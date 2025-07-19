@@ -5,7 +5,7 @@ import { Progress } from '@/components/ui/progress';
 import { Badge } from '@/components/ui/badge';
 import { useAuth } from '@/hooks/useAuth';
 import { supabase } from '@/integrations/supabase/client';
-import { Target, TrendingUp, Clock, Award, BookOpen, Circle } from 'lucide-react';
+import { Target, TrendingUp, Clock, Calendar, BookOpen, Circle, Award } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { QuestionHistoryModal } from '@/components/QuestionHistoryModal';
 import { TopicAccuracyModal } from '@/components/TopicAccuracyModal';
@@ -15,6 +15,7 @@ import { MisconceptionQuestionsModal } from '@/components/MisconceptionQuestions
 import { FocusAreaQuestionsModal } from '@/components/FocusAreaQuestionsModal';
 import { WorksheetGeneratorModal } from '@/components/WorksheetGeneratorModal';
 import { BulkQuestionGenerator } from '@/components/BulkQuestionGenerator';
+import { SessionsModal } from '@/components/SessionsModal';
 
 interface PerformanceData {
   topic: string;
@@ -38,6 +39,7 @@ const Dashboard = () => {
   const [loadingExplanations, setLoadingExplanations] = useState(false);
   const [loading, setLoading] = useState(true);
   const [totalQuestions, setTotalQuestions] = useState(0);
+  const [totalSessions, setTotalSessions] = useState(0);
   
   // Modal states
   const [questionHistoryOpen, setQuestionHistoryOpen] = useState(false);
@@ -49,6 +51,7 @@ const Dashboard = () => {
   const [selectedMisconceptionForQuestions, setSelectedMisconceptionForQuestions] = useState<any>(null);
   const [focusAreaQuestionsOpen, setFocusAreaQuestionsOpen] = useState(false);
   const [selectedFocusArea, setSelectedFocusArea] = useState<any>(null);
+  const [sessionsModalOpen, setSessionsModalOpen] = useState(false);
 
   useEffect(() => {
     if (user) {
@@ -98,6 +101,19 @@ const Dashboard = () => {
         .eq('student_id', user?.id);
 
       setTotalQuestions(count || 0);
+
+      // Get total sessions (unique days with answers)
+      const { data: sessionData } = await supabase
+        .from('student_answers')
+        .select('answered_at')
+        .eq('student_id', user?.id);
+
+      if (sessionData) {
+        const uniqueDays = new Set(
+          sessionData.map(answer => new Date(answer.answered_at).toDateString())
+        );
+        setTotalSessions(uniqueDays.size);
+      }
     } catch (error) {
       console.error('Error loading dashboard data:', error);
     } finally {
@@ -297,14 +313,14 @@ const Dashboard = () => {
             </CardContent>
           </Card>
 
-          <Card>
+          <Card className="cursor-pointer hover:shadow-md transition-shadow" onClick={() => setSessionsModalOpen(true)}>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Streak</CardTitle>
-              <Award className="h-4 w-4 text-muted-foreground" />
+              <CardTitle className="text-sm font-medium">Sessions</CardTitle>
+              <Calendar className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">0</div>
-              <p className="text-xs text-muted-foreground">Day streak</p>
+              <div className="text-2xl font-bold">{totalSessions}</div>
+              <p className="text-xs text-muted-foreground">Practice sessions • Click to view</p>
             </CardContent>
           </Card>
         </div>
@@ -481,6 +497,10 @@ const Dashboard = () => {
           open={focusAreaQuestionsOpen}
           onOpenChange={setFocusAreaQuestionsOpen}
           focusArea={selectedFocusArea}
+        />
+        <SessionsModal
+          open={sessionsModalOpen}
+          onOpenChange={setSessionsModalOpen}
         />
       </div>
     </div>
