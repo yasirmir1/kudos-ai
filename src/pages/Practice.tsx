@@ -249,12 +249,12 @@ const Practice = () => {
                 <Badge variant="secondary" className="px-3 py-1">{currentQuestion.topic}</Badge>
                 <Badge variant="outline" className="px-3 py-1">{currentQuestion.difficulty}</Badge>
               </div>
-              <div className="flex items-start space-x-2 text-muted-foreground min-w-0 flex-1 justify-end">
+              <div className="flex items-start space-x-1 text-muted-foreground min-w-0 flex-1 justify-end">
                 <Clock className="h-4 w-4 flex-shrink-0 mt-0.5" />
                 <span className="text-sm text-right leading-tight max-w-xs">{currentQuestion.subtopic}</span>
               </div>
             </div>
-            <h3 className="text-xl font-medium leading-relaxed text-center px-4">{currentQuestion.example_question}</h3>
+            <h3 className="text-xl font-medium leading-relaxed text-left px-4">{currentQuestion.example_question}</h3>
           </CardHeader>
           <CardContent className="px-8 pb-8">
             {/* Answer Options */}
