@@ -5,7 +5,7 @@ import { Progress } from '@/components/ui/progress';
 import { Badge } from '@/components/ui/badge';
 import { useAuth } from '@/hooks/useAuth';
 import { supabase } from '@/integrations/supabase/client';
-import { Target, TrendingUp, Clock, Award, BookOpen } from 'lucide-react';
+import { Target, TrendingUp, Clock, Award, BookOpen, Circle } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { QuestionHistoryModal } from '@/components/QuestionHistoryModal';
 import { TopicAccuracyModal } from '@/components/TopicAccuracyModal';
@@ -150,11 +150,11 @@ const Dashboard = () => {
 
   const getFrequencyColorBadge = (frequency: number) => {
     if (frequency >= 5) {
-      return <div className="w-3 h-3 rounded-full bg-red-500" title={`Very concerning - ${frequency}x encountered`} />;
+      return <div title={`Very concerning - ${frequency}x encountered`}><Circle className="w-3 h-3 fill-red-500 text-red-500" /></div>;
     } else if (frequency >= 3) {
-      return <div className="w-3 h-3 rounded-full bg-yellow-500" title={`Concerning - ${frequency}x encountered`} />;
+      return <div title={`Concerning - ${frequency}x encountered`}><Circle className="w-3 h-3 fill-yellow-500 text-yellow-500" /></div>;
     } else {
-      return <div className="w-3 h-3 rounded-full bg-green-500" title={`${frequency}x encountered`} />;
+      return <div title={`${frequency}x encountered`}><Circle className="w-3 h-3 fill-green-500 text-green-500" /></div>;
     }
   };
 
