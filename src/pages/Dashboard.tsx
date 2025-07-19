@@ -150,11 +150,11 @@ const Dashboard = () => {
 
   const getFrequencyColorBadge = (frequency: number) => {
     if (frequency >= 5) {
-      return <div className="w-3 h-3 rounded-full bg-red-500" title={`${frequency}x encountered - High frequency`} />;
+      return <div className="w-3 h-3 rounded-full bg-red-500" title={`Very concerning - ${frequency}x encountered`} />;
     } else if (frequency >= 3) {
-      return <div className="w-3 h-3 rounded-full bg-amber-500" title={`${frequency}x encountered - Medium frequency`} />;
+      return <div className="w-3 h-3 rounded-full bg-yellow-500" title={`Concerning - ${frequency}x encountered`} />;
     } else {
-      return <div className="w-3 h-3 rounded-full bg-green-500" title={`${frequency}x encountered - Low frequency`} />;
+      return <div className="w-3 h-3 rounded-full bg-green-500" title={`${frequency}x encountered`} />;
     }
   };
 
