@@ -40,32 +40,23 @@ const Analytics = () => {
     }
   }, [user]);
 
-  // Custom tick component for wrapping text
+  // Custom tick component for rotated text
   const CustomXAxisTick = (props: any) => {
     const { x, y, payload } = props;
-    const words = payload.value.split(' ');
-    const maxWordsPerLine = 2;
-    const lines = [];
-    
-    for (let i = 0; i < words.length; i += maxWordsPerLine) {
-      lines.push(words.slice(i, i + maxWordsPerLine).join(' '));
-    }
 
     return (
       <g transform={`translate(${x},${y})`}>
-        {lines.map((line, index) => (
-          <text
-            key={index}
-            x={0}
-            y={index * 10}
-            dy={6}
-            textAnchor="middle"
-            fill="#666"
-            fontSize={9}
-          >
-            {line}
-          </text>
-        ))}
+        <text
+          x={0}
+          y={0}
+          dy={16}
+          textAnchor="end"
+          fill="#666"
+          fontSize={10}
+          transform="rotate(-90)"
+        >
+          {payload.value}
+        </text>
       </g>
     );
   };
