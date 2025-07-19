@@ -70,32 +70,88 @@ const Dashboard = () => {
 
   const loadDashboardData = async () => {
     try {
-      // Load performance data
-      const { data: performanceData } = await supabase
-        .from('student_performance')
-        .select('*')
+      // Load performance data by calculating from age-group filtered answers
+      const { data: answersForPerformance } = await supabase
+        .from('student_answers')
+        .select('topic, is_correct, answered_at, time_taken_seconds')
         .eq('student_id', user?.id)
-        .order('accuracy', { ascending: false });
+        .eq('age_group', selectedAgeGroup);
 
-      if (performanceData) {
-        setPerformance(performanceData);
+      // Calculate performance data from filtered answers
+      const topicStats: { [key: string]: { correct: number; total: number; totalTime: number; lastAttempted: string } } = {};
+      
+      if (answersForPerformance) {
+        answersForPerformance.forEach(answer => {
+          if (!topicStats[answer.topic]) {
+            topicStats[answer.topic] = { correct: 0, total: 0, totalTime: 0, lastAttempted: answer.answered_at };
+          }
+          topicStats[answer.topic].total++;
+          topicStats[answer.topic].totalTime += answer.time_taken_seconds;
+          if (answer.is_correct) {
+            topicStats[answer.topic].correct++;
+          }
+          // Update last attempted if this answer is more recent
+          if (new Date(answer.answered_at) > new Date(topicStats[answer.topic].lastAttempted)) {
+            topicStats[answer.topic].lastAttempted = answer.answered_at;
+          }
+        });
       }
 
-      // Load weak topics
-      const { data: weakTopicsData } = await supabase
-        .rpc('get_weak_topics', { p_student_id: user?.id });
+      const calculatedPerformanceData = Object.entries(topicStats).map(([topic, stats]) => ({
+        topic,
+        accuracy: stats.correct / stats.total,
+        total_attempts: stats.total,
+        correct_answers: stats.correct,
+        avg_time_seconds: stats.totalTime / stats.total,
+        last_attempted: stats.lastAttempted
+      })).sort((a, b) => b.accuracy - a.accuracy);
 
-      if (weakTopicsData) {
-        setWeakTopics(weakTopicsData);
+      setPerformance(calculatedPerformanceData);
+
+      // Load weak topics from filtered performance data
+      const weakTopicsFromPerformance = calculatedPerformanceData
+        .filter(topic => topic.accuracy < 0.7 && topic.total_attempts >= 3)
+        .map(topic => ({
+          topic: topic.topic,
+          accuracy: topic.accuracy,
+          attempts: topic.total_attempts
+        }))
+        .sort((a, b) => a.accuracy - b.accuracy);
+
+      setWeakTopics(weakTopicsFromPerformance);
+
+      // Load misconception analysis from age-group filtered answers
+      const { data: ageGroupAnswers } = await supabase
+        .from('student_answers')
+        .select('red_herring_triggered, topic')
+        .eq('student_id', user?.id)
+        .eq('age_group', selectedAgeGroup)
+        .not('red_herring_triggered', 'is', null);
+
+      // Calculate misconceptions from filtered data
+      const misconceptionStats: { [key: string]: { frequency: number; topics: Set<string> } } = {};
+      
+      if (ageGroupAnswers) {
+        ageGroupAnswers.forEach(answer => {
+          if (answer.red_herring_triggered && Array.isArray(answer.red_herring_triggered)) {
+            answer.red_herring_triggered.forEach((redHerring: string) => {
+              if (!misconceptionStats[redHerring]) {
+                misconceptionStats[redHerring] = { frequency: 0, topics: new Set() };
+              }
+              misconceptionStats[redHerring].frequency++;
+              misconceptionStats[redHerring].topics.add(answer.topic);
+            });
+          }
+        });
       }
 
-      // Load misconception analysis
-      const { data: misconceptionsData } = await supabase
-        .rpc('get_student_misconceptions', { p_student_id: user?.id });
+      const calculatedMisconceptions = Object.entries(misconceptionStats).map(([redHerring, stats]) => ({
+        red_herring: redHerring,
+        frequency: stats.frequency,
+        topics: Array.from(stats.topics)
+      })).sort((a, b) => b.frequency - a.frequency);
 
-      if (misconceptionsData) {
-        setMisconceptions(misconceptionsData);
-      }
+      setMisconceptions(calculatedMisconceptions);
 
       // Get total questions answered for selected age group
       const { count } = await supabase
