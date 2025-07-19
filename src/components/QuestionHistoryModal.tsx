@@ -2,9 +2,10 @@ import { useState, useEffect } from 'react';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Badge } from '@/components/ui/badge';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { CheckCircle, XCircle, Clock } from 'lucide-react';
+import { CheckCircle, XCircle, Clock, ExternalLink } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
+import { QuestionDetailModal } from './QuestionDetailModal';
 
 interface QuestionHistory {
   id: number;
@@ -16,6 +17,7 @@ interface QuestionHistory {
   is_correct: boolean;
   time_taken_seconds: number;
   answered_at: string;
+  red_herring_triggered?: string[];
 }
 
 interface QuestionHistoryModalProps {
@@ -27,6 +29,8 @@ export const QuestionHistoryModal = ({ open, onOpenChange }: QuestionHistoryModa
   const { user } = useAuth();
   const [questions, setQuestions] = useState<QuestionHistory[]>([]);
   const [loading, setLoading] = useState(false);
+  const [selectedQuestion, setSelectedQuestion] = useState<QuestionHistory | null>(null);
+  const [detailModalOpen, setDetailModalOpen] = useState(false);
 
   useEffect(() => {
     if (open && user) {
@@ -66,6 +70,11 @@ export const QuestionHistoryModal = ({ open, onOpenChange }: QuestionHistoryModa
     return `${Math.floor(seconds / 60)}m ${seconds % 60}s`;
   };
 
+  const handleQuestionClick = (question: QuestionHistory) => {
+    setSelectedQuestion(question);
+    setDetailModalOpen(true);
+  };
+
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-4xl max-h-[80vh]">
@@ -90,10 +99,11 @@ export const QuestionHistoryModal = ({ open, onOpenChange }: QuestionHistoryModa
               {questions.map((question) => (
                 <div
                   key={question.id}
-                  className={`p-4 rounded-lg border ${
+                  onClick={() => handleQuestionClick(question)}
+                  className={`p-4 rounded-lg border cursor-pointer transition-all hover:shadow-md ${
                     question.is_correct 
-                      ? 'border-green-200 bg-green-50' 
-                      : 'border-red-200 bg-red-50'
+                      ? 'border-green-200 bg-green-50 hover:bg-green-100' 
+                      : 'border-red-200 bg-red-50 hover:bg-red-100'
                   }`}
                 >
                   <div className="flex items-start justify-between">
@@ -126,6 +136,10 @@ export const QuestionHistoryModal = ({ open, onOpenChange }: QuestionHistoryModa
                         <span>{formatTime(question.time_taken_seconds)}</span>
                       </div>
                       <div>{formatDate(question.answered_at)}</div>
+                      <div className="flex items-center space-x-1 text-primary">
+                        <ExternalLink className="h-3 w-3" />
+                        <span>View Details</span>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -133,6 +147,13 @@ export const QuestionHistoryModal = ({ open, onOpenChange }: QuestionHistoryModa
             </div>
           )}
         </ScrollArea>
+
+        <QuestionDetailModal
+          open={detailModalOpen}
+          onOpenChange={setDetailModalOpen}
+          questionId={selectedQuestion?.question_id || null}
+          studentAnswer={selectedQuestion}
+        />
       </DialogContent>
     </Dialog>
   );
