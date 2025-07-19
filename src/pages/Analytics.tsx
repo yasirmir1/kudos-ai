@@ -127,11 +127,25 @@ const Analytics = () => {
 
   // Process accuracy by topic for pie chart
   const getTopicAccuracyData = () => {
-    return performanceData.map(topic => ({
-      name: topic.topic,
-      accuracy: Math.round(topic.accuracy * 100),
-      attempts: topic.total_attempts
-    }));
+    return performanceData.map(topic => {
+      // Shorten topic names and replace "and" with "&"
+      let shortName = topic.topic
+        .replace(/\band\b/gi, '&')
+        .replace(/\bof\b/gi, '')
+        .replace(/\bthe\b/gi, '')
+        .trim();
+      
+      // If still too long, truncate to 20 characters
+      if (shortName.length > 20) {
+        shortName = shortName.substring(0, 17) + '...';
+      }
+      
+      return {
+        name: shortName,
+        accuracy: Math.round(topic.accuracy * 100),
+        attempts: topic.total_attempts
+      };
+    });
   };
 
   // Process difficulty distribution
