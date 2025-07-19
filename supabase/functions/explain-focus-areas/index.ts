@@ -100,41 +100,43 @@ serve(async (req) => {
       misconceptions: answer.red_herring_triggered || []
     })) || [];
 
-    const prompt = `You are talking to an 8-year-old named Alex who loves video games, toys, and ice cream! Alex made some specific mistakes in ${topic} and needs help understanding what went wrong and how to fix it.
+    const prompt = `You are talking to an 8-year-old who loves video games, toys, and ice cream! They made some mistakes in ${topic} and need gentle help understanding what might have gone wrong and how to fix it.
 
 SUPER IMPORTANT RULES:
+- Talk directly to them using "you" 
+- Use gentle language like "you might have thought" or "you may have tried"
 - NO big words like "concept," "interval," "calculate," or "negative result"
 - Use words a 2nd grader knows
 - Compare everything to fun stuff kids love (games, toys, candy, playgrounds)
 - Be excited and encouraging like their favorite fun teacher!
-- Focus on the SPECIFIC mistakes Alex made and what to do instead
+- Focus on what they MIGHT have done and what to try instead
 
-Alex's math story:
-- They got ${Math.round((focusAreaContext.accuracy || 0) * 100)}% right in ${topic}
-- They tried ${focusAreaContext.totalAttempts} questions
+Your math story:
+- You got ${Math.round((focusAreaContext.accuracy || 0) * 100)}% right in ${topic} - that's pretty good!
+- You tried ${focusAreaContext.totalAttempts} questions
 - The tricky parts were: ${uniqueSubtopics.join(', ') || 'some number puzzles'}
-- Common mistakes they made: ${uniqueMisconceptions.join(', ') || 'various mix-ups'}
+- Some mix-ups happened with: ${uniqueMisconceptions.join(', ') || 'various patterns'}
 
-Write like you're talking directly to Alex:
+Write like you're talking directly to them:
 
-🤔 **What happened in your answers:**
-[Look at their specific mistakes and explain in kid-friendly terms what they did wrong. For example: "Alex, I saw you sometimes counted 3-5 and got 2 instead of -2. That's like being on the 3rd floor and going down 5 floors - you'd end up 2 floors BELOW the ground floor!" Be specific about the mistake pattern.]
+🤔 **What might have happened:**
+[Gently explain what they might have done wrong using "you might have thought" or "you may have tried". For example: "You might have thought 3-5 equals 2 because you were thinking about regular subtraction. That's totally normal - lots of kids think that way at first!"]
 
-✨ **What you should do instead:**
-[Give the exact correct method using fun examples. "When you see 3-5, think of it like a elevator! Start on floor 3, go down 5 floors: 3→2→1→0→-1→-2. You end up on floor -2 (that's 2 floors underground)!"]
+✨ **Here's what to try instead:**
+[Give the exact correct method using fun examples. "When you see 3-5, you can think of it like an elevator! Start on floor 3, go down 5 floors: 3→2→1→0→-1→-2. You end up on floor -2 (that's 2 floors underground)!"]
 
-🎮 **Easy tricks to remember:**
-[Give 2-3 simple tricks or shortcuts using games/toys that prevent the specific mistake they made]
+🎮 **Cool tricks that might help:**
+[Give 2-3 simple tricks or shortcuts using games/toys that prevent the mistakes they might have made]
 
-🏃 **Practice games to try:**
-[Suggest specific activities that target their exact mistake patterns]
+🏃 **Fun ways to practice:**
+[Suggest specific activities that target the areas where they might be getting confused]
 
-🏆 **You're getting better because:**
+🏆 **You're already doing great because:**
 [Point out improvement or positive signs in their work]
 
-Focus on their ACTUAL mistakes from: ${JSON.stringify(mistakePatterns, null, 2)}
+Use their actual mistake patterns from: ${JSON.stringify(mistakePatterns, null, 2)}
 
-Make it specific to what they did wrong and crystal clear about what to do instead!`;
+Be gentle, use "might have" and "you may have" language, and focus on what to try differently!`;
 
     console.log('Sending request to Perplexity for focus area explanation...');
 
