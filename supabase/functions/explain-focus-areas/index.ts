@@ -110,19 +110,19 @@ Performance Summary:
 
 Create an engaging explanation with these sections:
 
-🎯 **What's happening in this topic:**
+🎯 What's happening in this topic:
 [Brief, encouraging overview of their performance and what this topic covers]
 
-🤔 **Where you might be getting stuck:**
+🤔 Where you might be getting stuck:
 [Analyze their common mistakes without being condescending - explain what typically goes wrong]
 
-🛠️ **Strategies to improve:**
+🛠️ Strategies to improve:
 [Give 2-3 practical, actionable strategies specific to their mistake patterns]
 
-📚 **Key concepts to focus on:**
+📚 Key concepts to focus on:
 [Highlight the most important concepts for this topic that they should master]
 
-🚀 **Next steps:**
+🚀 Next steps:
 [Suggest specific practice areas or approaches that would help most]
 
 Mistake patterns to address: ${JSON.stringify(mistakePatterns, null, 2)}

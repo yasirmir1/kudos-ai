@@ -30,16 +30,16 @@ serve(async (req) => {
 
     const prompt = `Help explain a math mistake to a student. Be encouraging but respectful - don't talk down to them.
 
-🧮 **Question:** ${question}
-❌ **Their answer:** ${student_answer}
-✅ **Correct answer:** ${correct_answer}
-🤯 **Mistake type:** ${misconception}
+🧮 Question: ${question}
+❌ Their answer: ${student_answer}
+✅ Correct answer: ${correct_answer}
+🤯 Mistake type: ${misconception}
 
 Create a SHORT, engaging explanation with exactly these 3 parts:
 
-🤔 **What happened:** [1 sentence - what they likely did or thought]
-💡 **Why this mistake is common:** [1 sentence - why this happens to many students]
-🎯 **How to get it right:** [1 sentence - clear, practical tip]
+🤔 What happened: [1 sentence - what they likely did or thought]
+💡 Why this mistake is common: [1 sentence - why this happens to many students]
+🎯 How to get it right: [1 sentence - clear, practical tip]
 
 Rules:
 - Use "you" naturally, not like talking to a little kid
