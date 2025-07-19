@@ -38,7 +38,9 @@ serve(async (req) => {
 Create a SHORT, engaging explanation with exactly these 3 parts:
 
 🤔 What happened: [1 sentence - what they likely did or thought]
+
 💡 Why this mistake is common: [1 sentence - why this happens to many students]
+
 🎯 How to get it right: [1 sentence - clear, practical tip]
 
 Rules:
@@ -47,6 +49,7 @@ Rules:
 - Use clear, simple language without being babyish
 - Keep each part to 1 sentence
 - Make it engaging and helpful
+- Add a blank line between each section for better readability
 - Total: 3-4 sentences max`;
 
     // Try Perplexity first, then fallback to OpenAI
