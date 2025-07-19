@@ -57,11 +57,10 @@ const Practice = () => {
 
       const answeredQuestionIds = answeredQuestions?.map(q => q.question_id) || [];
 
-      // Get ONLY new questions that the user has never seen
+      // Get random questions from ALL topics that the user has never seen
       let query = supabase
         .from('curriculum')
         .select('*')
-        .order('id', { ascending: false }) // Order by id instead of created_at
         .limit(20);
 
       if (answeredQuestionIds.length > 0) {
@@ -73,19 +72,21 @@ const Practice = () => {
       let questions: Question[] = [];
 
       if (newQuestions && newQuestions.length > 0) {
-        // Format questions
-        questions = newQuestions.map(q => ({
-          ...q,
-          options: Array.isArray(q.options) ? q.options : 
-                   typeof q.options === 'string' ? JSON.parse(q.options) : 
-                   Object.values(q.options || {})
-        }));
+        // Format questions and shuffle them randomly for variety
+        questions = newQuestions
+          .map(q => ({
+            ...q,
+            options: Array.isArray(q.options) ? q.options : 
+                     typeof q.options === 'string' ? JSON.parse(q.options) : 
+                     Object.values(q.options || {})
+          }))
+          .sort(() => Math.random() - 0.5); // Randomize the order
 
-        console.log(`Loaded ${questions.length} new questions (never seen before)`);
+        console.log(`Loaded ${questions.length} new questions from ${new Set(questions.map(q => q.topic)).size} different topics`);
       } else {
         console.log('No new questions available, need to generate more');
         
-        // If no new questions available, generate more AI questions
+        // If no new questions available, generate more AI questions from random topics
         await generateAdditionalQuestions();
         
         // After generation, try loading new questions again
@@ -93,16 +94,17 @@ const Practice = () => {
           .from('curriculum')
           .select('*')
           .not('question_id', 'in', answeredQuestionIds.length > 0 ? `(${answeredQuestionIds.map(id => `'${id}'`).join(',')})` : '()')
-          .order('id', { ascending: false }) // Order by id instead of created_at
           .limit(20);
 
         if (freshQuestions && freshQuestions.length > 0) {
-          questions = freshQuestions.map(q => ({
-            ...q,
-            options: Array.isArray(q.options) ? q.options : 
-                     typeof q.options === 'string' ? JSON.parse(q.options) : 
-                     Object.values(q.options || {})
-          }));
+          questions = freshQuestions
+            .map(q => ({
+              ...q,
+              options: Array.isArray(q.options) ? q.options : 
+                       typeof q.options === 'string' ? JSON.parse(q.options) : 
+                       Object.values(q.options || {})
+            }))
+            .sort(() => Math.random() - 0.5); // Randomize the order
         } else {
           toast({
             title: "No new questions available",
@@ -254,14 +256,10 @@ const Practice = () => {
     setGeneratingQuestions(true);
     toast({
       title: "Generating new questions...",
-      description: "Creating personalized questions based on your learning patterns.",
+      description: "Creating random questions from various topics.",
     });
 
     try {
-      // Get user's performance data to determine what to generate
-      const { data: weakTopics } = await supabase
-        .rpc('get_weak_topics', { p_student_id: user?.id });
-      
       // Get already answered questions to avoid duplicates
       const { data: answeredQuestions } = await supabase
         .from('student_answers')
@@ -270,41 +268,23 @@ const Practice = () => {
       
       const answeredQuestionIds = answeredQuestions?.map(q => q.question_id) || [];
       
-      // Determine generation parameters
+      // Get a random existing topic/subtopic combination from the curriculum
+      const { data: existingTopics } = await supabase
+        .from('curriculum')
+        .select('topic, subtopic, difficulty')
+        .not('question_id', 'in', answeredQuestionIds.length > 0 ? `(${answeredQuestionIds.map(id => `'${id}'`).join(',')})` : '()')
+        .limit(50);
+      
       let targetTopic = 'Number - Number and Place Value';
       let targetSubtopic = 'Read, write, order and compare numbers';
       let targetDifficulty = 'Medium';
       
-      if (weakTopics && weakTopics.length > 0) {
-        targetTopic = weakTopics[0].topic;
-        
-        // Get existing subtopics for this topic to ensure variety
-        const { data: existingQuestions } = await supabase
-          .from('curriculum')
-          .select('subtopic, difficulty')
-          .eq('topic', targetTopic)
-          .not('question_id', 'in', answeredQuestionIds.length > 0 ? `(${answeredQuestionIds.map(id => `'${id}'`).join(',')})` : '()')
-          .limit(20);
-        
-        if (existingQuestions && existingQuestions.length > 0) {
-          const randomQuestion = existingQuestions[Math.floor(Math.random() * existingQuestions.length)];
-          targetSubtopic = randomQuestion.subtopic;
-          targetDifficulty = randomQuestion.difficulty;
-        }
-      } else {
-        // For new users, get a random topic/subtopic from existing curriculum
-        const { data: randomQuestions } = await supabase
-          .from('curriculum')
-          .select('topic, subtopic, difficulty')
-          .not('question_id', 'in', answeredQuestionIds.length > 0 ? `(${answeredQuestionIds.map(id => `'${id}'`).join(',')})` : '()')
-          .limit(10);
-        
-        if (randomQuestions && randomQuestions.length > 0) {
-          const randomQuestion = randomQuestions[Math.floor(Math.random() * randomQuestions.length)];
-          targetTopic = randomQuestion.topic;
-          targetSubtopic = randomQuestion.subtopic;
-          targetDifficulty = randomQuestion.difficulty;
-        }
+      if (existingTopics && existingTopics.length > 0) {
+        // Pick a completely random topic/subtopic combination
+        const randomSelection = existingTopics[Math.floor(Math.random() * existingTopics.length)];
+        targetTopic = randomSelection.topic;
+        targetSubtopic = randomSelection.subtopic;
+        targetDifficulty = randomSelection.difficulty;
       }
 
       console.log(`Generating questions for ${targetTopic} - ${targetSubtopic} (${targetDifficulty})`);
@@ -329,7 +309,7 @@ const Practice = () => {
       if (response) {
         toast({
           title: "Questions generated successfully!",
-          description: "New personalized questions are now available.",
+          description: `New questions added for topic: ${targetTopic}`,
         });
       }
       
@@ -366,20 +346,21 @@ const Practice = () => {
           .from('curriculum')
           .select('*')
           .not('question_id', 'in', answeredQuestionIds.length > 0 ? `(${answeredQuestionIds.map(id => `'${id}'`).join(',')})` : '()')
-          .order('id', { ascending: false }) // Order by id instead of created_at
           .limit(20);
 
         if (newQuestions && newQuestions.length > 0) {
-          const formattedQuestions = newQuestions.map(q => ({
-            ...q,
-            options: Array.isArray(q.options) ? q.options : 
-                     typeof q.options === 'string' ? JSON.parse(q.options) : 
-                     Object.values(q.options || {})
-          }));
+          const formattedQuestions = newQuestions
+            .map(q => ({
+              ...q,
+              options: Array.isArray(q.options) ? q.options : 
+                       typeof q.options === 'string' ? JSON.parse(q.options) : 
+                       Object.values(q.options || {})
+            }))
+            .sort(() => Math.random() - 0.5); // Randomize order for variety
           
-          // Replace current questions with fresh set to avoid any repeats
+          // Replace current questions with fresh randomized set
           setQuestions(formattedQuestions);
-          console.log(`Refreshed with ${formattedQuestions.length} new questions`);
+          console.log(`Refreshed with ${formattedQuestions.length} questions from ${new Set(formattedQuestions.map(q => q.topic)).size} topics`);
         }
       }, 2000); // Wait for generation to complete
     }
