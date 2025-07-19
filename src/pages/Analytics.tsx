@@ -322,7 +322,6 @@ const Analytics = () => {
                     <XAxis dataKey="name" angle={-45} textAnchor="end" height={60} />
                     <YAxis domain={[0, 100]} />
                     <Tooltip />
-                    <Legend />
                     <Bar dataKey="accuracy" fill="#82ca9d" name="Accuracy %" />
                   </BarChart>
                 </ResponsiveContainer>
