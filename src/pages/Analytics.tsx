@@ -40,6 +40,36 @@ const Analytics = () => {
     }
   }, [user]);
 
+  // Custom tick component for wrapping text
+  const CustomXAxisTick = (props: any) => {
+    const { x, y, payload } = props;
+    const words = payload.value.split(' ');
+    const maxWordsPerLine = 2;
+    const lines = [];
+    
+    for (let i = 0; i < words.length; i += maxWordsPerLine) {
+      lines.push(words.slice(i, i + maxWordsPerLine).join(' '));
+    }
+
+    return (
+      <g transform={`translate(${x},${y})`}>
+        {lines.map((line, index) => (
+          <text
+            key={index}
+            x={0}
+            y={index * 15}
+            dy={16}
+            textAnchor="middle"
+            fill="#666"
+            fontSize={11}
+          >
+            {line}
+          </text>
+        ))}
+      </g>
+    );
+  };
+
   const loadAnalyticsData = async () => {
     try {
       // Load all student answers for time-based analytics
@@ -286,15 +316,13 @@ const Analytics = () => {
                 <CardDescription>Accuracy percentage for each topic studied</CardDescription>
               </CardHeader>
               <CardContent>
-                <ResponsiveContainer width="100%" height={350}>
-                  <BarChart data={topicAccuracy} margin={{ top: 5, right: 30, left: 20, bottom: 80 }}>
+                <ResponsiveContainer width="100%" height={380}>
+                  <BarChart data={topicAccuracy} margin={{ top: 5, right: 30, left: 20, bottom: 100 }}>
                     <CartesianGrid strokeDasharray="3 3" />
                     <XAxis 
                       dataKey="name" 
-                      angle={-45} 
-                      textAnchor="end" 
-                      height={100}
-                      fontSize={12}
+                      tick={CustomXAxisTick}
+                      height={120}
                       interval={0}
                     />
                     <YAxis domain={[0, 100]} />
