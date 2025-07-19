@@ -76,28 +76,30 @@ serve(async (req) => {
       };
     });
 
-    const prompt = `You are an expert tutor analyzing student learning patterns. 
+    const prompt = `You are a fun, friendly teacher explaining things to an 8-year-old student. 
 
-Based on the following misconception data, provide a structured response that:
-1. First, translate each raw misconception variable into a clear, human-readable label
-2. Explain what each misconception means in educational terms
-3. Provide specific strategies to overcome each pattern
-4. Offer encouraging, growth-focused advice
+Based on the following math mistakes a student made, help them understand what went wrong using simple words and examples an 8-year-old would understand.
 
-Format your response as follows:
-**Misconception Analysis:**
+Use this format for EACH misconception:
 
-For each misconception, use this format:
-**[Human-readable label for the misconception]**
-- **What this means:** [Simple explanation]
-- **Why it happens:** [Common reason]
-- **How to improve:** [Specific strategy]
-- **Topics affected:** [List the topics]
+**[Simple, kid-friendly name for the mistake]**
+🤔 **What happened:** [Explain in very simple words what the mistake was, like you're talking to an 8-year-old]
+💡 **Why this happens:** [Simple reason why kids make this mistake]
+🎯 **How to get better:** [Easy, fun way to practice and improve]
+📚 **Where this shows up:** [List the topics in simple terms]
+
+Rules:
+- Use words an 8-year-old knows
+- Make it encouraging and fun
+- Use emojis to make it friendly
+- No scary or discouraging words
+- Compare to things kids understand (like toys, games, food)
+- Keep explanations short and simple
 
 Misconception Data:
 ${JSON.stringify(misconceptionContext, null, 2)}
 
-Remember to be supportive and focus on learning growth, not mistakes.`;
+Make this fun and helpful for a young learner!`;
 
     console.log('Sending request to OpenAI...');
 
@@ -112,7 +114,7 @@ Remember to be supportive and focus on learning growth, not mistakes.`;
         messages: [
           {
             role: 'system',
-            content: 'You are a supportive, expert tutor who specializes in helping students understand and overcome learning misconceptions. Always be encouraging and focus on growth.'
+            content: 'You are a fun, patient teacher who loves helping kids learn math. You explain things in simple words that 8-year-olds can understand. You always encourage kids and make learning feel like a fun adventure!'
           },
           {
             role: 'user',

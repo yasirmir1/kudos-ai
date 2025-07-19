@@ -156,12 +156,43 @@ const Dashboard = () => {
 
   const getFrequencyColorBadge = (frequency: number) => {
     if (frequency >= 5) {
-      return <div title={`Very concerning - ${frequency}x encountered`}><Circle className="w-3 h-3 fill-red-500 text-red-500" /></div>;
+      return <div title={`Oops! This happened ${frequency} times - let's work on this!`}><Circle className="w-3 h-3 fill-red-500 text-red-500" /></div>;
     } else if (frequency >= 3) {
-      return <div title={`Concerning - ${frequency}x encountered`}><Circle className="w-3 h-3 fill-yellow-500 text-yellow-500" /></div>;
+      return <div title={`This happened ${frequency} times - time to practice!`}><Circle className="w-3 h-3 fill-yellow-500 text-yellow-500" /></div>;
     } else {
-      return <div title={`${frequency}x encountered`}><Circle className="w-3 h-3 fill-green-500 text-green-500" /></div>;
+      return <div title={`Only ${frequency} time${frequency > 1 ? 's' : ''} - you're learning!`}><Circle className="w-3 h-3 fill-green-500 text-green-500" /></div>;
     }
+  };
+
+  const formatMisconceptionForKids = (redHerring: string) => {
+    // Create more kid-friendly labels for common misconceptions
+    const kidFriendlyLabels: {[key: string]: string} = {
+      'Decimals_IncorrectPlaceValueShift': 'Moving decimal points the wrong way 🔢',
+      'Equivalence_PartialRecognition': 'Mixing up equal signs 🤔',
+      'Fractions_AddNumeratorsAndDenominators': 'Adding fractions like whole numbers 🍕',
+      'Fractions_MultiplyLikeAddition': 'Multiplying fractions like adding ✖️',
+      'HCF_PartialFactorization': 'Finding factors but not the biggest one 🔍',
+      'NegativeNumbers_IntervalAcrossZero': 'Counting backwards gets tricky ⬅️',
+      'OrderOfOperations_ParenthesesIgnored': 'Forgetting about parentheses first 📐',
+      'OrderOfOperations_SubtractionBeforeMultiplication': 'Doing subtraction before times ➖',
+      'PlaceValue_DigitValueConfusion': 'Mixing up what position means 📍',
+      'PlaceValue_OrderingConfusion_ZeroPlacement': 'Zero placement puzzles 0️⃣',
+      'Rounding_DownInsteadOfUp': 'Rounding the wrong direction ⬇️',
+      'Rounding_IncorrectDirection': 'Getting confused which way to round 🔄'
+    };
+
+    // If we have a kid-friendly version, use it, otherwise create one
+    if (kidFriendlyLabels[redHerring]) {
+      return kidFriendlyLabels[redHerring];
+    }
+
+    // Fallback: make any other misconception kid-friendly
+    return redHerring
+      ?.replace(/_/g, ' ')
+      .replace(/([a-z])([A-Z])/g, '$1 $2')
+      .toLowerCase()
+      .replace(/\b\w/g, l => l.toUpperCase())
+      .trim() + ' 🤯';
   };
 
   const overallAccuracy = performance.length > 0 
@@ -369,12 +400,7 @@ const Dashboard = () => {
               )}
               
               {!loadingExplanations && misconceptions.slice(0, 5).map((misconception, index) => {
-                const humanLabel = misconceptionExplanations[misconception.red_herring] || 
-                  misconception.red_herring?.replace(/_/g, ' ')
-                    .replace(/([a-z])([A-Z])/g, '$1 $2')
-                    .toLowerCase()
-                    .replace(/\b\w/g, l => l.toUpperCase())
-                    .trim();
+                const kidFriendlyLabel = formatMisconceptionForKids(misconception.red_herring);
                 
                 return (
                   <div 
@@ -394,10 +420,10 @@ const Dashboard = () => {
                       </div>
                     </div>
                     <p className="text-sm font-medium text-blue-900">
-                      {humanLabel}
+                      {kidFriendlyLabel}
                     </p>
                     <p className="text-xs text-blue-700">
-                      Common learning pattern - Click to view questions
+                      Let's see what happened and learn together! 🌟
                     </p>
                   </div>
                 );
