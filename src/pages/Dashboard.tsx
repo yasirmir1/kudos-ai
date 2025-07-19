@@ -5,7 +5,7 @@ import { Progress } from '@/components/ui/progress';
 import { Badge } from '@/components/ui/badge';
 import { useAuth } from '@/hooks/useAuth';
 import { supabase } from '@/integrations/supabase/client';
-import { Brain, Target, TrendingUp, Clock, Award, BookOpen } from 'lucide-react';
+import { Target, TrendingUp, Clock, Award, BookOpen } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { QuestionHistoryModal } from '@/components/QuestionHistoryModal';
 import { TopicAccuracyModal } from '@/components/TopicAccuracyModal';

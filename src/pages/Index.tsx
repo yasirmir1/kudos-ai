@@ -2,7 +2,7 @@ import { useEffect } from 'react';
 import { Navigate } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
 import { Button } from '@/components/ui/button';
-import { Brain, BookOpen, Target, TrendingUp } from 'lucide-react';
+import { BookOpen, Target, TrendingUp } from 'lucide-react';
 
 const Index = () => {
   const { user, loading } = useAuth();
@@ -12,7 +12,7 @@ const Index = () => {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
         <div className="text-center space-y-2">
-          <Brain className="h-8 w-8 mx-auto animate-pulse text-primary" />
+          <img src="/lovable-uploads/409330f0-2245-4147-b837-ff553d303814.png" alt="Kudos Academy" className="h-8 w-8 mx-auto animate-pulse" />
           <p className="text-muted-foreground">Loading...</p>
         </div>
       </div>
@@ -65,7 +65,7 @@ const Index = () => {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mt-20">
             <div className="text-center space-y-4 p-6 rounded-lg bg-card/50 border">
               <div className="p-3 bg-primary/10 rounded-lg w-fit mx-auto">
-                <Brain className="h-8 w-8 text-primary" />
+                <img src="/lovable-uploads/409330f0-2245-4147-b837-ff553d303814.png" alt="Kudos Academy" className="h-8 w-8" />
               </div>
               <h3 className="text-xl font-semibold">Adaptive Learning</h3>
               <p className="text-muted-foreground">

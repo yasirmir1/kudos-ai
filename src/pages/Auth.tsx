@@ -7,7 +7,7 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useAuth } from '@/hooks/useAuth';
 import { useToast } from '@/hooks/use-toast';
-import { BookOpen, Brain, Target } from 'lucide-react';
+import { BookOpen, Target } from 'lucide-react';
 
 const Auth = () => {
   const [email, setEmail] = useState('');
@@ -152,7 +152,7 @@ const Auth = () => {
                 <CardContent className="space-y-4">
                   <CardTitle className="text-xl">Create your account</CardTitle>
                   <CardDescription>
-                    Start your personalized 11+ preparation journey today
+                    Start your personalized learning journey today
                   </CardDescription>
                   
                   <div className="space-y-2">
