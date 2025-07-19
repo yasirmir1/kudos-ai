@@ -30,6 +30,8 @@ const Dashboard = () => {
   const [performance, setPerformance] = useState<PerformanceData[]>([]);
   const [weakTopics, setWeakTopics] = useState<WeakTopic[]>([]);
   const [misconceptions, setMisconceptions] = useState<any[]>([]);
+  const [misconceptionExplanations, setMisconceptionExplanations] = useState<{[key: string]: string}>({});
+  const [loadingExplanations, setLoadingExplanations] = useState(false);
   const [loading, setLoading] = useState(true);
   const [totalQuestions, setTotalQuestions] = useState(0);
   
@@ -45,6 +47,12 @@ const Dashboard = () => {
       loadDashboardData();
     }
   }, [user]);
+
+  useEffect(() => {
+    if (misconceptions.length > 0 && user) {
+      loadMisconceptionExplanations();
+    }
+  }, [misconceptions, user]);
 
   const loadDashboardData = async () => {
     try {
@@ -96,6 +104,48 @@ const Dashboard = () => {
 
   const startLearning = () => {
     navigate('/practice');
+  };
+
+  const loadMisconceptionExplanations = async () => {
+    if (!user || misconceptions.length === 0) return;
+    
+    setLoadingExplanations(true);
+    try {
+      const { data, error } = await supabase.functions.invoke('explain-misconceptions', {
+        body: { student_id: user.id }
+      });
+
+      if (error) {
+        console.error('Error getting explanations:', error);
+        return;
+      }
+
+      if (data?.explanation) {
+        // Parse the structured response to extract individual misconception labels
+        const explanationText = data.explanation;
+        const labeledMisconceptions: {[key: string]: string} = {};
+        
+        // Simple parsing to extract human-readable labels
+        misconceptions.forEach(misconception => {
+          const variable = misconception.red_herring;
+          // Create a human-readable label by formatting the variable name
+          const humanLabel = variable
+            ?.replace(/_/g, ' ')
+            .replace(/([a-z])([A-Z])/g, '$1 $2')
+            .toLowerCase()
+            .replace(/\b\w/g, l => l.toUpperCase())
+            .trim() || 'Unknown Misconception';
+          
+          labeledMisconceptions[variable] = humanLabel;
+        });
+        
+        setMisconceptionExplanations(labeledMisconceptions);
+      }
+    } catch (error) {
+      console.error('Error loading misconception explanations:', error);
+    } finally {
+      setLoadingExplanations(false);
+    }
   };
 
   const overallAccuracy = performance.length > 0 
@@ -288,31 +338,44 @@ const Dashboard = () => {
               <CardDescription>Common mistakes to watch out for</CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
-              {misconceptions.slice(0, 5).map((misconception, index) => (
-                <div 
-                  key={`${misconception.red_herring}-${index}`} 
-                  className="space-y-2 p-3 rounded-lg border cursor-pointer hover:bg-muted/50 transition-colors"
-                  onClick={() => {
-                    setSelectedMisconception(misconception);
-                    setMisconceptionModalOpen(true);
-                  }}
-                >
-                  <div className="flex items-center justify-between">
-                    <Badge variant="outline" className="text-xs">
-                      {misconception.frequency}x
-                    </Badge>
-                    <div className="text-xs text-muted-foreground">
-                      {misconception.topics?.join(', ')}
-                    </div>
-                  </div>
-                  <p className="text-sm font-medium text-blue-700 hover:text-blue-800">
-                    {misconception.red_herring?.replace(/_/g, ' ')}
-                  </p>
-                  <p className="text-xs text-muted-foreground">
-                    Click for AI explanation
-                  </p>
+              {loadingExplanations && misconceptions.length > 0 && (
+                <div className="flex items-center justify-center py-4">
+                  <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-primary"></div>
+                  <span className="ml-2 text-sm text-muted-foreground">Analyzing misconceptions...</span>
                 </div>
-              ))}
+              )}
+              
+              {!loadingExplanations && misconceptions.slice(0, 5).map((misconception, index) => {
+                const humanLabel = misconceptionExplanations[misconception.red_herring] || 
+                  misconception.red_herring?.replace(/_/g, ' ')
+                    .replace(/([a-z])([A-Z])/g, '$1 $2')
+                    .toLowerCase()
+                    .replace(/\b\w/g, l => l.toUpperCase())
+                    .trim();
+                
+                return (
+                  <div 
+                    key={`${misconception.red_herring}-${index}`} 
+                    className="space-y-2 p-3 rounded-lg border bg-gradient-to-r from-blue-50/50 to-purple-50/50"
+                  >
+                    <div className="flex items-center justify-between">
+                      <Badge variant="outline" className="text-xs bg-blue-100 text-blue-800">
+                        {misconception.frequency}x encountered
+                      </Badge>
+                      <div className="text-xs text-muted-foreground">
+                        {misconception.topics?.join(', ')}
+                      </div>
+                    </div>
+                    <p className="text-sm font-medium text-blue-900">
+                      {humanLabel}
+                    </p>
+                    <p className="text-xs text-blue-700">
+                      Common learning pattern - focus on understanding the underlying concept
+                    </p>
+                  </div>
+                );
+              })}
+              
               {misconceptions.length === 0 && (
                 <div className="text-center py-4 text-muted-foreground">
                   Complete some practice questions to identify misconceptions.
