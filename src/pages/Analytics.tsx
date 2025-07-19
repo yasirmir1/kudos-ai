@@ -300,19 +300,45 @@ const Analytics = () => {
                 <CardDescription>Daily accuracy percentage for the last 30 days</CardDescription>
               </CardHeader>
               <CardContent>
-                <ResponsiveContainer width="100%" height={300}>
-                  <LineChart data={accuracyOverTime}>
-                    <CartesianGrid strokeDasharray="3 3" />
-                    <XAxis dataKey="date" />
-                    <YAxis domain={[0, 100]} />
-                    <Tooltip />
-                    <Legend />
+                <ResponsiveContainer width="100%" height={400}>
+                  <LineChart 
+                    data={accuracyOverTime}
+                    margin={{ top: 20, right: 30, left: 20, bottom: 60 }}
+                  >
+                    <CartesianGrid strokeDasharray="3 3" stroke="#e0e0e0" />
+                    <XAxis 
+                      dataKey="date" 
+                      angle={-45}
+                      textAnchor="end"
+                      height={60}
+                      tick={{ fontSize: 11, fill: '#666' }}
+                      axisLine={{ stroke: '#d0d0d0' }}
+                      tickLine={{ stroke: '#d0d0d0' }}
+                    />
+                    <YAxis 
+                      domain={[0, 100]} 
+                      tick={{ fontSize: 11, fill: '#666' }}
+                      axisLine={{ stroke: '#d0d0d0' }}
+                      tickLine={{ stroke: '#d0d0d0' }}
+                    />
+                    <Tooltip 
+                      contentStyle={{
+                        backgroundColor: '#f8f9fa',
+                        border: '1px solid #e9ecef',
+                        borderRadius: '8px',
+                        boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)'
+                      }}
+                      formatter={(value: any, name: string) => [`${value}%`, 'Accuracy']}
+                      labelFormatter={(label: string) => `Date: ${label}`}
+                    />
                     <Line 
                       type="monotone" 
                       dataKey="accuracy" 
-                      stroke="#8884d8" 
-                      strokeWidth={2}
+                      stroke="#3b82f6" 
+                      strokeWidth={3}
                       name="Accuracy %" 
+                      dot={{ fill: '#3b82f6', strokeWidth: 2, r: 4 }}
+                      activeDot={{ r: 6, stroke: '#1e40af', strokeWidth: 2 }}
                     />
                   </LineChart>
                 </ResponsiveContainer>
