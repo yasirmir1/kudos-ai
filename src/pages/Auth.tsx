@@ -75,7 +75,7 @@ const Auth = () => {
               <Brain className="h-8 w-8 text-primary" />
             </div>
             <div>
-              <h1 className="text-2xl font-bold text-foreground">11+ Exam Coach</h1>
+              <h1 className="text-2xl font-bold text-foreground">Kudos Academy</h1>
               <p className="text-sm text-muted-foreground">Your adaptive learning companion</p>
             </div>
           </div>

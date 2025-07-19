@@ -31,7 +31,7 @@ const Index = () => {
       <header className="container mx-auto px-4 py-6 flex justify-between items-center">
         <div className="flex items-center space-x-2">
           <Brain className="h-8 w-8 text-primary" />
-          <span className="text-xl font-bold">11+ Exam Coach</span>
+          <span className="text-xl font-bold">Kudos Academy</span>
         </div>
         <Button asChild>
           <a href="/auth">Get Started</a>
