@@ -97,8 +97,8 @@ const Dashboard = () => {
   if (loading) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
-        <div className="text-center space-y-2">
-          <Brain className="h-8 w-8 mx-auto animate-pulse text-primary" />
+        <div className="text-center space-y-4">
+          <img src="/lovable-uploads/409330f0-2245-4147-b837-ff553d303814.png" alt="Kudos" className="h-12 w-auto mx-auto animate-pulse" />
           <p className="text-muted-foreground">Loading your progress...</p>
         </div>
       </div>
@@ -112,10 +112,10 @@ const Dashboard = () => {
         <div className="container mx-auto px-4 py-4 flex justify-between items-center">
           <div className="flex items-center space-x-3">
             <div className="p-2 bg-primary/10 rounded-lg">
-              <Brain className="h-6 w-6 text-primary" />
+              <img src="/lovable-uploads/409330f0-2245-4147-b837-ff553d303814.png" alt="Kudos" className="h-8 w-auto" />
             </div>
             <div>
-              <h1 className="text-xl font-bold">11+ Exam Coach</h1>
+              <h1 className="text-xl font-bold">Kudos</h1>
               <p className="text-sm text-muted-foreground">Welcome back, {user?.email}</p>
             </div>
           </div>
