@@ -40,9 +40,14 @@ const Analytics = () => {
     }
   }, [user]);
 
-  // Custom tick component for rotated text
+  // Custom tick component for clear readable labels
   const CustomXAxisTick = (props: any) => {
     const { x, y, payload } = props;
+    const text = payload.value;
+    const maxLength = 15;
+    
+    // Truncate long text with ellipsis
+    const displayText = text.length > maxLength ? text.substring(0, maxLength) + '...' : text;
 
     return (
       <g transform={`translate(${x},${y})`}>
@@ -50,12 +55,12 @@ const Analytics = () => {
           x={0}
           y={0}
           dy={16}
-          textAnchor="end"
+          textAnchor="middle"
           fill="#666"
-          fontSize={10}
-          transform="rotate(-90)"
+          fontSize={11}
+          fontWeight="500"
         >
-          {payload.value}
+          {displayText}
         </text>
       </g>
     );
@@ -307,13 +312,44 @@ const Analytics = () => {
                 <CardDescription>Accuracy percentage for each topic studied</CardDescription>
               </CardHeader>
               <CardContent>
-                <ResponsiveContainer width="100%" height={350}>
-                  <BarChart data={topicAccuracy} margin={{ top: 20, right: 30, left: 20, bottom: 80 }}>
-                    <CartesianGrid strokeDasharray="3 3" />
-                    <XAxis dataKey="name" tick={<CustomXAxisTick />} height={80} />
-                    <YAxis domain={[0, 100]} />
-                    <Tooltip />
-                    <Bar dataKey="accuracy" fill="#82ca9d" name="Accuracy %" />
+                <ResponsiveContainer width="100%" height={400}>
+                  <BarChart 
+                    data={topicAccuracy} 
+                    margin={{ top: 20, right: 30, left: 20, bottom: 60 }}
+                    barCategoryGap="20%"
+                  >
+                    <CartesianGrid strokeDasharray="3 3" stroke="#e0e0e0" />
+                    <XAxis 
+                      dataKey="name" 
+                      tick={<CustomXAxisTick />} 
+                      height={60}
+                      axisLine={{ stroke: '#d0d0d0' }}
+                      tickLine={{ stroke: '#d0d0d0' }}
+                    />
+                    <YAxis 
+                      domain={[0, 100]} 
+                      axisLine={{ stroke: '#d0d0d0' }}
+                      tickLine={{ stroke: '#d0d0d0' }}
+                      tick={{ fontSize: 11, fill: '#666' }}
+                    />
+                    <Tooltip 
+                      contentStyle={{
+                        backgroundColor: '#f8f9fa',
+                        border: '1px solid #e9ecef',
+                        borderRadius: '8px',
+                        boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)'
+                      }}
+                      formatter={(value: any, name: string) => [`${value}%`, 'Accuracy']}
+                      labelFormatter={(label: string) => `Topic: ${label}`}
+                    />
+                    <Bar 
+                      dataKey="accuracy" 
+                      fill="#3b82f6" 
+                      name="Accuracy %" 
+                      radius={[4, 4, 0, 0]}
+                      stroke="#1e40af"
+                      strokeWidth={1}
+                    />
                   </BarChart>
                 </ResponsiveContainer>
               </CardContent>
