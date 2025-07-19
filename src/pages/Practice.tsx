@@ -221,45 +221,44 @@ const Practice = () => {
   const progress = ((currentIndex + 1) / questions.length) * 100;
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background via-background to-secondary/10 p-4">
-      <div className="container mx-auto max-w-4xl">
+    <div className="min-h-screen bg-gradient-to-br from-background via-background to-secondary/10">
+      <div className="container mx-auto max-w-4xl px-6 py-8">
         {/* Header */}
-        <div className="flex items-center justify-between mb-6">
-          <Button variant="ghost" onClick={() => navigate('/')}>
+        <div className="flex items-center justify-between mb-8">
+          <Button variant="ghost" onClick={() => navigate('/')} className="px-4">
             <ArrowLeft className="mr-2 h-4 w-4" />
             Dashboard
           </Button>
-          <div className="text-center">
-            <p className="text-sm text-muted-foreground">
+          <div className="text-center flex-1 mx-8">
+            <p className="text-sm text-muted-foreground mb-2">
               Question {currentIndex + 1} of {questions.length}
             </p>
-            <Progress value={progress} className="w-48 h-2 mt-1" />
+            <Progress value={progress} className="w-64 h-2 mx-auto" />
           </div>
-          <div className="text-right">
+          <div className="text-center min-w-[80px]">
             <p className="text-sm text-muted-foreground">Score</p>
-            <p className="font-bold">{score}/{currentIndex + (isAnswered ? 1 : 0)}</p>
+            <p className="font-bold text-lg">{score}/{currentIndex + (isAnswered ? 1 : 0)}</p>
           </div>
         </div>
 
         {/* Question Card */}
-        <Card className="mb-6">
-          <CardHeader>
-            <div className="flex items-center justify-between">
-              <div className="flex items-center space-x-2">
-                <Badge variant="secondary">{currentQuestion.topic}</Badge>
-                <Badge variant="outline">{currentQuestion.difficulty}</Badge>
+        <Card className="mb-8 mx-auto max-w-3xl">
+          <CardHeader className="pb-6">
+            <div className="flex items-center justify-between mb-4">
+              <div className="flex items-center space-x-3">
+                <Badge variant="secondary" className="px-3 py-1">{currentQuestion.topic}</Badge>
+                <Badge variant="outline" className="px-3 py-1">{currentQuestion.difficulty}</Badge>
               </div>
-              <div className="flex items-center space-x-1 text-muted-foreground">
+              <div className="flex items-center space-x-2 text-muted-foreground">
                 <Clock className="h-4 w-4" />
                 <span className="text-sm">{currentQuestion.subtopic}</span>
               </div>
             </div>
+            <h3 className="text-xl font-medium leading-relaxed text-center px-4">{currentQuestion.example_question}</h3>
           </CardHeader>
-          <CardContent>
-            <h3 className="text-lg font-medium mb-6">{currentQuestion.example_question}</h3>
-            
+          <CardContent className="px-8 pb-8">
             {/* Answer Options */}
-            <div className="space-y-3">
+            <div className="space-y-4 mb-8">
               {currentQuestion.options.map((option, index) => {
                 const isSelected = selectedAnswer === option;
                 const isCorrect = option === currentQuestion.correct_answer;
@@ -270,7 +269,7 @@ const Practice = () => {
                     key={index}
                     onClick={() => handleAnswerSelect(option)}
                     disabled={isAnswered}
-                    className={`w-full p-4 text-left border rounded-lg transition-all ${
+                    className={`w-full p-5 text-left border rounded-lg transition-all ${
                       isSelected
                         ? isAnswered
                           ? isCorrect
@@ -283,12 +282,12 @@ const Practice = () => {
                     } ${isAnswered ? 'cursor-not-allowed' : 'cursor-pointer'}`}
                   >
                     <div className="flex items-center justify-between">
-                      <span>{option}</span>
+                      <span className="text-base leading-relaxed">{option}</span>
                       {showCorrectness && (
                         isCorrect ? (
-                          <CheckCircle className="h-5 w-5 text-green-600" />
+                          <CheckCircle className="h-5 w-5 text-green-600 ml-4 flex-shrink-0" />
                         ) : isSelected ? (
-                          <XCircle className="h-5 w-5 text-red-600" />
+                          <XCircle className="h-5 w-5 text-red-600 ml-4 flex-shrink-0" />
                         ) : null
                       )}
                     </div>
@@ -298,16 +297,18 @@ const Practice = () => {
             </div>
 
             {/* Action Buttons */}
-            <div className="mt-6 flex justify-end space-x-3">
+            <div className="flex justify-center">
               {!isAnswered ? (
                 <Button 
                   onClick={handleSubmitAnswer}
                   disabled={!selectedAnswer}
+                  size="lg"
+                  className="px-8"
                 >
                   Submit Answer
                 </Button>
               ) : (
-                <Button onClick={handleNextQuestion}>
+                <Button onClick={handleNextQuestion} size="lg" className="px-8">
                   {currentIndex + 1 >= questions.length ? 'Finish Session' : 'Next Question'}
                 </Button>
               )}
@@ -317,21 +318,21 @@ const Practice = () => {
 
         {/* Explanation Card */}
         {showExplanation && (currentQuestion.red_herring_explanation || currentQuestion.pedagogical_notes) && (
-          <Card>
-            <CardHeader>
-              <CardTitle className="text-lg">Explanation</CardTitle>
+          <Card className="mx-auto max-w-3xl">
+            <CardHeader className="pb-4">
+              <CardTitle className="text-lg text-center">Explanation</CardTitle>
             </CardHeader>
-            <CardContent className="space-y-4">
+            <CardContent className="px-8 pb-6 space-y-6">
               {currentQuestion.red_herring_explanation && (
-                <div>
-                  <h4 className="font-medium text-sm text-muted-foreground mb-2">Why other answers might seem tempting:</h4>
-                  <p className="text-sm">{currentQuestion.red_herring_explanation}</p>
+                <div className="text-center">
+                  <h4 className="font-medium text-sm text-muted-foreground mb-3">Why other answers might seem tempting:</h4>
+                  <p className="text-sm leading-relaxed">{currentQuestion.red_herring_explanation}</p>
                 </div>
               )}
               {currentQuestion.pedagogical_notes && (
-                <div>
-                  <h4 className="font-medium text-sm text-muted-foreground mb-2">Learning tip:</h4>
-                  <p className="text-sm">{currentQuestion.pedagogical_notes}</p>
+                <div className="text-center">
+                  <h4 className="font-medium text-sm text-muted-foreground mb-3">Learning tip:</h4>
+                  <p className="text-sm leading-relaxed">{currentQuestion.pedagogical_notes}</p>
                 </div>
               )}
             </CardContent>
