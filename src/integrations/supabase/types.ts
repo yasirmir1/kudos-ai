@@ -125,6 +125,7 @@ export type Database = {
           current_level: string | null
           email: string
           id: string
+          is_admin: boolean | null
           target_exam_date: string | null
         }
         Insert: {
@@ -132,6 +133,7 @@ export type Database = {
           current_level?: string | null
           email: string
           id?: string
+          is_admin?: boolean | null
           target_exam_date?: string | null
         }
         Update: {
@@ -139,6 +141,7 @@ export type Database = {
           current_level?: string | null
           email?: string
           id?: string
+          is_admin?: boolean | null
           target_exam_date?: string | null
         }
         Relationships: []
