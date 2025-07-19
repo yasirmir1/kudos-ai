@@ -316,24 +316,13 @@ const Analytics = () => {
                 <CardDescription>Accuracy percentage for each topic studied</CardDescription>
               </CardHeader>
               <CardContent>
-                <ResponsiveContainer width="100%" height={Math.max(300, topicAccuracy.length * 40)}>
-                  <BarChart 
-                    data={topicAccuracy} 
-                    layout="horizontal"
-                    margin={{ top: 5, right: 30, left: 150, bottom: 5 }}
-                  >
+                <ResponsiveContainer width="100%" height={300}>
+                  <BarChart data={topicAccuracy}>
                     <CartesianGrid strokeDasharray="3 3" />
-                    <XAxis 
-                      type="number"
-                      domain={[0, 100]} 
-                    />
-                    <YAxis 
-                      type="category"
-                      dataKey="name"
-                      width={140}
-                      fontSize={11}
-                    />
+                    <XAxis dataKey="name" angle={-45} textAnchor="end" height={60} />
+                    <YAxis domain={[0, 100]} />
                     <Tooltip />
+                    <Legend />
                     <Bar dataKey="accuracy" fill="#82ca9d" name="Accuracy %" />
                   </BarChart>
                 </ResponsiveContainer>
