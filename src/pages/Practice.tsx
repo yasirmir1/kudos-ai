@@ -49,43 +49,127 @@ const Practice = () => {
     try {
       setLoading(true);
       
-      // Get enhanced adaptive questions for the user
-      const { data, error } = await supabase
-        .rpc('get_adaptive_questions_enhanced', { 
-          p_student_id: user?.id,
-          p_count: 20 
-        });
+      // First, get all question IDs the user has already answered
+      const { data: answeredQuestions } = await supabase
+        .from('student_answers')
+        .select('question_id')
+        .eq('student_id', user?.id);
 
-      if (error) {
-        console.error('Error loading questions:', error);
-        // Fallback to random questions if adaptive fails
-        const { data: fallbackData } = await supabase
-          .from('curriculum')
-          .select('*')
-          .limit(20);
-        
-        if (fallbackData) {
-          const formattedData = fallbackData.map(q => ({
-            ...q,
-            options: Array.isArray(q.options) ? q.options : 
-                     typeof q.options === 'string' ? JSON.parse(q.options) : 
-                     Object.values(q.options || {})
-          }));
-          setQuestions(formattedData);
-        }
-      } else if (data) {
-        // Extract questions from the JSONB response
-        const extractedQuestions = data.map((item: any) => {
-          const question = item.question;
-          return {
-            ...question,
-            options: Array.isArray(question.options) ? question.options : 
-                     typeof question.options === 'string' ? JSON.parse(question.options) : 
-                     Object.values(question.options || {})
-          };
-        });
-        setQuestions(extractedQuestions);
+      const answeredQuestionIds = answeredQuestions?.map(q => q.question_id) || [];
+
+      // Then get NEW questions that the user hasn't seen
+      let query = supabase
+        .from('curriculum')
+        .select('*')
+        .limit(20);
+
+      if (answeredQuestionIds.length > 0) {
+        query = query.not('question_id', 'in', `(${answeredQuestionIds.map(id => `'${id}'`).join(',')})`);
       }
+
+      const { data: newQuestions, error: newError } = await query;
+
+      let questions: Question[] = [];
+
+      if (newQuestions && newQuestions.length > 0) {
+        // Format new questions
+        const formattedNewQuestions = newQuestions.map(q => ({
+          ...q,
+          options: Array.isArray(q.options) ? q.options : 
+                   typeof q.options === 'string' ? JSON.parse(q.options) : 
+                   Object.values(q.options || {})
+        }));
+
+        questions = formattedNewQuestions;
+
+        // Add 2-3% repeated questions for reinforcement
+        const repeatPercentage = Math.random() < 0.025; // 2.5% chance
+        
+        if (repeatPercentage && questions.length > 15 && answeredQuestionIds.length > 0) {
+          // Get a few questions the user got CORRECT before (for confidence building)
+          const { data: correctlyAnswered } = await supabase
+            .from('student_answers')
+            .select('question_id')
+            .eq('student_id', user?.id)
+            .eq('is_correct', true)
+            .lt('answered_at', new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString()) // 2 days ago
+            .order('answered_at', { ascending: false })
+            .limit(5);
+
+          if (correctlyAnswered && correctlyAnswered.length > 0) {
+            const repeatQuestionIds = correctlyAnswered.slice(0, 2).map(q => q.question_id);
+            
+            const { data: repeatQuestions } = await supabase
+              .from('curriculum')
+              .select('*')
+              .in('question_id', repeatQuestionIds);
+
+            if (repeatQuestions && repeatQuestions.length > 0) {
+              const formattedRepeatQuestions = repeatQuestions.map(q => ({
+                ...q,
+                options: Array.isArray(q.options) ? q.options : 
+                         typeof q.options === 'string' ? JSON.parse(q.options) : 
+                         Object.values(q.options || {})
+              }));
+
+              // Replace 1-2 new questions with repeat questions and shuffle
+              questions = [
+                ...questions.slice(0, -repeatQuestions.length),
+                ...formattedRepeatQuestions
+              ];
+              
+              // Shuffle the array so repeat questions aren't at the end
+              questions = questions.sort(() => Math.random() - 0.5);
+
+              console.log(`Added ${repeatQuestions.length} repeat questions for reinforcement`);
+            }
+          }
+        }
+      } else {
+        console.log('No new questions found, falling back to adaptive algorithm');
+        
+        // Fallback to adaptive questions if no new questions available
+        const { data, error } = await supabase
+          .rpc('get_adaptive_questions_enhanced', { 
+            p_student_id: user?.id,
+            p_count: 20 
+          });
+
+        if (error) {
+          console.error('Error loading adaptive questions:', error);
+          // Final fallback to any questions
+          const { data: fallbackData } = await supabase
+            .from('curriculum')
+            .select('*')
+            .limit(20);
+          
+          if (fallbackData) {
+            const formattedData = fallbackData.map(q => ({
+              ...q,
+              options: Array.isArray(q.options) ? q.options : 
+                       typeof q.options === 'string' ? JSON.parse(q.options) : 
+                       Object.values(q.options || {})
+            }));
+            questions = formattedData;
+          }
+        } else if (data) {
+          // Extract questions from the JSONB response
+          const extractedQuestions = data.map((item: any) => {
+            const question = item.question;
+            return {
+              ...question,
+              options: Array.isArray(question.options) ? question.options : 
+                       typeof question.options === 'string' ? JSON.parse(question.options) : 
+                       Object.values(question.options || {})
+            };
+          });
+          questions = extractedQuestions;
+        }
+      }
+
+      setQuestions(questions);
+      console.log(`Loaded ${questions.length} questions (prioritizing new content)`);
+
     } catch (error) {
       console.error('Error:', error);
       toast({
