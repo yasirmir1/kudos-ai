@@ -87,13 +87,23 @@ export const WorksheetGeneratorModal = () => {
         setGeneratedQuestions(formattedQuestions);
         setProgress(100);
       } else {
-        // Generate new questions via AI
+        // Generate new questions via AI using streaming endpoint
         const subtopic = existingQuestions?.[0]?.subtopic || 'General';
         
+        console.log('Making authenticated request to generate-questions...');
+        
+        // Get the session for authentication
+        const { data: { session } } = await supabase.auth.getSession();
+        if (!session) {
+          throw new Error('Authentication required');
+        }
+
         const response = await fetch('https://gqkfbxhuijpfcnjimlfj.functions.supabase.co/generate-questions', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
+            'Authorization': `Bearer ${session.access_token}`,
+            'apikey': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imdxa2ZieGh1aWpwZmNuamltbGZqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTI5MTQxMTcsImV4cCI6MjA2ODQ5MDExN30.n-sE8DxhfmuZmNju-L3zy6hWshTGzr_cpFEeBB0JZIo',
           },
           body: JSON.stringify({
             topic: selectedTopic,
@@ -105,9 +115,12 @@ export const WorksheetGeneratorModal = () => {
         });
 
         if (!response.ok) {
-          throw new Error('Failed to generate questions');
+          const errorText = await response.text();
+          console.error('Response error:', errorText);
+          throw new Error(`Failed to generate questions: ${response.status} ${errorText}`);
         }
 
+        // Handle streaming response
         const reader = response.body?.getReader();
         const newQuestions: Question[] = [];
         
