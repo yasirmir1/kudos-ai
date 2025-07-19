@@ -8,21 +8,24 @@ const corsHeaders = {
 };
 
 // Function to get topic prefix for question IDs
-const getTopicPrefix = (topic: string): string => {
-  if (topic.toLowerCase().includes('algebra')) return 'ALG';
-  if (topic.toLowerCase().includes('number') && topic.toLowerCase().includes('place')) return 'NPV';
-  if (topic.toLowerCase().includes('number') && (topic.toLowerCase().includes('addition') || topic.toLowerCase().includes('subtraction'))) return 'NAS';
-  if (topic.toLowerCase().includes('number') && (topic.toLowerCase().includes('multiplication') || topic.toLowerCase().includes('division'))) return 'NMD';
-  if (topic.toLowerCase().includes('number') && topic.toLowerCase().includes('fraction')) return 'NFR';
-  if (topic.toLowerCase().includes('number') && topic.toLowerCase().includes('decimal')) return 'NDC';
-  if (topic.toLowerCase().includes('number') && topic.toLowerCase().includes('percent')) return 'NPC';
-  if (topic.toLowerCase().includes('number') && topic.toLowerCase().includes('ratio')) return 'NRT';
-  if (topic.toLowerCase().includes('number')) return 'NUM';
-  if (topic.toLowerCase().includes('geometry')) return 'GEO';
-  if (topic.toLowerCase().includes('measure')) return 'MEA';
-  if (topic.toLowerCase().includes('statistic')) return 'STA';
-  if (topic.toLowerCase().includes('probability')) return 'PRB';
-  return 'GEN';
+const getTopicPrefix = (topic: string, age_group?: string): string => {
+  // Add 11P prefix for 11+ age group to maintain consistency
+  const basePrefix = age_group === '11+' ? '11P' : '';
+  
+  if (topic.toLowerCase().includes('algebra')) return basePrefix + 'ALG';
+  if (topic.toLowerCase().includes('number') && topic.toLowerCase().includes('place')) return basePrefix + 'NPV';
+  if (topic.toLowerCase().includes('number') && (topic.toLowerCase().includes('addition') || topic.toLowerCase().includes('subtraction'))) return basePrefix + 'NAS';
+  if (topic.toLowerCase().includes('number') && (topic.toLowerCase().includes('multiplication') || topic.toLowerCase().includes('division'))) return basePrefix + 'NMD';
+  if (topic.toLowerCase().includes('number') && topic.toLowerCase().includes('fraction')) return basePrefix + 'NFR';
+  if (topic.toLowerCase().includes('number') && topic.toLowerCase().includes('decimal')) return basePrefix + 'NDC';
+  if (topic.toLowerCase().includes('number') && topic.toLowerCase().includes('percent')) return basePrefix + 'NPC';
+  if (topic.toLowerCase().includes('number') && topic.toLowerCase().includes('ratio')) return basePrefix + 'NRT';
+  if (topic.toLowerCase().includes('number')) return basePrefix + 'NUM';
+  if (topic.toLowerCase().includes('geometry')) return basePrefix + 'GEO';
+  if (topic.toLowerCase().includes('measure')) return basePrefix + 'MEA';
+  if (topic.toLowerCase().includes('statistic')) return basePrefix + 'STA';
+  if (topic.toLowerCase().includes('probability')) return basePrefix + 'PRB';
+  return basePrefix + 'GEN';
 };
 
 serve(async (req) => {
@@ -93,7 +96,7 @@ ${examples.slice(1).map(ex => JSON.stringify(ex, null, 2)).join('\n\n')}
 ` : ''}
 
 Generate ${count} questions as a JSON array. Each question should have:
-- question_id: unique identifier (use format: "${getTopicPrefix(topic)}" + 3-digit number like "ALG001", "NUM001", etc.)
+- question_id: unique identifier (use format: "${getTopicPrefix(topic, age_group)}" + 3-digit number like "ALG001", "NUM001", etc.)
 - topic: "${topic}"
 - subtopic: "${subtopic}"
 - example_question: clear, well-written question
@@ -240,7 +243,7 @@ RESPOND WITH ONLY THE JSON ARRAY, NO OTHER TEXT.`;
               question.question_id = idResult;
             } else {
               // Fallback ID generation
-              const topicPrefix = getTopicPrefix(topic);
+              const topicPrefix = getTopicPrefix(topic, age_group);
               const timestamp = Date.now().toString().slice(-3);
               question.question_id = `${topicPrefix}${timestamp}`;
             }
@@ -269,7 +272,7 @@ RESPOND WITH ONLY THE JSON ARRAY, NO OTHER TEXT.`;
                 if (existing) {
                   // Generate a new ID if duplicate found
                   const timestamp = Date.now().toString().slice(-3);
-                  question.question_id = `${getTopicPrefix(topic)}${timestamp}`;
+                  question.question_id = `${getTopicPrefix(topic, age_group)}${timestamp}`;
                 }
 
                 // Add age group to question if provided
