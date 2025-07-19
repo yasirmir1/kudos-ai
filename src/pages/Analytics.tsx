@@ -321,8 +321,11 @@ const Analytics = () => {
                     <CartesianGrid strokeDasharray="3 3" stroke="#e0e0e0" />
                     <XAxis 
                       dataKey="name" 
-                      tick={<CustomXAxisTick />} 
+                      angle={-45}
+                      textAnchor="end"
                       height={60}
+                      fontSize={11}
+                      tick={{ fontSize: 11, fill: '#666' }}
                       axisLine={{ stroke: '#d0d0d0' }}
                       tickLine={{ stroke: '#d0d0d0' }}
                     />
