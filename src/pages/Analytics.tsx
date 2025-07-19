@@ -316,10 +316,10 @@ const Analytics = () => {
                 <CardDescription>Accuracy percentage for each topic studied</CardDescription>
               </CardHeader>
               <CardContent>
-                <ResponsiveContainer width="100%" height={300}>
-                  <BarChart data={topicAccuracy}>
+                <ResponsiveContainer width="100%" height={350}>
+                  <BarChart data={topicAccuracy} margin={{ top: 20, right: 30, left: 20, bottom: 80 }}>
                     <CartesianGrid strokeDasharray="3 3" />
-                    <XAxis dataKey="name" tick={<CustomXAxisTick />} height={70} />
+                    <XAxis dataKey="name" tick={<CustomXAxisTick />} height={80} />
                     <YAxis domain={[0, 100]} />
                     <Tooltip />
                     <Bar dataKey="accuracy" fill="#82ca9d" name="Accuracy %" />
