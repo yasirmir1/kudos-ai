@@ -321,7 +321,7 @@ const Dashboard = () => {
               {performance.filter(topic => topic.accuracy > 0.4).slice(0, 5).map((topic, index) => (
                 <div key={topic.topic} className="flex items-center justify-between">
                   <div className="flex items-center space-x-3">
-                    <Badge variant="secondary" className="text-xs min-w-8 flex justify-center">
+                    <Badge variant="secondary" className="text-xs min-w-8 flex justify-center bg-green-100 text-green-700 border-green-200">
                       #{index + 1}
                     </Badge>
                     <span className="font-medium">{topic.topic}</span>
