@@ -61,7 +61,7 @@ const Practice = () => {
       let query = supabase
         .from('curriculum')
         .select('*')
-        .order('created_at', { ascending: false }) // Prioritize newer questions
+        .order('id', { ascending: false }) // Order by id instead of created_at
         .limit(20);
 
       if (answeredQuestionIds.length > 0) {
@@ -93,7 +93,7 @@ const Practice = () => {
           .from('curriculum')
           .select('*')
           .not('question_id', 'in', answeredQuestionIds.length > 0 ? `(${answeredQuestionIds.map(id => `'${id}'`).join(',')})` : '()')
-          .order('created_at', { ascending: false })
+          .order('id', { ascending: false }) // Order by id instead of created_at
           .limit(20);
 
         if (freshQuestions && freshQuestions.length > 0) {
@@ -366,7 +366,7 @@ const Practice = () => {
           .from('curriculum')
           .select('*')
           .not('question_id', 'in', answeredQuestionIds.length > 0 ? `(${answeredQuestionIds.map(id => `'${id}'`).join(',')})` : '()')
-          .order('created_at', { ascending: false })
+          .order('id', { ascending: false }) // Order by id instead of created_at
           .limit(20);
 
         if (newQuestions && newQuestions.length > 0) {
