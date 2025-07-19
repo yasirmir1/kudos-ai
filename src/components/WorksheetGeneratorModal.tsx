@@ -375,7 +375,7 @@ export const WorksheetGeneratorModal = () => {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="count">Number of Questions</Label>
+                <Label htmlFor="count">Number of Questions (5-50)</Label>
                 <Input
                   id="count"
                   type="number"
@@ -383,7 +383,9 @@ export const WorksheetGeneratorModal = () => {
                   max="50"
                   value={questionCount}
                   onChange={(e) => setQuestionCount(parseInt(e.target.value) || 10)}
+                  placeholder="Enter between 5 and 50"
                 />
+                <p className="text-xs text-muted-foreground">Maximum 50 questions per worksheet</p>
               </div>
 
               <div className="flex space-x-2">
