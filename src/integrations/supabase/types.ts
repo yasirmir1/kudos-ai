@@ -242,6 +242,13 @@ export type Database = {
       }
     }
     Functions: {
+      generate_standardized_question_ids: {
+        Args: Record<PropertyKey, never>
+        Returns: {
+          old_id: string
+          new_id: string
+        }[]
+      }
       get_adaptive_questions: {
         Args: { p_student_id: string; p_count?: number }
         Returns: {

@@ -7,6 +7,24 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
 
+// Function to get topic prefix for question IDs
+const getTopicPrefix = (topic: string): string => {
+  if (topic.toLowerCase().includes('algebra')) return 'ALG';
+  if (topic.toLowerCase().includes('number') && topic.toLowerCase().includes('place')) return 'NPV';
+  if (topic.toLowerCase().includes('number') && (topic.toLowerCase().includes('addition') || topic.toLowerCase().includes('subtraction'))) return 'NAS';
+  if (topic.toLowerCase().includes('number') && (topic.toLowerCase().includes('multiplication') || topic.toLowerCase().includes('division'))) return 'NMD';
+  if (topic.toLowerCase().includes('number') && topic.toLowerCase().includes('fraction')) return 'NFR';
+  if (topic.toLowerCase().includes('number') && topic.toLowerCase().includes('decimal')) return 'NDC';
+  if (topic.toLowerCase().includes('number') && topic.toLowerCase().includes('percent')) return 'NPC';
+  if (topic.toLowerCase().includes('number') && topic.toLowerCase().includes('ratio')) return 'NRT';
+  if (topic.toLowerCase().includes('number')) return 'NUM';
+  if (topic.toLowerCase().includes('geometry')) return 'GEO';
+  if (topic.toLowerCase().includes('measure')) return 'MEA';
+  if (topic.toLowerCase().includes('statistic')) return 'STA';
+  if (topic.toLowerCase().includes('probability')) return 'PRB';
+  return 'GEN';
+};
+
 serve(async (req) => {
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders });
@@ -70,7 +88,7 @@ ${examples.slice(1).map(ex => JSON.stringify(ex, null, 2)).join('\n\n')}
 ` : ''}
 
 Generate ${count} questions as a JSON array. Each question should have:
-- question_id: unique identifier (use format: "${topic.toLowerCase().replace(/[^a-z0-9]/g, '_')}_${subtopic.toLowerCase().replace(/[^a-z0-9]/g, '_')}_" + random suffix)
+- question_id: unique identifier (use format: "${getTopicPrefix(topic)}" + 3-digit number like "ALG001", "NUM001", etc.)
 - topic: "${topic}"
 - subtopic: "${subtopic}"
 - example_question: clear, well-written question
@@ -209,6 +227,19 @@ RESPOND WITH ONLY THE JSON ARRAY, NO OTHER TEXT.`;
               continue;
             }
 
+            // Generate standardized question ID using database function
+            const { data: idResult } = await supabase
+              .rpc('generate_question_id', { topic_name: topic });
+            
+            if (idResult) {
+              question.question_id = idResult;
+            } else {
+              // Fallback ID generation
+              const topicPrefix = getTopicPrefix(topic);
+              const timestamp = Date.now().toString().slice(-3);
+              question.question_id = `${topicPrefix}${timestamp}`;
+            }
+
             // Stream the validated question
             const questionData = {
               type: 'question',
@@ -223,6 +254,19 @@ RESPOND WITH ONLY THE JSON ARRAY, NO OTHER TEXT.`;
             // Save to database if requested
             if (saveToDatabase) {
               try {
+                // Check for duplicates before inserting
+                const { data: existing } = await supabase
+                  .from('curriculum')
+                  .select('question_id')
+                  .eq('question_id', question.question_id)
+                  .single();
+                
+                if (existing) {
+                  // Generate a new ID if duplicate found
+                  const timestamp = Date.now().toString().slice(-3);
+                  question.question_id = `${getTopicPrefix(topic)}${timestamp}`;
+                }
+
                 const { error: insertError } = await supabase
                   .from('curriculum')
                   .insert(question);
