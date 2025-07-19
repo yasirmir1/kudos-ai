@@ -30,7 +30,7 @@ const Index = () => {
       {/* Header */}
       <header className="container mx-auto px-4 py-6 flex justify-between items-center">
         <div className="flex items-center space-x-2">
-          <img src="/lovable-uploads/409330f0-2245-4147-b837-ff553d303814.png" alt="Kudos Academy" className="h-12 w-12" />
+          <img src="/lovable-uploads/409330f0-2245-4147-b837-ff553d303814.png" alt="Kudos Academy" className="h-12 w-auto" />
         </div>
         <Button asChild>
           <a href="/auth">Get Started</a>
