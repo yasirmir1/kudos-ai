@@ -131,9 +131,11 @@ const Practice = () => {
       return null; // Uncertain
     })();
 
-    // Save enhanced answer data to database
+    // Save enhanced answer data to database immediately
     try {
-      await supabase
+      console.log('Saving answer for question:', currentQuestion.question_id);
+      
+      const { data, error } = await supabase
         .from('student_answers')
         .insert({
           student_id: user?.id,
@@ -147,8 +149,31 @@ const Practice = () => {
           red_herring_triggered: redHerringTriggered.length > 0 ? redHerringTriggered : null,
           difficulty_appropriate: difficultyAppropriate
         });
+
+      if (error) {
+        console.error('Error saving answer:', error);
+        toast({
+          title: "Failed to save answer",
+          description: "Your answer wasn't saved. Please check your connection.",
+          variant: "destructive",
+        });
+      } else {
+        console.log('Answer saved successfully:', data);
+        // Success toast only for first few questions to not be annoying
+        if (currentIndex < 3) {
+          toast({
+            title: "Answer saved!",
+            description: `Your ${isCorrect ? 'correct' : 'incorrect'} answer has been recorded.`,
+          });
+        }
+      }
     } catch (error) {
       console.error('Error saving answer:', error);
+      toast({
+        title: "Failed to save answer",
+        description: "Your answer wasn't saved. Please check your connection.",
+        variant: "destructive",
+      });
     }
   };
 
