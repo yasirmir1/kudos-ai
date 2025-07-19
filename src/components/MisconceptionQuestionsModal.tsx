@@ -136,6 +136,9 @@ export function MisconceptionQuestionsModal({
   const generateKidFriendlyExplanation = async (question: QuestionAnswer) => {
     if (!question.curriculum || !misconception) return;
 
+    console.log('🧠 Starting AI explanation generation for question:', question.question_id);
+    console.log('📝 Misconception:', misconception.red_herring);
+
     setGeneratingExplanations(prev => new Set(prev).add(question.id));
 
     try {
@@ -150,7 +153,7 @@ export function MisconceptionQuestionsModal({
       });
 
       if (error) {
-        console.error('Error generating explanation:', error);
+        console.error('❌ Error generating explanation:', error);
         return;
       }
 
@@ -158,6 +161,9 @@ export function MisconceptionQuestionsModal({
         setQuestions(prev => prev.map(q => 
           q.id === question.id ? { ...q, aiExplanation: data.explanation } : q
         ));
+        console.log('✅ Successfully received AI explanation');
+      } else {
+        console.log('❌ No explanation in API response:', data);
       }
     } catch (error) {
       console.error('Error generating explanation:', error);
