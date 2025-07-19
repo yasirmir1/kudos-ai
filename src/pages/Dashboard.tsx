@@ -10,6 +10,7 @@ import { useNavigate } from 'react-router-dom';
 import { QuestionHistoryModal } from '@/components/QuestionHistoryModal';
 import { TopicAccuracyModal } from '@/components/TopicAccuracyModal';
 import { TopicsStudiedModal } from '@/components/TopicsStudiedModal';
+import { MisconceptionExplanationModal } from '@/components/MisconceptionExplanationModal';
 
 interface PerformanceData {
   topic: string;
@@ -36,6 +37,8 @@ const Dashboard = () => {
   const [questionHistoryOpen, setQuestionHistoryOpen] = useState(false);
   const [topicAccuracyOpen, setTopicAccuracyOpen] = useState(false);
   const [topicsStudiedOpen, setTopicsStudiedOpen] = useState(false);
+  const [misconceptionModalOpen, setMisconceptionModalOpen] = useState(false);
+  const [selectedMisconception, setSelectedMisconception] = useState<any>(null);
 
   useEffect(() => {
     if (user) {
@@ -286,7 +289,14 @@ const Dashboard = () => {
             </CardHeader>
             <CardContent className="space-y-4">
               {misconceptions.slice(0, 5).map((misconception, index) => (
-                <div key={`${misconception.red_herring}-${index}`} className="space-y-2">
+                <div 
+                  key={`${misconception.red_herring}-${index}`} 
+                  className="space-y-2 p-3 rounded-lg border cursor-pointer hover:bg-muted/50 transition-colors"
+                  onClick={() => {
+                    setSelectedMisconception(misconception);
+                    setMisconceptionModalOpen(true);
+                  }}
+                >
                   <div className="flex items-center justify-between">
                     <Badge variant="outline" className="text-xs">
                       {misconception.frequency}x
@@ -295,8 +305,11 @@ const Dashboard = () => {
                       {misconception.topics?.join(', ')}
                     </div>
                   </div>
-                  <p className="text-sm font-medium text-blue-700">
+                  <p className="text-sm font-medium text-blue-700 hover:text-blue-800">
                     {misconception.red_herring?.replace(/_/g, ' ')}
+                  </p>
+                  <p className="text-xs text-muted-foreground">
+                    Click for AI explanation
                   </p>
                 </div>
               ))}
@@ -321,6 +334,11 @@ const Dashboard = () => {
         <TopicsStudiedModal 
           open={topicsStudiedOpen} 
           onOpenChange={setTopicsStudiedOpen} 
+        />
+        <MisconceptionExplanationModal
+          open={misconceptionModalOpen}
+          onOpenChange={setMisconceptionModalOpen}
+          misconception={selectedMisconception}
         />
       </div>
     </div>
