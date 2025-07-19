@@ -84,15 +84,44 @@ const Analytics = () => {
       }
 
       // Load performance data by topic (filtered by age group)
-      const { data: performanceData } = await supabase
-        .from('student_performance')
-        .select('*')
+      // We need to get performance data by age group by querying student_answers directly
+      // since student_performance doesn't have age_group column
+      const { data: answersForPerformance } = await supabase
+        .from('student_answers')
+        .select('topic, is_correct, answered_at, time_taken_seconds')
         .eq('student_id', user?.id)
-        .order('accuracy', { ascending: false });
+        .eq('age_group', selectedAgeGroup);
 
-      if (performanceData) {
-        setPerformanceData(performanceData);
+      // Calculate performance data from filtered answers
+      const topicStats: { [key: string]: { correct: number; total: number; totalTime: number; lastAttempted: string } } = {};
+      
+      if (answersForPerformance) {
+        answersForPerformance.forEach(answer => {
+          if (!topicStats[answer.topic]) {
+            topicStats[answer.topic] = { correct: 0, total: 0, totalTime: 0, lastAttempted: answer.answered_at };
+          }
+          topicStats[answer.topic].total++;
+          topicStats[answer.topic].totalTime += answer.time_taken_seconds;
+          if (answer.is_correct) {
+            topicStats[answer.topic].correct++;
+          }
+          // Update last attempted if this answer is more recent
+          if (new Date(answer.answered_at) > new Date(topicStats[answer.topic].lastAttempted)) {
+            topicStats[answer.topic].lastAttempted = answer.answered_at;
+          }
+        });
       }
+
+      const calculatedPerformanceData = Object.entries(topicStats).map(([topic, stats]) => ({
+        topic,
+        accuracy: stats.correct / stats.total,
+        total_attempts: stats.total,
+        correct_answers: stats.correct,
+        avg_time_seconds: stats.totalTime / stats.total,
+        last_attempted: stats.lastAttempted
+      })).sort((a, b) => b.accuracy - a.accuracy);
+
+      setPerformanceData(calculatedPerformanceData);
     } catch (error) {
       console.error('Error loading analytics data:', error);
     } finally {
