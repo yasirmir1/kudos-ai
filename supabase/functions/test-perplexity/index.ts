@@ -24,7 +24,7 @@ serve(async (req) => {
       throw new Error('PERPLEXITY_API_KEY not found in environment');
     }
 
-    // Simple test call to Perplexity
+    // Simple test call to Perplexity with correct model name
     const response = await fetch('https://api.perplexity.ai/chat/completions', {
       method: 'POST',
       headers: {
@@ -32,7 +32,7 @@ serve(async (req) => {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        model: 'llama-3.1-sonar-small-128k-online',
+        model: 'sonar',
         messages: [
           {
             role: 'user',
