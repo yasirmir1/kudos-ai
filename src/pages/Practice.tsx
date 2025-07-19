@@ -244,14 +244,14 @@ const Practice = () => {
         {/* Question Card */}
         <Card className="mb-8 mx-auto max-w-3xl">
           <CardHeader className="pb-6">
-            <div className="flex items-center justify-between mb-4">
-              <div className="flex items-center space-x-3">
+            <div className="flex items-center justify-between mb-4 gap-6">
+              <div className="flex items-center space-x-3 flex-shrink-0">
                 <Badge variant="secondary" className="px-3 py-1">{currentQuestion.topic}</Badge>
                 <Badge variant="outline" className="px-3 py-1">{currentQuestion.difficulty}</Badge>
               </div>
-              <div className="flex items-center space-x-2 text-muted-foreground">
-                <Clock className="h-4 w-4" />
-                <span className="text-sm">{currentQuestion.subtopic}</span>
+              <div className="flex items-center space-x-2 text-muted-foreground min-w-0 flex-1 justify-end">
+                <Clock className="h-4 w-4 flex-shrink-0" />
+                <span className="text-sm truncate max-w-xs">{currentQuestion.subtopic}</span>
               </div>
             </div>
             <h3 className="text-xl font-medium leading-relaxed text-center px-4">{currentQuestion.example_question}</h3>
