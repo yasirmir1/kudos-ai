@@ -1,0 +1,51 @@
+-- Insert remaining Year 5 curriculum data (skipping any that already exist)
+INSERT INTO curriculum (
+    question_id, topic, subtopic, example_question, question_type, 
+    options, correct_answer, difficulty, red_herring_tag, 
+    red_herring_explanation, pedagogical_notes, age_group, year_level
+) 
+SELECT * FROM (VALUES
+-- Year 5 Questions (Advanced Level) 
+('Y5NPV001', 'Number - Number and Place Value', 'Read, write, order and compare numbers to at least 1,000,000', 'Which number is larger: 456,789 or 456,879?', 'Multiple Choice', '["456,879", "456,789", "They are equal", "Cannot tell"]', '456,879', 'Medium', ARRAY['LargeNumber_DigitPositionError'], 'Student may compare wrong place values in large numbers.', 'Year 5: Comparing 6-digit numbers.', 'year 4-5', 5),
+
+('Y5NPV002', 'Number - Number and Place Value', 'Count forwards or backwards in steps of powers of 10', 'What is 34,500 + 1,000?', 'Multiple Choice', '["35,500", "34,600", "44,500", "34,510"]', '35,500', 'Easy', ARRAY['PowersOf10_PlaceValueError'], 'Student may add to wrong place value column.', 'Year 5: Adding powers of 10.', 'year 4-5', 5),
+
+('Y5NPV003', 'Number - Number and Place Value', 'Interpret negative numbers in context, count forwards and backwards with positive and negative whole numbers', 'The temperature is -5°C. It rises by 8°C. What is the new temperature?', 'Multiple Choice', '["3°C", "-13°C", "13°C", "-3°C"]', '3°C', 'Medium', ARRAY['NegativeNumbers_OperationError'], 'Student may subtract instead of add (-5-8=-13) or mishandle crossing zero.', 'Year 5: Working with negative numbers in context.', 'year 4-5', 5),
+
+('Y5NPV004', 'Number - Number and Place Value', 'Round any number up to 1,000,000 to the nearest 10, 100, 1000, 10,000 and 100,000', 'Round 654,321 to the nearest 10,000.', 'Multiple Choice', '["650,000", "660,000", "654,000", "700,000"]', '650,000', 'Hard', ARRAY['Rounding_LargePlaceValue'], 'Student may round to wrong place value or round up incorrectly.', 'Year 5: Rounding large numbers to ten thousands.', 'year 4-5', 5),
+
+('Y5ASM001', 'Number - Addition and Subtraction', 'Add and subtract whole numbers with more than 4 digits', 'Calculate: 45,678 - 17,892', 'Multiple Choice', '["27,786", "28,786", "27,886", "63,570"]', '27,786', 'Medium', ARRAY['Subtraction_BorrowingError'], 'Student may make errors when borrowing across multiple columns.', 'Year 5: 5-digit subtraction with borrowing.', 'year 4-5', 5),
+
+('Y5ASM002', 'Number - Addition and Subtraction', 'Solve addition and subtraction multi-step problems in contexts', 'A company had £45,600. They received £12,350 in sales, paid £8,900 in wages, and spent £5,750 on supplies. How much money do they have now?', 'Multiple Choice', '["£43,300", "£72,600", "£38,300", "£42,300"]', '£43,300', 'Very Hard', ARRAY['MultiStep_OrderOfOperations'], 'Student may add all positive amounts and subtract negatives incorrectly.', 'Year 5: Complex multi-step problem with money.', 'year 4-5', 5),
+
+('Y5MD001', 'Number - Multiplication and Division', 'Multiply numbers up to 4 digits by a one- or two-digit number using formal written method', 'Calculate: 1,234 × 25', 'Multiple Choice', '["30,850", "28,850", "31,850", "25,850"]', '30,850', 'Very Hard', ARRAY['LongMultiplication_PartialProductError'], 'Student may make errors when adding partial products in long multiplication.', 'Year 5: Long multiplication with 4-digit by 2-digit numbers.', 'year 4-5', 5),
+
+('Y5MD002', 'Number - Multiplication and Division', 'Divide numbers up to 4 digits by a one-digit number and interpret remainders', 'Calculate: 725 ÷ 6', 'Multiple Choice', '["120 remainder 5", "121 remainder 1", "120 remainder 3", "125"]', '120 remainder 5', 'Hard', ARRAY['Division_RemainderError'], 'Student may calculate remainder incorrectly or forget to include it.', 'Year 5: Division with remainders.', 'year 4-5', 5),
+
+('Y5MD003', 'Number - Multiplication and Division', 'Identify multiples and factors, including finding all factor pairs', 'Which of these is NOT a factor of 24?', 'Multiple Choice', '["5", "6", "8", "3"]', '5', 'Medium', ARRAY['Factors_NonFactorConfusion'], 'Student may not check if number divides evenly into 24.', 'Year 5: Identifying factors of numbers.', 'year 4-5', 5),
+
+('Y5MD004', 'Number - Multiplication and Division', 'Know and use the vocabulary of prime numbers, prime factors and composite numbers', 'Which of these is a prime number?', 'Multiple Choice', '["17", "15", "21", "27"]', '17', 'Medium', ARRAY['PrimeNumbers_OddNumberConfusion'], 'Student may think all odd numbers are prime.', 'Year 5: Identifying prime numbers.', 'year 4-5', 5),
+
+('Y5FR001', 'Number - Fractions (including decimals and percentages)', 'Compare and order fractions whose denominators are multiples of the same number', 'Which is larger: 2/3 or 5/6?', 'Multiple Choice', '["5/6", "2/3", "They are equal", "Cannot tell"]', '5/6', 'Hard', ARRAY['FractionComparison_CommonDenominator'], 'Student may not find common denominator to compare (2/3 = 4/6).', 'Year 5: Comparing fractions with related denominators.', 'year 4-5', 5),
+
+('Y5FR002', 'Number - Fractions (including decimals and percentages)', 'Recognise mixed numbers and improper fractions and convert from one form to the other', 'Convert 7/4 to a mixed number.', 'Multiple Choice', '["1 3/4", "3 1/4", "1 4/7", "7 1/4"]', '1 3/4', 'Medium', ARRAY['MixedNumber_ConversionError'], 'Student may invert the fraction or calculate whole number incorrectly.', 'Year 5: Converting improper fractions to mixed numbers.', 'year 4-5', 5),
+
+('Y5FR003', 'Number - Fractions (including decimals and percentages)', 'Add and subtract fractions with denominators that are multiples of the same number', 'Calculate: 1/2 + 1/4', 'Multiple Choice', '["3/4", "2/6", "1/6", "2/4"]', '3/4', 'Medium', ARRAY['Fractions_UnlikeAddition'], 'Student may add numerators and denominators directly (1+1=2, 2+4=6).', 'Year 5: Adding fractions with different but related denominators.', 'year 4-5', 5),
+
+('Y5FR004', 'Number - Fractions (including decimals and percentages)', 'Multiply proper fractions and mixed numbers by whole numbers', 'Calculate: 3/4 × 2', 'Multiple Choice', '["1 1/2", "3/8", "6/4", "3/2"]', '1 1/2', 'Hard', ARRAY['FractionMultiplication_WholeNumber'], 'Student may divide instead of multiply or not convert to mixed number.', 'Year 5: Multiplying fractions by whole numbers.', 'year 4-5', 5),
+
+('Y5FR005', 'Number - Fractions (including decimals and percentages)', 'Recognise the per cent symbol (%) and understand that per cent relates to ''number of parts per hundred''', 'What is 25% as a fraction?', 'Multiple Choice', '["1/4", "1/25", "25/10", "2/5"]', '1/4', 'Medium', ARRAY['Percentage_FractionConversion'], 'Student may write 1/25 thinking percent means ''out of'' the number.', 'Year 5: Converting percentages to fractions.', 'year 4-5', 5),
+
+('Y5FR006', 'Number - Fractions (including decimals and percentages)', 'Solve problems which require knowing percentage and decimal equivalents', 'What is 20% of 60?', 'Multiple Choice', '["12", "20", "40", "3"]', '12', 'Hard', ARRAY['Percentage_CalculationError'], 'Student may divide 60 by 20 (=3) or subtract 20 from 60 (=40).', 'Year 5: Finding percentages of amounts.', 'year 4-5', 5),
+
+('Y5ME001', 'Measurement', 'Convert between different units of metric measure', 'Convert 2.5kg to grams.', 'Multiple Choice', '["2,500g", "250g", "25g", "25,000g"]', '2,500g', 'Medium', ARRAY['MetricConversion_DecimalError'], 'Student may misplace decimal when converting (250g).', 'Year 5: Converting kilograms to grams with decimals.', 'year 4-5', 5),
+
+('Y5ME002', 'Measurement', 'Calculate and compare the area of rectangles using standard units', 'A rectangle has length 12cm and width 7cm. What is its area?', 'Multiple Choice', '["84 cm²", "19 cm²", "38 cm²", "84 cm"]', '84 cm²', 'Medium', ARRAY['Area_PerimeterConfusion'], 'Student may calculate perimeter (38cm) instead of area, or add dimensions.', 'Year 5: Calculating area of rectangles.', 'year 4-5', 5),
+
+('Y5ME003', 'Measurement', 'Estimate volume and capacity', 'A cube has sides of 3cm. What is its volume?', 'Multiple Choice', '["27 cm³", "9 cm³", "18 cm³", "12 cm³"]', '27 cm³', 'Hard', ARRAY['Volume_AreaConfusion'], 'Student may calculate area of one face (9 cm²) or perimeter instead.', 'Year 5: Calculating volume of cubes.', 'year 4-5', 5),
+
+('Y5ST001', 'Statistics', 'Solve comparison, sum and difference problems using information presented in a line graph', 'A line graph shows temperature over 5 days. Monday was 15°C and Friday was 22°C. What was the temperature increase?', 'Multiple Choice', '["7°C", "37°C", "15°C", "22°C"]', '7°C', 'Medium', ARRAY['LineGraph_ReadingError'], 'Student may add temperatures (37°C) or give one of the values.', 'Year 5: Interpreting line graphs to find differences.', 'year 4-5', 5),
+
+('Y5ST002', 'Statistics', 'Complete, read and interpret information in tables, including timetables', 'A train timetable shows a train leaves at 09:45 and arrives at 11:20. How long is the journey?', 'Multiple Choice', '["1 hour 35 minutes", "2 hours 35 minutes", "1 hour 25 minutes", "35 minutes"]', '1 hour 35 minutes', 'Hard', ARRAY['Time_DifferenceError'], 'Student may calculate time difference incorrectly across the hour.', 'Year 5: Reading timetables and calculating time differences.', 'year 4-5', 5)
+) AS v(question_id, topic, subtopic, example_question, question_type, options, correct_answer, difficulty, red_herring_tag, red_herring_explanation, pedagogical_notes, age_group, year_level)
+WHERE v.question_id NOT IN (SELECT question_id FROM curriculum WHERE question_id LIKE 'Y5%');
