@@ -28,26 +28,26 @@ serve(async (req) => {
 
     console.log('Generating kid-friendly explanation for question mistake');
 
-    const prompt = `You're helping an 8-year-old understand a math mistake. Keep it SHORT and friendly!
+    const prompt = `Help explain a math mistake to a student. Be encouraging but respectful - don't talk down to them.
 
 🧮 **Question:** ${question}
 ❌ **Their answer:** ${student_answer}
 ✅ **Correct answer:** ${correct_answer}
 🤯 **Mistake type:** ${misconception}
 
-Give a VERY SHORT explanation with exactly these 3 parts:
+Create a SHORT, engaging explanation with exactly these 3 parts:
 
-🤔 **What you tried:** [1 short sentence - guess what they thought]
-💡 **Why it happens:** [1 short sentence - "lots of kids think this way!"]
-🎯 **Next time:** [1 short sentence - simple tip to remember]
+🤔 **What happened:** [1 sentence - what they likely did or thought]
+💡 **Why this mistake is common:** [1 sentence - why this happens to many students]
+🎯 **How to get it right:** [1 sentence - clear, practical tip]
 
 Rules:
-- Use "you" to talk to them directly
-- Keep each part to 1 sentence only
-- Use words a 2nd grader knows
-- Be encouraging and fun
-- Use emojis
-- Total explanation should be 3-4 sentences max`;
+- Use "you" naturally, not like talking to a little kid
+- Be encouraging but not condescending
+- Use clear, simple language without being babyish
+- Keep each part to 1 sentence
+- Make it engaging and helpful
+- Total: 3-4 sentences max`;
 
     // Try Perplexity first, then fallback to OpenAI
     let explanation = '';
@@ -68,7 +68,7 @@ Rules:
             messages: [
               {
                 role: 'system',
-                content: 'You are a super friendly, patient teacher who loves helping kids learn math. You explain things like you\'re talking to your little brother or sister. You make kids feel smart and excited about learning! You always use simple words and fun examples.'
+                content: 'You are a helpful math tutor who explains concepts clearly and encouragingly. You respect students\' intelligence while keeping explanations accessible. Be engaging and supportive without being condescending.'
               },
               {
                 role: 'user',
@@ -112,7 +112,7 @@ Rules:
             messages: [
               {
                 role: 'system',
-                content: 'You are a super friendly, patient teacher who loves helping kids learn math. You explain things like you\'re talking to your little brother or sister. You make kids feel smart and excited about learning! You always use simple words and fun examples.'
+                content: 'You are a helpful math tutor who explains concepts clearly and encouragingly. You respect students\' intelligence while keeping explanations accessible. Be engaging and supportive without being condescending.'
               },
               {
                 role: 'user',

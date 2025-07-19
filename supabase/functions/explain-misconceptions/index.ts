@@ -78,33 +78,29 @@ serve(async (req) => {
       };
     });
 
-    const prompt = `You are a fun, friendly teacher talking to an 8-year-old who loves video games, toys, and ice cream! They made some mistakes in their math and need gentle help.
+    const prompt = `Help a student understand their math misconceptions. Be encouraging and respectful - explain clearly without talking down to them.
 
-Use "you" to talk directly to them and be gentle with language like "you might have thought" or "you may have tried".
+Here are the mistake patterns they've made:
 
-Based on their math mistakes, help them understand what might have gone wrong using simple words:
-
-Use this format for EACH mistake pattern:
-
-**[Simple, kid-friendly name for the mistake] 🤯**
-🤔 **What might have happened:** [Use "you might have thought" or "you may have tried" - explain gently what they possibly did wrong]
-💡 **Why this happens:** [Simple reason - "lots of kids think this way at first!"]
-🎯 **Here's what to try instead:** [Easy, fun way to do it correctly with examples]
-📚 **Where this shows up:** [List the topics in simple terms]
-
-Rules:
-- Talk directly to them using "you"
-- Use gentle words like "might have" and "may have"
-- Use words a 2nd grader knows
-- Make it encouraging and fun
-- Use emojis to make it friendly
-- Compare to things kids love (toys, games, food)
-- Keep explanations short and simple
-
-Mistake Data:
 ${JSON.stringify(misconceptionContext, null, 2)}
 
-Make this gentle, fun and helpful!`;
+For EACH misconception, create an engaging explanation using this format:
+
+**[Clear name for this mistake pattern] 🎯**
+🤔 **What usually happens:** [Explain what students typically think when making this mistake]
+💡 **Why this is tricky:** [Brief reason why this concept trips people up - show it's normal]
+🛠️ **How to tackle it:** [Clear, practical strategy to avoid this mistake]
+📚 **Shows up in:** [List the topics in clear terms]
+
+Rules:
+- Be encouraging but not condescending
+- Use clear, accessible language
+- Make each section engaging and helpful
+- Show that mistakes are normal and part of learning
+- Give practical, actionable advice
+- Keep it concise but thorough enough to be useful
+
+Make this helpful and engaging!`;
 
     // Try Perplexity first, then fallback to OpenAI
     let explanation = '';
@@ -125,7 +121,7 @@ Make this gentle, fun and helpful!`;
             messages: [
               {
                 role: 'system',
-                content: 'You are a fun, patient teacher who loves helping kids learn math. You explain things in simple words that 8-year-olds can understand. You always encourage kids and make learning feel like a fun adventure!'
+                content: 'You are a knowledgeable math tutor who explains concepts clearly and encouragingly. You help students understand their mistakes with respect and practical guidance. Be engaging and supportive without being condescending.'
               },
               {
                 role: 'user',
@@ -169,7 +165,7 @@ Make this gentle, fun and helpful!`;
             messages: [
               {
                 role: 'system',
-                content: 'You are a fun, patient teacher who loves helping kids learn math. You explain things in simple words that 8-year-olds can understand. You always encourage kids and make learning feel like a fun adventure!'
+                content: 'You are a knowledgeable math tutor who explains concepts clearly and encouragingly. You help students understand their mistakes with respect and practical guidance. Be engaging and supportive without being condescending.'
               },
               {
                 role: 'user',
