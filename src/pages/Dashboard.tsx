@@ -110,9 +110,14 @@ const Dashboard = () => {
               <p className="text-sm text-muted-foreground">Welcome back, {user?.email}</p>
             </div>
           </div>
-          <Button variant="outline" onClick={handleSignOut}>
-            Sign Out
-          </Button>
+          <div className="flex space-x-2">
+            <Button variant="ghost" onClick={() => navigate('/profile')}>
+              Profile
+            </Button>
+            <Button variant="outline" onClick={handleSignOut}>
+              Sign Out
+            </Button>
+          </div>
         </div>
       </header>
 
