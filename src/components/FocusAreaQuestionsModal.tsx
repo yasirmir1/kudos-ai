@@ -10,7 +10,7 @@ import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
-import { Target, Clock, X } from 'lucide-react';
+import { Target, Clock, X, Sparkles } from 'lucide-react';
 
 interface FocusAreaQuestionsModalProps {
   open: boolean;
@@ -37,6 +37,7 @@ interface QuestionAnswer {
     correct_answer: string;
     red_herring_explanation: string;
   } | null;
+  aiExplanation?: string;
 }
 
 export function FocusAreaQuestionsModal({ 
@@ -47,13 +48,11 @@ export function FocusAreaQuestionsModal({
   const { user } = useAuth();
   const [questions, setQuestions] = useState<QuestionAnswer[]>([]);
   const [loading, setLoading] = useState(false);
-  const [explanation, setExplanation] = useState<string>('');
-  const [loadingExplanation, setLoadingExplanation] = useState(false);
+  const [generatingExplanations, setGeneratingExplanations] = useState<Set<number>>(new Set());
 
   useEffect(() => {
     if (open && focusArea && user) {
       loadFocusAreaQuestions();
-      loadFocusAreaExplanation();
     }
   }, [open, focusArea, user]);
 
@@ -101,6 +100,13 @@ export function FocusAreaQuestionsModal({
         }));
 
         setQuestions(questionsWithCurriculum);
+        
+        // Automatically generate AI explanations for all questions
+        questionsWithCurriculum.forEach(question => {
+          if (question.curriculum) {
+            generateQuestionExplanation(question);
+          }
+        });
       } else {
         setQuestions([]);
       }
@@ -111,30 +117,67 @@ export function FocusAreaQuestionsModal({
     }
   };
 
-  const loadFocusAreaExplanation = async () => {
-    if (!focusArea || !user) return;
+  const generateQuestionExplanation = async (question: QuestionAnswer) => {
+    if (!question.curriculum || !focusArea) return;
 
-    setLoadingExplanation(true);
+    console.log('🧠 Starting AI explanation generation for focus area question:', question.question_id);
+
+    setGeneratingExplanations(prev => new Set(prev).add(question.id));
+
     try {
-      const { data, error } = await supabase.functions.invoke('explain-focus-areas', {
-        body: { 
-          student_id: user.id,
-          topic: focusArea.topic 
+      console.log('🔗 Calling explain-question-mistake edge function...');
+      
+      const { data, error } = await supabase.functions.invoke('explain-question-mistake', {
+        body: {
+          question: question.curriculum.example_question,
+          student_answer: question.answer_given,
+          correct_answer: question.curriculum.correct_answer,
+          misconception: 'focus_area_improvement',
+          topic: question.topic
         }
       });
 
+      console.log('📡 Edge function response:', { data, error });
+
       if (error) {
-        console.error('Error getting focus area explanation:', error);
+        console.error('❌ Edge function error:', error);
+        setQuestions(prev => prev.map(q => 
+          q.id === question.id ? { 
+            ...q, 
+            aiExplanation: "Having trouble creating your explanation right now. The main thing is to learn from this mistake and try a different approach next time!"
+          } : q
+        ));
         return;
       }
 
       if (data?.explanation) {
-        setExplanation(data.explanation);
+        setQuestions(prev => prev.map(q => 
+          q.id === question.id ? { ...q, aiExplanation: data.explanation } : q
+        ));
+        console.log('✅ Successfully received AI explanation');
+      } else {
+        console.log('❌ No explanation in API response:', data);
+        setQuestions(prev => prev.map(q => 
+          q.id === question.id ? { 
+            ...q, 
+            aiExplanation: "Working on your explanation! Making mistakes is how we learn." 
+          } : q
+        ));
       }
     } catch (error) {
-      console.error('Error loading focus area explanation:', error);
+      console.error('💥 Exception during API call:', error);
+      setQuestions(prev => prev.map(q => 
+        q.id === question.id ? { 
+          ...q, 
+          aiExplanation: "Every mistake is a step closer to getting it right! Keep practicing." 
+        } : q
+      ));
     } finally {
-      setLoadingExplanation(false);
+      setGeneratingExplanations(prev => {
+        const newSet = new Set(prev);
+        newSet.delete(question.id);
+        return newSet;
+      });
     }
   };
 
@@ -166,36 +209,6 @@ export function FocusAreaQuestionsModal({
         </DialogHeader>
 
         <div className="space-y-4">
-          {/* AI Explanation Section */}
-          {loadingExplanation && (
-            <Card className="border-l-4 border-l-blue-500 bg-gradient-to-r from-blue-50/50 to-purple-50/50">
-              <CardContent className="pt-6">
-                <div className="flex items-center justify-center py-4">
-                  <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-primary"></div>
-                  <span className="ml-2 text-sm text-muted-foreground">Creating a fun explanation just for you... 🌟</span>
-                </div>
-              </CardContent>
-            </Card>
-          )}
-
-          {!loadingExplanation && explanation && (
-            <Card className="border-l-4 border-l-blue-500 bg-gradient-to-r from-blue-50/50 to-purple-50/50">
-              <CardHeader>
-                <CardTitle className="flex items-center space-x-2 text-blue-900">
-                  <span>🎯 Let's Learn Together!</span>
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="prose prose-sm max-w-none">
-                  <div 
-                    className="text-sm text-blue-800 whitespace-pre-line leading-relaxed [&>p]:mb-4 [&>div]:mb-4"
-                  >
-                    {explanation}
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          )}
 
           {/* Questions Section */}
           {loading && (
@@ -271,12 +284,31 @@ export function FocusAreaQuestionsModal({
                       </div>
                     </div>
 
-                    {question.curriculum.red_herring_explanation && (
-                      <div>
-                        <h4 className="font-semibold mb-2 text-blue-700">Explanation:</h4>
-                        <p className="text-sm bg-blue-50 p-3 rounded border">{question.curriculum.red_herring_explanation}</p>
-                      </div>
-                    )}
+                    <div>
+                      <h4 className="font-semibold mb-2 text-blue-700 flex items-center space-x-2">
+                        <Sparkles className="h-4 w-4" />
+                        <span>Explanation</span>
+                      </h4>
+                      
+                      {generatingExplanations.has(question.id) && (
+                        <div className="bg-blue-50 p-3 rounded border flex items-center space-x-2">
+                          <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-500"></div>
+                          <span className="text-sm text-blue-700">Creating your explanation...</span>
+                        </div>
+                      )}
+                      
+                      {question.aiExplanation && (
+                        <div className="bg-blue-50 p-3 rounded border">
+                          <div className="text-sm whitespace-pre-line leading-relaxed [&>p]:mb-4 [&>div]:mb-4">{question.aiExplanation}</div>
+                        </div>
+                      )}
+                      
+                      {!question.aiExplanation && !generatingExplanations.has(question.id) && (
+                        <div className="bg-gray-50 p-3 rounded border text-center">
+                          <p className="text-sm text-gray-600">Explanation will appear here automatically</p>
+                        </div>
+                      )}
+                    </div>
                   </>
                 )}
               </CardContent>
