@@ -98,7 +98,7 @@ const Dashboard = () => {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
         <div className="text-center space-y-4">
-          <img src="/lovable-uploads/409330f0-2245-4147-b837-ff553d303814.png" alt="Kudos" className="h-12 w-auto mx-auto animate-pulse" />
+          <img src="/lovable-uploads/409330f0-2245-4147-b837-ff553d303814.png" alt="Kudos Academy" className="h-12 w-auto mx-auto animate-pulse" />
           <p className="text-muted-foreground">Loading your progress...</p>
         </div>
       </div>
@@ -111,9 +111,9 @@ const Dashboard = () => {
       <header className="border-b bg-card/50 backdrop-blur-sm">
         <div className="container mx-auto px-4 py-4 flex justify-between items-center">
           <div className="flex items-center space-x-3">
-            <img src="/lovable-uploads/409330f0-2245-4147-b837-ff553d303814.png" alt="Kudos" className="h-8 w-auto" />
+            <img src="/lovable-uploads/409330f0-2245-4147-b837-ff553d303814.png" alt="Kudos Academy" className="h-10 w-auto" />
             <div>
-              <h1 className="text-xl font-bold">Kudos</h1>
+              <h1 className="text-xl font-bold">Kudos Academy</h1>
               <p className="text-sm text-muted-foreground">Welcome back, {user?.email}</p>
             </div>
           </div>
