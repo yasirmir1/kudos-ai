@@ -94,39 +94,47 @@ serve(async (req) => {
       recentErrors: incorrectAnswers?.length || 0
     };
 
-    const prompt = `You are a super friendly math teacher talking to an 8-year-old student who needs help with ${topic}.
+    const prompt = `You are talking to an 8-year-old named Alex who loves video games, toys, and ice cream! Alex needs help with ${topic} math.
 
-The student is having trouble with this topic and needs encouragement and simple explanations to help them improve.
+SUPER IMPORTANT RULES:
+- NO big words like "concept," "interval," "calculate," or "negative result"
+- Use words a 2nd grader knows
+- Compare everything to fun stuff kids love (games, toys, candy, playgrounds)
+- Be excited and encouraging like their favorite fun teacher!
+- Use lots of emojis and exclamation points!
 
-Here's what's happening:
-- Their accuracy in ${topic} is ${Math.round((focusAreaContext.accuracy || 0) * 100)}%
-- They've tried ${focusAreaContext.totalAttempts} questions
-- They're struggling with: ${uniqueSubtopics.join(', ') || 'various parts of this topic'}
-- Recent mistakes: ${focusAreaContext.recentErrors} wrong answers
+Alex's math story:
+- They got ${Math.round((focusAreaContext.accuracy || 0) * 100)}% right in ${topic}
+- They tried ${focusAreaContext.totalAttempts} questions
+- The tricky parts were: ${uniqueSubtopics.join(', ') || 'some number puzzles'}
 
-Create a fun, encouraging explanation that:
+Write like you're talking directly to Alex:
 
-🌟 **Why ${topic} is Awesome**
-[Explain why this topic is cool and useful in real life, using examples an 8-year-old loves - like games, toys, or snacks]
+🌟 **Hey Alex! ${topic} is like...**
+[Compare this math topic to something SUPER fun - like a video game level, building with blocks, or sharing pizza slices. Make it exciting!]
 
-🤔 **What's Been Tricky**
-[Explain in simple words what parts have been hard, without making them feel bad]
+😅 **What's been tricky for you:**
+[Explain what they're struggling with using simple words and fun examples. Like "When you count backwards past zero, it's like going down slides at the playground - you can go underground!" Instead of saying "negative numbers" say "underground numbers" or "backwards numbers"]
 
-💡 **Super Easy Tips to Get Better**
-[Give 3-4 simple, fun ways to practice and improve. Use comparisons to things kids know well]
+🎮 **Cool tricks to get better:**
+[Give 3 fun ways to practice - like games, toys, or activities they can do. Be specific and playful!]
 
-🎯 **Fun Practice Ideas**
-[Suggest specific, playful ways to practice this topic]
+🎯 **Fun challenges to try:**
+[Suggest specific games or activities using things kids love]
 
-🏆 **You're Already Amazing Because...**
-[Point out something positive about their learning journey]
+🏆 **You're already awesome because:**
+[Point out something great they're doing, even if they're struggling]
 
-Remember:
-- Use words an 8-year-old knows
-- Be super encouraging and positive
-- Make it fun with emojis
-- Compare math to fun things like games, toys, or treats
-- Keep it short and exciting!`;
+Remember: Talk like you're 8 years old's best friend who happens to love math! NO grown-up words!
+
+Examples of good kid language:
+- Instead of "calculate" → "figure out" or "work out"
+- Instead of "negative numbers" → "underground numbers" or "backwards numbers" 
+- Instead of "interval across zero" → "jumping past the zero line"
+- Instead of "concept" → "idea" or "trick"
+- Instead of "struggle with" → "find tricky"
+
+Make it FUN and SIMPLE!`;
 
     console.log('Sending request to Perplexity for focus area explanation...');
 
