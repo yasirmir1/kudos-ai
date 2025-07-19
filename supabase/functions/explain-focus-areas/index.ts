@@ -14,9 +14,9 @@ serve(async (req) => {
   }
 
   try {
-    const OPENAI_API_KEY = Deno.env.get('kudos');
-    if (!OPENAI_API_KEY) {
-      throw new Error('OpenAI API key not found in kudos secret');
+    const PERPLEXITY_API_KEY = Deno.env.get('PERPLEXITY_API_KEY');
+    if (!PERPLEXITY_API_KEY) {
+      throw new Error('Perplexity API key not found');
     }
 
     // Initialize Supabase client
@@ -128,16 +128,16 @@ Remember:
 - Compare math to fun things like games, toys, or treats
 - Keep it short and exciting!`;
 
-    console.log('Sending request to OpenAI for focus area explanation...');
+    console.log('Sending request to Perplexity for focus area explanation...');
 
-    const response = await fetch('https://api.openai.com/v1/chat/completions', {
+    const response = await fetch('https://api.perplexity.ai/chat/completions', {
       method: 'POST',
       headers: {
-        'Authorization': `Bearer ${OPENAI_API_KEY}`,
+        'Authorization': `Bearer ${PERPLEXITY_API_KEY}`,
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        model: 'gpt-4.1-2025-04-14',
+        model: 'llama-3.1-sonar-small-128k-online',
         messages: [
           {
             role: 'system',
@@ -149,14 +149,17 @@ Remember:
           }
         ],
         max_tokens: 800,
-        temperature: 0.8
+        temperature: 0.8,
+        top_p: 0.9,
+        return_images: false,
+        return_related_questions: false
       }),
     });
 
     if (!response.ok) {
       const errorText = await response.text();
-      console.error('OpenAI API error:', errorText);
-      throw new Error(`OpenAI API error: ${response.status}`);
+      console.error('Perplexity API error:', errorText);
+      throw new Error(`Perplexity API error: ${response.status}`);
     }
 
     const data = await response.json();
