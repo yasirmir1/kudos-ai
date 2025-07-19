@@ -380,7 +380,7 @@ export const WorksheetGeneratorModal = () => {
                   id="count"
                   type="number"
                   min="5"
-                  max="20"
+                  max="50"
                   value={questionCount}
                   onChange={(e) => setQuestionCount(parseInt(e.target.value) || 10)}
                 />
