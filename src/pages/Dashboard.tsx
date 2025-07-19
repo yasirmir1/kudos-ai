@@ -25,6 +25,7 @@ const Dashboard = () => {
   const navigate = useNavigate();
   const [performance, setPerformance] = useState<PerformanceData[]>([]);
   const [weakTopics, setWeakTopics] = useState<WeakTopic[]>([]);
+  const [misconceptions, setMisconceptions] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [totalQuestions, setTotalQuestions] = useState(0);
 
@@ -53,6 +54,14 @@ const Dashboard = () => {
 
       if (weakTopicsData) {
         setWeakTopics(weakTopicsData);
+      }
+
+      // Load misconception analysis
+      const { data: misconceptionsData } = await supabase
+        .rpc('get_student_misconceptions', { p_student_id: user?.id });
+
+      if (misconceptionsData) {
+        setMisconceptions(misconceptionsData);
       }
 
       // Get total questions answered
@@ -186,7 +195,7 @@ const Dashboard = () => {
         </div>
 
         {/* Performance Details */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* Strongest Topics */}
           <Card>
             <CardHeader>
@@ -254,6 +263,39 @@ const Dashboard = () => {
               {needsWork.length === 0 && (
                 <div className="text-center py-4 text-muted-foreground">
                   Great job! No weak areas identified yet.
+                </div>
+              )}
+            </CardContent>
+          </Card>
+
+          {/* Common Misconceptions */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center space-x-2">
+                <Clock className="h-5 w-5 text-blue-500" />
+                <span>Misconceptions</span>
+              </CardTitle>
+              <CardDescription>Common mistakes to watch out for</CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              {misconceptions.slice(0, 5).map((misconception, index) => (
+                <div key={`${misconception.red_herring}-${index}`} className="space-y-2">
+                  <div className="flex items-center justify-between">
+                    <Badge variant="outline" className="text-xs">
+                      {misconception.frequency}x
+                    </Badge>
+                    <div className="text-xs text-muted-foreground">
+                      {misconception.topics?.join(', ')}
+                    </div>
+                  </div>
+                  <p className="text-sm font-medium text-blue-700">
+                    {misconception.red_herring?.replace(/_/g, ' ')}
+                  </p>
+                </div>
+              ))}
+              {misconceptions.length === 0 && (
+                <div className="text-center py-4 text-muted-foreground">
+                  Complete some practice questions to identify misconceptions.
                 </div>
               )}
             </CardContent>

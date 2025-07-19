@@ -64,9 +64,11 @@ export type Database = {
           answer_given: string
           answered_at: string | null
           difficulty: string
+          difficulty_appropriate: boolean | null
           id: number
           is_correct: boolean
           question_id: string | null
+          red_herring_triggered: string[] | null
           student_id: string | null
           subtopic: string
           time_taken_seconds: number
@@ -76,9 +78,11 @@ export type Database = {
           answer_given: string
           answered_at?: string | null
           difficulty: string
+          difficulty_appropriate?: boolean | null
           id?: number
           is_correct: boolean
           question_id?: string | null
+          red_herring_triggered?: string[] | null
           student_id?: string | null
           subtopic: string
           time_taken_seconds: number
@@ -88,9 +92,11 @@ export type Database = {
           answer_given?: string
           answered_at?: string | null
           difficulty?: string
+          difficulty_appropriate?: boolean | null
           id?: number
           is_correct?: boolean
           question_id?: string | null
+          red_herring_triggered?: string[] | null
           student_id?: string | null
           subtopic?: string
           time_taken_seconds?: number
@@ -165,6 +171,20 @@ export type Database = {
         Args: { p_student_id: string; p_count?: number }
         Returns: {
           question: Json
+        }[]
+      }
+      get_adaptive_questions_enhanced: {
+        Args: { p_student_id: string; p_count?: number }
+        Returns: {
+          question: Json
+        }[]
+      }
+      get_student_misconceptions: {
+        Args: { p_student_id: string }
+        Returns: {
+          red_herring: string
+          frequency: number
+          topics: string[]
         }[]
       }
       get_weak_topics: {

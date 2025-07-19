@@ -46,9 +46,9 @@ const Practice = () => {
     try {
       setLoading(true);
       
-      // Get adaptive questions for the user
+      // Get enhanced adaptive questions for the user
       const { data, error } = await supabase
-        .rpc('get_adaptive_questions', { 
+        .rpc('get_adaptive_questions_enhanced', { 
           p_student_id: user?.id,
           p_count: 20 
         });
@@ -116,7 +116,22 @@ const Practice = () => {
     // Calculate time taken
     const timeTaken = Math.floor((new Date().getTime() - startTime.getTime()) / 1000);
 
-    // Save answer to database
+    // Analyze red herrings triggered
+    let redHerringTriggered: string[] = [];
+    if (!isCorrect && currentQuestion.red_herring_tag) {
+      // Map common wrong answers to red herring tags
+      redHerringTriggered = currentQuestion.red_herring_tag;
+    }
+
+    // Determine if difficulty was appropriate (based on time taken and correctness)
+    const difficultyAppropriate = (() => {
+      if (isCorrect && timeTaken < 30) return true;  // Too easy
+      if (isCorrect && timeTaken < 120) return true; // Just right
+      if (!isCorrect && timeTaken > 180) return false; // Too hard
+      return null; // Uncertain
+    })();
+
+    // Save enhanced answer data to database
     try {
       await supabase
         .from('student_answers')
@@ -128,7 +143,9 @@ const Practice = () => {
           difficulty: currentQuestion.difficulty,
           answer_given: selectedAnswer,
           is_correct: isCorrect,
-          time_taken_seconds: timeTaken
+          time_taken_seconds: timeTaken,
+          red_herring_triggered: redHerringTriggered.length > 0 ? redHerringTriggered : null,
+          difficulty_appropriate: difficultyAppropriate
         });
     } catch (error) {
       console.error('Error saving answer:', error);
