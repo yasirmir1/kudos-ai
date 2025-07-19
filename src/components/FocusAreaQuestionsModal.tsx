@@ -47,10 +47,13 @@ export function FocusAreaQuestionsModal({
   const { user } = useAuth();
   const [questions, setQuestions] = useState<QuestionAnswer[]>([]);
   const [loading, setLoading] = useState(false);
+  const [explanation, setExplanation] = useState<string>('');
+  const [loadingExplanation, setLoadingExplanation] = useState(false);
 
   useEffect(() => {
     if (open && focusArea && user) {
       loadFocusAreaQuestions();
+      loadFocusAreaExplanation();
     }
   }, [open, focusArea, user]);
 
@@ -108,6 +111,33 @@ export function FocusAreaQuestionsModal({
     }
   };
 
+  const loadFocusAreaExplanation = async () => {
+    if (!focusArea || !user) return;
+
+    setLoadingExplanation(true);
+    try {
+      const { data, error } = await supabase.functions.invoke('explain-focus-areas', {
+        body: { 
+          student_id: user.id,
+          topic: focusArea.topic 
+        }
+      });
+
+      if (error) {
+        console.error('Error getting focus area explanation:', error);
+        return;
+      }
+
+      if (data?.explanation) {
+        setExplanation(data.explanation);
+      }
+    } catch (error) {
+      console.error('Error loading focus area explanation:', error);
+    } finally {
+      setLoadingExplanation(false);
+    }
+  };
+
   const formatOptions = (options: any) => {
     if (!options) return [];
     if (Array.isArray(options)) return options;
@@ -136,6 +166,37 @@ export function FocusAreaQuestionsModal({
         </DialogHeader>
 
         <div className="space-y-4">
+          {/* AI Explanation Section */}
+          {loadingExplanation && (
+            <Card className="border-l-4 border-l-blue-500 bg-gradient-to-r from-blue-50/50 to-purple-50/50">
+              <CardContent className="pt-6">
+                <div className="flex items-center justify-center py-4">
+                  <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-primary"></div>
+                  <span className="ml-2 text-sm text-muted-foreground">Creating a fun explanation just for you... 🌟</span>
+                </div>
+              </CardContent>
+            </Card>
+          )}
+
+          {!loadingExplanation && explanation && (
+            <Card className="border-l-4 border-l-blue-500 bg-gradient-to-r from-blue-50/50 to-purple-50/50">
+              <CardHeader>
+                <CardTitle className="flex items-center space-x-2 text-blue-900">
+                  <span>🎯 Let's Learn Together!</span>
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="prose prose-sm max-w-none">
+                  <div 
+                    className="text-sm text-blue-800 whitespace-pre-wrap"
+                    dangerouslySetInnerHTML={{ __html: explanation.replace(/\n/g, '<br>') }}
+                  />
+                </div>
+              </CardContent>
+            </Card>
+          )}
+
+          {/* Questions Section */}
           {loading && (
             <div className="flex items-center justify-center py-8">
               <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
