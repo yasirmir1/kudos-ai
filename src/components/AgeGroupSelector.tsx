@@ -29,16 +29,16 @@ export const AgeGroupSelector: React.FC = () => {
           variant="outline"
           role="combobox"
           aria-expanded={open}
-          className="w-[200px] justify-between bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60"
+          className="w-[240px] justify-between bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60"
         >
           <div className="flex items-center">
-            <GraduationCap className="mr-2 h-4 w-4" />
+            <GraduationCap className="mr-2 h-4 w-4 shrink-0" />
             <span className="truncate">{selectedGroup?.label}</span>
           </div>
           <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
         </Button>
       </PopoverTrigger>
-      <PopoverContent className="w-[200px] p-0" align="start">
+      <PopoverContent className="w-[240px] p-0" align="start">
         <Command>
           <CommandEmpty>No age group found.</CommandEmpty>
           <CommandGroup>

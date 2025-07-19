@@ -256,16 +256,13 @@ const Analytics = () => {
               <p className="text-sm text-muted-foreground">{selectedAgeGroup} - {user?.email}</p>
             </div>
           </div>
-          <div className="flex items-center space-x-3">
-            <AgeGroupSelector />
+          <div className="flex items-center space-x-6">
             <div className="flex space-x-2">
               <Button variant="ghost" onClick={() => navigate('/profile')}>
                 Profile
               </Button>
-              <Button variant="outline" onClick={handleSignOut}>
-                Sign Out
-              </Button>
             </div>
+            <AgeGroupSelector />
           </div>
         </div>
       </header>

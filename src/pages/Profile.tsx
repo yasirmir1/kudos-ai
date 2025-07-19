@@ -165,7 +165,7 @@ const Profile = () => {
               <p className="text-sm text-muted-foreground">{selectedAgeGroup} - {user?.email}</p>
             </div>
           </div>
-          <div className="flex items-center space-x-3">
+          <div className="flex items-center space-x-6">
             <AgeGroupSelector />
             <Button variant="outline" onClick={handleSignOut}>
               Sign Out
