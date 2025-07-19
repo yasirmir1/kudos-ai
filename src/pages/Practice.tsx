@@ -42,13 +42,37 @@ const Practice = () => {
   const [generatingExplanation, setGeneratingExplanation] = useState(false);
   const [generatingQuestions, setGeneratingQuestions] = useState(false);
   const [answeredQuestions, setAnsweredQuestions] = useState<{question: Question, isCorrect: boolean, timeTaken: number}[]>([]);
+  const [userAgeGroup, setUserAgeGroup] = useState<'6-7' | '8-9' | '10-11'>('10-11');
 
   useEffect(() => {
     setSessionStartTime(new Date());
-    loadAdaptiveQuestions();
+    loadUserProfile();
   }, [user]);
 
-  const loadAdaptiveQuestions = async () => {
+  const loadUserProfile = async () => {
+    try {
+      if (!user?.id) return;
+      
+      const { data: profile } = await supabase
+        .from('student_profiles')
+        .select('age_group')
+        .eq('id', user.id)
+        .maybeSingle();
+      
+      if (profile?.age_group) {
+        setUserAgeGroup(profile.age_group);
+      }
+      
+      // Load questions after getting age group
+      loadAdaptiveQuestions(profile?.age_group || '10-11');
+    } catch (error) {
+      console.error('Error loading profile:', error);
+      // Default to 10-11 if there's an error
+      loadAdaptiveQuestions('10-11');
+    }
+  };
+
+  const loadAdaptiveQuestions = async (ageGroup: '6-7' | '8-9' | '10-11' = '10-11') => {
     try {
       setLoading(true);
       
@@ -60,10 +84,11 @@ const Practice = () => {
 
       const answeredQuestionIds = answeredQuestions?.map(q => q.question_id) || [];
 
-      // Get random questions from ALL topics that the user has never seen
+      // Get random questions from ALL topics that the user has never seen for their age group
       let query = supabase
         .from('curriculum')
         .select('*')
+        .eq('age_group', ageGroup)
         .limit(20);
 
       if (answeredQuestionIds.length > 0) {
@@ -193,7 +218,8 @@ const Practice = () => {
           is_correct: isCorrect,
           time_taken_seconds: timeTaken,
           red_herring_triggered: redHerringTriggered.length > 0 ? redHerringTriggered : null,
-          difficulty_appropriate: difficultyAppropriate
+          difficulty_appropriate: difficultyAppropriate,
+          age_group: userAgeGroup
         });
 
       if (error) {
@@ -417,7 +443,8 @@ const Practice = () => {
           correct_answers: correctAnswers,
           average_time_per_question: averageTimePerQuestion,
           topics_covered: topicsCovered,
-          difficulty_levels: difficultyLevels
+          difficulty_levels: difficultyLevels,
+          age_group: userAgeGroup
         });
 
       if (error) {
@@ -456,7 +483,7 @@ const Practice = () => {
     setStartTime(new Date());
     setSessionStartTime(new Date());
     setAnsweredQuestions([]);
-    loadAdaptiveQuestions();
+    loadAdaptiveQuestions(userAgeGroup);
   };
 
   if (loading) {

@@ -11,10 +11,13 @@ import { ArrowLeft, User, Calendar, Target, Save } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { ResetProgressModal } from '@/components/ResetProgressModal';
 
+type AgeGroup = '6-7' | '8-9' | '10-11';
+
 interface Profile {
   id: string;
   email: string;
   current_level: string;
+  age_group: AgeGroup;
   target_exam_date: string | null;
   created_at: string;
 }
@@ -27,8 +30,13 @@ const Profile = () => {
   const [profile, setProfile] = useState<Profile | null>(null);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<{
+    current_level: string;
+    age_group: AgeGroup;
+    target_exam_date: string;
+  }>({
     current_level: 'beginner',
+    age_group: '10-11',
     target_exam_date: ''
   });
 
@@ -55,6 +63,7 @@ const Profile = () => {
         setProfile(data);
         setFormData({
           current_level: data.current_level || 'beginner',
+          age_group: data.age_group || '10-11',
           target_exam_date: data.target_exam_date || ''
         });
       } else {
@@ -91,6 +100,7 @@ const Profile = () => {
         .from('student_profiles')
         .update({
           current_level: formData.current_level,
+          age_group: formData.age_group,
           target_exam_date: formData.target_exam_date || null
         })
         .eq('id', user.id);
@@ -201,6 +211,26 @@ const Profile = () => {
                     <SelectItem value="advanced">Advanced - Nearly exam ready</SelectItem>
                   </SelectContent>
                 </Select>
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="age-group">Age Group</Label>
+                <Select 
+                  value={formData.age_group} 
+                  onValueChange={(value: AgeGroup) => setFormData(prev => ({ ...prev, age_group: value }))}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select your age group" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="6-7">6-7 years old</SelectItem>
+                    <SelectItem value="8-9">8-9 years old</SelectItem>
+                    <SelectItem value="10-11">10-11 years old</SelectItem>
+                  </SelectContent>
+                </Select>
+                <p className="text-xs text-muted-foreground">
+                  Questions and curriculum will be tailored to your age group
+                </p>
               </div>
 
               <div className="space-y-2">
