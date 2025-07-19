@@ -9,6 +9,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { useNavigate } from 'react-router-dom';
 import { ArrowLeft, User, Calendar, Target, Save } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+import { ResetProgressModal } from '@/components/ResetProgressModal';
 
 interface Profile {
   id: string;
@@ -235,6 +236,30 @@ const Profile = () => {
               <div className="flex justify-between py-2 border-b">
                 <span className="text-muted-foreground">Account ID</span>
                 <span className="font-mono text-xs">{user?.id}</span>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Danger Zone */}
+          <Card className="border-destructive/20">
+            <CardHeader>
+              <CardTitle className="flex items-center space-x-2 text-destructive">
+                <Target className="h-5 w-5" />
+                <span>Danger Zone</span>
+              </CardTitle>
+              <CardDescription>
+                Irreversible actions that will permanently affect your account
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="flex items-center justify-between p-4 border border-destructive/20 rounded-lg bg-destructive/5">
+                <div>
+                  <h4 className="font-medium text-destructive">Reset All Progress</h4>
+                  <p className="text-sm text-muted-foreground">
+                    Permanently delete all your learning progress and start over
+                  </p>
+                </div>
+                <ResetProgressModal onResetComplete={loadProfile} />
               </div>
             </CardContent>
           </Card>
