@@ -251,7 +251,7 @@ const Practice = () => {
               </div>
               <div className="flex items-start space-x-1 text-muted-foreground min-w-0 flex-1 justify-end">
                 <Clock className="h-4 w-4 flex-shrink-0 mt-0.5" />
-                <span className="text-sm text-right leading-tight max-w-xs">{currentQuestion.subtopic}</span>
+                <span className="text-sm text-right leading-tight max-w-[12rem] sm:max-w-xs" style={{ textWrap: 'balance' }}>{currentQuestion.subtopic}</span>
               </div>
             </div>
             <h3 className="text-xl font-medium leading-relaxed text-left px-4">{currentQuestion.example_question}</h3>
