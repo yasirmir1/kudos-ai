@@ -102,7 +102,7 @@ Rules:
 
 Make this helpful and engaging!`;
 
-    // Try Perplexity first, then fallback to OpenAI
+    // Try Perplexity first
     let explanation = '';
     let apiUsed = '';
 
@@ -132,7 +132,9 @@ Make this helpful and engaging!`;
             temperature: 0.8,
             top_p: 0.9,
             return_images: false,
-            return_related_questions: false
+            return_related_questions: false,
+            search_domain_filter: [],
+            search_recency_filter: "month"
           }),
         });
 

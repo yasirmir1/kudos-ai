@@ -188,9 +188,10 @@ export function FocusAreaQuestionsModal({
               <CardContent>
                 <div className="prose prose-sm max-w-none">
                   <div 
-                    className="text-sm text-blue-800 whitespace-pre-wrap"
-                    dangerouslySetInnerHTML={{ __html: explanation.replace(/\n/g, '<br>') }}
-                  />
+                    className="text-sm text-blue-800 whitespace-pre-line leading-relaxed [&>p]:mb-4 [&>div]:mb-4"
+                  >
+                    {explanation}
+                  </div>
                 </div>
               </CardContent>
             </Card>

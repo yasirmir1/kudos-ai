@@ -75,12 +75,14 @@ Rules:
                 content: prompt
               }
             ],
-            max_tokens: 500,
-            temperature: 0.8,
-            top_p: 0.9,
-            return_images: false,
-            return_related_questions: false
-          }),
+          max_tokens: 500,
+          temperature: 0.8,
+          top_p: 0.9,
+          return_images: false,
+          return_related_questions: false,
+          search_domain_filter: [],
+          search_recency_filter: "month"
+        }),
         });
 
         if (perplexityResponse.ok) {

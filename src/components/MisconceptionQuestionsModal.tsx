@@ -322,7 +322,7 @@ export function MisconceptionQuestionsModal({
                       
                       {question.aiExplanation && (
                         <div className="bg-blue-50 p-3 rounded border">
-                          <div className="text-sm whitespace-pre-line">{question.aiExplanation}</div>
+                          <div className="text-sm whitespace-pre-line leading-relaxed [&>p]:mb-4 [&>div]:mb-4">{question.aiExplanation}</div>
                         </div>
                       )}
                       

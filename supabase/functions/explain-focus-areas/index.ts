@@ -153,7 +153,9 @@ Be encouraging, practical, and respectful. Help them understand their mistakes a
         temperature: 0.8,
         top_p: 0.9,
         return_images: false,
-        return_related_questions: false
+        return_related_questions: false,
+        search_domain_filter: [],
+        search_recency_filter: "month"
       }),
     });
 
