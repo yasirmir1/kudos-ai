@@ -327,26 +327,18 @@ RESPOND WITH ONLY THE JSON ARRAY, NO OTHER TEXT.`;
             const topicSuffix = getTopicPrefix(topic, age_group).substring(2);
             const questionPrefix = questionYearLevel + topicSuffix;
             
-            // Get the highest existing number for this specific prefix
-            const { data: existingQuestions } = await supabase
-              .from('curriculum')
-              .select('question_id')
-              .like('question_id', `${questionPrefix}%`)
-              .order('question_id', { ascending: false })
-              .limit(1);
+            // Use the database function to generate standardized question IDs
+            const { data: generatedId, error: idError } = await supabase
+              .rpc('generate_question_id', { topic_name: topic });
             
-            let nextNumber = 1;
-            if (existingQuestions && existingQuestions.length > 0) {
-              const lastId = existingQuestions[0].question_id;
-              const match = lastId.match(/(\d+)$/);
-              if (match) {
-                nextNumber = parseInt(match[1]) + 1;
-              }
+            if (idError) {
+              console.error('Error generating question ID:', idError);
+              // Fallback to simple generation with timestamp
+              const timestamp = Date.now().toString().slice(-6);
+              question.question_id = `${questionPrefix}${timestamp}`;
+            } else {
+              question.question_id = generatedId;
             }
-            
-            // Add the loop index to ensure uniqueness within this batch
-            const questionNumber = String(nextNumber + i).padStart(3, '0');
-            question.question_id = `${questionPrefix}${questionNumber}`;
 
             // Stream the validated question
             const questionData = {
@@ -362,34 +354,51 @@ RESPOND WITH ONLY THE JSON ARRAY, NO OTHER TEXT.`;
             // Save to database if requested
             if (saveToDatabase) {
               try {
-                // Check for duplicates before inserting
-                const { data: existing } = await supabase
-                  .from('curriculum')
-                  .select('question_id')
-                  .eq('question_id', question.question_id)
-                  .single();
-                
-                if (existing) {
-                  // Generate a new ID if duplicate found
-                  const timestamp = Date.now().toString().slice(-3);
-                  question.question_id = `${getTopicPrefix(topic, age_group)}${timestamp}`;
-                }
-
                 // Add age group to question if provided
                 if (age_group) {
                   question.age_group = age_group;
                 }
 
+                // Use INSERT with ON CONFLICT to handle duplicates gracefully
                 const { error: insertError } = await supabase
                   .from('curriculum')
-                  .insert(question);
+                  .insert(question)
+                  .select()
+                  .single();
 
                 if (insertError) {
-                  console.error('Database save error:', insertError);
-                  controller.enqueue(new TextEncoder().encode(`data: ${JSON.stringify({
-                    type: 'error',
-                    message: `Failed to save question ${i + 1}: ${insertError.message}`
-                  })}\n\n`));
+                  if (insertError.code === '23505') { // Unique violation
+                    // Generate a new ID and retry once
+                    const { data: newId } = await supabase
+                      .rpc('generate_question_id', { topic_name: topic });
+                    
+                    if (newId) {
+                      question.question_id = newId;
+                      const { error: retryError } = await supabase
+                        .from('curriculum')
+                        .insert(question);
+                      
+                      if (retryError) {
+                        console.error('Retry database save error:', retryError);
+                        controller.enqueue(new TextEncoder().encode(`data: ${JSON.stringify({
+                          type: 'error',
+                          message: `Failed to save question ${i + 1} after retry: ${retryError.message}`
+                        })}\n\n`));
+                      } else {
+                        controller.enqueue(new TextEncoder().encode(`data: ${JSON.stringify({
+                          type: 'saved',
+                          questionId: question.question_id,
+                          index: i + 1
+                        })}\n\n`));
+                      }
+                    }
+                  } else {
+                    console.error('Database save error:', insertError);
+                    controller.enqueue(new TextEncoder().encode(`data: ${JSON.stringify({
+                      type: 'error',
+                      message: `Failed to save question ${i + 1}: ${insertError.message}`
+                    })}\n\n`));
+                  }
                 } else {
                   controller.enqueue(new TextEncoder().encode(`data: ${JSON.stringify({
                     type: 'saved',
