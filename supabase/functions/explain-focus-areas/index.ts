@@ -100,43 +100,34 @@ serve(async (req) => {
       misconceptions: answer.red_herring_triggered || []
     })) || [];
 
-    const prompt = `You are talking to an 8-year-old who loves video games, toys, and ice cream! They made some mistakes in ${topic} and need gentle help understanding what might have gone wrong and how to fix it.
+    const prompt = `Help a student understand their performance in ${topic}. Be encouraging and respectful - give practical advice without talking down to them.
 
-SUPER IMPORTANT RULES:
-- Talk directly to them using "you" 
-- Use gentle language like "you might have thought" or "you may have tried"
-- NO big words like "concept," "interval," "calculate," or "negative result"
-- Use words a 2nd grader knows
-- Compare everything to fun stuff kids love (games, toys, candy, playgrounds)
-- Be excited and encouraging like their favorite fun teacher!
-- Focus on what they MIGHT have done and what to try instead
+Performance Summary:
+- Accuracy: ${Math.round((focusAreaContext.accuracy || 0) * 100)}% in ${topic}
+- Questions attempted: ${focusAreaContext.totalAttempts}
+- Areas needing work: ${uniqueSubtopics.join(', ') || 'various subtopics'}
+- Common mistake patterns: ${uniqueMisconceptions.join(', ') || 'mixed patterns'}
 
-Your math story:
-- You got ${Math.round((focusAreaContext.accuracy || 0) * 100)}% right in ${topic} - that's pretty good!
-- You tried ${focusAreaContext.totalAttempts} questions
-- The tricky parts were: ${uniqueSubtopics.join(', ') || 'some number puzzles'}
-- Some mix-ups happened with: ${uniqueMisconceptions.join(', ') || 'various patterns'}
+Create an engaging explanation with these sections:
 
-Write like you're talking directly to them:
+🎯 **What's happening in this topic:**
+[Brief, encouraging overview of their performance and what this topic covers]
 
-🤔 **What might have happened:**
-[Gently explain what they might have done wrong using "you might have thought" or "you may have tried". For example: "You might have thought 3-5 equals 2 because you were thinking about regular subtraction. That's totally normal - lots of kids think that way at first!"]
+🤔 **Where you might be getting stuck:**
+[Analyze their common mistakes without being condescending - explain what typically goes wrong]
 
-✨ **Here's what to try instead:**
-[Give the exact correct method using fun examples. "When you see 3-5, you can think of it like an elevator! Start on floor 3, go down 5 floors: 3→2→1→0→-1→-2. You end up on floor -2 (that's 2 floors underground)!"]
+🛠️ **Strategies to improve:**
+[Give 2-3 practical, actionable strategies specific to their mistake patterns]
 
-🎮 **Cool tricks that might help:**
-[Give 2-3 simple tricks or shortcuts using games/toys that prevent the mistakes they might have made]
+📚 **Key concepts to focus on:**
+[Highlight the most important concepts for this topic that they should master]
 
-🏃 **Fun ways to practice:**
-[Suggest specific activities that target the areas where they might be getting confused]
+🚀 **Next steps:**
+[Suggest specific practice areas or approaches that would help most]
 
-🏆 **You're already doing great because:**
-[Point out improvement or positive signs in their work]
+Mistake patterns to address: ${JSON.stringify(mistakePatterns, null, 2)}
 
-Use their actual mistake patterns from: ${JSON.stringify(mistakePatterns, null, 2)}
-
-Be gentle, use "might have" and "you may have" language, and focus on what to try differently!`;
+Be encouraging, practical, and respectful. Help them understand their mistakes and give clear guidance for improvement.`;
 
     console.log('Sending request to Perplexity for focus area explanation...');
 
@@ -147,11 +138,11 @@ Be gentle, use "might have" and "you may have" language, and focus on what to tr
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        model: 'llama-3.1-sonar-small-128k-online',
+        model: 'sonar',
         messages: [
           {
             role: 'system',
-            content: 'You are the most encouraging, fun math teacher ever! You love helping kids learn and always make them feel confident and excited about math. You explain everything like you\'re talking to your favorite 8-year-old student.'
+            content: 'You are a knowledgeable math tutor who provides insightful analysis and practical guidance. You help students understand their learning patterns with respect and actionable advice. Be encouraging and supportive without being condescending.'
           },
           {
             role: 'user',
