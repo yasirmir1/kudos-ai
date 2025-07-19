@@ -317,7 +317,7 @@ const Analytics = () => {
               </CardHeader>
               <CardContent>
                 <ResponsiveContainer width="100%" height={380}>
-                  <BarChart data={topicAccuracy} margin={{ top: 5, right: 30, left: 20, bottom: 100 }}>
+                  <BarChart data={topicAccuracy} margin={{ top: 5, right: 50, left: 50, bottom: 100 }}>
                     <CartesianGrid strokeDasharray="3 3" />
                     <XAxis 
                       dataKey="name" 
@@ -327,7 +327,6 @@ const Analytics = () => {
                     />
                     <YAxis domain={[0, 100]} />
                     <Tooltip />
-                    <Legend />
                     <Bar dataKey="accuracy" fill="#82ca9d" name="Accuracy %" />
                   </BarChart>
                 </ResponsiveContainer>
