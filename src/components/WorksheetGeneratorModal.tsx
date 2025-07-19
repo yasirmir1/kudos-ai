@@ -10,6 +10,7 @@ import { Progress } from '@/components/ui/progress';
 import { useToast } from '@/hooks/use-toast';
 import { FileText, Download, Loader2, Sparkles, BookOpen } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
+import { useAgeGroup } from '@/contexts/AgeGroupContext';
 import jsPDF from 'jspdf';
 
 interface Question {
@@ -42,6 +43,7 @@ const DIFFICULTIES = [
 
 export const WorksheetGeneratorModal = () => {
   const { toast } = useToast();
+  const { selectedAgeGroup } = useAgeGroup();
   const [open, setOpen] = useState(false);
   const [generating, setGenerating] = useState(false);
   const [generatedQuestions, setGeneratedQuestions] = useState<Question[]>([]);
@@ -68,12 +70,13 @@ export const WorksheetGeneratorModal = () => {
     setGeneratedQuestions([]);
 
     try {
-      // Get existing questions from database first
+      // Get existing questions from database first (filtered by age group)
       const { data: existingQuestions } = await supabase
         .from('curriculum')
         .select('*')
         .eq('topic', selectedTopic)
         .eq('difficulty', selectedDifficulty)
+        .eq('age_group', selectedAgeGroup)
         .limit(questionCount);
 
       if (existingQuestions && existingQuestions.length >= questionCount) {
@@ -110,6 +113,7 @@ export const WorksheetGeneratorModal = () => {
             subtopic: subtopic,
             difficulty: selectedDifficulty,
             count: questionCount,
+            age_group: selectedAgeGroup,
             saveToDatabase: true
           }),
         });
@@ -313,10 +317,10 @@ export const WorksheetGeneratorModal = () => {
         <DialogHeader>
           <DialogTitle className="flex items-center space-x-2">
             <FileText className="h-5 w-5" />
-            <span>Generate Practice Worksheets</span>
+            <span>Generate Practice Worksheets - {selectedAgeGroup}</span>
           </DialogTitle>
           <DialogDescription>
-            Create child-friendly PDF worksheets with custom topics and difficulty levels
+            Create child-friendly PDF worksheets for {selectedAgeGroup} with custom topics and difficulty levels
           </DialogDescription>
         </DialogHeader>
 

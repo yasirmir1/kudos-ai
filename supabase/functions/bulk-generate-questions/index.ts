@@ -22,24 +22,24 @@ serve(async (req) => {
 
     console.log('Starting bulk question generation...');
 
-    // Get all unique topic/subtopic/difficulty combinations
+    // Get all unique topic/subtopic/difficulty/age_group combinations
     const { data: combinations, error: combinationsError } = await supabaseClient
       .from('curriculum')
-      .select('topic, subtopic, difficulty')
+      .select('topic, subtopic, difficulty, age_group')
       .limit(1000);
 
     if (combinationsError) {
       throw new Error(`Failed to fetch combinations: ${combinationsError.message}`);
     }
 
-    // Get unique combinations
+    // Get unique combinations including age_group
     const uniqueCombinations = Array.from(
       new Set(
-        combinations?.map(c => `${c.topic}|${c.subtopic}|${c.difficulty}`)
+        combinations?.map(c => `${c.topic}|${c.subtopic}|${c.difficulty}|${c.age_group || 'unspecified'}`)
       )
     ).map(combo => {
-      const [topic, subtopic, difficulty] = combo.split('|');
-      return { topic, subtopic, difficulty };
+      const [topic, subtopic, difficulty, age_group] = combo.split('|');
+      return { topic, subtopic, difficulty, age_group: age_group === 'unspecified' ? null : age_group };
     });
 
     console.log(`Found ${uniqueCombinations.length} unique combinations`);
@@ -62,6 +62,7 @@ serve(async (req) => {
             topic: combination.topic,
             subtopic: combination.subtopic,
             difficulty: combination.difficulty,
+            age_group: combination.age_group,
             count: questionsPerType,
             saveToDatabase: true
           }),

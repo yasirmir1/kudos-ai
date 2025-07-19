@@ -42,21 +42,26 @@ serve(async (req) => {
     const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
     const supabase = createClient(supabaseUrl, supabaseKey);
 
-    const { topic, subtopic, difficulty, count = 5, saveToDatabase = false } = await req.json();
+    const { topic, subtopic, difficulty, count = 5, age_group, saveToDatabase = false } = await req.json();
 
     if (!topic || !subtopic || !difficulty) {
       throw new Error('Topic, subtopic, and difficulty are required');
     }
 
-    console.log(`Generating ${count} questions for ${topic} - ${subtopic} (${difficulty})`);
+    console.log(`Generating ${count} questions for ${topic} - ${subtopic} (${difficulty}) for age group: ${age_group}`);
 
-    // Get existing questions as examples for the AI
-    const { data: examples, error: exampleError } = await supabase
+    // Get existing questions as examples for the AI (filtered by age group if provided)
+    let exampleQuery = supabase
       .from('curriculum')
       .select('*')
       .eq('topic', topic)
-      .eq('difficulty', difficulty)
-      .limit(3);
+      .eq('difficulty', difficulty);
+    
+    if (age_group) {
+      exampleQuery = exampleQuery.eq('age_group', age_group);
+    }
+    
+    const { data: examples, error: exampleError } = await exampleQuery.limit(3);
 
     if (exampleError) {
       console.error('Error fetching examples:', exampleError);
@@ -265,6 +270,11 @@ RESPOND WITH ONLY THE JSON ARRAY, NO OTHER TEXT.`;
                   // Generate a new ID if duplicate found
                   const timestamp = Date.now().toString().slice(-3);
                   question.question_id = `${getTopicPrefix(topic)}${timestamp}`;
+                }
+
+                // Add age group to question if provided
+                if (age_group) {
+                  question.age_group = age_group;
                 }
 
                 const { error: insertError } = await supabase
