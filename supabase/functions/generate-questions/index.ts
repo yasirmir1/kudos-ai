@@ -7,25 +7,36 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
 
-// Function to get topic prefix for question IDs
+// Function to get topic prefix for question IDs based on curriculum structure
 const getTopicPrefix = (topic: string, age_group?: string): string => {
-  // Add 11P prefix for 11+ age group to maintain consistency
-  const basePrefix = age_group === '11+' ? '11P' : '';
+  // Year prefix based on age group
+  let yearPrefix = '';
+  if (age_group === 'year 2-3') {
+    yearPrefix = 'Y2';
+  } else if (age_group === 'year 4-5') {
+    yearPrefix = 'Y4';
+  } else if (age_group === '11+') {
+    yearPrefix = 'Y6';
+  } else {
+    yearPrefix = 'Y4'; // default
+  }
   
-  if (topic.toLowerCase().includes('algebra')) return basePrefix + 'ALG';
-  if (topic.toLowerCase().includes('number') && topic.toLowerCase().includes('place')) return basePrefix + 'NPV';
-  if (topic.toLowerCase().includes('number') && (topic.toLowerCase().includes('addition') || topic.toLowerCase().includes('subtraction'))) return basePrefix + 'NAS';
-  if (topic.toLowerCase().includes('number') && (topic.toLowerCase().includes('multiplication') || topic.toLowerCase().includes('division'))) return basePrefix + 'NMD';
-  if (topic.toLowerCase().includes('number') && topic.toLowerCase().includes('fraction')) return basePrefix + 'NFR';
-  if (topic.toLowerCase().includes('number') && topic.toLowerCase().includes('decimal')) return basePrefix + 'NDC';
-  if (topic.toLowerCase().includes('number') && topic.toLowerCase().includes('percent')) return basePrefix + 'NPC';
-  if (topic.toLowerCase().includes('number') && topic.toLowerCase().includes('ratio')) return basePrefix + 'NRT';
-  if (topic.toLowerCase().includes('number')) return basePrefix + 'NUM';
-  if (topic.toLowerCase().includes('geometry')) return basePrefix + 'GEO';
-  if (topic.toLowerCase().includes('measure')) return basePrefix + 'MEA';
-  if (topic.toLowerCase().includes('statistic')) return basePrefix + 'STA';
-  if (topic.toLowerCase().includes('probability')) return basePrefix + 'PRB';
-  return basePrefix + 'GEN';
+  // Topic abbreviations based on your curriculum structure
+  if (topic === 'Number - Number and Place Value') return yearPrefix + 'NPV';
+  if (topic === 'Number - Addition and Subtraction') return yearPrefix + 'ASM';
+  if (topic === 'Number - Multiplication and Division') return yearPrefix + 'MD';
+  if (topic === 'Number - Fractions') return yearPrefix + 'FR';
+  if (topic === 'Number - Fractions (including decimals)') return yearPrefix + 'FR';
+  if (topic === 'Measurement') return yearPrefix + 'ME';
+  if (topic === 'Geometry - Properties of Shapes') return yearPrefix + 'GS';
+  if (topic === 'Geometry - Position and Direction') return yearPrefix + 'PD';
+  if (topic === 'Statistics') return yearPrefix + 'ST';
+  if (topic === 'Algebra') return yearPrefix + 'ALG';
+  if (topic === 'Ratio and Proportion') return yearPrefix + 'RP';
+  if (topic === 'Probability') return yearPrefix + 'PR';
+  
+  // Fallback for any other topics
+  return yearPrefix + 'GEN';
 };
 
 serve(async (req) => {
@@ -74,39 +85,54 @@ serve(async (req) => {
     const stream = new ReadableStream({
       async start(controller) {
         try {
-          const prompt = `You are an expert educational content creator. Generate ${count} high-quality multiple choice questions for mathematics education.
+          const prompt = `You are an expert educational content creator. Generate ${count} high-quality multiple choice questions for mathematics education that match the exact curriculum structure provided.
 
 TOPIC: ${topic}
 SUBTOPIC: ${subtopic}  
 DIFFICULTY: ${difficulty}
+AGE GROUP: ${age_group || 'year 4-5'}
 
-REQUIREMENTS:
-1. Follow the EXACT JSON structure shown in the examples
-2. Generate realistic red herrings (common wrong answers)
-3. Include pedagogical explanations
-4. Make questions age-appropriate for the difficulty level
-5. Ensure mathematical accuracy
+CRITICAL: Follow this EXACT JSON structure from the curriculum:
+
+{
+  "question_id": "${getTopicPrefix(topic, age_group)}001",
+  "topic": "${topic}",
+  "subtopic": "${subtopic}",
+  "example_question": "Clear, age-appropriate question text here",
+  "question_type": "Multiple Choice",
+  "options": [
+    "Option A",
+    "Option B", 
+    "Option C",
+    "Option D"
+  ],
+  "correct_answer": "Option B",
+  "difficulty": "${difficulty}",
+  "red_herring_tag": ["MisconceptionType_SpecificError"] or null,
+  "red_herring_explanation": "Explanation of why students might choose wrong answers" or null,
+  "pedagogical_notes": "${age_group === 'year 2-3' ? 'Year 2' : age_group === 'year 4-5' ? 'Year 4' : 'Year 6'}: Brief teaching context."
+}
 
 ${examples && examples.length > 0 ? `
-EXAMPLE STRUCTURE (use this exact format):
+REFERENCE EXAMPLES from your curriculum:
 ${JSON.stringify(examples[0], null, 2)}
 
-MORE EXAMPLES:
 ${examples.slice(1).map(ex => JSON.stringify(ex, null, 2)).join('\n\n')}
 ` : ''}
 
-Generate ${count} questions as a JSON array. Each question should have:
-- question_id: unique identifier (use format: "${getTopicPrefix(topic, age_group)}" + 3-digit number like "ALG001", "NUM001", etc.)
-- topic: "${topic}"
-- subtopic: "${subtopic}"
-- example_question: clear, well-written question
-- question_type: "multiple_choice"
-- options: array of 4 answer choices
-- correct_answer: one of the options (exact match)
-- difficulty: "${difficulty}"
-- red_herring_tag: array of misconception tags (e.g., ["PlaceValue_DigitValueConfusion"])
-- red_herring_explanation: why wrong answers are tempting
-- pedagogical_notes: teaching tips
+REQUIREMENTS:
+1. question_id: Use format "${getTopicPrefix(topic, age_group)}" followed by 3-digit number (001, 002, etc.)
+2. topic: EXACTLY "${topic}"
+3. subtopic: EXACTLY "${subtopic}"
+4. question_type: EXACTLY "Multiple Choice" (with capital letters)
+5. options: Array of exactly 4 plausible choices
+6. correct_answer: Must exactly match one option
+7. difficulty: EXACTLY "${difficulty}"
+8. red_herring_tag: Array of misconception types or null (e.g., ["PlaceValue_DigitConfusion"])
+9. red_herring_explanation: Pedagogical explanation of common errors or null
+10. pedagogical_notes: Start with appropriate year level (Year 2/3/4/6) and brief context
+
+Generate ${count} questions as a JSON array. Ensure mathematical accuracy and age-appropriate language.
 
 RESPOND WITH ONLY THE JSON ARRAY, NO OTHER TEXT.`;
 
@@ -235,18 +261,29 @@ RESPOND WITH ONLY THE JSON ARRAY, NO OTHER TEXT.`;
               continue;
             }
 
-            // Generate standardized question ID using database function
-            const { data: idResult } = await supabase
-              .rpc('generate_question_id', { topic_name: topic });
+            // Generate sequential question ID
+            const topicPrefix = getTopicPrefix(topic, age_group);
             
-            if (idResult) {
-              question.question_id = idResult;
-            } else {
-              // Fallback ID generation
-              const topicPrefix = getTopicPrefix(topic, age_group);
-              const timestamp = Date.now().toString().slice(-3);
-              question.question_id = `${topicPrefix}${timestamp}`;
+            // Get the highest existing number for this prefix
+            const { data: existingQuestions } = await supabase
+              .from('curriculum')
+              .select('question_id')
+              .like('question_id', `${topicPrefix}%`)
+              .order('question_id', { ascending: false })
+              .limit(1);
+            
+            let nextNumber = 1;
+            if (existingQuestions && existingQuestions.length > 0) {
+              const lastId = existingQuestions[0].question_id;
+              const match = lastId.match(/(\d+)$/);
+              if (match) {
+                nextNumber = parseInt(match[1]) + 1;
+              }
             }
+            
+            // Add the loop index to ensure uniqueness within this batch
+            const questionNumber = String(nextNumber + i).padStart(3, '0');
+            question.question_id = `${topicPrefix}${questionNumber}`;
 
             // Stream the validated question
             const questionData = {
