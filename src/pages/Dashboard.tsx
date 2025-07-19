@@ -148,6 +148,16 @@ const Dashboard = () => {
     }
   };
 
+  const getFrequencyColorBadge = (frequency: number) => {
+    if (frequency >= 5) {
+      return <div className="w-3 h-3 rounded-full bg-red-500" title={`${frequency}x encountered - High frequency`} />;
+    } else if (frequency >= 3) {
+      return <div className="w-3 h-3 rounded-full bg-amber-500" title={`${frequency}x encountered - Medium frequency`} />;
+    } else {
+      return <div className="w-3 h-3 rounded-full bg-green-500" title={`${frequency}x encountered - Low frequency`} />;
+    }
+  };
+
   const overallAccuracy = performance.length > 0 
     ? performance.reduce((sum, p) => sum + p.accuracy, 0) / performance.length 
     : 0;
@@ -269,7 +279,7 @@ const Dashboard = () => {
               {performance.slice(0, 5).map((topic, index) => (
                 <div key={topic.topic} className="flex items-center justify-between">
                   <div className="flex items-center space-x-3">
-                    <Badge variant="secondary" className="text-xs">
+                    <Badge variant="secondary" className="text-xs min-w-8 flex justify-center">
                       #{index + 1}
                     </Badge>
                     <span className="font-medium">{topic.topic}</span>
@@ -305,8 +315,8 @@ const Dashboard = () => {
               {needsWork.map((topic, index) => (
                 <div key={topic.topic} className="flex items-center justify-between">
                   <div className="flex items-center space-x-3">
-                    <Badge variant="destructive" className="text-xs">
-                      Priority {index + 1}
+                    <Badge variant="destructive" className="text-xs min-w-8 flex justify-center">
+                      P{index + 1}
                     </Badge>
                     <span className="font-medium">{topic.topic}</span>
                   </div>
@@ -359,11 +369,11 @@ const Dashboard = () => {
                     className="space-y-2 p-3 rounded-lg border bg-gradient-to-r from-blue-50/50 to-purple-50/50"
                   >
                     <div className="flex items-center justify-between">
-                      <Badge variant="outline" className="text-xs bg-blue-100 text-blue-800">
-                        {misconception.frequency}x encountered
-                      </Badge>
-                      <div className="text-xs text-muted-foreground">
-                        {misconception.topics?.join(', ')}
+                      <div className="flex items-center space-x-2">
+                        {getFrequencyColorBadge(misconception.frequency)}
+                        <span className="text-xs text-muted-foreground">
+                          {misconception.topics?.join(', ')}
+                        </span>
                       </div>
                     </div>
                     <p className="text-sm font-medium text-blue-900">
