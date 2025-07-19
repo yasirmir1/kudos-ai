@@ -34,6 +34,22 @@ serve(async (req) => {
 
     console.log('Fetching misconceptions for student:', student_id);
 
+    // Create a unique reference key for this student's misconceptions
+    const referenceKey = `student_${student_id}`;
+    
+    // First, check if we already have an explanation for this student's misconceptions
+    console.log('Checking for existing misconceptions explanation...');
+    const { data: existingExplanation, error: fetchError } = await supabase
+      .from('ai_explanations')
+      .select('explanation')
+      .eq('explanation_type', 'misconception')
+      .eq('reference_key', referenceKey)
+      .maybeSingle();
+
+    if (fetchError) {
+      console.error('Error fetching existing explanation:', fetchError);
+    }
+
     // Get student misconceptions
     const { data: misconceptions, error: misconceptionsError } = await supabase
       .rpc('get_student_misconceptions', { p_student_id: student_id });
@@ -52,6 +68,20 @@ serve(async (req) => {
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       });
     }
+
+    // If we have existing explanation and the misconceptions haven't changed significantly, return cached version
+    if (existingExplanation) {
+      console.log('Found existing misconceptions explanation, returning cached version');
+      return new Response(JSON.stringify({ 
+        explanation: existingExplanation.explanation,
+        misconceptions: misconceptions,
+        apiUsed: 'cached'
+      }), {
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
+    }
+
+    console.log('No existing explanation found, generating new one...');
 
     // Get curriculum data for additional context
     const { data: curriculumData, error: curriculumError } = await supabase
@@ -208,6 +238,22 @@ Make this helpful and engaging!`;
       .trim();
 
     console.log(`Generated explanation successfully using ${apiUsed}`);
+
+    // Store the explanation in the database for future use
+    const { error: insertError } = await supabase
+      .from('ai_explanations')
+      .insert({
+        explanation_type: 'misconception',
+        reference_key: referenceKey,
+        explanation: cleanedExplanation
+      });
+
+    if (insertError) {
+      console.error('Error storing explanation:', insertError);
+      // Don't fail the request if storing fails, just log it
+    } else {
+      console.log('Successfully stored misconceptions explanation in database');
+    }
 
     return new Response(JSON.stringify({ 
       explanation: cleanedExplanation,

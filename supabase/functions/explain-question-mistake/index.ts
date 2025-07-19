@@ -1,5 +1,6 @@
 import "https://deno.land/x/xhr@0.1.0/mod.ts";
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.52.0';
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -20,13 +21,44 @@ serve(async (req) => {
       throw new Error('Perplexity API key is required. Please set up your Perplexity API key.');
     }
 
+    // Initialize Supabase client
+    const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
+    const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
+    const supabase = createClient(supabaseUrl, supabaseKey);
+
     const { question, student_answer, correct_answer, misconception, topic } = await req.json();
 
     if (!question || !student_answer || !correct_answer) {
       throw new Error('Missing required fields');
     }
 
-    console.log('Generating kid-friendly explanation for question mistake');
+    // Create a unique reference key for this explanation
+    const referenceKey = `${question}_${student_answer}_${correct_answer}`;
+    
+    // First, check if we already have an explanation for this specific mistake
+    console.log('Checking for existing explanation...');
+    const { data: existingExplanation, error: fetchError } = await supabase
+      .from('ai_explanations')
+      .select('explanation')
+      .eq('explanation_type', 'question_mistake')
+      .eq('reference_key', referenceKey)
+      .maybeSingle();
+
+    if (fetchError) {
+      console.error('Error fetching existing explanation:', fetchError);
+    }
+
+    if (existingExplanation) {
+      console.log('Found existing explanation, returning cached version');
+      return new Response(JSON.stringify({ 
+        explanation: existingExplanation.explanation,
+        apiUsed: 'cached'
+      }), {
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
+    }
+
+    console.log('No existing explanation found, generating new one...');
 
     const prompt = `Help explain a math mistake to a student. Be encouraging but respectful - don't talk down to them.
 
@@ -158,6 +190,22 @@ Rules:
       .trim();
 
     console.log(`Generated explanation successfully using ${apiUsed}`);
+
+    // Store the explanation in the database for future use
+    const { error: insertError } = await supabase
+      .from('ai_explanations')
+      .insert({
+        explanation_type: 'question_mistake',
+        reference_key: referenceKey,
+        explanation: cleanedExplanation
+      });
+
+    if (insertError) {
+      console.error('Error storing explanation:', insertError);
+      // Don't fail the request if storing fails, just log it
+    } else {
+      console.log('Successfully stored explanation in database');
+    }
 
     return new Response(JSON.stringify({ 
       explanation: cleanedExplanation,

@@ -14,6 +14,33 @@ export type Database = {
   }
   public: {
     Tables: {
+      ai_explanations: {
+        Row: {
+          created_at: string | null
+          explanation: string
+          explanation_type: string
+          id: number
+          reference_key: string
+          updated_at: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          explanation: string
+          explanation_type: string
+          id?: number
+          reference_key: string
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          explanation?: string
+          explanation_type?: string
+          id?: number
+          reference_key?: string
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
       curriculum: {
         Row: {
           correct_answer: string
