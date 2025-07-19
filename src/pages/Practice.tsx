@@ -50,7 +50,7 @@ const Practice = () => {
       const { data, error } = await supabase
         .rpc('get_adaptive_questions', { 
           p_student_id: user?.id,
-          p_count: 10 
+          p_count: 20 
         });
 
       if (error) {
@@ -59,7 +59,7 @@ const Practice = () => {
         const { data: fallbackData } = await supabase
           .from('curriculum')
           .select('*')
-          .limit(10);
+          .limit(20);
         
         if (fallbackData) {
           const formattedData = fallbackData.map(q => ({
