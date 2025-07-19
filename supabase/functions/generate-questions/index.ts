@@ -7,14 +7,14 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
 
-// Function to get topic prefix for question IDs based on curriculum structure
+// Function to get topic prefix and year level mapping
 const getTopicPrefix = (topic: string, age_group?: string): string => {
   // Year prefix based on age group
   let yearPrefix = '';
   if (age_group === 'year 2-3') {
-    yearPrefix = 'Y2';
+    yearPrefix = 'Y2'; // Will also generate Y3 variants
   } else if (age_group === 'year 4-5') {
-    yearPrefix = 'Y4';
+    yearPrefix = 'Y4'; // Will also generate Y5 variants
   } else if (age_group === '11+') {
     yearPrefix = 'Y6';
   } else {
@@ -37,6 +37,34 @@ const getTopicPrefix = (topic: string, age_group?: string): string => {
   
   // Fallback for any other topics
   return yearPrefix + 'GEN';
+};
+
+// Function to get year level progression examples
+const getYearLevelGuidance = (age_group: string) => {
+  if (age_group === 'year 2-3') {
+    return {
+      yearLevels: ['Year 2', 'Year 3'],
+      progression: {
+        'Year 2': 'Basic concepts, smaller numbers (up to 100), concrete representations, simple operations',
+        'Year 3': 'Extended concepts, larger numbers (up to 1000), more abstract thinking, multi-step problems'
+      }
+    };
+  } else if (age_group === 'year 4-5') {
+    return {
+      yearLevels: ['Year 4', 'Year 5'],
+      progression: {
+        'Year 4': 'Intermediate concepts, numbers up to 10,000, written methods, problem solving',
+        'Year 5': 'Advanced concepts, larger numbers, complex calculations, real-world applications'
+      }
+    };
+  } else {
+    return {
+      yearLevels: ['Year 6'],
+      progression: {
+        'Year 6': '11+ preparation, advanced problem solving, complex multi-step problems'
+      }
+    };
+  }
 };
 
 serve(async (req) => {
@@ -85,12 +113,19 @@ serve(async (req) => {
     const stream = new ReadableStream({
       async start(controller) {
         try {
+          const yearGuidance = getYearLevelGuidance(age_group || 'year 4-5');
+          
           const prompt = `You are an expert educational content creator. Generate ${count} high-quality multiple choice questions for mathematics education that match the exact curriculum structure provided.
 
 TOPIC: ${topic}
 SUBTOPIC: ${subtopic}  
 DIFFICULTY: ${difficulty}
 AGE GROUP: ${age_group || 'year 4-5'}
+
+YEAR LEVEL PROGRESSION GUIDE:
+${Object.entries(yearGuidance.progression).map(([year, description]) => `${year}: ${description}`).join('\n')}
+
+Generate questions across BOTH year levels: ${yearGuidance.yearLevels.join(' and ')}
 
 CRITICAL: Follow this EXACT JSON structure from the curriculum:
 
@@ -110,29 +145,41 @@ CRITICAL: Follow this EXACT JSON structure from the curriculum:
   "difficulty": "${difficulty}",
   "red_herring_tag": ["MisconceptionType_SpecificError"] or null,
   "red_herring_explanation": "Explanation of why students might choose wrong answers" or null,
-  "pedagogical_notes": "${age_group === 'year 2-3' ? 'Year 2' : age_group === 'year 4-5' ? 'Year 4' : 'Year 6'}: Brief teaching context."
+  "pedagogical_notes": "Year X: Brief teaching context and methodology."
 }
 
 ${examples && examples.length > 0 ? `
-REFERENCE EXAMPLES from your curriculum:
+REFERENCE EXAMPLES from your curriculum (FOLLOW THESE PATTERNS EXACTLY):
 ${JSON.stringify(examples[0], null, 2)}
 
 ${examples.slice(1).map(ex => JSON.stringify(ex, null, 2)).join('\n\n')}
 ` : ''}
 
-REQUIREMENTS:
-1. question_id: Use format "${getTopicPrefix(topic, age_group)}" followed by 3-digit number (001, 002, etc.)
-2. topic: EXACTLY "${topic}"
-3. subtopic: EXACTLY "${subtopic}"
-4. question_type: EXACTLY "Multiple Choice" (with capital letters)
-5. options: Array of exactly 4 plausible choices
-6. correct_answer: Must exactly match one option
-7. difficulty: EXACTLY "${difficulty}"
-8. red_herring_tag: Array of misconception types or null (e.g., ["PlaceValue_DigitConfusion"])
-9. red_herring_explanation: Pedagogical explanation of common errors or null
-10. pedagogical_notes: Start with appropriate year level (Year 2/3/4/6) and brief context
+CRITICAL REQUIREMENTS:
+1. Generate questions for BOTH year levels: ${yearGuidance.yearLevels.join(' and ')}
+2. Start question_id with correct prefixes: ${yearGuidance.yearLevels.map(year => getTopicPrefix(topic, age_group).replace(/Y\d/, year.replace('Year ', 'Y'))).join(' and ')}
+3. Make ${Math.ceil(count/2)} questions at ${yearGuidance.yearLevels[0]} level and ${Math.floor(count/2)} at ${yearGuidance.yearLevels[1] || yearGuidance.yearLevels[0]} level
+4. Use appropriate mathematical complexity for each year
+5. Include realistic misconceptions specific to each year level
+6. pedagogical_notes must start with "Year X:" matching the complexity level
 
-Generate ${count} questions as a JSON array. Ensure mathematical accuracy and age-appropriate language.
+MATHEMATICAL PROGRESSION EXAMPLES:
+${age_group === 'year 2-3' ? `
+Year 2: "Count on in steps of 2 from 14. What is the next number: 14, 16, 18, __?" (Numbers to 100)
+Year 3: "Count on in 50s from 200. What comes next: 200, 250, 300, __?" (Numbers to 1000)
+` : age_group === 'year 4-5' ? `
+Year 4: "What is 2,345 + 1,234?" (4-digit addition, written methods)
+Year 5: "Calculate 4.56 + 2.78" (Decimal addition, real-world context)
+` : `
+Year 6: Complex problem solving, 11+ preparation level questions
+`}
+
+topic: EXACTLY "${topic}"
+subtopic: EXACTLY "${subtopic}"
+question_type: EXACTLY "Multiple Choice" 
+difficulty: EXACTLY "${difficulty}"
+
+Generate ${count} questions as a JSON array. Ensure mathematical accuracy and year-appropriate progression.
 
 RESPOND WITH ONLY THE JSON ARRAY, NO OTHER TEXT.`;
 
@@ -261,14 +308,30 @@ RESPOND WITH ONLY THE JSON ARRAY, NO OTHER TEXT.`;
               continue;
             }
 
-            // Generate sequential question ID
-            const topicPrefix = getTopicPrefix(topic, age_group);
+            // Determine year level for this question based on pedagogical_notes or position in batch
+            let questionYearLevel = '';
+            if (question.pedagogical_notes && question.pedagogical_notes.match(/Year \d/)) {
+              const match = question.pedagogical_notes.match(/Year (\d)/);
+              questionYearLevel = match ? `Y${match[1]}` : getTopicPrefix(topic, age_group).substring(0, 2);
+            } else {
+              // Fallback: alternate between year levels or use default
+              const yearGuidance = getYearLevelGuidance(age_group || 'year 4-5');
+              if (yearGuidance.yearLevels.length > 1) {
+                questionYearLevel = i < Math.ceil(questions.length/2) ? `Y${yearGuidance.yearLevels[0].replace('Year ', '')}` : `Y${yearGuidance.yearLevels[1].replace('Year ', '')}`;
+              } else {
+                questionYearLevel = getTopicPrefix(topic, age_group).substring(0, 2);
+              }
+            }
             
-            // Get the highest existing number for this prefix
+            // Generate topic prefix with correct year level
+            const topicSuffix = getTopicPrefix(topic, age_group).substring(2);
+            const questionPrefix = questionYearLevel + topicSuffix;
+            
+            // Get the highest existing number for this specific prefix
             const { data: existingQuestions } = await supabase
               .from('curriculum')
               .select('question_id')
-              .like('question_id', `${topicPrefix}%`)
+              .like('question_id', `${questionPrefix}%`)
               .order('question_id', { ascending: false })
               .limit(1);
             
@@ -283,7 +346,7 @@ RESPOND WITH ONLY THE JSON ARRAY, NO OTHER TEXT.`;
             
             // Add the loop index to ensure uniqueness within this batch
             const questionNumber = String(nextNumber + i).padStart(3, '0');
-            question.question_id = `${topicPrefix}${questionNumber}`;
+            question.question_id = `${questionPrefix}${questionNumber}`;
 
             // Stream the validated question
             const questionData = {
