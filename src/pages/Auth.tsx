@@ -3,6 +3,7 @@ import { Navigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useAuth } from '@/hooks/useAuth';
@@ -12,6 +13,7 @@ import { BookOpen, Target } from 'lucide-react';
 const Auth = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [ageGroup, setAgeGroup] = useState('10-11');
   const [loading, setLoading] = useState(false);
   const { user, signIn, signUp } = useAuth();
   const { toast } = useToast();
@@ -47,7 +49,7 @@ const Auth = () => {
     e.preventDefault();
     setLoading(true);
     
-    const { error } = await signUp(email, password);
+    const { error } = await signUp(email, password, ageGroup);
     
     if (error) {
       toast({
@@ -178,8 +180,22 @@ const Auth = () => {
                     />
                   </div>
                   
+                  <div className="space-y-2">
+                    <Label htmlFor="age-group">Age Group</Label>
+                    <Select value={ageGroup} onValueChange={setAgeGroup}>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select your age group" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="6-7">6-7 years old</SelectItem>
+                        <SelectItem value="8-9">8-9 years old</SelectItem>
+                        <SelectItem value="10-11">10-11 years old</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  
                   <p className="text-xs text-muted-foreground">
-                    By creating an account, you agree to personalized learning recommendations
+                    Questions will be tailored to your age group and learning level
                   </p>
                 </CardContent>
                 

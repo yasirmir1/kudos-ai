@@ -43,6 +43,7 @@ export type Database = {
       }
       curriculum: {
         Row: {
+          age_group: Database["public"]["Enums"]["age_group"]
           correct_answer: string
           difficulty: string
           example_question: string
@@ -57,6 +58,7 @@ export type Database = {
           topic: string
         }
         Insert: {
+          age_group?: Database["public"]["Enums"]["age_group"]
           correct_answer: string
           difficulty: string
           example_question: string
@@ -71,6 +73,7 @@ export type Database = {
           topic: string
         }
         Update: {
+          age_group?: Database["public"]["Enums"]["age_group"]
           correct_answer?: string
           difficulty?: string
           example_question?: string
@@ -89,6 +92,7 @@ export type Database = {
       practice_sessions: {
         Row: {
           accuracy: number | null
+          age_group: Database["public"]["Enums"]["age_group"] | null
           average_time_per_question: number | null
           correct_answers: number
           created_at: string
@@ -103,6 +107,7 @@ export type Database = {
         }
         Insert: {
           accuracy?: number | null
+          age_group?: Database["public"]["Enums"]["age_group"] | null
           average_time_per_question?: number | null
           correct_answers?: number
           created_at?: string
@@ -117,6 +122,7 @@ export type Database = {
         }
         Update: {
           accuracy?: number | null
+          age_group?: Database["public"]["Enums"]["age_group"] | null
           average_time_per_question?: number | null
           correct_answers?: number
           created_at?: string
@@ -133,6 +139,7 @@ export type Database = {
       }
       student_answers: {
         Row: {
+          age_group: Database["public"]["Enums"]["age_group"] | null
           answer_given: string
           answered_at: string | null
           difficulty: string
@@ -147,6 +154,7 @@ export type Database = {
           topic: string
         }
         Insert: {
+          age_group?: Database["public"]["Enums"]["age_group"] | null
           answer_given: string
           answered_at?: string | null
           difficulty: string
@@ -161,6 +169,7 @@ export type Database = {
           topic: string
         }
         Update: {
+          age_group?: Database["public"]["Enums"]["age_group"] | null
           answer_given?: string
           answered_at?: string | null
           difficulty?: string
@@ -193,6 +202,7 @@ export type Database = {
       }
       student_profiles: {
         Row: {
+          age_group: Database["public"]["Enums"]["age_group"]
           created_at: string | null
           current_level: string | null
           email: string
@@ -201,6 +211,7 @@ export type Database = {
           target_exam_date: string | null
         }
         Insert: {
+          age_group?: Database["public"]["Enums"]["age_group"]
           created_at?: string | null
           current_level?: string | null
           email: string
@@ -209,6 +220,7 @@ export type Database = {
           target_exam_date?: string | null
         }
         Update: {
+          age_group?: Database["public"]["Enums"]["age_group"]
           created_at?: string | null
           current_level?: string | null
           email?: string
@@ -287,7 +299,7 @@ export type Database = {
       }
     }
     Enums: {
-      [_ in never]: never
+      age_group: "6-7" | "8-9" | "10-11"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -414,6 +426,8 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      age_group: ["6-7", "8-9", "10-11"],
+    },
   },
 } as const
