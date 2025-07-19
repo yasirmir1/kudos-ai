@@ -57,11 +57,11 @@ const Analytics = () => {
           <text
             key={index}
             x={0}
-            y={index * 12}
-            dy={8}
+            y={index * 10}
+            dy={6}
             textAnchor="middle"
             fill="#666"
-            fontSize={11}
+            fontSize={9}
           >
             {line}
           </text>
@@ -319,7 +319,7 @@ const Analytics = () => {
                 <ResponsiveContainer width="100%" height={300}>
                   <BarChart data={topicAccuracy}>
                     <CartesianGrid strokeDasharray="3 3" />
-                    <XAxis dataKey="name" angle={-45} textAnchor="end" height={60} />
+                    <XAxis dataKey="name" tick={<CustomXAxisTick />} height={70} />
                     <YAxis domain={[0, 100]} />
                     <Tooltip />
                     <Bar dataKey="accuracy" fill="#82ca9d" name="Accuracy %" />
