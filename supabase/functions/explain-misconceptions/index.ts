@@ -14,9 +14,11 @@ serve(async (req) => {
   }
 
   try {
+    const PERPLEXITY_API_KEY = Deno.env.get('PERPLEXITY_API_KEY');
     const OPENAI_API_KEY = Deno.env.get('kudos');
-    if (!OPENAI_API_KEY) {
-      throw new Error('OpenAI API key not found in kudos secret');
+    
+    if (!PERPLEXITY_API_KEY && !OPENAI_API_KEY) {
+      throw new Error('No API keys found for explanations');
     }
 
     // Initialize Supabase client
@@ -76,70 +78,135 @@ serve(async (req) => {
       };
     });
 
-    const prompt = `You are a fun, friendly teacher explaining things to an 8-year-old student. 
+    const prompt = `You are a fun, friendly teacher talking to an 8-year-old who loves video games, toys, and ice cream! They made some mistakes in their math and need gentle help.
 
-Based on the following math mistakes a student made, help them understand what went wrong using simple words and examples an 8-year-old would understand.
+Use "you" to talk directly to them and be gentle with language like "you might have thought" or "you may have tried".
 
-Use this format for EACH misconception:
+Based on their math mistakes, help them understand what might have gone wrong using simple words:
 
-**[Simple, kid-friendly name for the mistake]**
-🤔 **What happened:** [Explain in very simple words what the mistake was, like you're talking to an 8-year-old]
-💡 **Why this happens:** [Simple reason why kids make this mistake]
-🎯 **How to get better:** [Easy, fun way to practice and improve]
+Use this format for EACH mistake pattern:
+
+**[Simple, kid-friendly name for the mistake] 🤯**
+🤔 **What might have happened:** [Use "you might have thought" or "you may have tried" - explain gently what they possibly did wrong]
+💡 **Why this happens:** [Simple reason - "lots of kids think this way at first!"]
+🎯 **Here's what to try instead:** [Easy, fun way to do it correctly with examples]
 📚 **Where this shows up:** [List the topics in simple terms]
 
 Rules:
-- Use words an 8-year-old knows
+- Talk directly to them using "you"
+- Use gentle words like "might have" and "may have"
+- Use words a 2nd grader knows
 - Make it encouraging and fun
 - Use emojis to make it friendly
-- No scary or discouraging words
-- Compare to things kids understand (like toys, games, food)
+- Compare to things kids love (toys, games, food)
 - Keep explanations short and simple
 
-Misconception Data:
+Mistake Data:
 ${JSON.stringify(misconceptionContext, null, 2)}
 
-Make this fun and helpful for a young learner!`;
+Make this gentle, fun and helpful!`;
 
-    console.log('Sending request to OpenAI...');
+    // Try Perplexity first, then fallback to OpenAI
+    let explanation = '';
+    let apiUsed = '';
 
-    const response = await fetch('https://api.openai.com/v1/chat/completions', {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${OPENAI_API_KEY}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        model: 'gpt-4.1-2025-04-14',
-        messages: [
-          {
-            role: 'system',
-            content: 'You are a fun, patient teacher who loves helping kids learn math. You explain things in simple words that 8-year-olds can understand. You always encourage kids and make learning feel like a fun adventure!'
+    if (PERPLEXITY_API_KEY) {
+      try {
+        console.log('Trying Perplexity API first...');
+        
+        const perplexityResponse = await fetch('https://api.perplexity.ai/chat/completions', {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${PERPLEXITY_API_KEY}`,
+            'Content-Type': 'application/json',
           },
-          {
-            role: 'user',
-            content: prompt
-          }
-        ],
-        max_tokens: 1000,
-        temperature: 0.7
-      }),
-    });
+          body: JSON.stringify({
+            model: 'llama-3.1-sonar-small-128k-online',
+            messages: [
+              {
+                role: 'system',
+                content: 'You are a fun, patient teacher who loves helping kids learn math. You explain things in simple words that 8-year-olds can understand. You always encourage kids and make learning feel like a fun adventure!'
+              },
+              {
+                role: 'user',
+                content: prompt
+              }
+            ],
+            max_tokens: 1000,
+            temperature: 0.8,
+            top_p: 0.9,
+            return_images: false,
+            return_related_questions: false
+          }),
+        });
 
-    if (!response.ok) {
-      const errorText = await response.text();
-      console.error('OpenAI API error:', errorText);
-      throw new Error(`OpenAI API error: ${response.status}`);
+        if (perplexityResponse.ok) {
+          const perplexityData = await perplexityResponse.json();
+          explanation = perplexityData.choices[0].message.content;
+          apiUsed = 'perplexity';
+          console.log('Successfully used Perplexity API');
+        } else {
+          throw new Error(`Perplexity API error: ${perplexityResponse.status}`);
+        }
+      } catch (perplexityError) {
+        console.log('Perplexity failed, trying OpenAI fallback:', perplexityError.message);
+      }
     }
 
-    const data = await response.json();
-    const explanation = data.choices[0].message.content;
+    // Fallback to OpenAI if Perplexity failed or no key
+    if (!explanation && OPENAI_API_KEY) {
+      try {
+        console.log('Using OpenAI API as fallback...');
+        
+        const openaiResponse = await fetch('https://api.openai.com/v1/chat/completions', {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${OPENAI_API_KEY}`,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            model: 'gpt-4.1-2025-04-14',
+            messages: [
+              {
+                role: 'system',
+                content: 'You are a fun, patient teacher who loves helping kids learn math. You explain things in simple words that 8-year-olds can understand. You always encourage kids and make learning feel like a fun adventure!'
+              },
+              {
+                role: 'user',
+                content: prompt
+              }
+            ],
+            max_tokens: 1000,
+            temperature: 0.7
+          }),
+        });
 
-    console.log('Generated explanation successfully');
+        if (openaiResponse.ok) {
+          const openaiData = await openaiResponse.json();
+          explanation = openaiData.choices[0].message.content;
+          apiUsed = 'openai';
+          console.log('Successfully used OpenAI API as fallback');
+        } else {
+          const errorText = await openaiResponse.text();
+          console.error('OpenAI API error:', errorText);
+          throw new Error(`OpenAI API error: ${openaiResponse.status}`);
+        }
+      } catch (openaiError) {
+        console.error('Both APIs failed:', openaiError.message);
+        throw new Error('Both Perplexity and OpenAI APIs failed');
+      }
+    }
+
+    if (!explanation) {
+      throw new Error('No explanation generated from either API');
+    }
+
+    console.log(`Generated explanation successfully using ${apiUsed}`);
 
     return new Response(JSON.stringify({ 
       explanation,
-      misconceptions: misconceptionContext
+      misconceptions: misconceptionContext,
+      apiUsed
     }), {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     });
