@@ -10,7 +10,7 @@ import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
-import { AlertCircle, Clock, X } from 'lucide-react';
+import { AlertCircle, Clock, X, Sparkles } from 'lucide-react';
 
 interface MisconceptionQuestionsModalProps {
   open: boolean;
@@ -36,6 +36,7 @@ interface QuestionAnswer {
     correct_answer: string;
     red_herring_explanation: string;
   } | null;
+  aiExplanation?: string;
 }
 
 export function MisconceptionQuestionsModal({ 
@@ -46,6 +47,7 @@ export function MisconceptionQuestionsModal({
   const { user } = useAuth();
   const [questions, setQuestions] = useState<QuestionAnswer[]>([]);
   const [loading, setLoading] = useState(false);
+  const [generatingExplanations, setGeneratingExplanations] = useState<Set<number>>(new Set());
 
   useEffect(() => {
     if (open && misconception && user) {
@@ -122,6 +124,43 @@ export function MisconceptionQuestionsModal({
       return Object.values(options);
     }
     return [];
+  };
+
+  const generateKidFriendlyExplanation = async (question: QuestionAnswer) => {
+    if (!question.curriculum || !misconception) return;
+
+    setGeneratingExplanations(prev => new Set(prev).add(question.id));
+
+    try {
+      const { data, error } = await supabase.functions.invoke('explain-question-mistake', {
+        body: {
+          question: question.curriculum.example_question,
+          student_answer: question.answer_given,
+          correct_answer: question.curriculum.correct_answer,
+          misconception: misconception.red_herring,
+          topic: question.topic
+        }
+      });
+
+      if (error) {
+        console.error('Error generating explanation:', error);
+        return;
+      }
+
+      if (data?.explanation) {
+        setQuestions(prev => prev.map(q => 
+          q.id === question.id ? { ...q, aiExplanation: data.explanation } : q
+        ));
+      }
+    } catch (error) {
+      console.error('Error generating explanation:', error);
+    } finally {
+      setGeneratingExplanations(prev => {
+        const newSet = new Set(prev);
+        newSet.delete(question.id);
+        return newSet;
+      });
+    }
   };
 
   return (
@@ -212,12 +251,42 @@ export function MisconceptionQuestionsModal({
                       </div>
                     </div>
 
-                    {question.curriculum.red_herring_explanation && (
-                      <div>
-                        <h4 className="font-semibold mb-2 text-blue-700">Explanation:</h4>
-                        <p className="text-sm bg-blue-50 p-3 rounded border">{question.curriculum.red_herring_explanation}</p>
+                    <div>
+                      <div className="flex items-center justify-between mb-2">
+                        <h4 className="font-semibold text-blue-700 flex items-center space-x-2">
+                          <Sparkles className="h-4 w-4" />
+                          <span>Kid-Friendly Explanation</span>
+                        </h4>
+                        {!question.aiExplanation && !generatingExplanations.has(question.id) && (
+                          <button
+                            onClick={() => generateKidFriendlyExplanation(question)}
+                            className="text-xs bg-blue-100 hover:bg-blue-200 text-blue-700 px-3 py-1 rounded-full transition-colors"
+                          >
+                            Get Fun Explanation ✨
+                          </button>
+                        )}
                       </div>
-                    )}
+                      
+                      {generatingExplanations.has(question.id) && (
+                        <div className="bg-blue-50 p-3 rounded border flex items-center space-x-2">
+                          <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-500"></div>
+                          <span className="text-sm text-blue-700">Creating a fun explanation just for you...</span>
+                        </div>
+                      )}
+                      
+                      {question.aiExplanation && (
+                        <div className="bg-blue-50 p-3 rounded border">
+                          <div className="text-sm whitespace-pre-line">{question.aiExplanation}</div>
+                        </div>
+                      )}
+                      
+                      {!question.aiExplanation && !generatingExplanations.has(question.id) && question.curriculum.red_herring_explanation && (
+                        <div className="bg-gray-50 p-3 rounded border">
+                          <p className="text-xs text-gray-600 mb-2">Standard explanation:</p>
+                          <p className="text-sm text-gray-700">{question.curriculum.red_herring_explanation}</p>
+                        </div>
+                      )}
+                    </div>
                   </>
                 )}
               </CardContent>
