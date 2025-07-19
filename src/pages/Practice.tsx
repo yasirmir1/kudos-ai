@@ -39,6 +39,7 @@ const Practice = () => {
   const [sessionComplete, setSessionComplete] = useState(false);
   const [aiExplanation, setAiExplanation] = useState<string>('');
   const [generatingExplanation, setGeneratingExplanation] = useState(false);
+  const [generatingQuestions, setGeneratingQuestions] = useState(false);
 
   useEffect(() => {
     loadAdaptiveQuestions();
@@ -218,7 +219,116 @@ const Practice = () => {
     }
   };
 
-  const handleNextQuestion = () => {
+  const generateAdditionalQuestions = async () => {
+    if (generatingQuestions) return;
+    
+    setGeneratingQuestions(true);
+    try {
+      // Get user's weak topics to focus generation
+      const { data: weakTopics } = await supabase
+        .rpc('get_weak_topics', { p_student_id: user?.id });
+      
+      // Determine what topic/subtopic to generate for
+      let targetTopic = 'Mathematics';
+      let targetSubtopic = 'General';
+      let targetDifficulty = 'Medium';
+      
+      if (weakTopics && weakTopics.length > 0) {
+        targetTopic = weakTopics[0].topic;
+        // Get a random subtopic from existing curriculum for this topic
+        const { data: existingQuestions } = await supabase
+          .from('curriculum')
+          .select('subtopic, difficulty')
+          .eq('topic', targetTopic)
+          .limit(10);
+        
+        if (existingQuestions && existingQuestions.length > 0) {
+          const randomQuestion = existingQuestions[Math.floor(Math.random() * existingQuestions.length)];
+          targetSubtopic = randomQuestion.subtopic;
+          targetDifficulty = randomQuestion.difficulty;
+        }
+      }
+
+      console.log(`Generating questions for ${targetTopic} - ${targetSubtopic} (${targetDifficulty})`);
+      
+      const response = await fetch(`https://gqkfbxhuijpfcnjimlfj.functions.supabase.co/generate-questions`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          topic: targetTopic,
+          subtopic: targetSubtopic,
+          difficulty: targetDifficulty,
+          count: 5,
+          saveToDatabase: true
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to generate questions');
+      }
+
+      const reader = response.body?.getReader();
+      const newQuestions: Question[] = [];
+      
+      if (reader) {
+        while (true) {
+          const { done, value } = await reader.read();
+          if (done) break;
+          
+          const chunk = new TextDecoder().decode(value);
+          const lines = chunk.split('\n');
+          
+          for (const line of lines) {
+            if (line.startsWith('data: ')) {
+              try {
+                const data = JSON.parse(line.slice(6));
+                if (data.type === 'question') {
+                  const question = data.data;
+                  // Format the question properly
+                  const formattedQuestion: Question = {
+                    ...question,
+                    options: Array.isArray(question.options) ? question.options : 
+                             typeof question.options === 'string' ? JSON.parse(question.options) : 
+                             Object.values(question.options || {})
+                  };
+                  newQuestions.push(formattedQuestion);
+                }
+              } catch (e) {
+                console.error('Error parsing streaming data:', e);
+              }
+            }
+          }
+        }
+      }
+      
+      if (newQuestions.length > 0) {
+        setQuestions(prev => [...prev, ...newQuestions]);
+        toast({
+          title: "New questions generated!",
+          description: `Added ${newQuestions.length} questions tailored to your learning needs.`,
+        });
+      }
+    } catch (error) {
+      console.error('Error generating questions:', error);
+      toast({
+        title: "Failed to generate questions",
+        description: "Continuing with existing questions.",
+        variant: "destructive",
+      });
+    } finally {
+      setGeneratingQuestions(false);
+    }
+  };
+
+  const handleNextQuestion = async () => {
+    // Check if we're running low on questions and generate more if needed
+    const remainingQuestions = questions.length - (currentIndex + 1);
+    if (remainingQuestions <= 3 && !generatingQuestions) {
+      generateAdditionalQuestions();
+    }
+    
     if (currentIndex + 1 >= questions.length) {
       setSessionComplete(true);
       return;
