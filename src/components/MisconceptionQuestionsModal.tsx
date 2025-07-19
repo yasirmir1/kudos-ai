@@ -142,6 +142,8 @@ export function MisconceptionQuestionsModal({
     setGeneratingExplanations(prev => new Set(prev).add(question.id));
 
     try {
+      console.log('🔗 Calling explain-question-mistake edge function...');
+      
       const { data, error } = await supabase.functions.invoke('explain-question-mistake', {
         body: {
           question: question.curriculum.example_question,
@@ -152,8 +154,17 @@ export function MisconceptionQuestionsModal({
         }
       });
 
+      console.log('📡 Edge function response:', { data, error });
+
       if (error) {
-        console.error('❌ Error generating explanation:', error);
+        console.error('❌ Edge function error:', error);
+        // Show a fallback message instead of failing silently
+        setQuestions(prev => prev.map(q => 
+          q.id === question.id ? { 
+            ...q, 
+            aiExplanation: "🤗 Oops! I'm having trouble creating your explanation right now. The main thing is to learn from this mistake and try a different approach next time!" 
+          } : q
+        ));
         return;
       }
 
@@ -164,9 +175,23 @@ export function MisconceptionQuestionsModal({
         console.log('✅ Successfully received AI explanation');
       } else {
         console.log('❌ No explanation in API response:', data);
+        // Show fallback message
+        setQuestions(prev => prev.map(q => 
+          q.id === question.id ? { 
+            ...q, 
+            aiExplanation: "🤗 I'm working on your explanation! In the meantime, remember that making mistakes is how we learn. You're doing great!" 
+          } : q
+        ));
       }
     } catch (error) {
-      console.error('Error generating explanation:', error);
+      console.error('💥 Exception during API call:', error);
+      // Show fallback message for any unexpected errors
+      setQuestions(prev => prev.map(q => 
+        q.id === question.id ? { 
+          ...q, 
+          aiExplanation: "🌟 Every mistake is a step closer to getting it right! Keep practicing and you'll master this concept." 
+        } : q
+      ));
     } finally {
       setGeneratingExplanations(prev => {
         const newSet = new Set(prev);
