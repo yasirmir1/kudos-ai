@@ -14,6 +14,7 @@ import { MisconceptionExplanationModal } from '@/components/MisconceptionExplana
 import { MisconceptionQuestionsModal } from '@/components/MisconceptionQuestionsModal';
 import { FocusAreaQuestionsModal } from '@/components/FocusAreaQuestionsModal';
 import { WorksheetGeneratorModal } from '@/components/WorksheetGeneratorModal';
+import { BulkQuestionGenerator } from '@/components/BulkQuestionGenerator';
 
 interface PerformanceData {
   topic: string;
@@ -440,6 +441,14 @@ const Dashboard = () => {
               )}
             </CardContent>
           </Card>
+        </div>
+
+        {/* Bulk Question Generator - Admin Section */}
+        <div className="space-y-6">
+          <div className="border-t pt-8">
+            <h3 className="text-2xl font-bold mb-4">Admin Tools</h3>
+            <BulkQuestionGenerator />
+          </div>
         </div>
 
         {/* Modals */}
