@@ -228,6 +228,9 @@ const Dashboard = () => {
             </div>
           </div>
           <div className="flex space-x-2">
+            <Button variant="ghost" onClick={() => navigate('/analytics')}>
+              Analytics
+            </Button>
             <Button variant="ghost" onClick={() => navigate('/profile')}>
               Profile
             </Button>
