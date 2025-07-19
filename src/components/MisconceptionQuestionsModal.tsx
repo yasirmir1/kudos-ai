@@ -98,6 +98,13 @@ export function MisconceptionQuestionsModal({
         }));
 
         setQuestions(questionsWithCurriculum);
+        
+        // Automatically generate AI explanations for all questions
+        questionsWithCurriculum.forEach(question => {
+          if (question.curriculum) {
+            generateKidFriendlyExplanation(question);
+          }
+        });
       } else {
         setQuestions([]);
       }
@@ -252,20 +259,10 @@ export function MisconceptionQuestionsModal({
                     </div>
 
                     <div>
-                      <div className="flex items-center justify-between mb-2">
-                        <h4 className="font-semibold text-blue-700 flex items-center space-x-2">
-                          <Sparkles className="h-4 w-4" />
-                          <span>Kid-Friendly Explanation</span>
-                        </h4>
-                        {!question.aiExplanation && !generatingExplanations.has(question.id) && (
-                          <button
-                            onClick={() => generateKidFriendlyExplanation(question)}
-                            className="text-xs bg-blue-100 hover:bg-blue-200 text-blue-700 px-3 py-1 rounded-full transition-colors"
-                          >
-                            Get Fun Explanation ✨
-                          </button>
-                        )}
-                      </div>
+                      <h4 className="font-semibold mb-2 text-blue-700 flex items-center space-x-2">
+                        <Sparkles className="h-4 w-4" />
+                        <span>Explanation</span>
+                      </h4>
                       
                       {generatingExplanations.has(question.id) && (
                         <div className="bg-blue-50 p-3 rounded border flex items-center space-x-2">
@@ -280,10 +277,9 @@ export function MisconceptionQuestionsModal({
                         </div>
                       )}
                       
-                      {!question.aiExplanation && !generatingExplanations.has(question.id) && question.curriculum.red_herring_explanation && (
-                        <div className="bg-gray-50 p-3 rounded border">
-                          <p className="text-xs text-gray-600 mb-2">Standard explanation:</p>
-                          <p className="text-sm text-gray-700">{question.curriculum.red_herring_explanation}</p>
+                      {!question.aiExplanation && !generatingExplanations.has(question.id) && (
+                        <div className="bg-gray-50 p-3 rounded border text-center">
+                          <p className="text-sm text-gray-600">Explanation will appear here automatically</p>
                         </div>
                       )}
                     </div>

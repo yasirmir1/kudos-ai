@@ -9,6 +9,7 @@ const corsHeaders = {
 
 const supabaseUrl = Deno.env.get('SUPABASE_URL')!
 const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!
+const perplexityApiKey = Deno.env.get('PERPLEXITY_API_KEY');
 const openAIApiKey = Deno.env.get('kudos');
 
 serve(async (req) => {
@@ -17,6 +18,10 @@ serve(async (req) => {
   }
 
   try {
+    if (!perplexityApiKey) {
+      throw new Error('Perplexity API key is required. Please set up your Perplexity API key.');
+    }
+
     const supabase = createClient(supabaseUrl, supabaseServiceKey)
     const { topic, difficulty, count = 5 } = await req.json();
 
@@ -54,36 +59,86 @@ Return a JSON array with this exact structure:
 
 Make sure the JSON is valid and properly formatted.`;
 
-    const response = await fetch('https://api.openai.com/v1/chat/completions', {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${openAIApiKey}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        model: 'gpt-4o-mini',
-        messages: [
-          {
-            role: 'system',
-            content: 'You are an expert in creating 11+ exam questions. Always return valid JSON arrays only, no additional text.'
-          },
-          {
-            role: 'user',
-            content: prompt
-          }
-        ],
-        temperature: 0.7,
-        max_tokens: 2000
-      }),
-    });
+    // Try Perplexity first
+    let response;
+    let apiUsed = '';
 
-    if (!response.ok) {
-      console.error('OpenAI API error:', response.status, response.statusText);
-      throw new Error(`OpenAI API error: ${response.status}`);
+    try {
+      console.log('Using Perplexity API for question generation...');
+      response = await fetch('https://api.perplexity.ai/chat/completions', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${perplexityApiKey}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          model: 'llama-3.1-sonar-large-128k-online',
+          messages: [
+            {
+              role: 'system',
+              content: 'You are an expert in creating 11+ exam questions. Always return valid JSON arrays only, no additional text.'
+            },
+            {
+              role: 'user',
+              content: prompt
+            }
+          ],
+          max_tokens: 2000,
+          temperature: 0.7,
+          top_p: 0.9,
+          return_images: false,
+          return_related_questions: false
+        }),
+      });
+      
+      if (response.ok) {
+        apiUsed = 'perplexity';
+        console.log('Successfully used Perplexity API');
+      } else {
+        throw new Error(`Perplexity API error: ${response.status}`);
+      }
+    } catch (perplexityError) {
+      console.log('Perplexity failed, trying OpenAI fallback:', perplexityError.message);
+      
+      if (openAIApiKey) {
+        console.log('Using OpenAI API as fallback...');
+        response = await fetch('https://api.openai.com/v1/chat/completions', {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${openAIApiKey}`,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            model: 'gpt-4.1-2025-04-14',
+            messages: [
+              {
+                role: 'system',
+                content: 'You are an expert in creating 11+ exam questions. Always return valid JSON arrays only, no additional text.'
+              },
+              {
+                role: 'user',
+                content: prompt
+              }
+            ],
+            temperature: 0.7,
+            max_tokens: 2000
+          }),
+        });
+        
+        if (response.ok) {
+          apiUsed = 'openai';
+          console.log('Successfully used OpenAI API as fallback');
+        } else {
+          console.error('OpenAI API error:', response.status, response.statusText);
+          throw new Error(`Both Perplexity and OpenAI APIs failed: ${response.status}`);
+        }
+      } else {
+        throw new Error('Perplexity failed and no OpenAI fallback available');
+      }
     }
 
     const data = await response.json();
-    console.log('OpenAI response received');
+    console.log(`API response received from ${apiUsed}`);
     
     let questions;
     try {
@@ -92,8 +147,8 @@ Make sure the JSON is valid and properly formatted.`;
       const jsonContent = content.replace(/```json\n?/g, '').replace(/```\n?/g, '');
       questions = JSON.parse(jsonContent);
     } catch (parseError) {
-      console.error('Failed to parse OpenAI response:', parseError);
-      throw new Error('Invalid JSON response from OpenAI');
+      console.error(`Failed to parse ${apiUsed} response:`, parseError);
+      throw new Error(`Invalid JSON response from ${apiUsed}`);
     }
 
     // Import questions into curriculum table

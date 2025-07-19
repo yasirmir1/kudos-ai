@@ -16,8 +16,8 @@ serve(async (req) => {
     const PERPLEXITY_API_KEY = Deno.env.get('PERPLEXITY_API_KEY');
     const OPENAI_API_KEY = Deno.env.get('kudos');
     
-    if (!PERPLEXITY_API_KEY && !OPENAI_API_KEY) {
-      throw new Error('No API keys found for explanations');
+    if (!PERPLEXITY_API_KEY) {
+      throw new Error('Perplexity API key is required. Please set up your Perplexity API key.');
     }
 
     const { question, student_answer, correct_answer, misconception, topic } = await req.json();
