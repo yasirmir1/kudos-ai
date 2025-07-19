@@ -13,7 +13,7 @@ import { BookOpen, Target } from 'lucide-react';
 const Auth = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [ageGroup, setAgeGroup] = useState('10-11');
+  const [ageGroup, setAgeGroup] = useState('year 4-5');
   const [loading, setLoading] = useState(false);
   const { user, signIn, signUp } = useAuth();
   const { toast } = useToast();
@@ -181,21 +181,21 @@ const Auth = () => {
                   </div>
                   
                   <div className="space-y-2">
-                    <Label htmlFor="age-group">Age Group</Label>
+                    <Label htmlFor="age-group">School Year</Label>
                     <Select value={ageGroup} onValueChange={setAgeGroup}>
                       <SelectTrigger>
-                        <SelectValue placeholder="Select your age group" />
+                        <SelectValue placeholder="Select your school year" />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="6-7">6-7 years old</SelectItem>
-                        <SelectItem value="8-9">8-9 years old</SelectItem>
-                        <SelectItem value="10-11">10-11 years old</SelectItem>
+                        <SelectItem value="year 2-3">Year 2-3</SelectItem>
+                        <SelectItem value="year 4-5">Year 4-5</SelectItem>
+                        <SelectItem value="11+">11+</SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
                   
                   <p className="text-xs text-muted-foreground">
-                    Questions will be tailored to your age group and learning level
+                    Questions will be tailored to your school year and learning level
                   </p>
                 </CardContent>
                 

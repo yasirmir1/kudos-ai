@@ -42,7 +42,7 @@ const Practice = () => {
   const [generatingExplanation, setGeneratingExplanation] = useState(false);
   const [generatingQuestions, setGeneratingQuestions] = useState(false);
   const [answeredQuestions, setAnsweredQuestions] = useState<{question: Question, isCorrect: boolean, timeTaken: number}[]>([]);
-  const [userAgeGroup, setUserAgeGroup] = useState<'6-7' | '8-9' | '10-11'>('10-11');
+  const [userAgeGroup, setUserAgeGroup] = useState<'year 2-3' | 'year 4-5' | '11+'>('year 4-5');
 
   useEffect(() => {
     setSessionStartTime(new Date());
@@ -64,15 +64,15 @@ const Practice = () => {
       }
       
       // Load questions after getting age group
-      loadAdaptiveQuestions(profile?.age_group || '10-11');
+      loadAdaptiveQuestions(profile?.age_group || 'year 4-5');
     } catch (error) {
       console.error('Error loading profile:', error);
-      // Default to 10-11 if there's an error
-      loadAdaptiveQuestions('10-11');
+      // Default to year 4-5 if there's an error
+      loadAdaptiveQuestions('year 4-5');
     }
   };
 
-  const loadAdaptiveQuestions = async (ageGroup: '6-7' | '8-9' | '10-11' = '10-11') => {
+  const loadAdaptiveQuestions = async (ageGroup: 'year 2-3' | 'year 4-5' | '11+' = 'year 4-5') => {
     try {
       setLoading(true);
       

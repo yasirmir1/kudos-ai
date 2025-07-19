@@ -11,7 +11,7 @@ import { ArrowLeft, User, Calendar, Target, Save } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { ResetProgressModal } from '@/components/ResetProgressModal';
 
-type AgeGroup = '6-7' | '8-9' | '10-11';
+type AgeGroup = 'year 2-3' | 'year 4-5' | '11+';
 
 interface Profile {
   id: string;
@@ -36,7 +36,7 @@ const Profile = () => {
     target_exam_date: string;
   }>({
     current_level: 'beginner',
-    age_group: '10-11',
+    age_group: 'year 4-5',
     target_exam_date: ''
   });
 
@@ -63,7 +63,7 @@ const Profile = () => {
         setProfile(data);
         setFormData({
           current_level: data.current_level || 'beginner',
-          age_group: data.age_group || '10-11',
+          age_group: data.age_group || 'year 4-5',
           target_exam_date: data.target_exam_date || ''
         });
       } else {
@@ -214,22 +214,22 @@ const Profile = () => {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="age-group">Age Group</Label>
+                <Label htmlFor="age-group">School Year</Label>
                 <Select 
                   value={formData.age_group} 
                   onValueChange={(value: AgeGroup) => setFormData(prev => ({ ...prev, age_group: value }))}
                 >
                   <SelectTrigger>
-                    <SelectValue placeholder="Select your age group" />
+                    <SelectValue placeholder="Select your school year" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="6-7">6-7 years old</SelectItem>
-                    <SelectItem value="8-9">8-9 years old</SelectItem>
-                    <SelectItem value="10-11">10-11 years old</SelectItem>
+                    <SelectItem value="year 2-3">Year 2-3</SelectItem>
+                    <SelectItem value="year 4-5">Year 4-5</SelectItem>
+                    <SelectItem value="11+">11+</SelectItem>
                   </SelectContent>
                 </Select>
                 <p className="text-xs text-muted-foreground">
-                  Questions and curriculum will be tailored to your age group
+                  Questions and curriculum will be tailored to your school year
                 </p>
               </div>
 

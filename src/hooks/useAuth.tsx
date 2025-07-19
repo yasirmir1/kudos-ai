@@ -50,7 +50,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     return () => subscription.unsubscribe();
   }, []);
 
-  const signUp = async (email: string, password: string, ageGroup: string = '10-11') => {
+  const signUp = async (email: string, password: string, ageGroup: string = 'year 4-5') => {
     const redirectUrl = `${window.location.origin}/`;
     
     const { error } = await supabase.auth.signUp({
