@@ -13,7 +13,6 @@ import { TopicsStudiedModal } from '@/components/TopicsStudiedModal';
 import { MisconceptionExplanationModal } from '@/components/MisconceptionExplanationModal';
 import { MisconceptionQuestionsModal } from '@/components/MisconceptionQuestionsModal';
 import { FocusAreaQuestionsModal } from '@/components/FocusAreaQuestionsModal';
-import { QuestionGeneratorModal } from '@/components/QuestionGeneratorModal';
 
 interface PerformanceData {
   topic: string;
@@ -253,7 +252,6 @@ const Dashboard = () => {
               <BookOpen className="mr-2 h-5 w-5" />
               Start Practice Session
             </Button>
-            <QuestionGeneratorModal />
           </div>
         </div>
 

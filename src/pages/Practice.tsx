@@ -367,7 +367,7 @@ const Practice = () => {
     );
   }
 
-  if (questions.length === 0) {
+  if (questions.length === 0 && !loading) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
         <div className="text-center space-y-4">
@@ -429,6 +429,11 @@ const Practice = () => {
           <div className="text-center flex-1 mx-8">
             <p className="text-sm text-muted-foreground mb-2">
               Question {currentIndex + 1} of {questions.length}
+              {generatingQuestions && (
+                <span className="ml-2 text-blue-600 text-xs">
+                  • Generating more questions...
+                </span>
+              )}
             </p>
             <Progress value={progress} className="w-64 h-2 mx-auto" />
           </div>
