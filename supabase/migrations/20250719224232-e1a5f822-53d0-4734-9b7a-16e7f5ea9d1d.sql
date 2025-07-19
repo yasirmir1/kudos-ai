@@ -1,0 +1,52 @@
+-- Insert Year 4-5 curriculum data with proper array formatting
+INSERT INTO curriculum (
+    question_id, topic, subtopic, example_question, question_type, 
+    options, correct_answer, difficulty, red_herring_tag, 
+    red_herring_explanation, pedagogical_notes, age_group, year_level
+) VALUES 
+-- Year 4 Questions (Foundation Level)
+('Y4NPV001', 'Number - Number and Place Value', 'Count in multiples of 6, 7, 9, 25 and 1000', 'Count on in 25s from 150. What comes next: 150, 175, 200, __?', 'Multiple Choice', '["225", "250", "215", "300"]', '225', 'Easy', NULL, NULL, 'Year 4: Skip counting by 25s.', 'year 4-5', 4),
+
+('Y4NPV002', 'Number - Number and Place Value', 'Recognise the place value of each digit in a four-digit number', 'What is the value of the digit 7 in the number 3,746?', 'Multiple Choice', '["700", "7", "70", "7000"]', '700', 'Medium', ARRAY['PlaceValue_PositionError'], 'Student may identify the wrong place value position (70 for tens or 7 for ones).', 'Year 4: Understanding hundreds place in 4-digit numbers.', 'year 4-5', 4),
+
+('Y4NPV003', 'Number - Number and Place Value', 'Count backwards through zero to include negative numbers', 'Continue the sequence: 3, 1, -1, __', 'Multiple Choice', '["-3", "-2", "0", "-4"]', '-3', 'Medium', ARRAY['NegativeNumbers_PatternError'], 'Student may not recognize the pattern of subtracting 2 each time.', 'Year 4: Counting backwards through zero.', 'year 4-5', 4),
+
+('Y4NPV004', 'Number - Number and Place Value', 'Round any number to the nearest 10, 100 or 1000', 'Round 4,567 to the nearest hundred.', 'Multiple Choice', '["4,600", "4,500", "4,570", "5,000"]', '4,600', 'Medium', ARRAY['Rounding_DirectionError'], 'Student may round down to 4,500 instead of up to 4,600.', 'Year 4: Rounding to nearest hundred.', 'year 4-5', 4),
+
+('Y4ASM001', 'Number - Addition and Subtraction', 'Add and subtract numbers with up to 4 digits using formal written methods', 'Calculate: 3,456 + 1,789', 'Multiple Choice', '["5,245", "4,245", "5,235", "5,145"]', '5,245', 'Medium', ARRAY['Addition_CarryingError'], 'Student may make errors when carrying over between columns.', 'Year 4: 4-digit addition with carrying.', 'year 4-5', 4),
+
+('Y4ASM002', 'Number - Addition and Subtraction', 'Solve addition and subtraction two-step problems in contexts', 'A school had 1,234 books. They bought 256 more books and then gave away 189 books. How many books do they have now?', 'Multiple Choice', '["1,301", "1,679", "1,290", "1,401"]', '1,301', 'Hard', ARRAY['MultiStep_SequenceError'], 'Student may add all numbers (1,679) instead of adding then subtracting.', 'Year 4: Two-step word problem with addition and subtraction.', 'year 4-5', 4),
+
+('Y4MD001', 'Number - Multiplication and Division', 'Recall multiplication and division facts for multiplication tables up to 12 × 12', 'What is 7 × 8?', 'Multiple Choice', '["56", "54", "48", "63"]', '56', 'Medium', ARRAY['Multiplication_NearbyFact'], 'Student may confuse with nearby facts like 6×8=48 or 7×9=63.', 'Year 4: Multiplication facts up to 12×12.', 'year 4-5', 4),
+
+('Y4MD002', 'Number - Multiplication and Division', 'Multiply two-digit and three-digit numbers by a one-digit number', 'Calculate: 234 × 6', 'Multiple Choice', '["1,404", "1,304", "1,444", "1,204"]', '1,404', 'Hard', ARRAY['Multiplication_CarryError'], 'Student may make errors when carrying in multi-digit multiplication.', 'Year 4: Three-digit by one-digit multiplication.', 'year 4-5', 4),
+
+('Y4FR001', 'Number - Fractions (including decimals)', 'Recognise and show families of common equivalent fractions', 'Which fraction is equivalent to 3/6?', 'Multiple Choice', '["1/2", "2/3", "3/4", "1/3"]', '1/2', 'Medium', ARRAY['Fractions_SimplificationError'], 'Student may not simplify correctly or recognize equivalence.', 'Year 4: Finding equivalent fractions through simplification.', 'year 4-5', 4),
+
+('Y4FR002', 'Number - Fractions (including decimals)', 'Count up and down in hundredths', 'What is 0.47 + 0.03?', 'Multiple Choice', '["0.50", "0.44", "0.77", "0.5"]', '0.50', 'Medium', ARRAY['Decimals_PlaceValueError'], 'Student may add digits incorrectly (4+3=7, giving 0.77).', 'Year 4: Adding hundredths to cross a tenth boundary.', 'year 4-5', 4),
+
+('Y4FR003', 'Number - Fractions (including decimals)', 'Add and subtract fractions with the same denominator', 'Calculate: 3/8 + 2/8', 'Multiple Choice', '["5/8", "5/16", "1/8", "6/8"]', '5/8', 'Easy', ARRAY['Fractions_DenominatorAddition'], 'Student may incorrectly add denominators (8+8=16).', 'Year 4: Adding fractions with same denominator.', 'year 4-5', 4),
+
+('Y4FR004', 'Number - Fractions (including decimals)', 'Recognise and write decimal equivalents of 1/4, 1/2, 3/4', 'What is 3/4 as a decimal?', 'Multiple Choice', '["0.75", "0.34", "0.25", "0.3"]', '0.75', 'Medium', ARRAY['FractionDecimal_ConversionError'], 'Student may write digits from fraction (0.34) instead of converting.', 'Year 4: Converting common fractions to decimals.', 'year 4-5', 4),
+
+('Y4ME001', 'Measurement', 'Convert between different units of measure', 'How many metres are in 3 kilometres?', 'Multiple Choice', '["3,000", "300", "30", "30,000"]', '3,000', 'Medium', ARRAY['Conversion_FactorError'], 'Student may use wrong conversion factor (×100 instead of ×1000).', 'Year 4: Converting kilometres to metres.', 'year 4-5', 4),
+
+('Y4ME002', 'Measurement', 'Measure and calculate the perimeter of a rectilinear figure', 'A rectangle has length 8cm and width 5cm. What is its perimeter?', 'Multiple Choice', '["26cm", "13cm", "40cm", "21cm"]', '26cm', 'Medium', ARRAY['Perimeter_FormulaError'], 'Student may only add length and width once (13cm) or calculate area (40cm²).', 'Year 4: Calculating rectangle perimeter.', 'year 4-5', 4),
+
+('Y4ME003', 'Measurement', 'Find the area of rectilinear shapes by counting squares', 'A rectangle drawn on squared paper covers 15 squares. What is its area?', 'Multiple Choice', '["15 square units", "15 units", "30 square units", "60 square units"]', '15 square units', 'Easy', ARRAY['Area_UnitError'], 'Student may forget to include ''square'' in units.', 'Year 4: Understanding area by counting squares.', 'year 4-5', 4),
+
+('Y4GS001', 'Geometry - Properties of Shapes', 'Compare and classify geometric shapes, including quadrilaterals and triangles', 'Which type of triangle has all sides of different lengths?', 'Multiple Choice', '["Scalene", "Isosceles", "Equilateral", "Right-angled"]', 'Scalene', 'Medium', ARRAY['Triangle_TypeConfusion'], 'Student may confuse triangle classifications.', 'Year 4: Identifying triangle types by side lengths.', 'year 4-5', 4),
+
+('Y4GS002', 'Geometry - Properties of Shapes', 'Identify acute and obtuse angles', 'What type of angle is greater than 90° but less than 180°?', 'Multiple Choice', '["Obtuse", "Acute", "Right", "Reflex"]', 'Obtuse', 'Medium', ARRAY['Angle_TypeConfusion'], 'Student may confuse obtuse with acute (less than 90°).', 'Year 4: Classifying angles by size.', 'year 4-5', 4),
+
+('Y4GS003', 'Geometry - Properties of Shapes', 'Identify lines of symmetry in 2-D shapes', 'How many lines of symmetry does a square have?', 'Multiple Choice', '["4", "2", "1", "8"]', '4', 'Medium', ARRAY['Symmetry_CountError'], 'Student may only count horizontal and vertical lines (2).', 'Year 4: Finding all lines of symmetry in regular shapes.', 'year 4-5', 4),
+
+('Y4PD001', 'Geometry - Position and Direction', 'Describe positions on a 2-D grid as coordinates in the first quadrant', 'What are the coordinates of a point that is 3 units right and 2 units up from the origin?', 'Multiple Choice', '["(3, 2)", "(2, 3)", "(3, -2)", "(-3, 2)"]', '(3, 2)', 'Medium', ARRAY['Coordinates_OrderError'], 'Student may reverse x and y coordinates (2, 3).', 'Year 4: Understanding coordinate notation (x, y).', 'year 4-5', 4),
+
+('Y4PD002', 'Geometry - Position and Direction', 'Describe movements between positions as translations', 'A shape at position (2, 3) moves 4 units right. What is its new position?', 'Multiple Choice', '["(6, 3)", "(2, 7)", "(4, 3)", "(2, -1)"]', '(6, 3)', 'Hard', ARRAY['Translation_DirectionError'], 'Student may move up instead of right (2, 7) or only count to 4.', 'Year 4: Understanding horizontal translation on coordinate grid.', 'year 4-5', 4),
+
+('Y4ST001', 'Statistics', 'Interpret and present discrete and continuous data using appropriate graphical methods', 'A bar chart shows the favorite colors of 30 students. If 12 chose blue and 8 chose red, how many chose other colors?', 'Multiple Choice', '["10", "20", "4", "30"]', '10', 'Medium', ARRAY['Statistics_SubtractionError'], 'Student may add instead of subtract, or find difference between blue and red.', 'Year 4: Interpreting data from bar charts.', 'year 4-5', 4),
+
+('Y4ST002', 'Statistics', 'Solve comparison, sum and difference problems using information presented in bar charts', 'In a bar chart, Team A scored 45 points and Team B scored 30 points. How many more points did Team A score?', 'Multiple Choice', '["15", "75", "30", "45"]', '15', 'Easy', ARRAY['Statistics_ComparisonError'], 'Student may add scores (75) instead of finding difference.', 'Year 4: Finding differences in data.', 'year 4-5', 4)
+
+ON CONFLICT (question_id) DO NOTHING;
