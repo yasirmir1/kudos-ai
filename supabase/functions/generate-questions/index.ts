@@ -1,16 +1,11 @@
 import "https://deno.land/x/xhr@0.1.0/mod.ts";
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
-import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.7.1'
+import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.52.0';
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
-
-const supabaseUrl = Deno.env.get('SUPABASE_URL')!
-const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!
-const perplexityApiKey = Deno.env.get('PERPLEXITY_API_KEY');
-const openAIApiKey = Deno.env.get('kudos');
 
 serve(async (req) => {
   if (req.method === 'OPTIONS') {
@@ -18,171 +13,278 @@ serve(async (req) => {
   }
 
   try {
-    if (!perplexityApiKey) {
-      throw new Error('Perplexity API key is required. Please set up your Perplexity API key.');
-    }
-
-    const supabase = createClient(supabaseUrl, supabaseServiceKey)
-    const { topic, difficulty, count = 5 } = await req.json();
-
-    console.log('Generating questions for:', { topic, difficulty, count });
-
-    const prompt = `Generate ${count} multiple choice questions for 11+ exam preparation on the topic "${topic}" with difficulty level "${difficulty}".
-
-Each question should:
-- Be appropriate for 11+ exam level (ages 10-11)
-- Have exactly 4 options (A, B, C, D)
-- Include red herring explanations for common misconceptions
-- Include pedagogical notes for learning reinforcement
-
-Return a JSON array with this exact structure:
-[
-  {
-    "question_id": "unique_id",
-    "topic": "${topic}",
-    "subtopic": "specific subtopic",
-    "example_question": "the actual question text",
-    "question_type": "multiple_choice",
-    "options": {
-      "A": "option text",
-      "B": "option text", 
-      "C": "option text",
-      "D": "option text"
-    },
-    "correct_answer": "A",
-    "difficulty": "${difficulty}",
-    "red_herring_tag": ["misconception1", "misconception2"],
-    "red_herring_explanation": "Explanation of why wrong answers are commonly chosen",
-    "pedagogical_notes": "Teaching tips and learning reinforcement notes"
-  }
-]
-
-Make sure the JSON is valid and properly formatted.`;
-
-    // Try Perplexity first
-    let response;
-    let apiUsed = '';
-
-    try {
-      console.log('Using Perplexity API for question generation...');
-      response = await fetch('https://api.perplexity.ai/chat/completions', {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${perplexityApiKey}`,
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          model: 'sonar',
-          messages: [
-            {
-              role: 'system',
-              content: 'You are an expert in creating 11+ exam questions. Always return valid JSON arrays only, no additional text.'
-            },
-            {
-              role: 'user',
-              content: prompt
-            }
-          ],
-          max_tokens: 2000,
-          temperature: 0.7,
-          top_p: 0.9,
-          return_images: false,
-          return_related_questions: false
-        }),
-      });
-      
-      if (response.ok) {
-        apiUsed = 'perplexity';
-        console.log('Successfully used Perplexity API');
-      } else {
-        throw new Error(`Perplexity API error: ${response.status}`);
-      }
-    } catch (perplexityError) {
-      console.log('Perplexity failed, trying OpenAI fallback:', perplexityError.message);
-      
-      if (openAIApiKey) {
-        console.log('Using OpenAI API as fallback...');
-        response = await fetch('https://api.openai.com/v1/chat/completions', {
-          method: 'POST',
-          headers: {
-            'Authorization': `Bearer ${openAIApiKey}`,
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            model: 'gpt-4.1-2025-04-14',
-            messages: [
-              {
-                role: 'system',
-                content: 'You are an expert in creating 11+ exam questions. Always return valid JSON arrays only, no additional text.'
-              },
-              {
-                role: 'user',
-                content: prompt
-              }
-            ],
-            temperature: 0.7,
-            max_tokens: 2000
-          }),
-        });
-        
-        if (response.ok) {
-          apiUsed = 'openai';
-          console.log('Successfully used OpenAI API as fallback');
-        } else {
-          console.error('OpenAI API error:', response.status, response.statusText);
-          throw new Error(`Both Perplexity and OpenAI APIs failed: ${response.status}`);
-        }
-      } else {
-        throw new Error('Perplexity failed and no OpenAI fallback available');
-      }
-    }
-
-    const data = await response.json();
-    console.log(`API response received from ${apiUsed}`);
+    const OPENAI_API_KEY = Deno.env.get('kudos');
+    const PERPLEXITY_API_KEY = Deno.env.get('PERPLEXITY_API_KEY');
     
-    let questions;
-    try {
-      const content = data.choices[0].message.content.trim();
-      // Remove any markdown code blocks if present
-      const jsonContent = content.replace(/```json\n?/g, '').replace(/```\n?/g, '');
-      questions = JSON.parse(jsonContent);
-    } catch (parseError) {
-      console.error(`Failed to parse ${apiUsed} response:`, parseError);
-      throw new Error(`Invalid JSON response from ${apiUsed}`);
+    if (!OPENAI_API_KEY && !PERPLEXITY_API_KEY) {
+      throw new Error('No AI API keys available');
     }
 
-    // Import questions into curriculum table
-    const { error: importError } = await supabase.rpc('import_curriculum_json_skip_duplicates', {
-      json_data: questions
+    const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
+    const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
+    const supabase = createClient(supabaseUrl, supabaseKey);
+
+    const { topic, subtopic, difficulty, count = 5, saveToDatabase = false } = await req.json();
+
+    if (!topic || !subtopic || !difficulty) {
+      throw new Error('Topic, subtopic, and difficulty are required');
+    }
+
+    console.log(`Generating ${count} questions for ${topic} - ${subtopic} (${difficulty})`);
+
+    // Get existing questions as examples for the AI
+    const { data: examples, error: exampleError } = await supabase
+      .from('curriculum')
+      .select('*')
+      .eq('topic', topic)
+      .eq('difficulty', difficulty)
+      .limit(3);
+
+    if (exampleError) {
+      console.error('Error fetching examples:', exampleError);
+    }
+
+    // Create a streaming response
+    const stream = new ReadableStream({
+      async start(controller) {
+        try {
+          const prompt = `You are an expert educational content creator. Generate ${count} high-quality multiple choice questions for mathematics education.
+
+TOPIC: ${topic}
+SUBTOPIC: ${subtopic}  
+DIFFICULTY: ${difficulty}
+
+REQUIREMENTS:
+1. Follow the EXACT JSON structure shown in the examples
+2. Generate realistic red herrings (common wrong answers)
+3. Include pedagogical explanations
+4. Make questions age-appropriate for the difficulty level
+5. Ensure mathematical accuracy
+
+${examples && examples.length > 0 ? `
+EXAMPLE STRUCTURE (use this exact format):
+${JSON.stringify(examples[0], null, 2)}
+
+MORE EXAMPLES:
+${examples.slice(1).map(ex => JSON.stringify(ex, null, 2)).join('\n\n')}
+` : ''}
+
+Generate ${count} questions as a JSON array. Each question should have:
+- question_id: unique identifier (use format: "${topic.toLowerCase().replace(/[^a-z0-9]/g, '_')}_${subtopic.toLowerCase().replace(/[^a-z0-9]/g, '_')}_" + random suffix)
+- topic: "${topic}"
+- subtopic: "${subtopic}"
+- example_question: clear, well-written question
+- question_type: "multiple_choice"
+- options: array of 4 answer choices
+- correct_answer: one of the options (exact match)
+- difficulty: "${difficulty}"
+- red_herring_tag: array of misconception tags (e.g., ["PlaceValue_DigitValueConfusion"])
+- red_herring_explanation: why wrong answers are tempting
+- pedagogical_notes: teaching tips
+
+RESPOND WITH ONLY THE JSON ARRAY, NO OTHER TEXT.`;
+
+          let apiResponse;
+          let apiUsed = '';
+
+          // Try GPT-4.1 first (best for structured generation)
+          if (OPENAI_API_KEY) {
+            try {
+              console.log('Using OpenAI GPT-4.1 for question generation...');
+              
+              apiResponse = await fetch('https://api.openai.com/v1/chat/completions', {
+                method: 'POST',
+                headers: {
+                  'Authorization': `Bearer ${OPENAI_API_KEY}`,
+                  'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                  model: 'gpt-4.1-2025-04-14',
+                  messages: [
+                    {
+                      role: 'system',
+                      content: 'You are an expert educational content creator specializing in mathematics curriculum development. You generate high-quality, pedagogically sound questions with realistic misconceptions.'
+                    },
+                    {
+                      role: 'user',
+                      content: prompt
+                    }
+                  ],
+                  max_tokens: 4000,
+                  temperature: 0.7,
+                  response_format: { type: "json_object" }
+                }),
+              });
+              
+              if (apiResponse.ok) {
+                apiUsed = 'openai';
+              } else {
+                throw new Error(`OpenAI API error: ${apiResponse.status}`);
+              }
+            } catch (openaiError) {
+              console.log('OpenAI failed, trying Perplexity...', openaiError.message);
+            }
+          }
+
+          // Fallback to Perplexity
+          if (!apiResponse?.ok && PERPLEXITY_API_KEY) {
+            try {
+              console.log('Using Perplexity as fallback...');
+              
+              apiResponse = await fetch('https://api.perplexity.ai/chat/completions', {
+                method: 'POST',
+                headers: {
+                  'Authorization': `Bearer ${PERPLEXITY_API_KEY}`,
+                  'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                  model: 'sonar',
+                  messages: [
+                    {
+                      role: 'system',
+                      content: 'You are an expert educational content creator. Generate structured JSON responses for educational questions.'
+                    },
+                    {
+                      role: 'user',
+                      content: prompt
+                    }
+                  ],
+                  max_tokens: 4000,
+                  temperature: 0.7
+                }),
+              });
+              
+              if (apiResponse.ok) {
+                apiUsed = 'perplexity';
+              }
+            } catch (perplexityError) {
+              console.error('Both APIs failed:', perplexityError.message);
+              throw new Error('All AI services unavailable');
+            }
+          }
+
+          if (!apiResponse?.ok) {
+            throw new Error('Failed to generate questions with any AI service');
+          }
+
+          const data = await apiResponse.json();
+          let generatedContent = '';
+          
+          if (apiUsed === 'openai') {
+            generatedContent = data.choices[0].message.content;
+          } else {
+            generatedContent = data.choices[0].message.content;
+          }
+
+          console.log('Generated content:', generatedContent);
+
+          // Parse and validate the generated questions
+          let questions;
+          try {
+            // Clean the response and try to parse JSON
+            const cleanContent = generatedContent.replace(/```json\n?|\n?```/g, '').trim();
+            const parsed = JSON.parse(cleanContent);
+            questions = Array.isArray(parsed) ? parsed : parsed.questions || [parsed];
+          } catch (parseError) {
+            console.error('JSON parsing error:', parseError);
+            throw new Error('AI generated invalid JSON format');
+          }
+
+          // Validate and stream each question
+          for (let i = 0; i < questions.length; i++) {
+            const question = questions[i];
+            
+            // Validate required fields
+            const requiredFields = ['question_id', 'topic', 'subtopic', 'example_question', 'options', 'correct_answer', 'difficulty'];
+            const missingFields = requiredFields.filter(field => !question[field]);
+            
+            if (missingFields.length > 0) {
+              console.error(`Question ${i + 1} missing fields:`, missingFields);
+              continue;
+            }
+
+            // Validate that correct_answer is in options
+            if (!question.options.includes(question.correct_answer)) {
+              console.error(`Question ${i + 1}: correct_answer not in options`);
+              continue;
+            }
+
+            // Stream the validated question
+            const questionData = {
+              type: 'question',
+              data: question,
+              index: i + 1,
+              total: questions.length,
+              apiUsed
+            };
+
+            controller.enqueue(new TextEncoder().encode(`data: ${JSON.stringify(questionData)}\n\n`));
+
+            // Save to database if requested
+            if (saveToDatabase) {
+              try {
+                const { error: insertError } = await supabase
+                  .from('curriculum')
+                  .insert(question);
+
+                if (insertError) {
+                  console.error('Database save error:', insertError);
+                  controller.enqueue(new TextEncoder().encode(`data: ${JSON.stringify({
+                    type: 'error',
+                    message: `Failed to save question ${i + 1}: ${insertError.message}`
+                  })}\n\n`));
+                } else {
+                  controller.enqueue(new TextEncoder().encode(`data: ${JSON.stringify({
+                    type: 'saved',
+                    questionId: question.question_id,
+                    index: i + 1
+                  })}\n\n`));
+                }
+              } catch (saveError) {
+                console.error('Save exception:', saveError);
+              }
+            }
+
+            // Add small delay between questions for better UX
+            await new Promise(resolve => setTimeout(resolve, 100));
+          }
+
+          // Send completion message
+          controller.enqueue(new TextEncoder().encode(`data: ${JSON.stringify({
+            type: 'complete',
+            totalGenerated: questions.length,
+            apiUsed,
+            saved: saveToDatabase
+          })}\n\n`));
+
+        } catch (error) {
+          console.error('Generation error:', error);
+          controller.enqueue(new TextEncoder().encode(`data: ${JSON.stringify({
+            type: 'error',
+            message: error.message
+          })}\n\n`));
+        } finally {
+          controller.close();
+        }
+      }
     });
 
-    if (importError) {
-      console.error('Failed to import questions:', importError);
-      throw new Error('Failed to import questions to database');
-    }
-
-    console.log(`Successfully generated and imported ${questions.length} questions`);
-
-    return new Response(
-      JSON.stringify({ 
-        success: true, 
-        questions,
-        message: `Generated ${questions.length} questions for ${topic} (${difficulty})`
-      }),
-      { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-    );
+    return new Response(stream, {
+      headers: {
+        ...corsHeaders,
+        'Content-Type': 'text/event-stream',
+        'Cache-Control': 'no-cache',
+        'Connection': 'keep-alive',
+      },
+    });
 
   } catch (error) {
     console.error('Error in generate-questions function:', error);
-    return new Response(
-      JSON.stringify({ 
-        error: error.message,
-        details: 'Check function logs for more information'
-      }),
-      { 
-        status: 500,
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
-      }
-    );
+    return new Response(JSON.stringify({ 
+      error: error.message 
+    }), {
+      status: 500,
+      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+    });
   }
 });

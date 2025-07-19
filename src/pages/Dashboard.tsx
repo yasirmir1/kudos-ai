@@ -13,6 +13,7 @@ import { TopicsStudiedModal } from '@/components/TopicsStudiedModal';
 import { MisconceptionExplanationModal } from '@/components/MisconceptionExplanationModal';
 import { MisconceptionQuestionsModal } from '@/components/MisconceptionQuestionsModal';
 import { FocusAreaQuestionsModal } from '@/components/FocusAreaQuestionsModal';
+import { QuestionGeneratorModal } from '@/components/QuestionGeneratorModal';
 
 interface PerformanceData {
   topic: string;
@@ -243,14 +244,17 @@ const Dashboard = () => {
           <p className="text-muted-foreground max-w-2xl mx-auto">
             Your adaptive learning system has prepared personalized questions based on your progress
           </p>
-          <Button 
-            size="lg" 
-            onClick={startLearning}
-            className="bg-gradient-to-r from-primary to-primary-glow hover:from-primary-glow hover:to-primary"
-          >
-            <BookOpen className="mr-2 h-5 w-5" />
-            Start Practice Session
-          </Button>
+          <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
+            <Button 
+              size="lg" 
+              onClick={startLearning}
+              className="bg-gradient-to-r from-primary to-primary-glow hover:from-primary-glow hover:to-primary"
+            >
+              <BookOpen className="mr-2 h-5 w-5" />
+              Start Practice Session
+            </Button>
+            <QuestionGeneratorModal />
+          </div>
         </div>
 
         {/* Stats Overview */}
