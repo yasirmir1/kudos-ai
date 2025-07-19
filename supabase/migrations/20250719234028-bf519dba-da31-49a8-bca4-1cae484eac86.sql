@@ -1,0 +1,9 @@
+-- Final batch of Year 4-5 curriculum questions
+INSERT INTO curriculum (
+  question_id, topic, subtopic, example_question, question_type, 
+  options, correct_answer, difficulty, red_herring_tag, 
+  red_herring_explanation, pedagogical_notes, age_group
+) VALUES 
+('Y5PD001', 'Geometry - Position and Direction', 'Identify, describe and represent the position of a shape following a reflection or translation', 'A triangle with vertex at (2, 5) is reflected in the y-axis. Where is this vertex now?', 'Multiple Choice', '["(-2, 5)", "(2, -5)", "(-2, -5)", "(5, 2)"]', '(-2, 5)', 'Very Hard', ARRAY['Reflection_AxisConfusion'], 'Student may reflect in x-axis (2, -5) or both axes (-2, -5).', 'Year 5: Understanding reflection in y-axis changes x-coordinate sign.', 'year 4-5'),
+('Y5ST001', 'Statistics', 'Solve comparison, sum and difference problems using information presented in a line graph', 'A line graph shows temperature over 5 days. Monday was 15°C and Friday was 22°C. What was the temperature increase?', 'Multiple Choice', '["7°C", "37°C", "15°C", "22°C"]', '7°C', 'Medium', ARRAY['LineGraph_ReadingError'], 'Student may add temperatures (37°C) or give one of the values.', 'Year 5: Interpreting line graphs to find differences.', 'year 4-5'),
+('Y5ST002', 'Statistics', 'Complete, read and interpret information in tables, including timetables', 'A train timetable shows a train leaves at 09:45 and arrives at 11:20. How long is the journey?', 'Multiple Choice', '["1 hour 35 minutes", "2 hours 35 minutes", "1 hour 25 minutes", "35 minutes"]', '1 hour 35 minutes', 'Hard', ARRAY['Time_DifferenceError'], 'Student may calculate time difference incorrectly across the hour.', 'Year 5: Reading timetables and calculating time differences.', 'year 4-5');
