@@ -318,7 +318,7 @@ const Dashboard = () => {
               <CardDescription>Topics where you're performing well</CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
-              {performance.slice(0, 5).map((topic, index) => (
+              {performance.filter(topic => topic.accuracy > 0.4).slice(0, 5).map((topic, index) => (
                 <div key={topic.topic} className="flex items-center justify-between">
                   <div className="flex items-center space-x-3">
                     <Badge variant="secondary" className="text-xs min-w-8 flex justify-center">
@@ -336,7 +336,7 @@ const Dashboard = () => {
                   </div>
                 </div>
               ))}
-              {performance.length === 0 && (
+              {performance.filter(topic => topic.accuracy > 0.4).length === 0 && (
                 <div className="text-center py-4 text-muted-foreground">
                   Complete some practice questions to see your strengths!
                 </div>
@@ -365,7 +365,7 @@ const Dashboard = () => {
                 >
                   <div className="flex items-center space-x-3">
                     <Badge variant="destructive" className="text-xs min-w-8 flex justify-center">
-                      P{index + 1}
+                      #{index + 1}
                     </Badge>
                     <span className="font-medium">{topic.topic}</span>
                   </div>
