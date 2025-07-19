@@ -28,31 +28,26 @@ serve(async (req) => {
 
     console.log('Generating kid-friendly explanation for question mistake');
 
-    const prompt = `You're a super friendly teacher talking to an 8-year-old who made a mistake in math. Be encouraging and help them understand what went wrong!
+    const prompt = `You're helping an 8-year-old understand a math mistake. Keep it SHORT and friendly!
 
 🧮 **Question:** ${question}
 ❌ **Their answer:** ${student_answer}
 ✅ **Correct answer:** ${correct_answer}
-🤯 **Mistake pattern:** ${misconception}
-📚 **Topic:** ${topic}
+🤯 **Mistake type:** ${misconception}
 
-Help them understand their mistake using this format:
+Give a VERY SHORT explanation with exactly these 3 parts:
 
-🤔 **What you might have been thinking:** [Guess gently what they tried to do - use "you might have thought" or "you may have tried"]
-
-💡 **Why this happens:** [Simple reason - "lots of kids think this way when they're learning!"]
-
-🎯 **Here's the trick for next time:** [Fun, easy way to get it right with a simple example they can remember]
+🤔 **What you tried:** [1 short sentence - guess what they thought]
+💡 **Why it happens:** [1 short sentence - "lots of kids think this way!"]
+🎯 **Next time:** [1 short sentence - simple tip to remember]
 
 Rules:
-- Talk directly to them using "you" 
+- Use "you" to talk to them directly
+- Keep each part to 1 sentence only
 - Use words a 2nd grader knows
-- Be super encouraging and fun
-- Use emojis to make it friendly
-- Keep each section short (2-3 sentences max)
-- Make them feel smart, not bad about the mistake
-- Give them a simple trick or tip they can use next time
-- Use comparisons to toys, games, or things kids love when helpful`;
+- Be encouraging and fun
+- Use emojis
+- Total explanation should be 3-4 sentences max`;
 
     // Try Perplexity first, then fallback to OpenAI
     let explanation = '';
