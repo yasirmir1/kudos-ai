@@ -11,6 +11,8 @@ import { QuestionHistoryModal } from '@/components/QuestionHistoryModal';
 import { TopicAccuracyModal } from '@/components/TopicAccuracyModal';
 import { TopicsStudiedModal } from '@/components/TopicsStudiedModal';
 import { MisconceptionExplanationModal } from '@/components/MisconceptionExplanationModal';
+import { MisconceptionQuestionsModal } from '@/components/MisconceptionQuestionsModal';
+import { FocusAreaQuestionsModal } from '@/components/FocusAreaQuestionsModal';
 
 interface PerformanceData {
   topic: string;
@@ -41,6 +43,10 @@ const Dashboard = () => {
   const [topicsStudiedOpen, setTopicsStudiedOpen] = useState(false);
   const [misconceptionModalOpen, setMisconceptionModalOpen] = useState(false);
   const [selectedMisconception, setSelectedMisconception] = useState<any>(null);
+  const [misconceptionQuestionsOpen, setMisconceptionQuestionsOpen] = useState(false);
+  const [selectedMisconceptionForQuestions, setSelectedMisconceptionForQuestions] = useState<any>(null);
+  const [focusAreaQuestionsOpen, setFocusAreaQuestionsOpen] = useState(false);
+  const [selectedFocusArea, setSelectedFocusArea] = useState<any>(null);
 
   useEffect(() => {
     if (user) {
@@ -313,7 +319,14 @@ const Dashboard = () => {
             </CardHeader>
             <CardContent className="space-y-4">
               {needsWork.map((topic, index) => (
-                <div key={topic.topic} className="flex items-center justify-between">
+                <div 
+                  key={topic.topic} 
+                  className="flex items-center justify-between cursor-pointer hover:bg-gray-50 p-2 rounded-lg transition-colors"
+                  onClick={() => {
+                    setSelectedFocusArea(topic);
+                    setFocusAreaQuestionsOpen(true);
+                  }}
+                >
                   <div className="flex items-center space-x-3">
                     <Badge variant="destructive" className="text-xs min-w-8 flex justify-center">
                       P{index + 1}
@@ -325,7 +338,7 @@ const Dashboard = () => {
                       {Math.round(topic.accuracy * 100)}%
                     </div>
                     <div className="text-xs text-muted-foreground">
-                      {topic.attempts} attempts
+                      {topic.attempts} attempts • Click to view questions
                     </div>
                   </div>
                 </div>
@@ -366,7 +379,11 @@ const Dashboard = () => {
                 return (
                   <div 
                     key={`${misconception.red_herring}-${index}`} 
-                    className="space-y-2 p-3 rounded-lg border bg-gradient-to-r from-blue-50/50 to-purple-50/50"
+                    className="space-y-2 p-3 rounded-lg border bg-gradient-to-r from-blue-50/50 to-purple-50/50 cursor-pointer hover:shadow-md transition-shadow"
+                    onClick={() => {
+                      setSelectedMisconceptionForQuestions(misconception);
+                      setMisconceptionQuestionsOpen(true);
+                    }}
                   >
                     <div className="flex items-center justify-between">
                       <div className="flex items-center space-x-2">
@@ -380,7 +397,7 @@ const Dashboard = () => {
                       {humanLabel}
                     </p>
                     <p className="text-xs text-blue-700">
-                      Common learning pattern - focus on understanding the underlying concept
+                      Common learning pattern - Click to view questions
                     </p>
                   </div>
                 );
@@ -412,6 +429,16 @@ const Dashboard = () => {
           open={misconceptionModalOpen}
           onOpenChange={setMisconceptionModalOpen}
           misconception={selectedMisconception}
+        />
+        <MisconceptionQuestionsModal
+          open={misconceptionQuestionsOpen}
+          onOpenChange={setMisconceptionQuestionsOpen}
+          misconception={selectedMisconceptionForQuestions}
+        />
+        <FocusAreaQuestionsModal
+          open={focusAreaQuestionsOpen}
+          onOpenChange={setFocusAreaQuestionsOpen}
+          focusArea={selectedFocusArea}
         />
       </div>
     </div>
