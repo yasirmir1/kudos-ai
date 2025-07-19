@@ -94,47 +94,47 @@ serve(async (req) => {
       recentErrors: incorrectAnswers?.length || 0
     };
 
-    const prompt = `You are talking to an 8-year-old named Alex who loves video games, toys, and ice cream! Alex needs help with ${topic} math.
+    // Analyze the specific mistakes patterns
+    const mistakePatterns = incorrectAnswers?.map(answer => ({
+      subtopic: answer.subtopic,
+      misconceptions: answer.red_herring_triggered || []
+    })) || [];
+
+    const prompt = `You are talking to an 8-year-old named Alex who loves video games, toys, and ice cream! Alex made some specific mistakes in ${topic} and needs help understanding what went wrong and how to fix it.
 
 SUPER IMPORTANT RULES:
 - NO big words like "concept," "interval," "calculate," or "negative result"
 - Use words a 2nd grader knows
 - Compare everything to fun stuff kids love (games, toys, candy, playgrounds)
 - Be excited and encouraging like their favorite fun teacher!
-- Use lots of emojis and exclamation points!
+- Focus on the SPECIFIC mistakes Alex made and what to do instead
 
 Alex's math story:
 - They got ${Math.round((focusAreaContext.accuracy || 0) * 100)}% right in ${topic}
 - They tried ${focusAreaContext.totalAttempts} questions
 - The tricky parts were: ${uniqueSubtopics.join(', ') || 'some number puzzles'}
+- Common mistakes they made: ${uniqueMisconceptions.join(', ') || 'various mix-ups'}
 
 Write like you're talking directly to Alex:
 
-🌟 **Hey Alex! ${topic} is like...**
-[Compare this math topic to something SUPER fun - like a video game level, building with blocks, or sharing pizza slices. Make it exciting!]
+🤔 **What happened in your answers:**
+[Look at their specific mistakes and explain in kid-friendly terms what they did wrong. For example: "Alex, I saw you sometimes counted 3-5 and got 2 instead of -2. That's like being on the 3rd floor and going down 5 floors - you'd end up 2 floors BELOW the ground floor!" Be specific about the mistake pattern.]
 
-😅 **What's been tricky for you:**
-[Explain what they're struggling with using simple words and fun examples. Like "When you count backwards past zero, it's like going down slides at the playground - you can go underground!" Instead of saying "negative numbers" say "underground numbers" or "backwards numbers"]
+✨ **What you should do instead:**
+[Give the exact correct method using fun examples. "When you see 3-5, think of it like a elevator! Start on floor 3, go down 5 floors: 3→2→1→0→-1→-2. You end up on floor -2 (that's 2 floors underground)!"]
 
-🎮 **Cool tricks to get better:**
-[Give 3 fun ways to practice - like games, toys, or activities they can do. Be specific and playful!]
+🎮 **Easy tricks to remember:**
+[Give 2-3 simple tricks or shortcuts using games/toys that prevent the specific mistake they made]
 
-🎯 **Fun challenges to try:**
-[Suggest specific games or activities using things kids love]
+🏃 **Practice games to try:**
+[Suggest specific activities that target their exact mistake patterns]
 
-🏆 **You're already awesome because:**
-[Point out something great they're doing, even if they're struggling]
+🏆 **You're getting better because:**
+[Point out improvement or positive signs in their work]
 
-Remember: Talk like you're 8 years old's best friend who happens to love math! NO grown-up words!
+Focus on their ACTUAL mistakes from: ${JSON.stringify(mistakePatterns, null, 2)}
 
-Examples of good kid language:
-- Instead of "calculate" → "figure out" or "work out"
-- Instead of "negative numbers" → "underground numbers" or "backwards numbers" 
-- Instead of "interval across zero" → "jumping past the zero line"
-- Instead of "concept" → "idea" or "trick"
-- Instead of "struggle with" → "find tricky"
-
-Make it FUN and SIMPLE!`;
+Make it specific to what they did wrong and crystal clear about what to do instead!`;
 
     console.log('Sending request to Perplexity for focus area explanation...');
 
