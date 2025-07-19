@@ -57,8 +57,8 @@ const Analytics = () => {
           <text
             key={index}
             x={0}
-            y={index * 15}
-            dy={16}
+            y={index * 12}
+            dy={8}
             textAnchor="middle"
             fill="#666"
             fontSize={11}
