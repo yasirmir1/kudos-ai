@@ -335,54 +335,36 @@ const Practice = () => {
 
       console.log(`Generating questions for ${targetTopic} - ${targetSubtopic} (${targetDifficulty})`);
       
-      const response = await fetch(`https://gqkfbxhuijpfcnjimlfj.functions.supabase.co/generate-questions`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
+      const { data: response, error: functionError } = await supabase.functions.invoke('generate-questions', {
+        body: {
           topic: targetTopic,
           subtopic: targetSubtopic,
           difficulty: targetDifficulty,
           count: 5,
           saveToDatabase: true
-        }),
+        }
       });
 
-      if (!response.ok) {
+      if (functionError) {
         throw new Error('Failed to generate questions');
       }
 
-      const reader = response.body?.getReader();
+      // Handle streaming response from Supabase function
       const newQuestions: Question[] = [];
       
-      if (reader) {
-        while (true) {
-          const { done, value } = await reader.read();
-          if (done) break;
-          
-          const chunk = new TextDecoder().decode(value);
-          const lines = chunk.split('\n');
-          
-          for (const line of lines) {
-            if (line.startsWith('data: ')) {
-              try {
-                const data = JSON.parse(line.slice(6));
-                if (data.type === 'question') {
-                  const question = data.data;
-                  // Format the question properly
-                  const formattedQuestion: Question = {
-                    ...question,
-                    options: Array.isArray(question.options) ? question.options : 
-                             typeof question.options === 'string' ? JSON.parse(question.options) : 
-                             Object.values(question.options || {})
-                  };
-                  newQuestions.push(formattedQuestion);
-                }
-              } catch (e) {
-                console.error('Error parsing streaming data:', e);
-              }
-            }
+      if (response && Array.isArray(response)) {
+        // Response contains generated questions directly
+        for (const questionData of response) {
+          try {
+            const formattedQuestion: Question = {
+              ...questionData,
+              options: Array.isArray(questionData.options) ? questionData.options : 
+                       typeof questionData.options === 'string' ? JSON.parse(questionData.options) : 
+                       Object.values(questionData.options || {})
+            };
+            newQuestions.push(formattedQuestion);
+          } catch (e) {
+            console.error('Error formatting question:', e);
           }
         }
       }
