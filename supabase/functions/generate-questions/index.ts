@@ -186,49 +186,10 @@ RESPOND WITH ONLY THE JSON ARRAY, NO OTHER TEXT.`;
           let apiResponse;
           let apiUsed = '';
 
-          // Try GPT-4.1 first (best for structured generation)
-          if (OPENAI_API_KEY) {
+          // Try Perplexity first
+          if (PERPLEXITY_API_KEY) {
             try {
-              console.log('Using OpenAI GPT-4.1 for question generation...');
-              
-              apiResponse = await fetch('https://api.openai.com/v1/chat/completions', {
-                method: 'POST',
-                headers: {
-                  'Authorization': `Bearer ${OPENAI_API_KEY}`,
-                  'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                  model: 'gpt-4.1-2025-04-14',
-                  messages: [
-                    {
-                      role: 'system',
-                      content: 'You are an expert educational content creator specializing in mathematics curriculum development. You generate high-quality, pedagogically sound questions with realistic misconceptions.'
-                    },
-                    {
-                      role: 'user',
-                      content: prompt
-                    }
-                  ],
-                  max_tokens: 4000,
-                  temperature: 0.7,
-                  response_format: { type: "json_object" }
-                }),
-              });
-              
-              if (apiResponse.ok) {
-                apiUsed = 'openai';
-              } else {
-                throw new Error(`OpenAI API error: ${apiResponse.status}`);
-              }
-            } catch (openaiError) {
-              console.log('OpenAI failed, trying Perplexity...', openaiError.message);
-            }
-          }
-
-          // Fallback to Perplexity
-          if (!apiResponse?.ok && PERPLEXITY_API_KEY) {
-            try {
-              console.log('Using Perplexity as fallback...');
+              console.log('Using Perplexity for question generation...');
               
               apiResponse = await fetch('https://api.perplexity.ai/chat/completions', {
                 method: 'POST',
@@ -237,11 +198,11 @@ RESPOND WITH ONLY THE JSON ARRAY, NO OTHER TEXT.`;
                   'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({
-                  model: 'sonar',
+                  model: 'llama-3.1-sonar-large-128k-online',
                   messages: [
                     {
                       role: 'system',
-                      content: 'You are an expert educational content creator. Generate structured JSON responses for educational questions.'
+                      content: 'You are an expert educational content creator. Generate valid JSON arrays for educational questions. Always respond with properly formatted JSON only.'
                     },
                     {
                       role: 'user',
@@ -249,15 +210,55 @@ RESPOND WITH ONLY THE JSON ARRAY, NO OTHER TEXT.`;
                     }
                   ],
                   max_tokens: 4000,
-                  temperature: 0.7
+                  temperature: 0.5,
+                  return_images: false,
+                  return_related_questions: false
                 }),
               });
               
               if (apiResponse.ok) {
                 apiUsed = 'perplexity';
+              } else {
+                throw new Error(`Perplexity API error: ${apiResponse.status}`);
               }
             } catch (perplexityError) {
-              console.error('Both APIs failed:', perplexityError.message);
+              console.log('Perplexity failed, trying OpenAI...', perplexityError.message);
+            }
+          }
+
+          // Fallback to OpenAI
+          if (!apiResponse?.ok && OPENAI_API_KEY) {
+            try {
+              console.log('Using OpenAI as fallback...');
+              
+              apiResponse = await fetch('https://api.openai.com/v1/chat/completions', {
+                method: 'POST',
+                headers: {
+                  'Authorization': `Bearer ${OPENAI_API_KEY}`,
+                  'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                  model: 'gpt-4o-mini',
+                  messages: [
+                    {
+                      role: 'system',
+                      content: 'You are an expert educational content creator. Generate only valid JSON arrays for educational questions.'
+                    },
+                    {
+                      role: 'user',
+                      content: prompt
+                    }
+                  ],
+                  max_tokens: 4000,
+                  temperature: 0.5
+                }),
+              });
+              
+              if (apiResponse.ok) {
+                apiUsed = 'openai';
+              }
+            } catch (openaiError) {
+              console.error('Both APIs failed:', openaiError.message);
               throw new Error('All AI services unavailable');
             }
           }
@@ -280,12 +281,41 @@ RESPOND WITH ONLY THE JSON ARRAY, NO OTHER TEXT.`;
           // Parse and validate the generated questions
           let questions;
           try {
-            // Clean the response and try to parse JSON
-            const cleanContent = generatedContent.replace(/```json\n?|\n?```/g, '').trim();
+            // Enhanced JSON cleaning to handle various edge cases
+            let cleanContent = generatedContent.trim();
+            
+            // Remove markdown code blocks
+            cleanContent = cleanContent.replace(/```json\n?|\n?```/g, '');
+            
+            // Remove any leading/trailing text that's not JSON
+            const jsonStart = cleanContent.indexOf('[');
+            const jsonEnd = cleanContent.lastIndexOf(']');
+            
+            if (jsonStart !== -1 && jsonEnd !== -1 && jsonEnd > jsonStart) {
+              cleanContent = cleanContent.substring(jsonStart, jsonEnd + 1);
+            }
+            
+            // Fix common JSON issues
+            cleanContent = cleanContent
+              .replace(/,\s*}/g, '}')  // Remove trailing commas in objects
+              .replace(/,\s*]/g, ']')  // Remove trailing commas in arrays
+              .replace(/'/g, '"')      // Replace single quotes with double quotes
+              .replace(/\n/g, ' ')     // Replace newlines with spaces
+              .replace(/\s+/g, ' ')    // Replace multiple spaces with single space
+              .trim();
+            
+            console.log('Cleaned content:', cleanContent.substring(0, 500) + '...');
+            
             const parsed = JSON.parse(cleanContent);
             questions = Array.isArray(parsed) ? parsed : parsed.questions || [parsed];
+            
+            if (!Array.isArray(questions) || questions.length === 0) {
+              throw new Error('No valid questions found in response');
+            }
+            
           } catch (parseError) {
             console.error('JSON parsing error:', parseError);
+            console.error('Raw content:', generatedContent.substring(0, 1000) + '...');
             throw new Error('AI generated invalid JSON format');
           }
 
