@@ -102,18 +102,13 @@ const Dashboard = () => {
 
       setTotalQuestions(count || 0);
 
-      // Get total sessions (unique days with answers)
-      const { data: sessionData } = await supabase
-        .from('student_answers')
-        .select('answered_at')
+      // Get total sessions from practice_sessions table
+      const { count: sessionCount } = await supabase
+        .from('practice_sessions')
+        .select('*', { count: 'exact', head: true })
         .eq('student_id', user?.id);
 
-      if (sessionData) {
-        const uniqueDays = new Set(
-          sessionData.map(answer => new Date(answer.answered_at).toDateString())
-        );
-        setTotalSessions(uniqueDays.size);
-      }
+      setTotalSessions(sessionCount || 0);
     } catch (error) {
       console.error('Error loading dashboard data:', error);
     } finally {

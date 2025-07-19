@@ -18,13 +18,15 @@ interface SessionsModalProps {
 }
 
 interface SessionData {
-  session_id: number;
+  id: string;
   session_start: string;
   session_end: string;
   total_questions: number;
   correct_answers: number;
   accuracy: number;
-  date: string;
+  average_time_per_question: number;
+  topics_covered: string[];
+  difficulty_levels: string[];
 }
 
 export function SessionsModal({ open, onOpenChange }: SessionsModalProps) {
@@ -42,81 +44,17 @@ export function SessionsModal({ open, onOpenChange }: SessionsModalProps) {
     setLoading(true);
     try {
       const { data, error } = await supabase
-        .from('student_answers')
-        .select('answered_at, is_correct')
+        .from('practice_sessions')
+        .select('*')
         .eq('student_id', user?.id)
-        .order('answered_at', { ascending: true });
+        .order('session_start', { ascending: false });
 
       if (error) {
         console.error('Error loading sessions:', error);
         return;
       }
 
-      if (!data || data.length === 0) {
-        setSessions([]);
-        return;
-      }
-
-      // Group answers into sessions based on time gaps
-      const sessions: SessionData[] = [];
-      let currentSession: { answers: any[], start: Date, end: Date } | null = null;
-      const SESSION_GAP_MINUTES = 30; // If more than 30 minutes between answers, it's a new session
-
-      data.forEach((answer, index) => {
-        const answerTime = new Date(answer.answered_at);
-        
-        if (!currentSession) {
-          // Start first session
-          currentSession = {
-            answers: [answer],
-            start: answerTime,
-            end: answerTime
-          };
-        } else {
-          const timeDiff = (answerTime.getTime() - currentSession.end.getTime()) / (1000 * 60); // minutes
-          
-          if (timeDiff > SESSION_GAP_MINUTES) {
-            // Save current session and start new one
-            const correctAnswers = currentSession.answers.filter(a => a.is_correct).length;
-            sessions.push({
-              session_id: sessions.length + 1,
-              session_start: currentSession.start.toISOString(),
-              session_end: currentSession.end.toISOString(),
-              total_questions: currentSession.answers.length,
-              correct_answers: correctAnswers,
-              accuracy: currentSession.answers.length > 0 ? (correctAnswers / currentSession.answers.length) * 100 : 0,
-              date: currentSession.start.toDateString()
-            });
-            
-            currentSession = {
-              answers: [answer],
-              start: answerTime,
-              end: answerTime
-            };
-          } else {
-            // Add to current session
-            currentSession.answers.push(answer);
-            currentSession.end = answerTime;
-          }
-        }
-      });
-
-      // Don't forget the last session
-      if (currentSession) {
-        const correctAnswers = currentSession.answers.filter(a => a.is_correct).length;
-        sessions.push({
-          session_id: sessions.length + 1,
-          session_start: currentSession.start.toISOString(),
-          session_end: currentSession.end.toISOString(),
-          total_questions: currentSession.answers.length,
-          correct_answers: correctAnswers,
-          accuracy: currentSession.answers.length > 0 ? (correctAnswers / currentSession.answers.length) * 100 : 0,
-          date: currentSession.start.toDateString()
-        });
-      }
-
-      // Reverse to show most recent first
-      setSessions(sessions.reverse());
+      setSessions(data || []);
     } catch (error) {
       console.error('Error loading sessions:', error);
     } finally {
@@ -139,7 +77,7 @@ export function SessionsModal({ open, onOpenChange }: SessionsModalProps) {
             <span>Your Learning Sessions</span>
           </DialogTitle>
           <DialogDescription>
-            View your performance across all practice sessions (sessions are split when there's more than 30 minutes between questions)
+            View your completed practice sessions with detailed performance metrics
           </DialogDescription>
         </DialogHeader>
 
@@ -160,7 +98,7 @@ export function SessionsModal({ open, onOpenChange }: SessionsModalProps) {
                 const duration = Math.round((sessionEnd.getTime() - sessionStart.getTime()) / (1000 * 60)); // minutes
                 
                 return (
-                <Card key={session.session_id} className="hover:shadow-sm transition-shadow">
+                <Card key={session.id} className="hover:shadow-sm transition-shadow">
                   <CardHeader className="pb-3">
                     <CardTitle className="text-base flex items-center justify-between">
                       <span className="flex items-center space-x-2">
@@ -175,21 +113,36 @@ export function SessionsModal({ open, onOpenChange }: SessionsModalProps) {
                     </CardTitle>
                   </CardHeader>
                   <CardContent>
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center space-x-4">
-                        <div className="flex items-center space-x-1">
-                          <Target className="h-4 w-4 text-muted-foreground" />
-                          <span className="text-sm">
-                            {session.correct_answers}/{session.total_questions} correct
-                          </span>
+                    <div className="space-y-2">
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center space-x-4">
+                          <div className="flex items-center space-x-1">
+                            <Target className="h-4 w-4 text-muted-foreground" />
+                            <span className="text-sm">
+                              {session.correct_answers}/{session.total_questions} correct
+                            </span>
+                          </div>
+                          <div className="text-xs text-muted-foreground">
+                            Duration: {duration} min{duration !== 1 ? 's' : ''}
+                          </div>
                         </div>
                         <div className="text-xs text-muted-foreground">
-                          Duration: {duration} min{duration !== 1 ? 's' : ''}
+                          Session #{index + 1}
                         </div>
                       </div>
-                      <div className="text-xs text-muted-foreground">
-                        Session #{session.session_id}
-                      </div>
+                      
+                      {session.topics_covered && session.topics_covered.length > 0 && (
+                        <div className="text-xs text-muted-foreground">
+                          <span className="font-medium">Topics:</span> {session.topics_covered.slice(0, 2).join(', ')}
+                          {session.topics_covered.length > 2 && ` +${session.topics_covered.length - 2} more`}
+                        </div>
+                      )}
+                      
+                      {session.average_time_per_question && (
+                        <div className="text-xs text-muted-foreground">
+                          <span className="font-medium">Avg time per question:</span> {Math.round(session.average_time_per_question)}s
+                        </div>
+                      )}
                     </div>
                   </CardContent>
                 </Card>

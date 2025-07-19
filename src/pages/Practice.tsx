@@ -36,12 +36,15 @@ const Practice = () => {
   const [loading, setLoading] = useState(true);
   const [score, setScore] = useState(0);
   const [startTime, setStartTime] = useState<Date>(new Date());
+  const [sessionStartTime, setSessionStartTime] = useState<Date>(new Date());
   const [sessionComplete, setSessionComplete] = useState(false);
   const [aiExplanation, setAiExplanation] = useState<string>('');
   const [generatingExplanation, setGeneratingExplanation] = useState(false);
   const [generatingQuestions, setGeneratingQuestions] = useState(false);
+  const [answeredQuestions, setAnsweredQuestions] = useState<{question: Question, isCorrect: boolean, timeTaken: number}[]>([]);
 
   useEffect(() => {
+    setSessionStartTime(new Date());
     loadAdaptiveQuestions();
   }, [user]);
 
@@ -147,8 +150,17 @@ const Practice = () => {
       setScore(score + 1);
     }
 
-    // Calculate time taken
+    // Calculate time taken for this question
     const timeTaken = Math.floor((new Date().getTime() - startTime.getTime()) / 1000);
+    
+    // Store question result for session recording
+    setAnsweredQuestions(prev => [...prev, {
+      question: currentQuestion,
+      isCorrect,
+      timeTaken
+    }]);
+
+    // Time taken was already calculated above
 
     // Analyze red herrings triggered
     let redHerringTriggered: string[] = [];
@@ -367,6 +379,8 @@ const Practice = () => {
     
     if (currentIndex + 1 >= questions.length) {
       setSessionComplete(true);
+      // Record the session in the database
+      recordSessionResults();
       return;
     }
     
@@ -379,6 +393,57 @@ const Practice = () => {
     setStartTime(new Date());
   };
 
+  const recordSessionResults = async () => {
+    try {
+      const sessionEndTime = new Date();
+      const totalQuestions = answeredQuestions.length;
+      const correctAnswers = answeredQuestions.filter(q => q.isCorrect).length;
+      
+      // Calculate average time per question
+      const totalTime = answeredQuestions.reduce((sum, q) => sum + q.timeTaken, 0);
+      const averageTimePerQuestion = totalQuestions > 0 ? totalTime / totalQuestions : 0;
+      
+      // Get unique topics and difficulty levels
+      const topicsCovered = [...new Set(answeredQuestions.map(q => q.question.topic))];
+      const difficultyLevels = [...new Set(answeredQuestions.map(q => q.question.difficulty))];
+      
+      const { data, error } = await supabase
+        .from('practice_sessions')
+        .insert({
+          student_id: user?.id,
+          session_start: sessionStartTime.toISOString(),
+          session_end: sessionEndTime.toISOString(),
+          total_questions: totalQuestions,
+          correct_answers: correctAnswers,
+          average_time_per_question: averageTimePerQuestion,
+          topics_covered: topicsCovered,
+          difficulty_levels: difficultyLevels
+        });
+
+      if (error) {
+        console.error('Error recording session:', error);
+        toast({
+          title: "Session not saved",
+          description: "Your practice session results couldn't be saved.",
+          variant: "destructive",
+        });
+      } else {
+        console.log('Session recorded successfully:', data);
+        toast({
+          title: "Session saved!",
+          description: "Your practice session has been recorded.",
+        });
+      }
+    } catch (error) {
+      console.error('Error recording session:', error);
+      toast({
+        title: "Session not saved",
+        description: "There was an error saving your session.",
+        variant: "destructive",
+      });
+    }
+  };
+
   const handleRestart = () => {
     setCurrentIndex(0);
     setSelectedAnswer('');
@@ -389,6 +454,8 @@ const Practice = () => {
     setScore(0);
     setSessionComplete(false);
     setStartTime(new Date());
+    setSessionStartTime(new Date());
+    setAnsweredQuestions([]);
     loadAdaptiveQuestions();
   };
 

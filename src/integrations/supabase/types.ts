@@ -86,6 +86,51 @@ export type Database = {
         }
         Relationships: []
       }
+      practice_sessions: {
+        Row: {
+          accuracy: number | null
+          average_time_per_question: number | null
+          correct_answers: number
+          created_at: string
+          difficulty_levels: string[] | null
+          id: string
+          session_end: string
+          session_start: string
+          student_id: string
+          topics_covered: string[] | null
+          total_questions: number
+          updated_at: string
+        }
+        Insert: {
+          accuracy?: number | null
+          average_time_per_question?: number | null
+          correct_answers?: number
+          created_at?: string
+          difficulty_levels?: string[] | null
+          id?: string
+          session_end?: string
+          session_start?: string
+          student_id: string
+          topics_covered?: string[] | null
+          total_questions?: number
+          updated_at?: string
+        }
+        Update: {
+          accuracy?: number | null
+          average_time_per_question?: number | null
+          correct_answers?: number
+          created_at?: string
+          difficulty_levels?: string[] | null
+          id?: string
+          session_end?: string
+          session_start?: string
+          student_id?: string
+          topics_covered?: string[] | null
+          total_questions?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
       student_answers: {
         Row: {
           answer_given: string
