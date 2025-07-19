@@ -166,7 +166,15 @@ Be encouraging, practical, and respectful. Help them understand their mistakes a
     }
 
     const data = await response.json();
-    const explanation = data.choices[0].message.content;
+    const rawExplanation = data.choices[0].message.content;
+
+    // Clean up source citations and references
+    const explanation = rawExplanation
+      .replace(/\[\d+\]/g, '') // Remove [1], [2], etc.
+      .replace(/\[.*?\]/g, '') // Remove any other bracketed references
+      .replace(/Source:.*$/gm, '') // Remove source lines
+      .replace(/References?:.*$/gm, '') // Remove reference lines
+      .trim();
 
     console.log('Generated focus area explanation successfully');
 

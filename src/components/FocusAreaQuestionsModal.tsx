@@ -299,7 +299,7 @@ export function FocusAreaQuestionsModal({
                       
                       {question.aiExplanation && (
                         <div className="bg-blue-50 p-3 rounded border">
-                          <div className="text-sm whitespace-pre-line leading-[1.4] [&>p]:mb-4 [&>div]:mb-4">{question.aiExplanation}</div>
+                          <div className="text-sm whitespace-pre-line leading-[1.4] [&>div]:mb-6 [&>p]:mb-6 [&_h4]:mb-4">{question.aiExplanation}</div>
                         </div>
                       )}
                       

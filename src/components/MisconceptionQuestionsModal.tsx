@@ -201,32 +201,15 @@ export function MisconceptionQuestionsModal({
     }
   };
 
-  const testPerplexityAPI = async () => {
-    console.log('🧪 Testing Perplexity API...');
-    try {
-      const { data, error } = await supabase.functions.invoke('test-perplexity');
-      console.log('🧪 Test result:', { data, error });
-    } catch (error) {
-      console.error('🧪 Test failed:', error);
-    }
-  };
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-4xl max-h-[80vh] overflow-y-auto">
         <DialogHeader>
-          <div className="flex items-center justify-between">
-            <DialogTitle className="flex items-center space-x-2">
-              <AlertCircle className="h-5 w-5 text-red-500" />
-              <span>Misconception: {misconception ? formatMisconceptionName(misconception.red_herring) : ''}</span>
-            </DialogTitle>
-            <button 
-              onClick={testPerplexityAPI}
-              className="text-xs bg-green-100 hover:bg-green-200 text-green-700 px-3 py-1 rounded-full transition-colors"
-            >
-              🧪 Test API
-            </button>
-          </div>
+          <DialogTitle className="flex items-center space-x-2">
+            <AlertCircle className="h-5 w-5 text-red-500" />
+            <span>Misconception: {misconception ? formatMisconceptionName(misconception.red_herring) : ''}</span>
+          </DialogTitle>
           <DialogDescription>
             Questions where you encountered this misconception pattern. 
             {misconception && <span className="font-semibold"> Occurred {misconception.frequency} times in: {misconception.topics.join(', ')}</span>}
@@ -322,7 +305,7 @@ export function MisconceptionQuestionsModal({
                       
                       {question.aiExplanation && (
                         <div className="bg-blue-50 p-3 rounded border">
-                          <div className="text-sm whitespace-pre-line leading-[1.4] [&>p]:mb-4 [&>div]:mb-4">{question.aiExplanation}</div>
+                          <div className="text-sm whitespace-pre-line leading-[1.4] [&>div]:mb-6 [&>p]:mb-6 [&_h4]:mb-4">{question.aiExplanation}</div>
                         </div>
                       )}
                       

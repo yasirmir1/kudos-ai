@@ -146,10 +146,18 @@ Rules:
       throw new Error('No explanation generated from either API');
     }
 
+    // Clean up source citations and references
+    const cleanedExplanation = explanation
+      .replace(/\[\d+\]/g, '') // Remove [1], [2], etc.
+      .replace(/\[.*?\]/g, '') // Remove any other bracketed references
+      .replace(/Source:.*$/gm, '') // Remove source lines
+      .replace(/References?:.*$/gm, '') // Remove reference lines
+      .trim();
+
     console.log(`Generated explanation successfully using ${apiUsed}`);
 
     return new Response(JSON.stringify({ 
-      explanation,
+      explanation: cleanedExplanation,
       apiUsed
     }), {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },

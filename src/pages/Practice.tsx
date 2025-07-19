@@ -6,7 +6,7 @@ import { Badge } from '@/components/ui/badge';
 import { useAuth } from '@/hooks/useAuth';
 import { supabase } from '@/integrations/supabase/client';
 import { useNavigate } from 'react-router-dom';
-import { ArrowLeft, Clock, CheckCircle, XCircle, RotateCcw } from 'lucide-react';
+import { ArrowLeft, Clock, CheckCircle, XCircle, RotateCcw, Sparkles } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 
 interface Question {
@@ -37,6 +37,8 @@ const Practice = () => {
   const [score, setScore] = useState(0);
   const [startTime, setStartTime] = useState<Date>(new Date());
   const [sessionComplete, setSessionComplete] = useState(false);
+  const [aiExplanation, setAiExplanation] = useState<string>('');
+  const [generatingExplanation, setGeneratingExplanation] = useState(false);
 
   useEffect(() => {
     loadAdaptiveQuestions();
@@ -175,6 +177,45 @@ const Practice = () => {
         variant: "destructive",
       });
     }
+
+    // Generate AI explanation if answer is incorrect
+    if (!isCorrect) {
+      generateAiExplanation(currentQuestion, selectedAnswer);
+    }
+  };
+
+  const generateAiExplanation = async (question: Question, studentAnswer: string) => {
+    setGeneratingExplanation(true);
+    setAiExplanation('');
+
+    try {
+      const { data, error } = await supabase.functions.invoke('explain-question-mistake', {
+        body: {
+          question: question.example_question,
+          student_answer: studentAnswer,
+          correct_answer: question.correct_answer,
+          misconception: question.red_herring_tag?.[0] || 'general_mistake',
+          topic: question.topic
+        }
+      });
+
+      if (error) {
+        console.error('Error generating explanation:', error);
+        setAiExplanation("I'm having trouble creating your explanation right now. The main thing is to learn from this mistake and try a different approach next time!");
+        return;
+      }
+
+      if (data?.explanation) {
+        setAiExplanation(data.explanation);
+      } else {
+        setAiExplanation("I'm working on your explanation! In the meantime, remember that making mistakes is how we learn. You're doing great!");
+      }
+    } catch (error) {
+      console.error('Exception during AI explanation:', error);
+      setAiExplanation("Every mistake is a step closer to getting it right! Keep practicing and you'll master this concept.");
+    } finally {
+      setGeneratingExplanation(false);
+    }
   };
 
   const handleNextQuestion = () => {
@@ -187,6 +228,8 @@ const Practice = () => {
     setSelectedAnswer('');
     setIsAnswered(false);
     setShowExplanation(false);
+    setAiExplanation('');
+    setGeneratingExplanation(false);
     setStartTime(new Date());
   };
 
@@ -195,6 +238,8 @@ const Practice = () => {
     setSelectedAnswer('');
     setIsAnswered(false);
     setShowExplanation(false);
+    setAiExplanation('');
+    setGeneratingExplanation(false);
     setScore(0);
     setSessionComplete(false);
     setStartTime(new Date());
@@ -358,11 +403,43 @@ const Practice = () => {
           </CardContent>
         </Card>
 
-        {/* Explanation Card */}
-        {showExplanation && (currentQuestion.red_herring_explanation || currentQuestion.pedagogical_notes) && (
+        {/* AI Explanation Card */}
+        {showExplanation && !selectedAnswer?.includes(currentQuestion.correct_answer) && (
           <Card className="mx-auto max-w-3xl">
             <CardHeader className="pb-4">
-              <CardTitle className="text-lg text-center">Explanation</CardTitle>
+              <CardTitle className="text-lg text-center flex items-center justify-center space-x-2">
+                <Sparkles className="h-5 w-5" />
+                <span>Explanation</span>
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="px-8 pb-6">
+              {generatingExplanation && (
+                <div className="bg-blue-50 p-4 rounded border flex items-center space-x-3">
+                  <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-blue-500"></div>
+                  <span className="text-sm text-blue-700">Creating a helpful explanation just for you...</span>
+                </div>
+              )}
+              
+              {aiExplanation && (
+                <div className="bg-blue-50 p-4 rounded border">
+                  <div className="text-sm whitespace-pre-line leading-[1.4] [&>div]:mb-6 [&>p]:mb-6 [&_h4]:mb-4">{aiExplanation}</div>
+                </div>
+              )}
+              
+              {!aiExplanation && !generatingExplanation && (
+                <div className="bg-gray-50 p-4 rounded border text-center">
+                  <p className="text-sm text-gray-600">Explanation will appear here automatically</p>
+                </div>
+              )}
+            </CardContent>
+          </Card>
+        )}
+
+        {/* Static Explanation Card for correct answers or fallback */}
+        {showExplanation && selectedAnswer === currentQuestion.correct_answer && (currentQuestion.red_herring_explanation || currentQuestion.pedagogical_notes) && (
+          <Card className="mx-auto max-w-3xl">
+            <CardHeader className="pb-4">
+              <CardTitle className="text-lg text-center">Great job!</CardTitle>
             </CardHeader>
             <CardContent className="px-8 pb-6 space-y-6">
               {currentQuestion.red_herring_explanation && (
