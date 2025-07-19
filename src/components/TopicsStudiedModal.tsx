@@ -34,6 +34,7 @@ export const TopicsStudiedModal = ({ open, onOpenChange }: TopicsStudiedModalPro
   useEffect(() => {
     if (open && user) {
       loadStudiedTopics();
+      loadMisconceptionInsights();
     }
   }, [open, user]);
 
@@ -91,6 +92,28 @@ export const TopicsStudiedModal = ({ open, onOpenChange }: TopicsStudiedModalPro
     }
   };
 
+  const loadMisconceptionInsights = async () => {
+    if (!user) return;
+    
+    setIsLoadingExplanation(true);
+    try {
+      const { data, error } = await supabase.functions.invoke('explain-misconceptions', {
+        body: { student_id: user.id }
+      });
+
+      if (error) throw error;
+
+      setExplanation(data.explanation);
+      setShowExplanation(true);
+    } catch (error) {
+      console.error('Error getting explanation:', error);
+      // Don't show error toast for automatic loading
+      setShowExplanation(false);
+    } finally {
+      setIsLoadingExplanation(false);
+    }
+  };
+
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString('en-US', {
       month: 'short',
@@ -105,34 +128,12 @@ export const TopicsStudiedModal = ({ open, onOpenChange }: TopicsStudiedModalPro
     return <Badge className="bg-red-100 text-red-800">Needs Work</Badge>;
   };
 
-  const handleGetExplanation = async () => {
-    if (!user) return;
-    
-    setIsLoadingExplanation(true);
-    try {
-      const { data, error } = await supabase.functions.invoke('explain-misconceptions', {
-        body: { student_id: user.id }
-      });
-
-      if (error) throw error;
-
-      setExplanation(data.explanation);
-      setShowExplanation(true);
-      
-      toast({
-        title: "Explanation Generated",
-        description: "Your personalized misconception explanation is ready!",
-      });
-    } catch (error) {
-      console.error('Error getting explanation:', error);
-      toast({
-        title: "Error",
-        description: "Failed to generate explanation. Please try again.",
-        variant: "destructive",
-      });
-    } finally {
-      setIsLoadingExplanation(false);
-    }
+  const handleRefreshInsights = async () => {
+    await loadMisconceptionInsights();
+    toast({
+      title: "Insights Refreshed",
+      description: "Your learning insights have been updated!",
+    });
   };
 
   return (
@@ -153,15 +154,18 @@ export const TopicsStudiedModal = ({ open, onOpenChange }: TopicsStudiedModalPro
           <div className="flex-1">
             <div className="flex items-center justify-between mb-4">
               <h3 className="font-medium">Performance Overview</h3>
-              <Button
-                onClick={handleGetExplanation}
-                disabled={isLoadingExplanation}
-                size="sm"
-                className="gap-2"
-              >
-                <Lightbulb className="h-4 w-4" />
-                {isLoadingExplanation ? "Analyzing..." : "Get AI Insights"}
-              </Button>
+              {showExplanation && (
+                <Button
+                  onClick={handleRefreshInsights}
+                  disabled={isLoadingExplanation}
+                  size="sm"
+                  variant="outline"
+                  className="gap-2"
+                >
+                  <Lightbulb className="h-4 w-4" />
+                  {isLoadingExplanation ? "Updating..." : "Refresh Insights"}
+                </Button>
+              )}
             </div>
             
             <ScrollArea className="h-[50vh] pr-4">
@@ -226,21 +230,30 @@ export const TopicsStudiedModal = ({ open, onOpenChange }: TopicsStudiedModalPro
             </ScrollArea>
           </div>
 
-          {/* AI Explanation Panel */}
-          {showExplanation && explanation && (
+          {/* AI Explanation Panel - Always show if available */}
+          {(showExplanation || isLoadingExplanation) && (
             <div className="flex-1 border-l pl-4">
               <h3 className="font-medium mb-4 flex items-center gap-2">
                 <Lightbulb className="h-4 w-4 text-primary" />
-                Personalized Learning Insights
+                Learning Insights & Misconception Analysis
               </h3>
               
-              <ScrollArea className="h-[50vh] pr-4">
-                <div className="prose prose-sm max-w-none">
-                  <div className="whitespace-pre-wrap text-sm leading-relaxed">
-                    {explanation}
+              {isLoadingExplanation ? (
+                <div className="flex items-center justify-center h-[50vh]">
+                  <div className="text-center space-y-2">
+                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto"></div>
+                    <p className="text-sm text-muted-foreground">Analyzing your learning patterns...</p>
                   </div>
                 </div>
-              </ScrollArea>
+              ) : explanation ? (
+                <ScrollArea className="h-[50vh] pr-4">
+                  <div className="prose prose-sm max-w-none">
+                    <div className="whitespace-pre-wrap text-sm leading-relaxed">
+                      {explanation}
+                    </div>
+                  </div>
+                </ScrollArea>
+              ) : null}
             </div>
           )}
         </div>

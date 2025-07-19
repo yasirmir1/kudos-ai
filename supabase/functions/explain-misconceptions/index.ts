@@ -76,19 +76,28 @@ serve(async (req) => {
       };
     });
 
-    const prompt = `You are an expert tutor helping a student understand their learning misconceptions. 
+    const prompt = `You are an expert tutor analyzing student learning patterns. 
 
-Based on the following misconception data, provide a personalized, encouraging explanation that:
-1. Explains what each misconception means in simple terms
-2. Why these mistakes are common and normal part of learning
-3. Provides specific strategies to overcome each misconception
-4. Connects the misconceptions to the topics they affect
-5. Offers positive reinforcement and motivation
+Based on the following misconception data, provide a structured response that:
+1. First, translate each raw misconception variable into a clear, human-readable label
+2. Explain what each misconception means in educational terms
+3. Provide specific strategies to overcome each pattern
+4. Offer encouraging, growth-focused advice
+
+Format your response as follows:
+**Misconception Analysis:**
+
+For each misconception, use this format:
+**[Human-readable label for the misconception]**
+- **What this means:** [Simple explanation]
+- **Why it happens:** [Common reason]
+- **How to improve:** [Specific strategy]
+- **Topics affected:** [List the topics]
 
 Misconception Data:
 ${JSON.stringify(misconceptionContext, null, 2)}
 
-Please provide a warm, supportive response that helps the student learn from these patterns without feeling discouraged. Focus on growth mindset and specific actionable advice.`;
+Remember to be supportive and focus on learning growth, not mistakes.`;
 
     console.log('Sending request to OpenAI...');
 
