@@ -15,6 +15,7 @@ import { MisconceptionQuestionsModal } from '@/components/MisconceptionQuestions
 import { FocusAreaQuestionsModal } from '@/components/FocusAreaQuestionsModal';
 import { WorksheetGeneratorModal } from '@/components/WorksheetGeneratorModal';
 import { BulkQuestionGenerator } from '@/components/BulkQuestionGenerator';
+import { ResetProgressModal } from '@/components/ResetProgressModal';
 
 interface PerformanceData {
   topic: string;
@@ -228,6 +229,7 @@ const Dashboard = () => {
             </div>
           </div>
           <div className="flex space-x-2">
+            <ResetProgressModal onResetComplete={loadDashboardData} />
             <Button variant="ghost" onClick={() => navigate('/profile')}>
               Profile
             </Button>
