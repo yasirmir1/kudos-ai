@@ -53,6 +53,35 @@ const Practice = () => {
     }
   }, [user, selectedAgeGroup]);
 
+  // Record session when user leaves the practice page
+  useEffect(() => {
+    const recordSessionOnLeave = () => {
+      if (answeredQuestions.length > 0) {
+        recordSessionResults();
+      }
+    };
+
+    // Handle page navigation away from component
+    return () => {
+      recordSessionOnLeave();
+    };
+  }, [answeredQuestions]);
+
+  // Handle browser tab close/refresh
+  useEffect(() => {
+    const handleBeforeUnload = () => {
+      if (answeredQuestions.length > 0) {
+        recordSessionResults();
+      }
+    };
+
+    window.addEventListener('beforeunload', handleBeforeUnload);
+    
+    return () => {
+      window.removeEventListener('beforeunload', handleBeforeUnload);
+    };
+  }, [answeredQuestions]);
+
 // Function removed - now using selectedAgeGroup from context
 
   const loadAdaptiveQuestions = async (ageGroup: 'year 2-3' | 'year 4-5' | '11+' = 'year 4-5') => {
