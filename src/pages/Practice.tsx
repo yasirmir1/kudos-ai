@@ -8,6 +8,8 @@ import { supabase } from '@/integrations/supabase/client';
 import { useNavigate } from 'react-router-dom';
 import { ArrowLeft, Clock, CheckCircle, XCircle, RotateCcw, Sparkles } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+import { useAgeGroup } from '@/contexts/AgeGroupContext';
+import { AgeGroupSelector } from '@/components/AgeGroupSelector';
 
 interface Question {
   question_id: string;
@@ -25,6 +27,7 @@ interface Question {
 
 const Practice = () => {
   const { user } = useAuth();
+  const { selectedAgeGroup } = useAgeGroup();
   const navigate = useNavigate();
   const { toast } = useToast();
   
@@ -42,35 +45,15 @@ const Practice = () => {
   const [generatingExplanation, setGeneratingExplanation] = useState(false);
   const [generatingQuestions, setGeneratingQuestions] = useState(false);
   const [answeredQuestions, setAnsweredQuestions] = useState<{question: Question, isCorrect: boolean, timeTaken: number}[]>([]);
-  const [userAgeGroup, setUserAgeGroup] = useState<'year 2-3' | 'year 4-5' | '11+'>('year 4-5');
 
   useEffect(() => {
     setSessionStartTime(new Date());
-    loadUserProfile();
-  }, [user]);
-
-  const loadUserProfile = async () => {
-    try {
-      if (!user?.id) return;
-      
-      const { data: profile } = await supabase
-        .from('student_profiles')
-        .select('age_group')
-        .eq('id', user.id)
-        .maybeSingle();
-      
-      if (profile?.age_group) {
-        setUserAgeGroup(profile.age_group);
-      }
-      
-      // Load questions after getting age group
-      loadAdaptiveQuestions(profile?.age_group || 'year 4-5');
-    } catch (error) {
-      console.error('Error loading profile:', error);
-      // Default to year 4-5 if there's an error
-      loadAdaptiveQuestions('year 4-5');
+    if (user) {
+      loadAdaptiveQuestions(selectedAgeGroup);
     }
-  };
+  }, [user, selectedAgeGroup]);
+
+// Function removed - now using selectedAgeGroup from context
 
   const loadAdaptiveQuestions = async (ageGroup: 'year 2-3' | 'year 4-5' | '11+' = 'year 4-5') => {
     try {
@@ -219,7 +202,7 @@ const Practice = () => {
           time_taken_seconds: timeTaken,
           red_herring_triggered: redHerringTriggered.length > 0 ? redHerringTriggered : null,
           difficulty_appropriate: difficultyAppropriate,
-          age_group: userAgeGroup
+          age_group: selectedAgeGroup
         });
 
       if (error) {
@@ -444,7 +427,7 @@ const Practice = () => {
           average_time_per_question: averageTimePerQuestion,
           topics_covered: topicsCovered,
           difficulty_levels: difficultyLevels,
-          age_group: userAgeGroup
+          age_group: selectedAgeGroup
         });
 
       if (error) {
@@ -483,7 +466,7 @@ const Practice = () => {
     setStartTime(new Date());
     setSessionStartTime(new Date());
     setAnsweredQuestions([]);
-    loadAdaptiveQuestions(userAgeGroup);
+    loadAdaptiveQuestions(selectedAgeGroup);
   };
 
   if (loading) {
@@ -552,7 +535,7 @@ const Practice = () => {
       <div className="container mx-auto max-w-4xl px-6 py-8">
         {/* Header */}
         <div className="flex items-center justify-between mb-8">
-          <Button variant="ghost" onClick={() => navigate('/')} className="px-4">
+          <Button variant="ghost" onClick={() => navigate('/dashboard')} className="px-4">
             <ArrowLeft className="mr-2 h-4 w-4" />
             Dashboard
           </Button>
@@ -567,9 +550,12 @@ const Practice = () => {
             </p>
             <Progress value={progress} className="w-64 h-2 mx-auto" />
           </div>
-          <div className="text-center min-w-[80px]">
-            <p className="text-sm text-muted-foreground">Score</p>
-            <p className="font-bold text-lg">{score}/{currentIndex + (isAnswered ? 1 : 0)}</p>
+          <div className="flex items-center space-x-4">
+            <AgeGroupSelector />
+            <div className="text-center min-w-[80px]">
+              <p className="text-sm text-muted-foreground">Score</p>
+              <p className="font-bold text-lg">{score}/{currentIndex + (isAnswered ? 1 : 0)}</p>
+            </div>
           </div>
         </div>
 

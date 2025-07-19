@@ -5,6 +5,8 @@ import { useAuth } from '@/hooks/useAuth';
 import { supabase } from '@/integrations/supabase/client';
 import { useNavigate } from 'react-router-dom';
 import { ArrowLeft, TrendingUp, BarChart3, PieChart, Calendar } from 'lucide-react';
+import { useAgeGroup } from '@/contexts/AgeGroupContext';
+import { AgeGroupSelector } from '@/components/AgeGroupSelector';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, BarChart, Bar, PieChart as RechartsPieChart, Cell, Pie } from 'recharts';
 
 interface StudentAnswer {
@@ -28,6 +30,7 @@ interface PerformanceData {
 
 const Analytics = () => {
   const { user, signOut } = useAuth();
+  const { selectedAgeGroup } = useAgeGroup();
   const navigate = useNavigate();
   
   const [loading, setLoading] = useState(true);
@@ -38,7 +41,7 @@ const Analytics = () => {
     if (user) {
       loadAnalyticsData();
     }
-  }, [user]);
+  }, [user, selectedAgeGroup]);
 
   // Custom tick component for clear readable labels
   const CustomXAxisTick = (props: any) => {
@@ -68,18 +71,19 @@ const Analytics = () => {
 
   const loadAnalyticsData = async () => {
     try {
-      // Load all student answers for time-based analytics
+      // Load all student answers for time-based analytics (filtered by age group)
       const { data: answersData } = await supabase
         .from('student_answers')
         .select('*')
         .eq('student_id', user?.id)
+        .eq('age_group', selectedAgeGroup)
         .order('answered_at', { ascending: true });
 
       if (answersData) {
         setStudentAnswers(answersData);
       }
 
-      // Load performance data by topic
+      // Load performance data by topic (filtered by age group)
       const { data: performanceData } = await supabase
         .from('student_performance')
         .select('*')
@@ -220,16 +224,19 @@ const Analytics = () => {
             </div>
             <div>
               <h1 className="text-xl font-bold">Performance Analytics</h1>
-              <p className="text-sm text-muted-foreground">{user?.email}</p>
+              <p className="text-sm text-muted-foreground">{selectedAgeGroup} - {user?.email}</p>
             </div>
           </div>
-          <div className="flex space-x-2">
-            <Button variant="ghost" onClick={() => navigate('/profile')}>
-              Profile
-            </Button>
-            <Button variant="outline" onClick={handleSignOut}>
-              Sign Out
-            </Button>
+          <div className="flex items-center space-x-3">
+            <AgeGroupSelector />
+            <div className="flex space-x-2">
+              <Button variant="ghost" onClick={() => navigate('/profile')}>
+                Profile
+              </Button>
+              <Button variant="outline" onClick={handleSignOut}>
+                Sign Out
+              </Button>
+            </div>
           </div>
         </div>
       </header>

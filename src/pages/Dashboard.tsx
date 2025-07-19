@@ -16,6 +16,8 @@ import { FocusAreaQuestionsModal } from '@/components/FocusAreaQuestionsModal';
 import { WorksheetGeneratorModal } from '@/components/WorksheetGeneratorModal';
 import { BulkQuestionGenerator } from '@/components/BulkQuestionGenerator';
 import { SessionsModal } from '@/components/SessionsModal';
+import { AgeGroupSelector } from '@/components/AgeGroupSelector';
+import { useAgeGroup } from '@/contexts/AgeGroupContext';
 
 interface PerformanceData {
   topic: string;
@@ -31,6 +33,7 @@ interface WeakTopic {
 
 const Dashboard = () => {
   const { user, signOut } = useAuth();
+  const { selectedAgeGroup } = useAgeGroup();
   const navigate = useNavigate();
   const [performance, setPerformance] = useState<PerformanceData[]>([]);
   const [weakTopics, setWeakTopics] = useState<WeakTopic[]>([]);
@@ -57,7 +60,7 @@ const Dashboard = () => {
     if (user) {
       loadDashboardData();
     }
-  }, [user]);
+  }, [user, selectedAgeGroup]);
 
   useEffect(() => {
     if (misconceptions.length > 0 && user) {
@@ -94,19 +97,21 @@ const Dashboard = () => {
         setMisconceptions(misconceptionsData);
       }
 
-      // Get total questions answered
+      // Get total questions answered for selected age group
       const { count } = await supabase
         .from('student_answers')
         .select('*', { count: 'exact', head: true })
-        .eq('student_id', user?.id);
+        .eq('student_id', user?.id)
+        .eq('age_group', selectedAgeGroup);
 
       setTotalQuestions(count || 0);
 
-      // Get total sessions from practice_sessions table
+      // Get total sessions from practice_sessions table for selected age group
       const { count: sessionCount } = await supabase
         .from('practice_sessions')
         .select('*', { count: 'exact', head: true })
-        .eq('student_id', user?.id);
+        .eq('student_id', user?.id)
+        .eq('age_group', selectedAgeGroup);
 
       setTotalSessions(sessionCount || 0);
     } catch (error) {
@@ -238,16 +243,19 @@ const Dashboard = () => {
               <p className="text-sm text-muted-foreground">Welcome back, {user?.email}</p>
             </div>
           </div>
-          <div className="flex space-x-2">
-            <Button variant="ghost" onClick={() => navigate('/analytics')}>
-              Analytics
-            </Button>
-            <Button variant="ghost" onClick={() => navigate('/profile')}>
-              Profile
-            </Button>
-            <Button variant="outline" onClick={handleSignOut}>
-              Sign Out
-            </Button>
+          <div className="flex items-center space-x-3">
+            <AgeGroupSelector />
+            <div className="flex space-x-2">
+              <Button variant="ghost" onClick={() => navigate('/analytics')}>
+                Analytics
+              </Button>
+              <Button variant="ghost" onClick={() => navigate('/profile')}>
+                Profile
+              </Button>
+              <Button variant="outline" onClick={handleSignOut}>
+                Sign Out
+              </Button>
+            </div>
           </div>
         </div>
       </header>
@@ -257,7 +265,7 @@ const Dashboard = () => {
         <div className="text-center space-y-4">
           <h2 className="text-3xl font-bold">Ready to learn?</h2>
           <p className="text-muted-foreground max-w-2xl mx-auto">
-            Your adaptive learning system has prepared personalized questions based on your progress
+            Your adaptive learning system has prepared personalized {selectedAgeGroup} questions based on your progress
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
             <Button 

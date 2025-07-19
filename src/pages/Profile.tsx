@@ -10,6 +10,8 @@ import { useNavigate } from 'react-router-dom';
 import { ArrowLeft, User, Calendar, Target, Save } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { ResetProgressModal } from '@/components/ResetProgressModal';
+import { useAgeGroup } from '@/contexts/AgeGroupContext';
+import { AgeGroupSelector } from '@/components/AgeGroupSelector';
 
 type AgeGroup = 'year 2-3' | 'year 4-5' | '11+';
 
@@ -24,6 +26,7 @@ interface Profile {
 
 const Profile = () => {
   const { user, signOut } = useAuth();
+  const { selectedAgeGroup } = useAgeGroup();
   const navigate = useNavigate();
   const { toast } = useToast();
   
@@ -159,12 +162,15 @@ const Profile = () => {
             </div>
             <div>
               <h1 className="text-xl font-bold">Profile Settings</h1>
-              <p className="text-sm text-muted-foreground">{user?.email}</p>
+              <p className="text-sm text-muted-foreground">{selectedAgeGroup} - {user?.email}</p>
             </div>
           </div>
-          <Button variant="outline" onClick={handleSignOut}>
-            Sign Out
-          </Button>
+          <div className="flex items-center space-x-3">
+            <AgeGroupSelector />
+            <Button variant="outline" onClick={handleSignOut}>
+              Sign Out
+            </Button>
+          </div>
         </div>
       </header>
 
