@@ -2,7 +2,7 @@ import { useEffect } from 'react';
 import { Navigate } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
 import { Button } from '@/components/ui/button';
-import { BookOpen, Target, TrendingUp } from 'lucide-react';
+import { BookOpen, Target, TrendingUp, Brain } from 'lucide-react';
 
 const Index = () => {
   const { user, loading } = useAuth();
@@ -30,8 +30,7 @@ const Index = () => {
       {/* Header */}
       <header className="container mx-auto px-4 py-6 flex justify-between items-center">
         <div className="flex items-center space-x-2">
-          <img src="/lovable-uploads/409330f0-2245-4147-b837-ff553d303814.png" alt="Kudos Academy" className="h-8 w-8" />
-          <span className="text-xl font-bold">Kudos Academy</span>
+          <img src="/lovable-uploads/409330f0-2245-4147-b837-ff553d303814.png" alt="Kudos Academy" className="h-12 w-12" />
         </div>
         <Button asChild>
           <a href="/auth">Get Started</a>
@@ -65,7 +64,7 @@ const Index = () => {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mt-20">
             <div className="text-center space-y-4 p-6 rounded-lg bg-card/50 border">
               <div className="p-3 bg-primary/10 rounded-lg w-fit mx-auto">
-                <img src="/lovable-uploads/409330f0-2245-4147-b837-ff553d303814.png" alt="Kudos Academy" className="h-8 w-8" />
+                <Brain className="h-8 w-8 text-primary" />
               </div>
               <h3 className="text-xl font-semibold">Adaptive Learning</h3>
               <p className="text-muted-foreground">
