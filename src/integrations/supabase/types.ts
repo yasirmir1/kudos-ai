@@ -56,6 +56,7 @@ export type Database = {
           red_herring_tag: string[] | null
           subtopic: string
           topic: string
+          year_level: number | null
         }
         Insert: {
           age_group?: Database["public"]["Enums"]["age_group"] | null
@@ -71,6 +72,7 @@ export type Database = {
           red_herring_tag?: string[] | null
           subtopic: string
           topic: string
+          year_level?: number | null
         }
         Update: {
           age_group?: Database["public"]["Enums"]["age_group"] | null
@@ -86,6 +88,7 @@ export type Database = {
           red_herring_tag?: string[] | null
           subtopic?: string
           topic?: string
+          year_level?: number | null
         }
         Relationships: []
       }
