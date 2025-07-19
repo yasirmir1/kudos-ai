@@ -49,7 +49,7 @@ const Practice = () => {
     try {
       setLoading(true);
       
-      // First, get all question IDs the user has already answered
+      // Get all question IDs the user has already answered to ensure no repeats
       const { data: answeredQuestions } = await supabase
         .from('student_answers')
         .select('question_id')
@@ -57,10 +57,11 @@ const Practice = () => {
 
       const answeredQuestionIds = answeredQuestions?.map(q => q.question_id) || [];
 
-      // Then get NEW questions that the user hasn't seen
+      // Get ONLY new questions that the user has never seen
       let query = supabase
         .from('curriculum')
         .select('*')
+        .order('created_at', { ascending: false }) // Prioritize newer questions
         .limit(20);
 
       if (answeredQuestionIds.length > 0) {
@@ -72,109 +73,53 @@ const Practice = () => {
       let questions: Question[] = [];
 
       if (newQuestions && newQuestions.length > 0) {
-        // Format new questions
-        const formattedNewQuestions = newQuestions.map(q => ({
+        // Format questions
+        questions = newQuestions.map(q => ({
           ...q,
           options: Array.isArray(q.options) ? q.options : 
                    typeof q.options === 'string' ? JSON.parse(q.options) : 
                    Object.values(q.options || {})
         }));
 
-        questions = formattedNewQuestions;
-
-        // Add 2-3% repeated questions for reinforcement
-        const repeatPercentage = Math.random() < 0.025; // 2.5% chance
-        
-        if (repeatPercentage && questions.length > 15 && answeredQuestionIds.length > 0) {
-          // Get a few questions the user got CORRECT before (for confidence building)
-          const { data: correctlyAnswered } = await supabase
-            .from('student_answers')
-            .select('question_id')
-            .eq('student_id', user?.id)
-            .eq('is_correct', true)
-            .lt('answered_at', new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString()) // 2 days ago
-            .order('answered_at', { ascending: false })
-            .limit(5);
-
-          if (correctlyAnswered && correctlyAnswered.length > 0) {
-            const repeatQuestionIds = correctlyAnswered.slice(0, 2).map(q => q.question_id);
-            
-            const { data: repeatQuestions } = await supabase
-              .from('curriculum')
-              .select('*')
-              .in('question_id', repeatQuestionIds);
-
-            if (repeatQuestions && repeatQuestions.length > 0) {
-              const formattedRepeatQuestions = repeatQuestions.map(q => ({
-                ...q,
-                options: Array.isArray(q.options) ? q.options : 
-                         typeof q.options === 'string' ? JSON.parse(q.options) : 
-                         Object.values(q.options || {})
-              }));
-
-              // Replace 1-2 new questions with repeat questions and shuffle
-              questions = [
-                ...questions.slice(0, -repeatQuestions.length),
-                ...formattedRepeatQuestions
-              ];
-              
-              // Shuffle the array so repeat questions aren't at the end
-              questions = questions.sort(() => Math.random() - 0.5);
-
-              console.log(`Added ${repeatQuestions.length} repeat questions for reinforcement`);
-            }
-          }
-        }
+        console.log(`Loaded ${questions.length} new questions (never seen before)`);
       } else {
-        console.log('No new questions found, falling back to adaptive algorithm');
+        console.log('No new questions available, need to generate more');
         
-        // Fallback to adaptive questions if no new questions available
-        const { data, error } = await supabase
-          .rpc('get_adaptive_questions_enhanced', { 
-            p_student_id: user?.id,
-            p_count: 20 
-          });
+        // If no new questions available, generate more AI questions
+        await generateAdditionalQuestions();
+        
+        // After generation, try loading new questions again
+        const { data: freshQuestions } = await supabase
+          .from('curriculum')
+          .select('*')
+          .not('question_id', 'in', answeredQuestionIds.length > 0 ? `(${answeredQuestionIds.map(id => `'${id}'`).join(',')})` : '()')
+          .order('created_at', { ascending: false })
+          .limit(20);
 
-        if (error) {
-          console.error('Error loading adaptive questions:', error);
-          // Final fallback to any questions
-          const { data: fallbackData } = await supabase
-            .from('curriculum')
-            .select('*')
-            .limit(20);
-          
-          if (fallbackData) {
-            const formattedData = fallbackData.map(q => ({
-              ...q,
-              options: Array.isArray(q.options) ? q.options : 
-                       typeof q.options === 'string' ? JSON.parse(q.options) : 
-                       Object.values(q.options || {})
-            }));
-            questions = formattedData;
-          }
-        } else if (data) {
-          // Extract questions from the JSONB response
-          const extractedQuestions = data.map((item: any) => {
-            const question = item.question;
-            return {
-              ...question,
-              options: Array.isArray(question.options) ? question.options : 
-                       typeof question.options === 'string' ? JSON.parse(question.options) : 
-                       Object.values(question.options || {})
-            };
+        if (freshQuestions && freshQuestions.length > 0) {
+          questions = freshQuestions.map(q => ({
+            ...q,
+            options: Array.isArray(q.options) ? q.options : 
+                     typeof q.options === 'string' ? JSON.parse(q.options) : 
+                     Object.values(q.options || {})
+          }));
+        } else {
+          toast({
+            title: "No new questions available",
+            description: "Please try again later or contact support.",
+            variant: "destructive",
           });
-          questions = extractedQuestions;
+          return;
         }
       }
 
       setQuestions(questions);
-      console.log(`Loaded ${questions.length} questions (prioritizing new content)`);
 
     } catch (error) {
       console.error('Error:', error);
       toast({
         title: "Error loading questions",
-        description: "We'll use some practice questions for now.",
+        description: "Failed to load practice questions.",
         variant: "destructive",
       });
     } finally {
@@ -307,27 +252,56 @@ const Practice = () => {
     if (generatingQuestions) return;
     
     setGeneratingQuestions(true);
+    toast({
+      title: "Generating new questions...",
+      description: "Creating personalized questions based on your learning patterns.",
+    });
+
     try {
-      // Get user's weak topics to focus generation
+      // Get user's performance data to determine what to generate
       const { data: weakTopics } = await supabase
         .rpc('get_weak_topics', { p_student_id: user?.id });
       
-      // Determine what topic/subtopic to generate for
-      let targetTopic = 'Mathematics';
-      let targetSubtopic = 'General';
+      // Get already answered questions to avoid duplicates
+      const { data: answeredQuestions } = await supabase
+        .from('student_answers')
+        .select('question_id')
+        .eq('student_id', user?.id);
+      
+      const answeredQuestionIds = answeredQuestions?.map(q => q.question_id) || [];
+      
+      // Determine generation parameters
+      let targetTopic = 'Number - Number and Place Value';
+      let targetSubtopic = 'Read, write, order and compare numbers';
       let targetDifficulty = 'Medium';
       
       if (weakTopics && weakTopics.length > 0) {
         targetTopic = weakTopics[0].topic;
-        // Get a random subtopic from existing curriculum for this topic
+        
+        // Get existing subtopics for this topic to ensure variety
         const { data: existingQuestions } = await supabase
           .from('curriculum')
           .select('subtopic, difficulty')
           .eq('topic', targetTopic)
-          .limit(10);
+          .not('question_id', 'in', answeredQuestionIds.length > 0 ? `(${answeredQuestionIds.map(id => `'${id}'`).join(',')})` : '()')
+          .limit(20);
         
         if (existingQuestions && existingQuestions.length > 0) {
           const randomQuestion = existingQuestions[Math.floor(Math.random() * existingQuestions.length)];
+          targetSubtopic = randomQuestion.subtopic;
+          targetDifficulty = randomQuestion.difficulty;
+        }
+      } else {
+        // For new users, get a random topic/subtopic from existing curriculum
+        const { data: randomQuestions } = await supabase
+          .from('curriculum')
+          .select('topic, subtopic, difficulty')
+          .not('question_id', 'in', answeredQuestionIds.length > 0 ? `(${answeredQuestionIds.map(id => `'${id}'`).join(',')})` : '()')
+          .limit(10);
+        
+        if (randomQuestions && randomQuestions.length > 0) {
+          const randomQuestion = randomQuestions[Math.floor(Math.random() * randomQuestions.length)];
+          targetTopic = randomQuestion.topic;
           targetSubtopic = randomQuestion.subtopic;
           targetDifficulty = randomQuestion.difficulty;
         }
@@ -340,47 +314,30 @@ const Practice = () => {
           topic: targetTopic,
           subtopic: targetSubtopic,
           difficulty: targetDifficulty,
-          count: 5,
+          count: 10, // Generate more questions to reduce future generation needs
           saveToDatabase: true
         }
       });
 
       if (functionError) {
+        console.error('Function error:', functionError);
         throw new Error('Failed to generate questions');
       }
 
-      // Handle streaming response from Supabase function
-      const newQuestions: Question[] = [];
+      console.log('Generated questions response:', response);
       
-      if (response && Array.isArray(response)) {
-        // Response contains generated questions directly
-        for (const questionData of response) {
-          try {
-            const formattedQuestion: Question = {
-              ...questionData,
-              options: Array.isArray(questionData.options) ? questionData.options : 
-                       typeof questionData.options === 'string' ? JSON.parse(questionData.options) : 
-                       Object.values(questionData.options || {})
-            };
-            newQuestions.push(formattedQuestion);
-          } catch (e) {
-            console.error('Error formatting question:', e);
-          }
-        }
-      }
-      
-      if (newQuestions.length > 0) {
-        setQuestions(prev => [...prev, ...newQuestions]);
+      if (response) {
         toast({
-          title: "New questions generated!",
-          description: `Added ${newQuestions.length} questions tailored to your learning needs.`,
+          title: "Questions generated successfully!",
+          description: "New personalized questions are now available.",
         });
       }
+      
     } catch (error) {
       console.error('Error generating questions:', error);
       toast({
         title: "Failed to generate questions",
-        description: "Continuing with existing questions.",
+        description: "We'll try again when you need more questions.",
         variant: "destructive",
       });
     } finally {
@@ -391,8 +348,40 @@ const Practice = () => {
   const handleNextQuestion = async () => {
     // Check if we're running low on questions and generate more if needed
     const remainingQuestions = questions.length - (currentIndex + 1);
-    if (remainingQuestions <= 3 && !generatingQuestions) {
-      generateAdditionalQuestions();
+    
+    if (remainingQuestions <= 5 && !generatingQuestions) {
+      console.log(`Running low on questions (${remainingQuestions} remaining), generating more...`);
+      await generateAdditionalQuestions();
+      
+      // Reload questions to include newly generated ones
+      setTimeout(async () => {
+        const { data: answeredQuestions } = await supabase
+          .from('student_answers')
+          .select('question_id')
+          .eq('student_id', user?.id);
+
+        const answeredQuestionIds = answeredQuestions?.map(q => q.question_id) || [];
+
+        const { data: newQuestions } = await supabase
+          .from('curriculum')
+          .select('*')
+          .not('question_id', 'in', answeredQuestionIds.length > 0 ? `(${answeredQuestionIds.map(id => `'${id}'`).join(',')})` : '()')
+          .order('created_at', { ascending: false })
+          .limit(20);
+
+        if (newQuestions && newQuestions.length > 0) {
+          const formattedQuestions = newQuestions.map(q => ({
+            ...q,
+            options: Array.isArray(q.options) ? q.options : 
+                     typeof q.options === 'string' ? JSON.parse(q.options) : 
+                     Object.values(q.options || {})
+          }));
+          
+          // Replace current questions with fresh set to avoid any repeats
+          setQuestions(formattedQuestions);
+          console.log(`Refreshed with ${formattedQuestions.length} new questions`);
+        }
+      }, 2000); // Wait for generation to complete
     }
     
     if (currentIndex + 1 >= questions.length) {
