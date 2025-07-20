@@ -132,7 +132,7 @@ const Curriculum = () => {
       <div className="container mx-auto px-4 py-8">
         {/* Action Bar */}
         <div className="flex justify-end mb-6">
-          <CsvImportModal>
+          <CsvImportModal onImportComplete={loadCurriculumData}>
             <Button variant="outline" className="flex items-center gap-2">
               <Upload className="h-4 w-4" />
               Import CSV

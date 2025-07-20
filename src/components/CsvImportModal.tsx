@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import Papa from 'papaparse';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Alert, AlertDescription } from "@/components/ui/alert";
@@ -12,6 +12,7 @@ import { Upload, Download, AlertCircle, CheckCircle } from "lucide-react";
 
 interface CsvImportModalProps {
   children: React.ReactNode;
+  onImportComplete?: () => void;
 }
 
 interface CsvRow {
@@ -36,7 +37,7 @@ interface ImportResult {
   details: string[];
 }
 
-export const CsvImportModal: React.FC<CsvImportModalProps> = ({ children }) => {
+export const CsvImportModal: React.FC<CsvImportModalProps> = ({ children, onImportComplete }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [csvData, setCsvData] = useState<CsvRow[]>([]);
   const [isProcessing, setIsProcessing] = useState(false);
@@ -210,6 +211,11 @@ export const CsvImportModal: React.FC<CsvImportModalProps> = ({ children }) => {
       description: `Successfully imported ${importResult.success} questions. ${importResult.errors} errors.`,
       variant: importResult.errors > 0 ? "destructive" : "default",
     });
+
+    // Call the callback to refresh data if successful
+    if (importResult.success > 0 && onImportComplete) {
+      onImportComplete();
+    }
   };
 
   const resetModal = () => {
@@ -230,6 +236,9 @@ export const CsvImportModal: React.FC<CsvImportModalProps> = ({ children }) => {
       <DialogContent className="max-w-4xl max-h-[80vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle>Import Questions from CSV</DialogTitle>
+          <DialogDescription>
+            Upload a CSV file to import multiple questions into the curriculum database.
+          </DialogDescription>
         </DialogHeader>
 
         <div className="space-y-6">
