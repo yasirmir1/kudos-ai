@@ -300,6 +300,9 @@ const Dashboard = () => {
           </div>
           <div className="flex items-center space-x-6">
             <div className="flex space-x-2">
+              <Button variant="ghost" onClick={() => navigate('/curriculum')}>
+                Curriculum
+              </Button>
               <Button variant="ghost" onClick={() => navigate('/analytics')}>
                 Analytics
               </Button>
