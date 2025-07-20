@@ -1,64 +1,170 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Checkbox } from "@/components/ui/checkbox";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
-import { Loader2, CheckCircle } from "lucide-react";
+import { Loader2, CheckCircle, AlertCircle } from "lucide-react";
+
+interface TopicCombination {
+  topic: string;
+  subtopic: string;
+  difficulty: string;
+}
 
 export const PerplexityQuestionGenerator = () => {
-  const [topic, setTopic] = useState("");
-  const [subtopic, setSubtopic] = useState("");
-  const [difficulty, setDifficulty] = useState("");
-  const [ageGroup, setAgeGroup] = useState("");
-  const [count, setCount] = useState(5);
+  const [availableCombinations, setAvailableCombinations] = useState<TopicCombination[]>([]);
+  const [selectedCombinations, setSelectedCombinations] = useState<TopicCombination[]>([]);
+  const [ageGroup, setAgeGroup] = useState("year 4-5");
+  const [questionsPerCombination, setQuestionsPerCombination] = useState(2);
   const [isGenerating, setIsGenerating] = useState(false);
-  const [generatedQuestions, setGeneratedQuestions] = useState<any[]>([]);
+  const [results, setResults] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
   const { toast } = useToast();
 
-  const handleGenerate = async () => {
-    if (!topic || !subtopic || !difficulty || !ageGroup) {
+  useEffect(() => {
+    loadAvailableCombinations();
+  }, []);
+
+  const loadAvailableCombinations = async () => {
+    try {
+      // Get unique topic/subtopic/difficulty combinations from curriculum
+      const { data, error } = await supabase
+        .from('curriculum')
+        .select('topic, subtopic, difficulty')
+        .order('topic')
+        .order('subtopic')
+        .order('difficulty');
+
+      if (error) throw error;
+
+      // Create unique combinations
+      const uniqueCombinations: TopicCombination[] = [];
+      const seen = new Set<string>();
+
+      data?.forEach((item) => {
+        const key = `${item.topic}|${item.subtopic}|${item.difficulty}`;
+        if (!seen.has(key)) {
+          seen.add(key);
+          uniqueCombinations.push({
+            topic: item.topic,
+            subtopic: item.subtopic,
+            difficulty: item.difficulty
+          });
+        }
+      });
+
+      setAvailableCombinations(uniqueCombinations);
+      // Select all by default
+      setSelectedCombinations(uniqueCombinations);
+    } catch (error) {
+      console.error('Error loading combinations:', error);
       toast({
-        title: "Missing fields",
-        description: "Please fill in all required fields.",
+        title: "Error",
+        description: "Failed to load available topic combinations",
+        variant: "destructive",
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const toggleAllCombinations = (checked: boolean) => {
+    setSelectedCombinations(checked ? availableCombinations : []);
+  };
+
+  const toggleCombination = (combination: TopicCombination, checked: boolean) => {
+    if (checked) {
+      setSelectedCombinations([...selectedCombinations, combination]);
+    } else {
+      setSelectedCombinations(selectedCombinations.filter(c => 
+        !(c.topic === combination.topic && c.subtopic === combination.subtopic && c.difficulty === combination.difficulty)
+      ));
+    }
+  };
+
+  const isCombinationSelected = (combination: TopicCombination) => {
+    return selectedCombinations.some(c => 
+      c.topic === combination.topic && c.subtopic === combination.subtopic && c.difficulty === combination.difficulty
+    );
+  };
+
+  const handleGenerate = async () => {
+    if (selectedCombinations.length === 0) {
+      toast({
+        title: "No combinations selected",
+        description: "Please select at least one topic combination.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    if (!ageGroup) {
+      toast({
+        title: "Missing age group",
+        description: "Please select an age group.",
         variant: "destructive",
       });
       return;
     }
 
     setIsGenerating(true);
-    setGeneratedQuestions([]);
+    setResults([]);
+
+    const allResults: any[] = [];
+    let successful = 0;
+    let failed = 0;
 
     try {
-      const { data, error } = await supabase.functions.invoke('generate-questions', {
-        body: {
-          topic,
-          subtopic,
-          difficulty,
-          age_group: ageGroup,
-          count,
-          saveToDatabase: true
-        }
-      });
+      // Process each combination
+      for (const combination of selectedCombinations) {
+        try {
+          const { data, error } = await supabase.functions.invoke('generate-questions', {
+            body: {
+              topic: combination.topic,
+              subtopic: combination.subtopic,
+              difficulty: combination.difficulty,
+              age_group: ageGroup,
+              count: questionsPerCombination,
+              saveToDatabase: true
+            }
+          });
 
-      if (error) {
-        throw error;
+          if (error) {
+            throw error;
+          }
+
+          allResults.push({
+            combination,
+            status: 'success',
+            questions: data?.questions || []
+          });
+          successful++;
+        } catch (error) {
+          console.error(`Error generating for ${combination.topic} - ${combination.subtopic} (${combination.difficulty}):`, error);
+          allResults.push({
+            combination,
+            status: 'error',
+            error: error.message
+          });
+          failed++;
+        }
       }
 
-      // The function returns a stream, but we can handle the final result
-      setGeneratedQuestions(data?.questions || []);
+      setResults(allResults);
       
       toast({
-        title: "Questions generated!",
-        description: `Successfully generated ${count} questions and saved them to the curriculum.`,
+        title: "Generation complete!",
+        description: `Generated questions for ${successful} combinations. ${failed} failed.`,
       });
     } catch (error) {
       console.error('Generation error:', error);
       toast({
         title: "Generation failed",
-        description: error.message || "Failed to generate questions. Please try again.",
+        description: "Failed to generate questions. Please try again.",
         variant: "destructive",
       });
     } finally {
@@ -66,61 +172,40 @@ export const PerplexityQuestionGenerator = () => {
     }
   };
 
+  if (loading) {
+    return (
+      <Card>
+        <CardHeader>
+          <CardTitle>Perplexity Question Generator</CardTitle>
+          <CardDescription>Loading available combinations...</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="flex items-center justify-center p-8">
+            <Loader2 className="h-8 w-8 animate-spin" />
+          </div>
+        </CardContent>
+      </Card>
+    );
+  }
   return (
     <div className="space-y-6">
       <Card>
         <CardHeader>
           <CardTitle>Perplexity Question Generator</CardTitle>
           <CardDescription>
-            Generate mathematics questions using Perplexity AI and save them to your curriculum.
+            Generate mathematics questions using Perplexity AI for selected topic combinations.
           </CardDescription>
         </CardHeader>
-        <CardContent className="space-y-4">
+        <CardContent className="space-y-6">
+          {/* Age Group and Questions per Combination */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div className="space-y-2">
-              <Label htmlFor="topic">Topic</Label>
-              <Input
-                id="topic"
-                placeholder="e.g., Number - Addition and Subtraction"
-                value={topic}
-                onChange={(e) => setTopic(e.target.value)}
-                disabled={isGenerating}
-              />
-            </div>
-            
-            <div className="space-y-2">
-              <Label htmlFor="subtopic">Subtopic</Label>
-              <Input
-                id="subtopic"
-                placeholder="e.g., Add and subtract numbers mentally"
-                value={subtopic}
-                onChange={(e) => setSubtopic(e.target.value)}
-                disabled={isGenerating}
-              />
-            </div>
-            
-            <div className="space-y-2">
-              <Label htmlFor="difficulty">Difficulty</Label>
-              <Select value={difficulty} onValueChange={setDifficulty} disabled={isGenerating}>
-                <SelectTrigger>
-                  <SelectValue placeholder="Select difficulty" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="Easy">Easy</SelectItem>
-                  <SelectItem value="Medium">Medium</SelectItem>
-                  <SelectItem value="Hard">Hard</SelectItem>
-                  <SelectItem value="Very Hard">Very Hard</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-            
             <div className="space-y-2">
               <Label htmlFor="age-group">Age Group</Label>
               <Select value={ageGroup} onValueChange={setAgeGroup} disabled={isGenerating}>
-                <SelectTrigger>
+                <SelectTrigger className="bg-background">
                   <SelectValue placeholder="Select age group" />
                 </SelectTrigger>
-                <SelectContent>
+                <SelectContent className="bg-background border shadow-md z-50">
                   <SelectItem value="year 2-3">Year 2-3</SelectItem>
                   <SelectItem value="year 4-5">Year 4-5</SelectItem>
                   <SelectItem value="11+">11+</SelectItem>
@@ -129,22 +214,58 @@ export const PerplexityQuestionGenerator = () => {
             </div>
             
             <div className="space-y-2">
-              <Label htmlFor="count">Number of Questions</Label>
+              <Label htmlFor="questions-per-combination">Questions per Combination</Label>
               <Input
-                id="count"
+                id="questions-per-combination"
                 type="number"
                 min="1"
-                max="20"
-                value={count}
-                onChange={(e) => setCount(parseInt(e.target.value) || 5)}
+                max="10"
+                value={questionsPerCombination}
+                onChange={(e) => setQuestionsPerCombination(parseInt(e.target.value) || 2)}
                 disabled={isGenerating}
               />
             </div>
           </div>
 
+          {/* Topic Combinations Selection */}
+          <div className="space-y-4">
+            <div className="flex items-center justify-between">
+              <Label className="text-base font-semibold">Topic Combinations ({selectedCombinations.length} selected)</Label>
+              <div className="flex items-center space-x-2">
+                <Checkbox
+                  id="select-all"
+                  checked={selectedCombinations.length === availableCombinations.length}
+                  onCheckedChange={toggleAllCombinations}
+                  disabled={isGenerating}
+                />
+                <Label htmlFor="select-all" className="text-sm">Select All</Label>
+              </div>
+            </div>
+            
+            <div className="max-h-60 overflow-y-auto border rounded-lg p-4 space-y-2 bg-muted/30">
+              {availableCombinations.map((combination, index) => (
+                <div key={index} className="flex items-center space-x-2 p-2 rounded hover:bg-muted/50">
+                  <Checkbox
+                    id={`combo-${index}`}
+                    checked={isCombinationSelected(combination)}
+                    onCheckedChange={(checked) => toggleCombination(combination, checked as boolean)}
+                    disabled={isGenerating}
+                  />
+                  <Label htmlFor={`combo-${index}`} className="text-sm flex-1 cursor-pointer">
+                    <span className="font-medium">{combination.topic}</span>
+                    <span className="text-muted-foreground"> - {combination.subtopic}</span>
+                    <span className="ml-2 px-2 py-1 rounded text-xs bg-primary/10 text-primary">
+                      {combination.difficulty}
+                    </span>
+                  </Label>
+                </div>
+              ))}
+            </div>
+          </div>
+
           <Button
             onClick={handleGenerate}
-            disabled={isGenerating || !topic || !subtopic || !difficulty || !ageGroup}
+            disabled={isGenerating || selectedCombinations.length === 0 || !ageGroup}
             className="w-full"
           >
             {isGenerating ? (
@@ -153,47 +274,62 @@ export const PerplexityQuestionGenerator = () => {
                 Generating Questions...
               </>
             ) : (
-              "Generate Questions"
+              `Generate Questions for ${selectedCombinations.length} Combinations`
             )}
           </Button>
+          
+          {selectedCombinations.length > 0 && (
+            <p className="text-sm text-muted-foreground text-center">
+              This will generate {selectedCombinations.length * questionsPerCombination} total questions 
+              ({questionsPerCombination} per combination)
+            </p>
+          )}
         </CardContent>
       </Card>
 
-      {generatedQuestions.length > 0 && (
+      {results.length > 0 && (
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <CheckCircle className="h-5 w-5 text-green-500" />
-              Generated Questions ({generatedQuestions.length})
+              Generation Results ({results.length} combinations processed)
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="space-y-4">
-              {generatedQuestions.map((question, index) => (
-                <div key={index} className="p-4 border rounded-lg">
-                  <h4 className="font-medium mb-2">Question {index + 1}: {question.question_id}</h4>
-                  <p className="mb-2">{question.example_question}</p>
-                  <div className="grid grid-cols-2 gap-2 mb-2">
-                    {question.options?.map((option: string, optIndex: number) => (
-                      <div
-                        key={optIndex}
-                        className={`p-2 rounded text-sm ${
-                          option === question.correct_answer
-                            ? 'bg-green-100 text-green-800 border border-green-300'
-                            : 'bg-gray-50 border'
-                        }`}
-                      >
-                        {option}
-                      </div>
-                    ))}
+            <div className="space-y-3">
+              {results.map((result, index) => (
+                <div
+                  key={index}
+                  className={`p-3 rounded-lg border ${
+                    result.status === 'success' 
+                      ? 'bg-green-50 border-green-200' 
+                      : 'bg-red-50 border-red-200'
+                  }`}
+                >
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <span className="font-medium">{result.combination.topic}</span>
+                      <span className="text-muted-foreground"> - {result.combination.subtopic}</span>
+                      <span className="ml-2 px-2 py-1 rounded text-xs bg-primary/10 text-primary">
+                        {result.combination.difficulty}
+                      </span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      {result.status === 'success' ? (
+                        <>
+                          <CheckCircle className="h-4 w-4 text-green-600" />
+                          <span className="text-sm text-green-700">{result.questions?.length || 0} questions</span>
+                        </>
+                      ) : (
+                        <>
+                          <AlertCircle className="h-4 w-4 text-red-600" />
+                          <span className="text-sm text-red-700">Failed</span>
+                        </>
+                      )}
+                    </div>
                   </div>
-                  <p className="text-sm text-muted-foreground">
-                    <strong>Correct:</strong> {question.correct_answer}
-                  </p>
-                  {question.pedagogical_notes && (
-                    <p className="text-sm text-muted-foreground mt-1">
-                      <strong>Notes:</strong> {question.pedagogical_notes}
-                    </p>
+                  {result.error && (
+                    <p className="text-sm text-red-600 mt-1">{result.error}</p>
                   )}
                 </div>
               ))}
