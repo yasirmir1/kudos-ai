@@ -14,8 +14,6 @@ import { MisconceptionExplanationModal } from '@/components/MisconceptionExplana
 import { MisconceptionQuestionsModal } from '@/components/MisconceptionQuestionsModal';
 import { FocusAreaQuestionsModal } from '@/components/FocusAreaQuestionsModal';
 import { WorksheetGeneratorModal } from '@/components/WorksheetGeneratorModal';
-import { BulkQuestionGenerator } from '@/components/BulkQuestionGenerator';
-import { PerplexityQuestionGenerator } from '@/components/PerplexityQuestionGenerator';
 import { SessionsModal } from '@/components/SessionsModal';
 import { AgeGroupSelector } from '@/components/AgeGroupSelector';
 import { useAgeGroup } from '@/contexts/AgeGroupContext';
@@ -519,16 +517,6 @@ const Dashboard = () => {
           </Card>
         </div>
 
-        {/* Admin Tools Section */}
-        <div className="space-y-6">
-          <div className="border-t pt-8">
-            <h3 className="text-2xl font-bold mb-4">Admin Tools</h3>
-            <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
-              <PerplexityQuestionGenerator />
-              <BulkQuestionGenerator />
-            </div>
-          </div>
-        </div>
 
         {/* Modals */}
         <QuestionHistoryModal 

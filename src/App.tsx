@@ -11,7 +11,7 @@ import Dashboard from "./pages/Dashboard";
 import Practice from "./pages/Practice";
 import Profile from "./pages/Profile";
 import Analytics from "./pages/Analytics";
-import { BulkGeneration } from "./pages/BulkGeneration";
+
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -31,7 +31,7 @@ const App = () => (
             <Route path="/practice" element={<Practice />} />
             <Route path="/profile" element={<Profile />} />
             <Route path="/analytics" element={<Analytics />} />
-            <Route path="/bulk-generation" element={<BulkGeneration />} />
+            
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>
