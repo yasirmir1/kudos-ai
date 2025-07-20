@@ -15,10 +15,12 @@ interface TopicCombination {
   difficulty: string;
 }
 
+type AgeGroup = "year 2-3" | "year 4-5" | "11+";
+
 export const PerplexityQuestionGenerator = () => {
   const [availableCombinations, setAvailableCombinations] = useState<TopicCombination[]>([]);
   const [selectedCombinations, setSelectedCombinations] = useState<TopicCombination[]>([]);
-  const [ageGroup, setAgeGroup] = useState("year 4-5");
+  const [ageGroup, setAgeGroup] = useState<AgeGroup>("year 4-5");
   const [questionsPerCombination, setQuestionsPerCombination] = useState(2);
   const [isGenerating, setIsGenerating] = useState(false);
   const [results, setResults] = useState<any[]>([]);
@@ -27,14 +29,18 @@ export const PerplexityQuestionGenerator = () => {
 
   useEffect(() => {
     loadAvailableCombinations();
-  }, []);
+  }, [ageGroup]); // Re-load when age group changes
 
   const loadAvailableCombinations = async () => {
+    if (!ageGroup) return; // Don't load if no age group selected
+    
+    setLoading(true);
     try {
-      // Get unique topic/subtopic/difficulty combinations from curriculum
+      // Get unique topic/subtopic/difficulty combinations from curriculum filtered by age group
       const { data, error } = await supabase
         .from('curriculum')
         .select('topic, subtopic, difficulty')
+        .eq('age_group', ageGroup)
         .order('topic')
         .order('subtopic')
         .order('difficulty');
@@ -58,13 +64,15 @@ export const PerplexityQuestionGenerator = () => {
       });
 
       setAvailableCombinations(uniqueCombinations);
-      // Select all by default
+      // Select all by default for the current age group
       setSelectedCombinations(uniqueCombinations);
+
+      console.log(`Loaded ${uniqueCombinations.length} combinations for age group: ${ageGroup}`);
     } catch (error) {
       console.error('Error loading combinations:', error);
       toast({
         title: "Error",
-        description: "Failed to load available topic combinations",
+        description: `Failed to load topic combinations for ${ageGroup}`,
         variant: "destructive",
       });
     } finally {
@@ -221,12 +229,12 @@ export const PerplexityQuestionGenerator = () => {
     }
   };
 
-  if (loading) {
+  if (loading && ageGroup) {
     return (
       <Card>
         <CardHeader>
           <CardTitle>Perplexity Question Generator</CardTitle>
-          <CardDescription>Loading available combinations...</CardDescription>
+          <CardDescription>Loading available combinations for {ageGroup}...</CardDescription>
         </CardHeader>
         <CardContent>
           <div className="flex items-center justify-center p-8">
@@ -243,23 +251,27 @@ export const PerplexityQuestionGenerator = () => {
           <CardTitle>Perplexity Question Generator</CardTitle>
           <CardDescription>
             Generate mathematics questions using Perplexity AI for selected topic combinations.
+            {ageGroup && <span className="block mt-1 font-medium">Current Age Group: {ageGroup}</span>}
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-6">
           {/* Age Group and Questions per Combination */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label htmlFor="age-group">Age Group</Label>
-              <Select value={ageGroup} onValueChange={setAgeGroup} disabled={isGenerating}>
+              <Label htmlFor="age-group">Age Group *</Label>
+              <Select value={ageGroup} onValueChange={(value) => setAgeGroup(value as AgeGroup)} disabled={isGenerating}>
                 <SelectTrigger className="bg-background">
-                  <SelectValue placeholder="Select age group" />
+                  <SelectValue placeholder="Select age group to load topics" />
                 </SelectTrigger>
                 <SelectContent className="bg-background border shadow-md z-50">
-                  <SelectItem value="year 2-3">Year 2-3</SelectItem>
-                  <SelectItem value="year 4-5">Year 4-5</SelectItem>
-                  <SelectItem value="11+">11+</SelectItem>
+                  <SelectItem value="year 2-3">Year 2-3 (Ages 6-8)</SelectItem>
+                  <SelectItem value="year 4-5">Year 4-5 (Ages 8-10)</SelectItem>
+                  <SelectItem value="11+">11+ (Ages 10+)</SelectItem>
                 </SelectContent>
               </Select>
+              <p className="text-sm text-muted-foreground">
+                Topics will be filtered based on the selected age group
+              </p>
             </div>
             
             <div className="space-y-2">
@@ -277,40 +289,59 @@ export const PerplexityQuestionGenerator = () => {
           </div>
 
           {/* Topic Combinations Selection */}
-          <div className="space-y-4">
-            <div className="flex items-center justify-between">
-              <Label className="text-base font-semibold">Topic Combinations ({selectedCombinations.length} selected)</Label>
-              <div className="flex items-center space-x-2">
-                <Checkbox
-                  id="select-all"
-                  checked={selectedCombinations.length === availableCombinations.length}
-                  onCheckedChange={toggleAllCombinations}
-                  disabled={isGenerating}
-                />
-                <Label htmlFor="select-all" className="text-sm">Select All</Label>
-              </div>
-            </div>
-            
-            <div className="max-h-60 overflow-y-auto border rounded-lg p-4 space-y-2 bg-muted/30">
-              {availableCombinations.map((combination, index) => (
-                <div key={index} className="flex items-center space-x-2 p-2 rounded hover:bg-muted/50">
+          {ageGroup && availableCombinations.length > 0 && (
+            <div className="space-y-4">
+              <div className="flex items-center justify-between">
+                <Label className="text-base font-semibold">
+                  Topic Combinations for {ageGroup} ({selectedCombinations.length} selected)
+                </Label>
+                <div className="flex items-center space-x-2">
                   <Checkbox
-                    id={`combo-${index}`}
-                    checked={isCombinationSelected(combination)}
-                    onCheckedChange={(checked) => toggleCombination(combination, checked as boolean)}
+                    id="select-all"
+                    checked={selectedCombinations.length === availableCombinations.length && availableCombinations.length > 0}
+                    onCheckedChange={toggleAllCombinations}
                     disabled={isGenerating}
                   />
-                  <Label htmlFor={`combo-${index}`} className="text-sm flex-1 cursor-pointer">
-                    <span className="font-medium">{combination.topic}</span>
-                    <span className="text-muted-foreground"> - {combination.subtopic}</span>
-                    <span className="ml-2 px-2 py-1 rounded text-xs bg-primary/10 text-primary">
-                      {combination.difficulty}
-                    </span>
-                  </Label>
+                  <Label htmlFor="select-all" className="text-sm">Select All</Label>
                 </div>
-              ))}
+              </div>
+              
+              <div className="max-h-60 overflow-y-auto border rounded-lg p-4 space-y-2 bg-muted/30">
+                {availableCombinations.map((combination, index) => (
+                  <div key={index} className="flex items-center space-x-2 p-2 rounded hover:bg-muted/50">
+                    <Checkbox
+                      id={`combo-${index}`}
+                      checked={isCombinationSelected(combination)}
+                      onCheckedChange={(checked) => toggleCombination(combination, checked as boolean)}
+                      disabled={isGenerating}
+                    />
+                    <Label htmlFor={`combo-${index}`} className="text-sm flex-1 cursor-pointer">
+                      <span className="font-medium">{combination.topic}</span>
+                      <span className="text-muted-foreground"> - {combination.subtopic}</span>
+                      <span className="ml-2 px-2 py-1 rounded text-xs bg-primary/10 text-primary">
+                        {combination.difficulty}
+                      </span>
+                    </Label>
+                  </div>
+                ))}
+              </div>
             </div>
-          </div>
+          )}
+
+          {/* Show message when no age group selected */}
+          {!ageGroup && (
+            <div className="text-center p-8 border-2 border-dashed border-muted rounded-lg">
+              <p className="text-muted-foreground">Please select an age group to load available topic combinations</p>
+            </div>
+          )}
+
+          {/* Show message when age group selected but no combinations */}
+          {ageGroup && !loading && availableCombinations.length === 0 && (
+            <div className="text-center p-8 border-2 border-dashed border-muted rounded-lg">
+              <p className="text-muted-foreground">No topic combinations found for {ageGroup}</p>
+              <p className="text-sm text-muted-foreground mt-1">Try a different age group or add more curriculum data</p>
+            </div>
+          )}
 
           <Button
             onClick={handleGenerate}
