@@ -24,6 +24,7 @@ export const PerplexityQuestionGenerator = () => {
   const [questionsPerCombination, setQuestionsPerCombination] = useState(2);
   const [isGenerating, setIsGenerating] = useState(false);
   const [results, setResults] = useState<any[]>([]);
+  const [currentProgress, setCurrentProgress] = useState({ current: 0, total: 0 });
   const [loading, setLoading] = useState(true);
   const { toast } = useToast();
 
@@ -121,6 +122,7 @@ export const PerplexityQuestionGenerator = () => {
 
     setIsGenerating(true);
     setResults([]);
+    setCurrentProgress({ current: 0, total: selectedCombinations.length });
 
     const allResults: any[] = [];
     let successful = 0;
@@ -129,10 +131,16 @@ export const PerplexityQuestionGenerator = () => {
     try {
       console.log(`Starting generation for ${selectedCombinations.length} combinations...`);
       
-      // Process each combination
+      // Process each combination with delay to avoid rate limiting
       for (let i = 0; i < selectedCombinations.length; i++) {
         const combination = selectedCombinations[i];
         console.log(`Processing ${i + 1}/${selectedCombinations.length}: ${combination.topic} - ${combination.subtopic} (${combination.difficulty})`);
+        
+        // Add delay between requests to avoid rate limiting
+        if (i > 0) {
+          console.log('Waiting 3 seconds to avoid rate limiting...');
+          await new Promise(resolve => setTimeout(resolve, 3000));
+        }
         
         try {
           const response = await fetch('https://gqkfbxhuijpfcnjimlfj.supabase.co/functions/v1/generate-questions', {
@@ -199,6 +207,9 @@ export const PerplexityQuestionGenerator = () => {
             savedCount
           });
           successful++;
+          
+          // Update progress
+          setCurrentProgress({ current: i + 1, total: selectedCombinations.length });
           
         } catch (error) {
           console.error(`✗ Error generating for ${combination.topic} - ${combination.subtopic} (${combination.difficulty}):`, error);
@@ -351,12 +362,31 @@ export const PerplexityQuestionGenerator = () => {
             {isGenerating ? (
               <>
                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                Generating Questions...
+                Generating Questions... ({currentProgress.current}/{currentProgress.total})
               </>
             ) : (
               `Generate Questions for ${selectedCombinations.length} Combinations`
             )}
           </Button>
+          
+          {/* Progress indicator during generation */}
+          {isGenerating && currentProgress.total > 0 && (
+            <div className="space-y-2">
+              <div className="flex justify-between text-sm text-muted-foreground">
+                <span>Progress: {currentProgress.current}/{currentProgress.total} combinations</span>
+                <span>{Math.round((currentProgress.current / currentProgress.total) * 100)}%</span>
+              </div>
+              <div className="w-full bg-muted rounded-full h-2">
+                <div 
+                  className="bg-primary h-2 rounded-full transition-all duration-300" 
+                  style={{ width: `${(currentProgress.current / currentProgress.total) * 100}%` }}
+                />
+              </div>
+              <p className="text-xs text-muted-foreground text-center">
+                Processing with 3-second delays to avoid rate limiting
+              </p>
+            </div>
+          )}
           
           {selectedCombinations.length > 0 && (
             <p className="text-sm text-muted-foreground text-center">

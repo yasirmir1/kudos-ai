@@ -218,6 +218,11 @@ RESPOND WITH ONLY THE JSON ARRAY, NO OTHER TEXT.`;
               
               if (apiResponse.ok) {
                 apiUsed = 'openai';
+              } else if (apiResponse.status === 429) {
+                console.log('OpenAI rate limited, waiting before trying Perplexity...');
+                // Wait 2 seconds before trying Perplexity
+                await new Promise(resolve => setTimeout(resolve, 2000));
+                throw new Error(`OpenAI API rate limited: ${apiResponse.status}`);
               } else {
                 throw new Error(`OpenAI API error: ${apiResponse.status}`);
               }
@@ -256,10 +261,11 @@ RESPOND WITH ONLY THE JSON ARRAY, NO OTHER TEXT.`;
               
               if (apiResponse.ok) {
                 apiUsed = 'perplexity';
+              } else {
+                console.error('Perplexity API error:', apiResponse.status);
               }
             } catch (perplexityError) {
-              console.error('Both APIs failed:', perplexityError.message);
-              throw new Error('All AI services unavailable');
+              console.error('Perplexity failed:', perplexityError.message);
             }
           }
 
