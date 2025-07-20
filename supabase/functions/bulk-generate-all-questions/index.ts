@@ -214,22 +214,26 @@ RESPOND WITH ONLY THE JSON ARRAY, NO OTHER TEXT.`;
                       model: 'llama-3.1-sonar-small-128k-online',
                       messages: [
                         {
-                          role: 'system',
-                          content: 'You are an expert mathematics educator. Generate educational questions in valid JSON format that exactly matches the curriculum database schema. Always respond with properly formatted JSON only, no additional text.'
-                        },
-                        {
                           role: 'user',
                           content: prompt
                         }
                       ],
-                      max_tokens: 3000,
-                      temperature: 0.2
+                      max_tokens: 2000,
+                      temperature: 0.2,
+                      top_p: 0.9,
+                      return_images: false,
+                      return_related_questions: false,
+                      search_recency_filter: "month",
+                      presence_penalty: 0,
+                      frequency_penalty: 1
                     }),
                   });
                   
                   if (apiResponse.ok) {
                     apiUsed = 'perplexity';
                   } else {
+                    const errorText = await apiResponse.text();
+                    console.error(`Perplexity API error ${apiResponse.status}:`, errorText);
                     throw new Error(`Perplexity API error: ${apiResponse.status}`);
                   }
                 } catch (perplexityError) {
