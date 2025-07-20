@@ -47,10 +47,11 @@ serve(async (req) => {
   }
 
   try {
+    const PERPLEXITY_API_KEY = Deno.env.get('PERPLEXITY_API_KEY');
     const OPENAI_API_KEY = Deno.env.get('OPENAI_API_KEY');
     
-    if (!OPENAI_API_KEY) {
-      throw new Error('OpenAI API key not available');
+    if (!PERPLEXITY_API_KEY && !OPENAI_API_KEY) {
+      throw new Error('No AI API keys available');
     }
 
     const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
@@ -144,31 +145,90 @@ Format as JSON array with this exact structure:
 
 Generate ${questionsPerCombination} questions. Respond with ONLY the JSON array.`;
 
-              const apiResponse = await fetch('https://api.openai.com/v1/chat/completions', {
-                method: 'POST',
-                headers: {
-                  'Authorization': `Bearer ${OPENAI_API_KEY}`,
-                  'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                  model: 'gpt-4o-mini',
-                  messages: [
-                    {
-                      role: 'system',
-                      content: 'You are an educational content creator. Generate valid JSON arrays only.'
-                    },
-                    {
-                      role: 'user',
-                      content: prompt
-                    }
-                  ],
-                  max_tokens: 3000,
-                  temperature: 0.3
-                }),
-              });
+              let apiResponse;
+              let apiUsed = '';
 
-              if (!apiResponse.ok) {
-                throw new Error(`OpenAI API error: ${apiResponse.status}`);
+              // Try Perplexity Sonar Reasoning Pro first
+              if (PERPLEXITY_API_KEY) {
+                try {
+                  console.log(`Using Perplexity Sonar Reasoning Pro for ${topic} - ${subtopic} (${difficulty})`);
+                  
+                  apiResponse = await fetch('https://api.perplexity.ai/chat/completions', {
+                    method: 'POST',
+                    headers: {
+                      'Authorization': `Bearer ${PERPLEXITY_API_KEY}`,
+                      'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                      model: 'sonar-reasoning',
+                      messages: [
+                        {
+                          role: 'user',
+                          content: prompt
+                        }
+                      ],
+                      max_tokens: 4000,
+                      temperature: 0.2,
+                      top_p: 0.9,
+                      presence_penalty: 0,
+                      frequency_penalty: 0.1
+                    }),
+                  });
+                  
+                  if (apiResponse.ok) {
+                    apiUsed = 'perplexity-sonar-reasoning';
+                  } else {
+                    const errorText = await apiResponse.text();
+                    console.error(`Perplexity Sonar Reasoning error ${apiResponse.status}:`, errorText);
+                    throw new Error(`Perplexity API error: ${apiResponse.status}`);
+                  }
+                } catch (perplexityError) {
+                  console.log('Perplexity Sonar Reasoning failed, trying OpenAI...', perplexityError.message);
+                }
+              }
+
+              // Fallback to OpenAI if Perplexity fails
+              if (!apiResponse?.ok && OPENAI_API_KEY) {
+                try {
+                  console.log('Using OpenAI as fallback...');
+                  
+                  apiResponse = await fetch('https://api.openai.com/v1/chat/completions', {
+                    method: 'POST',
+                    headers: {
+                      'Authorization': `Bearer ${OPENAI_API_KEY}`,
+                      'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                      model: 'gpt-4o-mini',
+                      messages: [
+                        {
+                          role: 'system',
+                          content: 'You are an educational content creator. Generate valid JSON arrays only.'
+                        },
+                        {
+                          role: 'user',
+                          content: prompt
+                        }
+                      ],
+                      max_tokens: 3000,
+                      temperature: 0.3
+                    }),
+                  });
+                  
+                  if (apiResponse.ok) {
+                    apiUsed = 'openai';
+                  } else {
+                    const errorText = await apiResponse.text();
+                    console.error(`OpenAI API error ${apiResponse.status}:`, errorText);
+                    throw new Error(`OpenAI API error: ${apiResponse.status}`);
+                  }
+                } catch (openaiError) {
+                  console.error('OpenAI failed:', openaiError.message);
+                }
+              }
+
+              if (!apiResponse?.ok) {
+                throw new Error('All AI services failed');
               }
 
               const data = await apiResponse.json();
@@ -276,7 +336,7 @@ Generate ${questionsPerCombination} questions. Respond with ONLY the JSON array.
                 type: 'combination_complete',
                 combination: { topic, subtopic, difficulty, age_group },
                 generated: combinationGenerated,
-                apiUsed: 'openai'
+                apiUsed
               })}\n\n`));
 
               successful++;
