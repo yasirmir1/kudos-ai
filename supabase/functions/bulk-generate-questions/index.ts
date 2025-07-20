@@ -18,7 +18,7 @@ serve(async (req) => {
       Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
     );
 
-    const { questionsPerType = 100 } = await req.json();
+    const { questionsPerType = 10 } = await req.json(); // Reduced default from 100 to 10
 
     console.log('Starting bulk question generation...');
 
