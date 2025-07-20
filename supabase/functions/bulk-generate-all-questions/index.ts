@@ -123,26 +123,38 @@ SUBTOPIC: ${subtopic}
 DIFFICULTY: ${difficulty}
 AGE GROUP: ${age_group}
 
-Format as JSON array with this exact structure:
+CRITICAL: You must respond with ONLY a valid JSON array. No explanations, no markdown, no code blocks.
+
+Example format (you must follow this EXACT structure):
 [
   {
     "question_id": "TEMP_ID",
-    "topic": "${topic}",
-    "subtopic": "${subtopic}",
-    "example_question": "Question text here",
+    "topic": "Number - Addition and Subtraction",
+    "subtopic": "Add and subtract numbers mentally",
+    "example_question": "What is 47 + 28?",
     "question_type": "Multiple Choice",
-    "options": ["A", "B", "C", "D"],
-    "correct_answer": "A",
-    "difficulty": "${difficulty}",
+    "options": ["75", "65", "85", "55"],
+    "correct_answer": "75",
+    "difficulty": "Easy",
     "red_herring_tag": null,
     "red_herring_explanation": null,
-    "pedagogical_notes": "Brief teaching notes",
+    "pedagogical_notes": "Focus on mental calculation strategies",
     "year_level": 4,
-    "age_group": "${age_group}"
+    "age_group": "year 4-5"
   }
 ]
 
-Generate ${questionsPerCombination} questions. Respond with ONLY the JSON array.`;
+Required formatting rules:
+- Use double quotes for all strings
+- Ensure correct_answer exactly matches one of the options
+- Set question_id to "TEMP_ID" (will be replaced)
+- Use null for empty fields, not empty strings
+- No trailing commas
+- Valid JSON syntax only
+
+Generate exactly ${questionsPerCombination} questions using the topic "${topic}", subtopic "${subtopic}", difficulty "${difficulty}", and age_group "${age_group}".
+
+Return ONLY the JSON array - no other text:`;
 
               let apiResponse;
               let apiUsed = '';
