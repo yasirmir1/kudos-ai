@@ -169,11 +169,11 @@ const Curriculum = () => {
 
         {/* Year Level Tabs */}
         <Tabs value={selectedYear} onValueChange={setSelectedYear} className="space-y-6">
-          <TabsList className="grid w-full grid-cols-5">
+          <TabsList className="grid w-full grid-cols-5 h-16">
             {availableYears.map(year => {
               const ageInfo = getAgeGroupInfo(parseInt(year));
               return (
-                <TabsTrigger key={year} value={year} className="text-center">
+                <TabsTrigger key={year} value={year} className="text-center h-14 py-2">
                   <div>
                     <div className="font-semibold">Year {year}</div>
                     <div className="text-xs text-muted-foreground">{ageInfo.ages}</div>
