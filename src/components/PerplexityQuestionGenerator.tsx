@@ -131,16 +131,10 @@ export const PerplexityQuestionGenerator = () => {
     try {
       console.log(`Starting generation for ${selectedCombinations.length} combinations...`);
       
-      // Process each combination with delay to avoid rate limiting
+      // Process each combination 
       for (let i = 0; i < selectedCombinations.length; i++) {
         const combination = selectedCombinations[i];
         console.log(`Processing ${i + 1}/${selectedCombinations.length}: ${combination.topic} - ${combination.subtopic} (${combination.difficulty})`);
-        
-        // Add delay between requests to avoid rate limiting
-        if (i > 0) {
-          console.log('Waiting 3 seconds to avoid rate limiting...');
-          await new Promise(resolve => setTimeout(resolve, 3000));
-        }
         
         try {
           const response = await fetch('https://gqkfbxhuijpfcnjimlfj.supabase.co/functions/v1/generate-questions', {
@@ -382,9 +376,9 @@ export const PerplexityQuestionGenerator = () => {
                   style={{ width: `${(currentProgress.current / currentProgress.total) * 100}%` }}
                 />
               </div>
-              <p className="text-xs text-muted-foreground text-center">
-                Processing with 3-second delays to avoid rate limiting
-              </p>
+               <p className="text-xs text-muted-foreground text-center">
+                 Processing with Perplexity AI - no delays needed with your credits
+               </p>
             </div>
           )}
           

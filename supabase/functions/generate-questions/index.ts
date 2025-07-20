@@ -188,10 +188,48 @@ RESPOND WITH ONLY THE JSON ARRAY, NO OTHER TEXT.`;
           let apiResponse;
           let apiUsed = '';
 
-          // Try OpenAI first since Perplexity is having issues
-          if (OPENAI_API_KEY) {
+          // Try Perplexity first since user has credits
+          if (PERPLEXITY_API_KEY) {
             try {
-              console.log('Using OpenAI for question generation...');
+              console.log('Using Perplexity for question generation...');
+              
+              apiResponse = await fetch('https://api.perplexity.ai/chat/completions', {
+                method: 'POST',
+                headers: {
+                  'Authorization': `Bearer ${PERPLEXITY_API_KEY}`,
+                  'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                  model: 'llama-3.1-sonar-small-128k-online',
+                  messages: [
+                    {
+                      role: 'system',
+                      content: 'You are an expert mathematics educator. Generate educational questions in valid JSON format that exactly matches the curriculum database schema. Always respond with properly formatted JSON only, no additional text.'
+                    },
+                    {
+                      role: 'user',
+                      content: prompt
+                    }
+                  ],
+                  max_tokens: 3000,
+                  temperature: 0.2
+                }),
+              });
+              
+              if (apiResponse.ok) {
+                apiUsed = 'perplexity';
+              } else {
+                throw new Error(`Perplexity API error: ${apiResponse.status}`);
+              }
+            } catch (perplexityError) {
+              console.log('Perplexity failed, trying OpenAI...', perplexityError.message);
+            }
+          }
+
+          // Fallback to OpenAI if Perplexity fails
+          if (!apiResponse?.ok && OPENAI_API_KEY) {
+            try {
+              console.log('Using OpenAI as fallback...');
               
               apiResponse = await fetch('https://api.openai.com/v1/chat/completions', {
                 method: 'POST',
@@ -218,54 +256,11 @@ RESPOND WITH ONLY THE JSON ARRAY, NO OTHER TEXT.`;
               
               if (apiResponse.ok) {
                 apiUsed = 'openai';
-              } else if (apiResponse.status === 429) {
-                console.log('OpenAI rate limited, waiting before trying Perplexity...');
-                // Wait 2 seconds before trying Perplexity
-                await new Promise(resolve => setTimeout(resolve, 2000));
-                throw new Error(`OpenAI API rate limited: ${apiResponse.status}`);
               } else {
-                throw new Error(`OpenAI API error: ${apiResponse.status}`);
+                console.error('OpenAI API error:', apiResponse.status);
               }
             } catch (openaiError) {
-              console.log('OpenAI failed, trying Perplexity...', openaiError.message);
-            }
-          }
-
-          // Fallback to Perplexity if OpenAI fails
-          if (!apiResponse?.ok && PERPLEXITY_API_KEY) {
-            try {
-              console.log('Using Perplexity as fallback...');
-              
-              apiResponse = await fetch('https://api.perplexity.ai/chat/completions', {
-                method: 'POST',
-                headers: {
-                  'Authorization': `Bearer ${PERPLEXITY_API_KEY}`,
-                  'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                  model: 'llama-3.1-sonar-small-128k-online',
-                  messages: [
-                    {
-                      role: 'system',
-                      content: 'You are an expert mathematics educator. Generate educational questions in valid JSON format. Always respond with properly formatted JSON only.'
-                    },
-                    {
-                      role: 'user',
-                      content: prompt
-                    }
-                  ],
-                  max_tokens: 2000,
-                  temperature: 0.2
-                }),
-              });
-              
-              if (apiResponse.ok) {
-                apiUsed = 'perplexity';
-              } else {
-                console.error('Perplexity API error:', apiResponse.status);
-              }
-            } catch (perplexityError) {
-              console.error('Perplexity failed:', perplexityError.message);
+              console.error('OpenAI failed:', openaiError.message);
             }
           }
 
