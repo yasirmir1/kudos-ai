@@ -10,7 +10,7 @@ import { useNavigate } from 'react-router-dom';
 import { ArrowLeft, User, Calendar, Target, Save } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { ResetProgressModal } from '@/components/ResetProgressModal';
-import { useAgeGroup } from '@/contexts/AgeGroupContext';
+import { useAgeGroup, updateAgeGroupFromProfile } from '@/contexts/AgeGroupContext';
 import { AgeGroupSelector } from '@/components/AgeGroupSelector';
 
 type AgeGroup = 'year 2-3' | 'year 4-5' | '11+';
@@ -110,6 +110,11 @@ const Profile = () => {
 
       if (error) {
         throw error;
+      }
+
+      // Update the age group context if it changed
+      if (formData.age_group !== profile.age_group) {
+        updateAgeGroupFromProfile(formData.age_group);
       }
 
       toast({

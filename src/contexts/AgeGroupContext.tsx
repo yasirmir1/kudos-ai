@@ -18,6 +18,13 @@ export const useAgeGroup = () => {
   return context;
 };
 
+// Function to update age group from outside the context (e.g., from profile updates)
+export const updateAgeGroupFromProfile = (ageGroup: AgeGroup) => {
+  localStorage.setItem('selectedAgeGroup', ageGroup);
+  // Dispatch custom event to notify context
+  window.dispatchEvent(new CustomEvent('ageGroupUpdated', { detail: ageGroup }));
+};
+
 export const AgeGroupProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [selectedAgeGroup, setSelectedAgeGroup] = useState<AgeGroup>('year 4-5');
 
@@ -34,6 +41,22 @@ export const AgeGroupProvider: React.FC<{ children: React.ReactNode }> = ({ chil
       setSelectedAgeGroup(stored as AgeGroup);
     }
   }, []);
+
+  // Listen for age group updates from profile changes
+  useEffect(() => {
+    const handleAgeGroupUpdate = (event: CustomEvent<AgeGroup>) => {
+      const newAgeGroup = event.detail;
+      if (ageGroups.some(group => group.value === newAgeGroup)) {
+        setSelectedAgeGroup(newAgeGroup);
+      }
+    };
+
+    window.addEventListener('ageGroupUpdated', handleAgeGroupUpdate as EventListener);
+    
+    return () => {
+      window.removeEventListener('ageGroupUpdated', handleAgeGroupUpdate as EventListener);
+    };
+  }, [ageGroups]);
 
   // Save to localStorage whenever it changes
   const handleSetSelectedAgeGroup = (ageGroup: AgeGroup) => {
