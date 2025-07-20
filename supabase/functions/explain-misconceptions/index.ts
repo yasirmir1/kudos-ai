@@ -14,11 +14,10 @@ serve(async (req) => {
   }
 
   try {
-    const PERPLEXITY_API_KEY = Deno.env.get('PERPLEXITY_API_KEY');
-    const OPENAI_API_KEY = Deno.env.get('kudos');
+    const DEEPSEEK_API_KEY = Deno.env.get('DEEPSEEK_API_KEY');
     
-    if (!PERPLEXITY_API_KEY) {
-      throw new Error('Perplexity API key is required. Please set up your Perplexity API key.');
+    if (!DEEPSEEK_API_KEY) {
+      throw new Error('Deepseek API key is required');
     }
 
     // Initialize Supabase client
@@ -132,53 +131,45 @@ Rules:
 
 Make this helpful and engaging!`;
 
-    // Try Perplexity first
+    // Use Deepseek API
     let explanation = '';
     let apiUsed = '';
-
-    if (PERPLEXITY_API_KEY) {
-      try {
-        console.log('Trying Perplexity API first...');
-        
-        const perplexityResponse = await fetch('https://api.perplexity.ai/chat/completions', {
-          method: 'POST',
-          headers: {
-            'Authorization': `Bearer ${PERPLEXITY_API_KEY}`,
-            'Content-Type': 'application/json',
+    
+    console.log('Using Deepseek API...');
+    
+    const deepseekResponse = await fetch('https://api.deepseek.com/v1/chat/completions', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${DEEPSEEK_API_KEY}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        model: 'deepseek-chat',
+        messages: [
+          {
+            role: 'system',
+            content: 'You are a knowledgeable math tutor who explains concepts clearly and encouragingly. You help students understand their mistakes with respect and practical guidance. Be engaging and supportive without being condescending.'
           },
-          body: JSON.stringify({
-            model: 'sonar',
-            messages: [
-              {
-                role: 'system',
-                content: 'You are a knowledgeable math tutor who explains concepts clearly and encouragingly. You help students understand their mistakes with respect and practical guidance. Be engaging and supportive without being condescending.'
-              },
-              {
-                role: 'user',
-                content: prompt
-              }
-            ],
-            max_tokens: 1000,
-            temperature: 0.8,
-            top_p: 0.9,
-            return_images: false,
-            return_related_questions: false,
-            search_domain_filter: [],
-            search_recency_filter: "month"
-          }),
-        });
+          {
+            role: 'user',
+            content: prompt
+          }
+        ],
+        max_tokens: 1000,
+        temperature: 0.8,
+        top_p: 0.9
+      }),
+    });
 
-        if (perplexityResponse.ok) {
-          const perplexityData = await perplexityResponse.json();
-          explanation = perplexityData.choices[0].message.content;
-          apiUsed = 'perplexity';
-          console.log('Successfully used Perplexity API');
-        } else {
-          throw new Error(`Perplexity API error: ${perplexityResponse.status}`);
-        }
-      } catch (perplexityError) {
-        console.log('Perplexity failed, trying OpenAI fallback:', perplexityError.message);
-      }
+    if (deepseekResponse.ok) {
+      const deepseekData = await deepseekResponse.json();
+      explanation = deepseekData.choices[0].message.content;
+      apiUsed = 'deepseek';
+      console.log('Successfully used Deepseek API');
+    } else {
+      const errorText = await deepseekResponse.text();
+      console.error(`Deepseek API error ${deepseekResponse.status}:`, errorText);
+      throw new Error(`Deepseek API error: ${deepseekResponse.status} - ${errorText}`);
     }
 
     // Fallback to OpenAI if Perplexity failed or no key

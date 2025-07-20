@@ -14,9 +14,9 @@ serve(async (req) => {
   }
 
   try {
-    const PERPLEXITY_API_KEY = Deno.env.get('PERPLEXITY_API_KEY');
-    if (!PERPLEXITY_API_KEY) {
-      throw new Error('Perplexity API key not found');
+    const DEEPSEEK_API_KEY = Deno.env.get('DEEPSEEK_API_KEY');
+    if (!DEEPSEEK_API_KEY) {
+      throw new Error('Deepseek API key not found');
     }
 
     // Initialize Supabase client
@@ -129,16 +129,16 @@ Mistake patterns to address: ${JSON.stringify(mistakePatterns, null, 2)}
 
 Be encouraging, practical, and respectful. Help them understand their mistakes and give clear guidance for improvement.`;
 
-    console.log('Sending request to Perplexity for focus area explanation...');
+    console.log('Sending request to Deepseek for focus area explanation...');
 
-    const response = await fetch('https://api.perplexity.ai/chat/completions', {
+    const response = await fetch('https://api.deepseek.com/v1/chat/completions', {
       method: 'POST',
       headers: {
-        'Authorization': `Bearer ${PERPLEXITY_API_KEY}`,
+        'Authorization': `Bearer ${DEEPSEEK_API_KEY}`,
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        model: 'sonar',
+        model: 'deepseek-chat',
         messages: [
           {
             role: 'system',
@@ -151,30 +151,18 @@ Be encouraging, practical, and respectful. Help them understand their mistakes a
         ],
         max_tokens: 800,
         temperature: 0.8,
-        top_p: 0.9,
-        return_images: false,
-        return_related_questions: false,
-        search_domain_filter: [],
-        search_recency_filter: "month"
+        top_p: 0.9
       }),
     });
 
     if (!response.ok) {
       const errorText = await response.text();
-      console.error('Perplexity API error:', errorText);
-      throw new Error(`Perplexity API error: ${response.status}`);
+      console.error('Deepseek API error:', errorText);
+      throw new Error(`Deepseek API error: ${response.status}`);
     }
 
     const data = await response.json();
-    const rawExplanation = data.choices[0].message.content;
-
-    // Clean up source citations and references
-    const explanation = rawExplanation
-      .replace(/\[\d+\]/g, '') // Remove [1], [2], etc.
-      .replace(/\[.*?\]/g, '') // Remove any other bracketed references
-      .replace(/Source:.*$/gm, '') // Remove source lines
-      .replace(/References?:.*$/gm, '') // Remove reference lines
-      .trim();
+    const explanation = data.choices[0].message.content;
 
     console.log('Generated focus area explanation successfully');
 

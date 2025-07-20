@@ -73,11 +73,10 @@ serve(async (req) => {
   }
 
   try {
-    const OPENAI_API_KEY = Deno.env.get('OPENAI_API_KEY');
-    const PERPLEXITY_API_KEY = Deno.env.get('PERPLEXITY_API_KEY');
+    const DEEPSEEK_API_KEY = Deno.env.get('DEEPSEEK_API_KEY');
     
-    if (!OPENAI_API_KEY && !PERPLEXITY_API_KEY) {
-      throw new Error('No AI API keys available');
+    if (!DEEPSEEK_API_KEY) {
+      throw new Error('Deepseek API key not available');
     }
 
     const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
@@ -188,84 +187,39 @@ RESPOND WITH ONLY THE JSON ARRAY, NO OTHER TEXT.`;
           let apiResponse;
           let apiUsed = '';
 
-          // Try Perplexity first since user has credits
-          if (PERPLEXITY_API_KEY) {
-            try {
-              console.log('Using Perplexity for question generation...');
-              
-              apiResponse = await fetch('https://api.perplexity.ai/chat/completions', {
-                method: 'POST',
-                headers: {
-                  'Authorization': `Bearer ${PERPLEXITY_API_KEY}`,
-                  'Content-Type': 'application/json',
+          // Use Deepseek API
+          console.log('Using Deepseek for question generation...');
+          
+          apiResponse = await fetch('https://api.deepseek.com/v1/chat/completions', {
+            method: 'POST',
+            headers: {
+              'Authorization': `Bearer ${DEEPSEEK_API_KEY}`,
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              model: 'deepseek-reasoner',
+              messages: [
+                {
+                  role: 'system',
+                  content: 'You are an expert mathematics educator. Generate educational questions in valid JSON format that exactly matches the curriculum database schema. Always respond with properly formatted JSON only, no additional text.'
                 },
-                body: JSON.stringify({
-                  model: 'llama-3.1-sonar-small-128k-online',
-                  messages: [
-                    {
-                      role: 'system',
-                      content: 'You are an expert mathematics educator. Generate educational questions in valid JSON format that exactly matches the curriculum database schema. Always respond with properly formatted JSON only, no additional text.'
-                    },
-                    {
-                      role: 'user',
-                      content: prompt
-                    }
-                  ],
-                  max_tokens: 3000,
-                  temperature: 0.2
-                }),
-              });
-              
-              if (apiResponse.ok) {
-                apiUsed = 'perplexity';
-              } else {
-                throw new Error(`Perplexity API error: ${apiResponse.status}`);
-              }
-            } catch (perplexityError) {
-              console.log('Perplexity failed, trying OpenAI...', perplexityError.message);
-            }
-          }
-
-          // Fallback to OpenAI if Perplexity fails
-          if (!apiResponse?.ok && OPENAI_API_KEY) {
-            try {
-              console.log('Using OpenAI as fallback...');
-              
-              apiResponse = await fetch('https://api.openai.com/v1/chat/completions', {
-                method: 'POST',
-                headers: {
-                  'Authorization': `Bearer ${OPENAI_API_KEY}`,
-                  'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                  model: 'gpt-4o-mini',
-                  messages: [
-                    {
-                      role: 'system',
-                      content: 'You are an expert educational content creator. Generate only valid JSON arrays for educational questions. Always respond with properly formatted JSON only, no additional text.'
-                    },
-                    {
-                      role: 'user',
-                      content: prompt
-                    }
-                  ],
-                  max_tokens: 3000,
-                  temperature: 0.3
-                }),
-              });
-              
-              if (apiResponse.ok) {
-                apiUsed = 'openai';
-              } else {
-                console.error('OpenAI API error:', apiResponse.status);
-              }
-            } catch (openaiError) {
-              console.error('OpenAI failed:', openaiError.message);
-            }
-          }
-
-          if (!apiResponse?.ok) {
-            throw new Error('Failed to generate questions with any AI service');
+                {
+                  role: 'user',
+                  content: prompt
+                }
+              ],
+              max_tokens: 4000,
+              temperature: 0.2,
+              top_p: 0.9
+            }),
+          });
+          
+          if (apiResponse.ok) {
+            apiUsed = 'deepseek';
+          } else {
+            const errorText = await apiResponse.text();
+            console.error(`Deepseek API error ${apiResponse.status}:`, errorText);
+            throw new Error(`Deepseek API error: ${apiResponse.status} - ${errorText}`);
           }
 
           const data = await apiResponse.json();
