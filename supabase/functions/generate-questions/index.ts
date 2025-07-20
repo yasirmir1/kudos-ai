@@ -186,50 +186,10 @@ RESPOND WITH ONLY THE JSON ARRAY, NO OTHER TEXT.`;
           let apiResponse;
           let apiUsed = '';
 
-          // Try Perplexity first
-          if (PERPLEXITY_API_KEY) {
+          // Try OpenAI first since Perplexity is having issues
+          if (OPENAI_API_KEY) {
             try {
-              console.log('Using Perplexity for question generation...');
-              
-              apiResponse = await fetch('https://api.perplexity.ai/chat/completions', {
-                method: 'POST',
-                headers: {
-                  'Authorization': `Bearer ${PERPLEXITY_API_KEY}`,
-                  'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                  model: 'llama-3.1-sonar-small-128k-online',
-                  messages: [
-                    {
-                      role: 'system',
-                      content: 'You are an expert educational content creator specializing in mathematics curriculum. Generate valid JSON arrays containing educational questions. Always respond with properly formatted JSON only, no additional text.'
-                    },
-                    {
-                      role: 'user',
-                      content: prompt
-                    }
-                  ],
-                  max_tokens: 3000,
-                  temperature: 0.3,
-                  return_images: false,
-                  return_related_questions: false
-                }),
-              });
-              
-              if (apiResponse.ok) {
-                apiUsed = 'perplexity';
-              } else {
-                throw new Error(`Perplexity API error: ${apiResponse.status}`);
-              }
-            } catch (perplexityError) {
-              console.log('Perplexity failed, trying OpenAI...', perplexityError.message);
-            }
-          }
-
-          // Fallback to OpenAI
-          if (!apiResponse?.ok && OPENAI_API_KEY) {
-            try {
-              console.log('Using OpenAI as fallback...');
+              console.log('Using OpenAI for question generation...');
               
               apiResponse = await fetch('https://api.openai.com/v1/chat/completions', {
                 method: 'POST',
@@ -242,23 +202,61 @@ RESPOND WITH ONLY THE JSON ARRAY, NO OTHER TEXT.`;
                   messages: [
                     {
                       role: 'system',
-                      content: 'You are an expert educational content creator. Generate only valid JSON arrays for educational questions.'
+                      content: 'You are an expert educational content creator. Generate only valid JSON arrays for educational questions. Always respond with properly formatted JSON only, no additional text.'
                     },
                     {
                       role: 'user',
                       content: prompt
                     }
                   ],
-                  max_tokens: 4000,
-                  temperature: 0.5
+                  max_tokens: 3000,
+                  temperature: 0.3
                 }),
               });
               
               if (apiResponse.ok) {
                 apiUsed = 'openai';
+              } else {
+                throw new Error(`OpenAI API error: ${apiResponse.status}`);
               }
             } catch (openaiError) {
-              console.error('Both APIs failed:', openaiError.message);
+              console.log('OpenAI failed, trying Perplexity...', openaiError.message);
+            }
+          }
+
+          // Fallback to Perplexity if OpenAI fails
+          if (!apiResponse?.ok && PERPLEXITY_API_KEY) {
+            try {
+              console.log('Using Perplexity as fallback...');
+              
+              apiResponse = await fetch('https://api.perplexity.ai/chat/completions', {
+                method: 'POST',
+                headers: {
+                  'Authorization': `Bearer ${PERPLEXITY_API_KEY}`,
+                  'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                  model: 'llama-3.1-sonar-small-128k-online',
+                  messages: [
+                    {
+                      role: 'system',
+                      content: 'You are an expert mathematics educator. Generate educational questions in valid JSON format. Always respond with properly formatted JSON only.'
+                    },
+                    {
+                      role: 'user',
+                      content: prompt
+                    }
+                  ],
+                  max_tokens: 2000,
+                  temperature: 0.2
+                }),
+              });
+              
+              if (apiResponse.ok) {
+                apiUsed = 'perplexity';
+              }
+            } catch (perplexityError) {
+              console.error('Both APIs failed:', perplexityError.message);
               throw new Error('All AI services unavailable');
             }
           }

@@ -119,32 +119,81 @@ export const PerplexityQuestionGenerator = () => {
     let failed = 0;
 
     try {
+      console.log(`Starting generation for ${selectedCombinations.length} combinations...`);
+      
       // Process each combination
-      for (const combination of selectedCombinations) {
+      for (let i = 0; i < selectedCombinations.length; i++) {
+        const combination = selectedCombinations[i];
+        console.log(`Processing ${i + 1}/${selectedCombinations.length}: ${combination.topic} - ${combination.subtopic} (${combination.difficulty})`);
+        
         try {
-          const { data, error } = await supabase.functions.invoke('generate-questions', {
-            body: {
+          const response = await fetch('https://gqkfbxhuijpfcnjimlfj.supabase.co/functions/v1/generate-questions', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imdxa2ZieGh1aWpwZmNuamltbGZqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTI5MTQxMTcsImV4cCI6MjA2ODQ5MDExN30.n-sE8DxhfmuZmNju-L3zy6hWshTGzr_cpFEeBB0JZIo`
+            },
+            body: JSON.stringify({
               topic: combination.topic,
               subtopic: combination.subtopic,
               difficulty: combination.difficulty,
               age_group: ageGroup,
               count: questionsPerCombination,
               saveToDatabase: true
-            }
+            })
           });
 
-          if (error) {
-            throw error;
+          if (!response.ok) {
+            throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+          }
+
+          // Since the response is a stream, we need to read it
+          const reader = response.body?.getReader();
+          const decoder = new TextDecoder();
+          let generatedQuestions: any[] = [];
+          let savedCount = 0;
+
+          if (reader) {
+            try {
+              while (true) {
+                const { done, value } = await reader.read();
+                if (done) break;
+
+                const chunk = decoder.decode(value);
+                const lines = chunk.split('\n');
+                
+                for (const line of lines) {
+                  if (line.startsWith('data: ')) {
+                    try {
+                      const data = JSON.parse(line.slice(6));
+                      if (data.type === 'question') {
+                        generatedQuestions.push(data.data);
+                      } else if (data.type === 'saved') {
+                        savedCount++;
+                      } else if (data.type === 'complete') {
+                        console.log(`✓ Generated ${data.totalGenerated} questions for ${combination.topic} - ${combination.subtopic} (${combination.difficulty})`);
+                      }
+                    } catch (e) {
+                      // Ignore JSON parsing errors for incomplete chunks
+                    }
+                  }
+                }
+              }
+            } finally {
+              reader.releaseLock();
+            }
           }
 
           allResults.push({
             combination,
             status: 'success',
-            questions: data?.questions || []
+            questions: generatedQuestions,
+            savedCount
           });
           successful++;
+          
         } catch (error) {
-          console.error(`Error generating for ${combination.topic} - ${combination.subtopic} (${combination.difficulty}):`, error);
+          console.error(`✗ Error generating for ${combination.topic} - ${combination.subtopic} (${combination.difficulty}):`, error);
           allResults.push({
             combination,
             status: 'error',

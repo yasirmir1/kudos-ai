@@ -7,7 +7,6 @@ const corsHeaders = {
 };
 
 serve(async (req) => {
-  // Handle CORS preflight requests
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders });
   }
@@ -15,16 +14,12 @@ serve(async (req) => {
   try {
     const PERPLEXITY_API_KEY = Deno.env.get('PERPLEXITY_API_KEY');
     
-    console.log('Testing Perplexity API key...');
-    console.log('API key exists:', !!PERPLEXITY_API_KEY);
-    console.log('API key length:', PERPLEXITY_API_KEY?.length || 0);
-    console.log('API key starts with:', PERPLEXITY_API_KEY?.substring(0, 10) + '...' || 'No key');
-
     if (!PERPLEXITY_API_KEY) {
-      throw new Error('PERPLEXITY_API_KEY not found in environment');
+      throw new Error('PERPLEXITY_API_KEY not found');
     }
 
-    // Simple test call to Perplexity with correct model name
+    console.log('Testing Perplexity API...');
+
     const response = await fetch('https://api.perplexity.ai/chat/completions', {
       method: 'POST',
       headers: {
@@ -32,44 +27,46 @@ serve(async (req) => {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        model: 'sonar',
+        model: 'llama-3.1-sonar-small-128k-online',
         messages: [
           {
             role: 'user',
-            content: 'Say "Hello World" in a friendly way!'
+            content: 'Generate a simple math question as JSON: {"question": "What is 2+2?", "answer": "4"}'
           }
         ],
-        max_tokens: 50,
-        temperature: 0.7
+        max_tokens: 500,
+        temperature: 0.1
       }),
     });
 
-    console.log('Perplexity API response status:', response.status);
-    
+    console.log('Response status:', response.status);
+    console.log('Response headers:', Object.fromEntries(response.headers.entries()));
+
+    const data = await response.text();
+    console.log('Response data:', data);
+
     if (!response.ok) {
-      const errorText = await response.text();
-      console.error('Perplexity API error response:', errorText);
-      throw new Error(`Perplexity API error: ${response.status} - ${errorText}`);
+      return new Response(JSON.stringify({ 
+        error: `API Error ${response.status}`, 
+        details: data 
+      }), {
+        status: response.status,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
     }
 
-    const data = await response.json();
-    console.log('Perplexity API success! Response:', data);
-
     return new Response(JSON.stringify({ 
-      success: true,
-      message: 'Perplexity API key is working!',
-      response: data.choices[0].message.content,
-      status: response.status
+      success: true, 
+      data: JSON.parse(data) 
     }), {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     });
 
   } catch (error) {
-    console.error('Test failed:', error);
+    console.error('Test error:', error);
     return new Response(JSON.stringify({ 
-      success: false,
       error: error.message,
-      details: 'Check edge function logs for more information'
+      stack: error.stack 
     }), {
       status: 500,
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
