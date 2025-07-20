@@ -184,7 +184,7 @@ const Curriculum = () => {
           </TabsList>
 
           {availableYears.map(year => (
-            <TabsContent key={year} value={year} className="space-y-6">
+            <TabsContent key={year} value={year} className={`space-y-6 ${year === '2' ? 'min-h-[800px]' : ''}`}>
               <Card>
                 <CardHeader>
                   <CardTitle className="flex items-center space-x-2">
