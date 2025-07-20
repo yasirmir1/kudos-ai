@@ -115,7 +115,7 @@ serve(async (req) => {
         try {
           const yearGuidance = getYearLevelGuidance(age_group || 'year 4-5');
           
-          const prompt = `You are an expert educational content creator. Generate ${count} high-quality multiple choice questions for mathematics education that match the exact curriculum structure provided.
+          const prompt = `You are an expert educational content creator. Generate ${count} high-quality multiple choice questions for mathematics education that match the EXACT curriculum table schema.
 
 TOPIC: ${topic}
 SUBTOPIC: ${subtopic}  
@@ -127,10 +127,10 @@ ${Object.entries(yearGuidance.progression).map(([year, description]) => `${year}
 
 Generate questions across BOTH year levels: ${yearGuidance.yearLevels.join(' and ')}
 
-CRITICAL: Follow this EXACT JSON structure from the curriculum:
+CRITICAL: Generate JSON that matches the EXACT curriculum table schema:
 
 {
-  "question_id": "${getTopicPrefix(topic, age_group)}001",
+  "question_id": "TEMP_ID",
   "topic": "${topic}",
   "subtopic": "${subtopic}",
   "example_question": "Clear, age-appropriate question text here",
@@ -143,9 +143,11 @@ CRITICAL: Follow this EXACT JSON structure from the curriculum:
   ],
   "correct_answer": "Option B",
   "difficulty": "${difficulty}",
-  "red_herring_tag": ["MisconceptionType_SpecificError"] or null,
-  "red_herring_explanation": "Explanation of why students might choose wrong answers" or null,
-  "pedagogical_notes": "Year X: Brief teaching context and methodology."
+  "red_herring_tag": ["MisconceptionType_SpecificError"],
+  "red_herring_explanation": "Explanation of why students might choose wrong answers",
+  "pedagogical_notes": "Year X: Brief teaching context and methodology.",
+  "year_level": 2,
+  "age_group": "${age_group || 'year 4-5'}"
 }
 
 ${examples && examples.length > 0 ? `
@@ -338,16 +340,27 @@ RESPOND WITH ONLY THE JSON ARRAY, NO OTHER TEXT.`;
 
             // Determine year level for this question based on pedagogical_notes or position in batch
             let questionYearLevel = '';
+            let numericYearLevel = 4; // default
+            
             if (question.pedagogical_notes && question.pedagogical_notes.match(/Year \d/)) {
               const match = question.pedagogical_notes.match(/Year (\d)/);
-              questionYearLevel = match ? `Y${match[1]}` : getTopicPrefix(topic, age_group).substring(0, 2);
+              if (match) {
+                questionYearLevel = `Y${match[1]}`;
+                numericYearLevel = parseInt(match[1]);
+              } else {
+                questionYearLevel = getTopicPrefix(topic, age_group).substring(0, 2);
+              }
             } else {
               // Fallback: alternate between year levels or use default
               const yearGuidance = getYearLevelGuidance(age_group || 'year 4-5');
               if (yearGuidance.yearLevels.length > 1) {
-                questionYearLevel = i < Math.ceil(questions.length/2) ? `Y${yearGuidance.yearLevels[0].replace('Year ', '')}` : `Y${yearGuidance.yearLevels[1].replace('Year ', '')}`;
+                const yearIndex = i < Math.ceil(questions.length/2) ? 0 : 1;
+                const selectedYear = yearGuidance.yearLevels[yearIndex];
+                questionYearLevel = `Y${selectedYear.replace('Year ', '')}`;
+                numericYearLevel = parseInt(selectedYear.replace('Year ', ''));
               } else {
                 questionYearLevel = getTopicPrefix(topic, age_group).substring(0, 2);
+                numericYearLevel = parseInt(questionYearLevel.substring(1));
               }
             }
             
@@ -359,6 +372,22 @@ RESPOND WITH ONLY THE JSON ARRAY, NO OTHER TEXT.`;
             const timestamp = Date.now().toString().slice(-6);
             const randomSuffix = Math.floor(Math.random() * 100).toString().padStart(2, '0');
             question.question_id = `${questionPrefix}${timestamp}${randomSuffix}`;
+            
+            // Ensure all schema fields are properly formatted
+            question.year_level = numericYearLevel;
+            question.age_group = age_group || 'year 4-5';
+            question.question_type = question.question_type || 'Multiple Choice';
+            
+            // Handle arrays and nulls properly
+            if (!question.red_herring_tag || !Array.isArray(question.red_herring_tag)) {
+              question.red_herring_tag = null;
+            }
+            if (!question.red_herring_explanation || question.red_herring_explanation.trim() === '') {
+              question.red_herring_explanation = null;
+            }
+            if (!question.pedagogical_notes || question.pedagogical_notes.trim() === '') {
+              question.pedagogical_notes = null;
+            }
 
             // Stream the validated question
             const questionData = {
