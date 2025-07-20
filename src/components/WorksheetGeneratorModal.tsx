@@ -36,9 +36,9 @@ const TOPICS = [
 ];
 
 const DIFFICULTIES = [
-  { value: 'Easy', label: 'Easy (Ages 6-8)', color: 'bg-green-100 text-green-800' },
-  { value: 'Medium', label: 'Medium (Ages 9-11)', color: 'bg-yellow-100 text-yellow-800' },
-  { value: 'Hard', label: 'Hard (Ages 12+)', color: 'bg-red-100 text-red-800' }
+  { value: 'Easy', label: 'Easy', color: 'bg-green-100 text-green-800' },
+  { value: 'Medium', label: 'Medium', color: 'bg-yellow-100 text-yellow-800' },
+  { value: 'Hard', label: 'Hard', color: 'bg-red-100 text-red-800' }
 ];
 
 export const WorksheetGeneratorModal = () => {
