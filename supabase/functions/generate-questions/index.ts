@@ -379,23 +379,30 @@ RESPOND WITH ONLY THE JSON ARRAY, NO OTHER TEXT.`;
                   question.age_group = age_group;
                 }
 
-                // Use INSERT with ON CONFLICT to handle duplicates gracefully
-                const { error: insertError } = await supabase
+                console.log(`Attempting to save question ${i + 1}: ${question.question_id}`);
+
+                // Use INSERT to save the question
+                const { data: insertedData, error: insertError } = await supabase
                   .from('curriculum')
                   .insert(question)
-                  .select()
+                  .select('question_id')
                   .single();
 
                 if (insertError) {
+                  console.error('Database save error:', insertError);
                   if (insertError.code === '23505') { // Unique violation
                     // Generate a new ID and retry once
                     const newTimestamp = Date.now().toString().slice(-6);
                     const newRandomSuffix = Math.floor(Math.random() * 100).toString().padStart(2, '0');
                     question.question_id = `${questionPrefix}${newTimestamp}${newRandomSuffix}`;
                     
-                    const { error: retryError } = await supabase
+                    console.log(`Retrying with new ID: ${question.question_id}`);
+                    
+                    const { data: retryData, error: retryError } = await supabase
                       .from('curriculum')
-                      .insert(question);
+                      .insert(question)
+                      .select('question_id')
+                      .single();
                     
                     if (retryError) {
                       console.error('Retry database save error:', retryError);
@@ -404,28 +411,33 @@ RESPOND WITH ONLY THE JSON ARRAY, NO OTHER TEXT.`;
                         message: `Failed to save question ${i + 1} after retry: ${retryError.message}`
                       })}\n\n`));
                     } else {
+                      console.log(`✓ Question saved after retry: ${retryData?.question_id}`);
                       controller.enqueue(new TextEncoder().encode(`data: ${JSON.stringify({
                         type: 'saved',
-                        questionId: question.question_id,
+                        questionId: retryData?.question_id,
                         index: i + 1
                       })}\n\n`));
                     }
                   } else {
-                    console.error('Database save error:', insertError);
                     controller.enqueue(new TextEncoder().encode(`data: ${JSON.stringify({
                       type: 'error',
                       message: `Failed to save question ${i + 1}: ${insertError.message}`
                     })}\n\n`));
                   }
                 } else {
+                  console.log(`✓ Question saved successfully: ${insertedData?.question_id}`);
                   controller.enqueue(new TextEncoder().encode(`data: ${JSON.stringify({
                     type: 'saved',
-                    questionId: question.question_id,
+                    questionId: insertedData?.question_id,
                     index: i + 1
                   })}\n\n`));
                 }
               } catch (saveError) {
                 console.error('Save exception:', saveError);
+                controller.enqueue(new TextEncoder().encode(`data: ${JSON.stringify({
+                  type: 'error',
+                  message: `Exception saving question ${i + 1}: ${saveError.message}`
+                })}\n\n`));
               }
             }
 
