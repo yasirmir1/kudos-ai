@@ -198,19 +198,19 @@ RESPOND WITH ONLY THE JSON ARRAY, NO OTHER TEXT.`;
                   'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({
-                  model: 'llama-3.1-sonar-large-128k-online',
+                  model: 'llama-3.1-sonar-small-128k-online',
                   messages: [
                     {
                       role: 'system',
-                      content: 'You are an expert educational content creator. Generate valid JSON arrays for educational questions. Always respond with properly formatted JSON only.'
+                      content: 'You are an expert educational content creator specializing in mathematics curriculum. Generate valid JSON arrays containing educational questions. Always respond with properly formatted JSON only, no additional text.'
                     },
                     {
                       role: 'user',
                       content: prompt
                     }
                   ],
-                  max_tokens: 4000,
-                  temperature: 0.5,
+                  max_tokens: 3000,
+                  temperature: 0.3,
                   return_images: false,
                   return_related_questions: false
                 }),
@@ -357,18 +357,10 @@ RESPOND WITH ONLY THE JSON ARRAY, NO OTHER TEXT.`;
             const topicSuffix = getTopicPrefix(topic, age_group).substring(2);
             const questionPrefix = questionYearLevel + topicSuffix;
             
-            // Use the database function to generate standardized question IDs
-            const { data: generatedId, error: idError } = await supabase
-              .rpc('generate_question_id', { topic_name: topic });
-            
-            if (idError) {
-              console.error('Error generating question ID:', idError);
-              // Fallback to simple generation with timestamp
-              const timestamp = Date.now().toString().slice(-6);
-              question.question_id = `${questionPrefix}${timestamp}`;
-            } else {
-              question.question_id = generatedId;
-            }
+            // Generate unique question ID
+            const timestamp = Date.now().toString().slice(-6);
+            const randomSuffix = Math.floor(Math.random() * 100).toString().padStart(2, '0');
+            question.question_id = `${questionPrefix}${timestamp}${randomSuffix}`;
 
             // Stream the validated question
             const questionData = {
@@ -399,28 +391,26 @@ RESPOND WITH ONLY THE JSON ARRAY, NO OTHER TEXT.`;
                 if (insertError) {
                   if (insertError.code === '23505') { // Unique violation
                     // Generate a new ID and retry once
-                    const { data: newId } = await supabase
-                      .rpc('generate_question_id', { topic_name: topic });
+                    const newTimestamp = Date.now().toString().slice(-6);
+                    const newRandomSuffix = Math.floor(Math.random() * 100).toString().padStart(2, '0');
+                    question.question_id = `${questionPrefix}${newTimestamp}${newRandomSuffix}`;
                     
-                    if (newId) {
-                      question.question_id = newId;
-                      const { error: retryError } = await supabase
-                        .from('curriculum')
-                        .insert(question);
-                      
-                      if (retryError) {
-                        console.error('Retry database save error:', retryError);
-                        controller.enqueue(new TextEncoder().encode(`data: ${JSON.stringify({
-                          type: 'error',
-                          message: `Failed to save question ${i + 1} after retry: ${retryError.message}`
-                        })}\n\n`));
-                      } else {
-                        controller.enqueue(new TextEncoder().encode(`data: ${JSON.stringify({
-                          type: 'saved',
-                          questionId: question.question_id,
-                          index: i + 1
-                        })}\n\n`));
-                      }
+                    const { error: retryError } = await supabase
+                      .from('curriculum')
+                      .insert(question);
+                    
+                    if (retryError) {
+                      console.error('Retry database save error:', retryError);
+                      controller.enqueue(new TextEncoder().encode(`data: ${JSON.stringify({
+                        type: 'error',
+                        message: `Failed to save question ${i + 1} after retry: ${retryError.message}`
+                      })}\n\n`));
+                    } else {
+                      controller.enqueue(new TextEncoder().encode(`data: ${JSON.stringify({
+                        type: 'saved',
+                        questionId: question.question_id,
+                        index: i + 1
+                      })}\n\n`));
                     }
                   } else {
                     console.error('Database save error:', insertError);
