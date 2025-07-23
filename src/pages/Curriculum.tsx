@@ -5,9 +5,8 @@ import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import { supabase } from '@/integrations/supabase/client';
-import { BookOpen, Target, Users, ArrowLeft, Lightbulb, Upload } from 'lucide-react';
+import { BookOpen, Target, Users, ArrowLeft, Lightbulb } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import { CsvImportModal } from '@/components/CsvImportModal';
 import { AppNavigation } from '@/components/AppNavigation';
 
 interface CurriculumItem {
@@ -110,7 +109,7 @@ const Curriculum = () => {
       <AppNavigation />
 
       {/* Page Title Section */}
-      <div className="container mx-auto px-4 pt-6 pb-0">
+      <div className="container mx-auto px-4 pt-4">
         <div className="flex items-center space-x-3">
           <div className="p-2 bg-primary/10 rounded-lg">
             <BookOpen className="h-6 w-6 text-primary" />
@@ -123,15 +122,6 @@ const Curriculum = () => {
       </div>
 
       <div className="container mx-auto px-4 pb-8">
-        {/* Action Bar */}
-        <div className="flex justify-end mb-6">
-          <CsvImportModal onImportComplete={loadCurriculumData}>
-            <Button variant="outline" className="flex items-center gap-2">
-              <Upload className="h-4 w-4" />
-              Import CSV
-            </Button>
-          </CsvImportModal>
-        </div>
 
         {/* Overview Cards */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
