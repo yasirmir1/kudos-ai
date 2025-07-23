@@ -170,7 +170,6 @@ const Curriculum = () => {
                 <TabsTrigger key={year} value={year} className="text-center h-14 py-2">
                   <div>
                     <div className="font-semibold">Year {year}</div>
-                    <div className="text-xs text-muted-foreground">{ageInfo.ages}</div>
                   </div>
                 </TabsTrigger>
               );
@@ -186,7 +185,7 @@ const Curriculum = () => {
                     <span>Year {year} Mathematics Curriculum</span>
                   </CardTitle>
                   <CardDescription>
-                    {getAgeGroupInfo(parseInt(year)).label} • {getAgeGroupInfo(parseInt(year)).ages} • 
+                    {getAgeGroupInfo(parseInt(year)).label} • 
                     {Object.keys(groupedData[parseInt(year)] || {}).length} topics covered
                   </CardDescription>
                 </CardHeader>
