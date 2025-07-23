@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -23,17 +23,6 @@ interface Question {
   difficulty: string;
 }
 
-const TOPICS = [
-  'Numbers and Operations',
-  'Algebra',
-  'Geometry',
-  'Measurement',
-  'Data Analysis',
-  'Probability',
-  'Fractions',
-  'Decimals',
-  'Percentages'
-];
 
 const DIFFICULTIES = [
   { value: 'Easy', label: 'Easy', color: 'bg-green-100 text-green-800' },
@@ -48,12 +37,49 @@ export const WorksheetGeneratorModal = () => {
   const [generating, setGenerating] = useState(false);
   const [generatedQuestions, setGeneratedQuestions] = useState<Question[]>([]);
   const [progress, setProgress] = useState(0);
+  const [availableTopics, setAvailableTopics] = useState<string[]>([]);
+  const [loadingTopics, setLoadingTopics] = useState(false);
   
   // Form state
   const [selectedTopic, setSelectedTopic] = useState('');
   const [selectedDifficulty, setSelectedDifficulty] = useState('');
   const [questionCount, setQuestionCount] = useState(10);
   const [worksheetTitle, setWorksheetTitle] = useState('Math Practice Worksheet');
+
+  // Fetch topics based on selected age group
+  useEffect(() => {
+    const fetchTopics = async () => {
+      setLoadingTopics(true);
+      try {
+        const { data, error } = await supabase
+          .from('curriculum')
+          .select('topic')
+          .eq('age_group', selectedAgeGroup)
+          .order('topic');
+
+        if (error) throw error;
+
+        const uniqueTopics = [...new Set(data?.map(item => item.topic) || [])];
+        setAvailableTopics(uniqueTopics);
+        
+        // Reset selected topic if it's not available in the new age group
+        if (selectedTopic && !uniqueTopics.includes(selectedTopic)) {
+          setSelectedTopic('');
+        }
+      } catch (error) {
+        console.error('Error fetching topics:', error);
+        toast({
+          title: "Error",
+          description: "Failed to load topics for the selected age group.",
+          variant: "destructive",
+        });
+      } finally {
+        setLoadingTopics(false);
+      }
+    };
+
+    fetchTopics();
+  }, [selectedAgeGroup, selectedTopic, toast]);
 
   const generateWorksheet = async () => {
     if (!selectedTopic || !selectedDifficulty) {
@@ -344,18 +370,21 @@ export const WorksheetGeneratorModal = () => {
 
               <div className="space-y-2">
                 <Label htmlFor="topic">Topic</Label>
-                <Select value={selectedTopic} onValueChange={setSelectedTopic}>
+                <Select value={selectedTopic} onValueChange={setSelectedTopic} disabled={loadingTopics}>
                   <SelectTrigger>
-                    <SelectValue placeholder="Select a topic" />
+                    <SelectValue placeholder={loadingTopics ? "Loading topics..." : "Select a topic"} />
                   </SelectTrigger>
                   <SelectContent>
-                    {TOPICS.map((topic) => (
+                    {availableTopics.map((topic) => (
                       <SelectItem key={topic} value={topic}>
                         {topic}
                       </SelectItem>
                     ))}
                   </SelectContent>
                 </Select>
+                {availableTopics.length === 0 && !loadingTopics && (
+                  <p className="text-xs text-muted-foreground">No topics available for {selectedAgeGroup}</p>
+                )}
               </div>
 
               <div className="space-y-2">
