@@ -241,12 +241,22 @@ const Analytics = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-background via-background to-secondary/10">
-      <AppNavigation 
-        title="Performance Analytics" 
-        subtitle={`${selectedAgeGroup} - ${user?.email}`}
-      />
+      <AppNavigation />
 
-      <div className="container mx-auto px-4 py-8">
+      {/* Page Title Section */}
+      <div className="container mx-auto px-4 py-6">
+        <div className="flex items-center space-x-3 mb-8">
+          <div className="p-2 bg-primary/10 rounded-lg">
+            <BarChart3 className="h-6 w-6 text-primary" />
+          </div>
+          <div>
+            <h1 className="text-2xl font-bold">Performance Analytics</h1>
+            <p className="text-sm text-muted-foreground">{selectedAgeGroup} - {user?.email}</p>
+          </div>
+        </div>
+      </div>
+
+      <div className="container mx-auto px-4 pb-8">
         <div className="space-y-6">
           {/* Summary Stats */}
           <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
