@@ -85,7 +85,7 @@ const Curriculum = () => {
   };
 
   const getAgeGroupInfo = (year: number) => {
-    if (year <= 3) return { label: 'Year 2-3', ages: '7-8 years' };
+    if (year <= 3) return { label: 'Year 2-3', ages: '6-7 years' };
     if (year <= 5) return { label: 'Year 4-5', ages: '9-10 years' };
     return { label: '11+ Prep', ages: '11+ years' };
   };
