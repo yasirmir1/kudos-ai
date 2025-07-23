@@ -112,13 +112,6 @@ export const AppNavigation: React.FC<AppNavigationProps> = ({
             <AgeGroupSelector />
           </div>
         </div>
-
-        {/* Optional secondary info bar */}
-        {user && (
-          <div className="mt-2 text-xs text-muted-foreground text-center">
-            {selectedAgeGroup} • {user.email}
-          </div>
-        )}
       </div>
     </header>
   );
