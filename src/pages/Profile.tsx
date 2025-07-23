@@ -170,7 +170,7 @@ const Profile = () => {
         </div>
       </div>
 
-      <div className="container mx-auto px-4 pb-8 max-w-2xl">
+      <div className="container mx-auto px-4 pb-8">
         <div className="space-y-6">
           {/* Profile Information */}
           <Card>
