@@ -232,24 +232,24 @@ export function MisconceptionQuestionsModal({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-4xl max-h-[85vh] overflow-y-auto bg-gradient-to-br from-red-50 to-pink-50">
+      <DialogContent className="max-w-4xl max-h-[85vh] overflow-y-auto bg-gradient-to-br from-destructive/10 to-secondary">
         <DialogHeader className="text-center pb-2">
           <DialogTitle className="flex items-center justify-center space-x-3 text-xl">
-            <div className="flex items-center justify-center w-10 h-10 bg-red-100 rounded-full">
-              <Brain className="h-6 w-6 text-red-600" />
+            <div className="flex items-center justify-center w-10 h-10 bg-destructive/20 rounded-full">
+              <Brain className="h-6 w-6 text-destructive" />
             </div>
-            <span className="bg-gradient-to-r from-red-600 to-pink-600 bg-clip-text text-transparent font-bold">
+            <span className="bg-gradient-to-r from-destructive to-destructive/80 bg-clip-text text-transparent font-bold">
               Common Mix-Up: {misconception ? formatMisconceptionName(misconception.red_herring) : ''}
             </span>
           </DialogTitle>
           <DialogDescription className="text-base text-center">
-            <div className="bg-white/60 backdrop-blur-sm rounded-lg p-3 mt-2">
-              <p className="text-gray-700 font-medium">
+            <div className="bg-card/60 backdrop-blur-sm rounded-lg p-3 mt-2 border border-border/50">
+              <p className="text-foreground font-medium">
                 🧠 Let's understand this thinking pattern together! 
               </p>
               {misconception && (
-                <p className="text-sm text-gray-600 mt-1">
-                  This happened <span className="font-bold text-red-600">{misconception.frequency}</span> times in: 
+                <p className="text-sm text-muted-foreground mt-1">
+                  This happened <span className="font-bold text-destructive">{misconception.frequency}</span> times in: 
                   <span className="font-bold"> {misconception.topics.join(', ')}</span>
                 </p>
               )}
@@ -260,61 +260,61 @@ export function MisconceptionQuestionsModal({
         <div className="space-y-4">
           {loading && (
             <div className="flex flex-col items-center justify-center py-8">
-              <div className="animate-spin rounded-full h-8 w-8 border-4 border-red-200 border-t-red-500 mb-3"></div>
-              <span className="text-red-600 font-medium">Finding questions with this mix-up...</span>
+              <div className="animate-spin rounded-full h-8 w-8 border-4 border-destructive/20 border-t-destructive mb-3"></div>
+              <span className="text-destructive font-medium">Finding questions with this mix-up...</span>
             </div>
           )}
 
           {!loading && questions.length === 0 && (
             <div className="text-center py-8">
-              <div className="bg-blue-50 border-2 border-blue-200 rounded-xl p-6">
-                <AlertCircle className="h-12 w-12 text-blue-500 mx-auto mb-3" />
-                <p className="text-blue-700 font-semibold text-lg mb-2">Hmm, that's interesting! 🤔</p>
-                <p className="text-blue-600">We can't find specific questions for this thinking pattern right now.</p>
+              <div className="bg-primary/10 border-2 border-primary/30 rounded-xl p-6">
+                <AlertCircle className="h-12 w-12 text-primary mx-auto mb-3" />
+                <p className="text-primary font-semibold text-lg mb-2">Hmm, that's interesting! 🤔</p>
+                <p className="text-primary/70">We can't find specific questions for this thinking pattern right now.</p>
               </div>
             </div>
           )}
 
           {!loading && questions.map((question, index) => (
-            <Card key={question.question_id} className="border-2 border-red-200 bg-white/80 backdrop-blur-sm hover:shadow-lg transition-all duration-300 animate-fade-in">
-              <CardHeader className="pb-3 bg-gradient-to-r from-red-100 to-pink-100 rounded-t-lg">
+            <Card key={question.question_id} className="border-2 border-destructive/30 bg-card/80 backdrop-blur-sm hover:shadow-lg transition-all duration-300 animate-fade-in">
+              <CardHeader className="pb-3 bg-gradient-to-r from-destructive/10 to-destructive/5 rounded-t-lg">
                 <div className="flex items-center justify-between">
-                  <CardTitle className="flex items-center space-x-2 text-lg text-red-800">
-                    <div className="flex items-center justify-center w-8 h-8 bg-red-200 rounded-full">
-                      <span className="text-red-700 font-bold">{index + 1}</span>
+                  <CardTitle className="flex items-center space-x-2 text-lg text-destructive">
+                    <div className="flex items-center justify-center w-8 h-8 bg-destructive/20 rounded-full">
+                      <span className="text-destructive font-bold">{index + 1}</span>
                     </div>
                     <span>Mix-Up Example {index + 1}</span>
                   </CardTitle>
                   <div className="flex items-center space-x-2">
-                    <Badge variant="outline" className="flex items-center space-x-1 text-xs bg-red-50 border-red-200 text-red-700">
+                    <Badge variant="outline" className="flex items-center space-x-1 text-xs bg-destructive/10 border-destructive/30 text-destructive">
                       <AlertTriangle className="h-3 w-3" />
                       <span>Tried {question.attempts_count} time{question.attempts_count > 1 ? 's' : ''}</span>
                     </Badge>
-                    <Badge variant="outline" className="flex items-center space-x-1 text-xs bg-blue-50 border-blue-200 text-blue-700">
+                    <Badge variant="outline" className="flex items-center space-x-1 text-xs bg-primary/10 border-primary/30 text-primary">
                       <Clock className="h-3 w-3" />
                       <span>{Math.round(question.avg_time_taken_seconds)}s</span>
                     </Badge>
-                    <Badge variant="secondary" className="text-xs bg-purple-100 text-purple-700">{question.topic}</Badge>
+                    <Badge variant="secondary" className="text-xs">{question.topic}</Badge>
                   </div>
                 </div>
-                <p className="text-xs text-red-600 mt-1">
+                <p className="text-xs text-destructive/70 mt-1">
                   Last tried on {new Date(question.latest_answered_at).toLocaleDateString()} • {question.subtopic}
                 </p>
               </CardHeader>
               <CardContent className="space-y-4 pt-4">
                 {question.curriculum && (
                   <>
-                    <div className="bg-blue-50 border-l-4 border-blue-400 p-3 rounded-r-lg">
-                      <h4 className="font-bold mb-2 text-blue-800 flex items-center space-x-2">
+                    <div className="bg-primary/10 border-l-4 border-primary p-3 rounded-r-lg">
+                      <h4 className="font-bold mb-2 text-primary flex items-center space-x-2">
                         <span>❓</span>
                         <span>The Question:</span>
                       </h4>
-                      <p className="text-blue-900 font-medium">{question.curriculum.example_question}</p>
+                      <p className="text-foreground font-medium">{question.curriculum.example_question}</p>
                     </div>
 
                     {question.curriculum.options && (
-                      <div className="bg-gray-50 border border-gray-200 p-3 rounded-lg">
-                        <h4 className="font-bold mb-2 text-gray-800 flex items-center space-x-2">
+                      <div className="bg-muted border border-border p-3 rounded-lg">
+                        <h4 className="font-bold mb-2 text-foreground flex items-center space-x-2">
                           <span>📝</span>
                           <span>Answer Choices:</span>
                         </h4>
@@ -324,15 +324,15 @@ export function MisconceptionQuestionsModal({
                               key={optIndex}
                               className={`text-sm p-3 rounded-lg border-2 font-medium transition-all duration-200 ${
                                 option === question.latest_answer_given 
-                                  ? 'bg-red-100 text-red-800 border-red-300 shadow-sm' 
+                                  ? 'bg-destructive/10 text-destructive border-destructive/30 shadow-sm' 
                                   : option === question.curriculum?.correct_answer
-                                  ? 'bg-green-100 text-green-800 border-green-300 shadow-sm'
-                                  : 'bg-white border-gray-200 text-gray-700'
+                                  ? 'bg-green-50 text-green-800 border-green-300 shadow-sm'
+                                  : 'bg-card border-border text-foreground'
                               }`}
                             >
                               <div className="flex items-center space-x-2">
                                 {option === question.latest_answer_given && (
-                                  <div className="flex items-center space-x-1 text-red-600">
+                                  <div className="flex items-center space-x-1 text-destructive">
                                     <X className="h-4 w-4" />
                                     <span className="text-xs font-bold">Your answer</span>
                                   </div>
@@ -352,47 +352,47 @@ export function MisconceptionQuestionsModal({
                     )}
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                      <div className="bg-red-50 border-2 border-red-200 p-3 rounded-lg">
-                        <h4 className="font-bold mb-2 text-red-700 flex items-center space-x-2">
+                      <div className="bg-destructive/10 border-2 border-destructive/30 p-3 rounded-lg">
+                        <h4 className="font-bold mb-2 text-destructive flex items-center space-x-2">
                           <span>❌</span>
                           <span>What You Picked:</span>
                         </h4>
-                        <p className="text-red-800 font-medium bg-white p-2 rounded border">{question.latest_answer_given}</p>
+                        <p className="text-destructive font-medium bg-card p-2 rounded border">{question.latest_answer_given}</p>
                       </div>
                       <div className="bg-green-50 border-2 border-green-200 p-3 rounded-lg">
                         <h4 className="font-bold mb-2 text-green-700 flex items-center space-x-2">
                           <span>✅</span>
                           <span>The Right Answer:</span>
                         </h4>
-                        <p className="text-green-800 font-medium bg-white p-2 rounded border">{question.curriculum.correct_answer}</p>
+                        <p className="text-green-800 font-medium bg-card p-2 rounded border">{question.curriculum.correct_answer}</p>
                       </div>
                     </div>
 
-                    <div className="bg-gradient-to-r from-purple-50 to-pink-50 border-2 border-purple-200 p-4 rounded-lg">
-                      <h4 className="font-bold mb-3 text-purple-700 flex items-center space-x-2">
+                    <div className="bg-gradient-to-r from-accent to-secondary border-2 border-accent-foreground/20 p-4 rounded-lg">
+                      <h4 className="font-bold mb-3 text-accent-foreground flex items-center space-x-2">
                         <Sparkles className="h-5 w-5" />
                         <span>🎓 Why This Happens & How to Fix It!</span>
                       </h4>
                       
                       {generatingExplanations.has(question.question_id) && (
-                        <div className="bg-white/70 p-4 rounded-lg border border-purple-200 flex items-center space-x-3">
-                          <div className="animate-spin rounded-full h-5 w-5 border-2 border-purple-300 border-t-purple-600"></div>
-                          <span className="text-purple-700 font-medium">Creating a fun explanation just for you...</span>
+                        <div className="bg-card/70 p-4 rounded-lg border border-border flex items-center space-x-3">
+                          <div className="animate-spin rounded-full h-5 w-5 border-2 border-primary/30 border-t-primary"></div>
+                          <span className="text-primary font-medium">Creating a fun explanation just for you...</span>
                           <Star className="h-4 w-4 text-yellow-500 animate-pulse" />
                         </div>
                       )}
                       
                       {question.aiExplanation && (
-                        <div className="bg-white/80 p-4 rounded-lg border border-purple-200">
-                          <div className="text-sm leading-relaxed text-purple-900 whitespace-pre-line [&>div]:mb-3 [&>p]:mb-3 [&_h4]:mb-2 [&_strong]:font-bold [&_strong]:text-purple-800 [&>h1]:mb-3 [&>h2]:mb-3 [&>h3]:mb-3">
+                        <div className="bg-card/80 p-4 rounded-lg border border-border">
+                          <div className="text-sm leading-relaxed text-foreground whitespace-pre-line [&>div]:mb-3 [&>p]:mb-3 [&_h4]:mb-2 [&_strong]:font-bold [&_strong]:text-accent-foreground [&>h1]:mb-3 [&>h2]:mb-3 [&>h3]:mb-3">
                             {question.aiExplanation}
                           </div>
                         </div>
                       )}
                       
                       {!question.aiExplanation && !generatingExplanations.has(question.question_id) && (
-                        <div className="bg-white/70 p-4 rounded-lg border border-purple-200 text-center">
-                          <p className="text-purple-600 font-medium">Your personalized explanation is coming soon! 🌟</p>
+                        <div className="bg-card/70 p-4 rounded-lg border border-border text-center">
+                          <p className="text-muted-foreground font-medium">Your personalized explanation is coming soon! 🌟</p>
                         </div>
                       )}
                     </div>
