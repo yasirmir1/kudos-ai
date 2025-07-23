@@ -235,58 +235,58 @@ export function FocusAreaQuestionsModal({
           </DialogDescription>
         </DialogHeader>
 
-        <div className="space-y-4">
+        <div className="space-y-3">
           {/* Questions Section */}
           {loading && (
-            <div className="flex items-center justify-center py-8">
-              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
-              <span className="ml-2">Loading questions...</span>
+            <div className="flex items-center justify-center py-6">
+              <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-primary"></div>
+              <span className="ml-2 text-sm">Loading questions...</span>
             </div>
           )}
 
           {!loading && questions.length === 0 && (
-            <div className="text-center py-8 text-muted-foreground">
+            <div className="text-center py-6 text-sm text-muted-foreground">
               No incorrect questions found for this topic. Keep practicing to improve!
             </div>
           )}
 
           {!loading && questions.map((question, index) => (
             <Card key={question.question_id} className="border-l-4 border-l-orange-500">
-              <CardHeader>
+              <CardHeader className="pb-3">
                 <div className="flex items-center justify-between">
-                  <CardTitle className="text-lg">Question {index + 1}</CardTitle>
+                  <CardTitle className="text-base">Question {index + 1}</CardTitle>
                   <div className="flex items-center space-x-2">
-                    <Badge variant="outline" className="flex items-center space-x-1">
+                    <Badge variant="outline" className="flex items-center space-x-1 text-xs">
                       <AlertTriangle className="h-3 w-3" />
                       <span>{question.attempts_count} attempt{question.attempts_count > 1 ? 's' : ''}</span>
                     </Badge>
-                    <Badge variant="outline" className="flex items-center space-x-1">
+                    <Badge variant="outline" className="flex items-center space-x-1 text-xs">
                       <Clock className="h-3 w-3" />
                       <span>{Math.round(question.avg_time_taken_seconds)}s avg</span>
                     </Badge>
-                    <Badge variant="secondary">{question.subtopic}</Badge>
+                    <Badge variant="secondary" className="text-xs">{question.subtopic}</Badge>
                   </div>
                 </div>
-                <p className="text-sm text-muted-foreground">
+                <p className="text-xs text-muted-foreground">
                   Last answered on {new Date(question.latest_answered_at).toLocaleDateString()}
                 </p>
               </CardHeader>
-              <CardContent className="space-y-4">
+              <CardContent className="space-y-3 pt-0">
                 {question.curriculum && (
                   <>
                     <div>
-                      <h4 className="font-semibold mb-2">Question:</h4>
+                      <h4 className="font-semibold mb-1 text-sm">Question:</h4>
                       <p className="text-sm">{question.curriculum.example_question}</p>
                     </div>
 
                     {question.curriculum.options && (
                       <div>
-                        <h4 className="font-semibold mb-2">Options:</h4>
+                        <h4 className="font-semibold mb-1 text-sm">Options:</h4>
                         <ul className="space-y-1">
                           {formatOptions(question.curriculum.options).map((option, optIndex) => (
                             <li 
                               key={optIndex}
-                              className={`text-sm p-2 rounded ${
+                              className={`text-sm p-1.5 rounded ${
                                 option === question.latest_answer_given 
                                   ? 'bg-red-100 text-red-800 border border-red-300' 
                                   : option === question.curriculum?.correct_answer
@@ -303,38 +303,38 @@ export function FocusAreaQuestionsModal({
                       </div>
                     )}
 
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                       <div>
-                        <h4 className="font-semibold mb-2 text-red-700">Your Latest Answer:</h4>
-                        <p className="text-sm bg-red-50 p-2 rounded border">{question.latest_answer_given}</p>
+                        <h4 className="font-semibold mb-1 text-sm text-red-700">Your Latest Answer:</h4>
+                        <p className="text-sm bg-red-50 p-1.5 rounded border">{question.latest_answer_given}</p>
                       </div>
                       <div>
-                        <h4 className="font-semibold mb-2 text-green-700">Correct Answer:</h4>
-                        <p className="text-sm bg-green-50 p-2 rounded border">{question.curriculum.correct_answer}</p>
+                        <h4 className="font-semibold mb-1 text-sm text-green-700">Correct Answer:</h4>
+                        <p className="text-sm bg-green-50 p-1.5 rounded border">{question.curriculum.correct_answer}</p>
                       </div>
                     </div>
 
                     <div>
-                      <h4 className="font-semibold mb-2 text-blue-700 flex items-center space-x-2">
+                      <h4 className="font-semibold mb-1 text-sm text-blue-700 flex items-center space-x-2">
                         <Sparkles className="h-4 w-4" />
                         <span>Explanation</span>
                       </h4>
                       
                       {generatingExplanations.has(question.question_id) && (
-                        <div className="bg-blue-50 p-3 rounded border flex items-center space-x-2">
+                        <div className="bg-blue-50 p-2 rounded border flex items-center space-x-2">
                           <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-500"></div>
                           <span className="text-sm text-blue-700">Creating your explanation...</span>
                         </div>
                       )}
                       
                       {question.aiExplanation && (
-                        <div className="bg-blue-50 p-3 rounded border">
-                          <div className="text-sm whitespace-pre-line leading-[1.4] [&>div]:mb-6 [&>p]:mb-6 [&_h4]:mb-4">{question.aiExplanation}</div>
+                        <div className="bg-blue-50 p-2 rounded border">
+                          <div className="text-sm whitespace-pre-line leading-[1.4] [&>div]:mb-3 [&>p]:mb-3 [&_h4]:mb-2">{question.aiExplanation}</div>
                         </div>
                       )}
                       
                       {!question.aiExplanation && !generatingExplanations.has(question.question_id) && (
-                        <div className="bg-gray-50 p-3 rounded border text-center">
+                        <div className="bg-gray-50 p-2 rounded border text-center">
                           <p className="text-sm text-gray-600">Explanation will appear here automatically</p>
                         </div>
                       )}
