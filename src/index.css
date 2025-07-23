@@ -8,115 +8,115 @@ All colors MUST be HSL.
 
 @layer base {
   :root {
-    /* Soft, warm background colors */
-    --background: 45 100% 98%;
-    --foreground: 230 25% 20%;
+    /* Clean white background with subtle warmth */
+    --background: 0 0% 100%;
+    --foreground: 220 80% 25%;
 
     --card: 0 0% 100%;
-    --card-foreground: 230 25% 20%;
+    --card-foreground: 220 80% 25%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 230 25% 20%;
+    --popover-foreground: 220 80% 25%;
 
-    /* Beautiful ocean-inspired primary colors */
-    --primary: 195 85% 55%;
+    /* KUDOS blue primary colors */
+    --primary: 220 80% 50%;
     --primary-foreground: 0 0% 100%;
-    --primary-glow: 185 90% 65%;
+    --primary-glow: 220 85% 60%;
 
-    /* Soft lavender secondary */
-    --secondary: 280 50% 95%;
-    --secondary-foreground: 280 30% 25%;
+    /* Light blue-gray secondary */
+    --secondary: 220 20% 96%;
+    --secondary-foreground: 220 80% 25%;
 
-    /* Gentle muted tones */
-    --muted: 210 30% 96%;
-    --muted-foreground: 210 15% 50%;
+    /* Subtle gray muted tones */
+    --muted: 220 15% 96%;
+    --muted-foreground: 220 20% 50%;
 
-    /* Fresh mint accent */
-    --accent: 150 60% 94%;
-    --accent-foreground: 150 40% 25%;
+    /* Light blue accent */
+    --accent: 220 30% 94%;
+    --accent-foreground: 220 80% 25%;
 
-    /* Coral destructive (soft red) */
-    --destructive: 350 70% 60%;
+    /* Professional red destructive */
+    --destructive: 0 70% 55%;
     --destructive-foreground: 0 0% 100%;
 
-    /* Soft borders and inputs */
-    --border: 210 30% 88%;
-    --input: 210 30% 88%;
-    --ring: 195 85% 55%;
+    /* Clean borders and inputs */
+    --border: 220 15% 88%;
+    --input: 220 15% 88%;
+    --ring: 220 80% 50%;
 
     --radius: 0.75rem;
     
-    /* Beautiful learning theme gradients with better contrast */
-    --gradient-primary: linear-gradient(135deg, hsl(195 85% 45%), hsl(185 90% 55%));
-    --gradient-learning: linear-gradient(180deg, hsl(45 100% 98%), hsl(280 50% 95%));
+    /* Clean blue and white gradients */
+    --gradient-primary: linear-gradient(135deg, hsl(220 80% 50%), hsl(220 85% 60%));
+    --gradient-learning: linear-gradient(180deg, hsl(0 0% 100%), hsl(220 20% 96%));
     --gradient-success: linear-gradient(135deg, hsl(120 60% 55%), hsl(140 70% 60%));
     --gradient-warning: linear-gradient(135deg, hsl(40 85% 60%), hsl(50 90% 65%));
-    --gradient-focus: linear-gradient(135deg, hsl(25 85% 60%), hsl(35 90% 65%));
-    --gradient-misconception: linear-gradient(135deg, hsl(350 70% 60%), hsl(340 75% 65%));
+    --gradient-focus: linear-gradient(135deg, hsl(220 60% 55%), hsl(220 70% 65%));
+    --gradient-misconception: linear-gradient(135deg, hsl(0 70% 55%), hsl(10 75% 60%));
     
     /* Enhanced animations and shadows */
     --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    --shadow-learning: 0 10px 30px -10px hsl(195 85% 55% / 0.3);
-    --shadow-card: 0 4px 20px -4px hsl(230 25% 20% / 0.08);
-    --shadow-glow: 0 0 40px hsl(185 90% 65% / 0.4);
+    --shadow-learning: 0 10px 30px -10px hsl(220 80% 50% / 0.3);
+    --shadow-card: 0 4px 20px -4px hsl(220 80% 25% / 0.08);
+    --shadow-glow: 0 0 40px hsl(220 85% 60% / 0.4);
 
-    /* Sidebar colors with ocean theme */
-    --sidebar-background: 200 30% 97%;
-    --sidebar-foreground: 230 25% 30%;
-    --sidebar-primary: 195 85% 55%;
+    /* Sidebar colors with blue theme */
+    --sidebar-background: 0 0% 100%;
+    --sidebar-foreground: 220 80% 25%;
+    --sidebar-primary: 220 80% 50%;
     --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 210 40% 94%;
-    --sidebar-accent-foreground: 230 25% 30%;
-    --sidebar-border: 210 30% 88%;
-    --sidebar-ring: 195 85% 55%;
+    --sidebar-accent: 220 20% 96%;
+    --sidebar-accent-foreground: 220 80% 25%;
+    --sidebar-border: 220 15% 88%;
+    --sidebar-ring: 220 80% 50%;
   }
 
   .dark {
-    /* Dark ocean-inspired theme */
-    --background: 220 30% 8%;
-    --foreground: 210 30% 92%;
+    /* Dark blue theme */
+    --background: 220 50% 8%;
+    --foreground: 0 0% 95%;
 
-    --card: 220 30% 10%;
-    --card-foreground: 210 30% 92%;
+    --card: 220 40% 10%;
+    --card-foreground: 0 0% 95%;
 
-    --popover: 220 30% 10%;
-    --popover-foreground: 210 30% 92%;
+    --popover: 220 40% 10%;
+    --popover-foreground: 0 0% 95%;
 
-    /* Bright ocean blue for dark mode */
-    --primary: 190 90% 65%;
-    --primary-foreground: 220 30% 8%;
-    --primary-glow: 180 100% 75%;
+    /* Bright KUDOS blue for dark mode */
+    --primary: 220 85% 65%;
+    --primary-foreground: 220 50% 8%;
+    --primary-glow: 220 90% 75%;
 
-    /* Dark purple secondary */
-    --secondary: 270 20% 15%;
-    --secondary-foreground: 270 30% 85%;
+    /* Dark blue-gray secondary */
+    --secondary: 220 25% 15%;
+    --secondary-foreground: 0 0% 85%;
 
     /* Dark muted tones */
     --muted: 220 20% 15%;
     --muted-foreground: 220 15% 65%;
 
-    /* Dark mint accent */
-    --accent: 160 20% 15%;
-    --accent-foreground: 160 30% 85%;
+    /* Dark blue accent */
+    --accent: 220 30% 18%;
+    --accent-foreground: 0 0% 85%;
 
-    /* Bright coral for dark mode */
-    --destructive: 350 75% 65%;
-    --destructive-foreground: 220 30% 92%;
+    /* Bright red for dark mode */
+    --destructive: 0 75% 65%;
+    --destructive-foreground: 0 0% 95%;
 
     /* Dark borders */
     --border: 220 20% 18%;
     --input: 220 20% 18%;
-    --ring: 190 90% 65%;
+    --ring: 220 85% 65%;
 
     /* Dark sidebar */
-    --sidebar-background: 220 30% 10%;
-    --sidebar-foreground: 210 30% 85%;
-    --sidebar-primary: 190 90% 65%;
-    --sidebar-primary-foreground: 220 30% 8%;
+    --sidebar-background: 220 40% 10%;
+    --sidebar-foreground: 0 0% 85%;
+    --sidebar-primary: 220 85% 65%;
+    --sidebar-primary-foreground: 220 50% 8%;
     --sidebar-accent: 220 25% 15%;
-    --sidebar-accent-foreground: 210 30% 85%;
+    --sidebar-accent-foreground: 0 0% 85%;
     --sidebar-border: 220 20% 18%;
-    --sidebar-ring: 190 90% 65%;
+    --sidebar-ring: 220 85% 65%;
   }
 }
 
