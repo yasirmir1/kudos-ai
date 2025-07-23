@@ -110,7 +110,7 @@ const Curriculum = () => {
 
       {/* Page Title Section */}
       <div className="container mx-auto px-4 pt-4">
-        <div className="flex items-center space-x-3">
+        <div className="flex items-center space-x-3 mb-6">
           <div className="p-2 bg-primary/10 rounded-lg">
             <BookOpen className="h-6 w-6 text-primary" />
           </div>
