@@ -51,7 +51,7 @@ export const AppNavigation: React.FC<AppNavigationProps> = ({
                 <img 
                   src="/lovable-uploads/343d37bc-a8af-452f-b2b9-250214aa6175.png" 
                   alt="Kudos Academy" 
-                  className="h-10 w-auto"
+                  className="h-12 w-auto"
                 />
               </div>
             )}
