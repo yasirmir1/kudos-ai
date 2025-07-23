@@ -289,10 +289,7 @@ const Dashboard = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-background via-background to-secondary/10">
-      <AppNavigation 
-        title="Kudos Academy" 
-        subtitle={`Welcome back, ${user?.email}`}
-      />
+      <AppNavigation />
 
       <div className="container mx-auto px-4 py-8 space-y-8">
         {/* Quick Actions */}
