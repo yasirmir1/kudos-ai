@@ -12,6 +12,7 @@ import { useToast } from '@/hooks/use-toast';
 import { ResetProgressModal } from '@/components/ResetProgressModal';
 import { useAgeGroup, updateAgeGroupFromProfile } from '@/contexts/AgeGroupContext';
 import { AgeGroupSelector } from '@/components/AgeGroupSelector';
+import { AppNavigation } from '@/components/AppNavigation';
 
 type AgeGroup = 'year 2-3' | 'year 4-5' | '11+';
 
@@ -154,25 +155,10 @@ const Profile = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-background via-background to-secondary/10">
-      {/* Header */}
-      <header className="border-b bg-card/50 backdrop-blur-sm">
-        <div className="container mx-auto px-4 py-4 flex justify-between items-center">
-          <Button variant="ghost" onClick={() => navigate('/dashboard')}>
-            <ArrowLeft className="mr-2 h-4 w-4" />
-            Back to Dashboard
-          </Button>
-          <div className="flex items-center space-x-3">
-            <div className="p-2 bg-primary/10 rounded-lg">
-              <User className="h-6 w-6 text-primary" />
-            </div>
-            <div>
-              <h1 className="text-xl font-bold">Profile Settings</h1>
-              <p className="text-sm text-muted-foreground">{selectedAgeGroup} - {user?.email}</p>
-            </div>
-          </div>
-          <AgeGroupSelector />
-        </div>
-      </header>
+      <AppNavigation 
+        title="Profile Settings" 
+        subtitle={`${selectedAgeGroup} - ${user?.email}`}
+      />
 
       <div className="container mx-auto px-4 py-8 max-w-2xl">
         <div className="space-y-6">

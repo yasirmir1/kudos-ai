@@ -7,6 +7,7 @@ import { useNavigate } from 'react-router-dom';
 import { ArrowLeft, TrendingUp, BarChart3, PieChart, Calendar } from 'lucide-react';
 import { useAgeGroup } from '@/contexts/AgeGroupContext';
 import { AgeGroupSelector } from '@/components/AgeGroupSelector';
+import { AppNavigation } from '@/components/AppNavigation';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, BarChart, Bar, PieChart as RechartsPieChart, Cell, Pie } from 'recharts';
 
 interface StudentAnswer {
@@ -240,32 +241,10 @@ const Analytics = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-background via-background to-secondary/10">
-      {/* Header */}
-      <header className="border-b bg-card/50 backdrop-blur-sm">
-        <div className="container mx-auto px-4 py-4 flex justify-between items-center">
-          <Button variant="ghost" onClick={() => navigate('/dashboard')}>
-            <ArrowLeft className="mr-2 h-4 w-4" />
-            Back
-          </Button>
-          <div className="flex items-center space-x-3">
-            <div className="p-2 bg-primary/10 rounded-lg">
-              <BarChart3 className="h-6 w-6 text-primary" />
-            </div>
-            <div>
-              <h1 className="text-xl font-bold">Performance Analytics</h1>
-              <p className="text-sm text-muted-foreground">{selectedAgeGroup} - {user?.email}</p>
-            </div>
-          </div>
-          <div className="flex items-center space-x-6">
-            <div className="flex space-x-2">
-              <Button variant="ghost" onClick={() => navigate('/profile')}>
-                Profile
-              </Button>
-            </div>
-            <AgeGroupSelector />
-          </div>
-        </div>
-      </header>
+      <AppNavigation 
+        title="Performance Analytics" 
+        subtitle={`${selectedAgeGroup} - ${user?.email}`}
+      />
 
       <div className="container mx-auto px-4 py-8">
         <div className="space-y-6">

@@ -8,6 +8,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { BookOpen, Target, Users, ArrowLeft, Lightbulb, Upload } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { CsvImportModal } from '@/components/CsvImportModal';
+import { AppNavigation } from '@/components/AppNavigation';
 
 interface CurriculumItem {
   id: number;
@@ -106,28 +107,10 @@ const Curriculum = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-background via-background to-secondary/10">
-      {/* Header */}
-      <header className="border-b bg-card/50 backdrop-blur-sm">
-        <div className="container mx-auto px-4 py-4">
-          <div className="flex items-center space-x-4">
-            <Button 
-              variant="ghost" 
-              size="icon"
-              onClick={() => navigate('/dashboard')}
-              className="hover:bg-secondary"
-            >
-              <ArrowLeft className="h-5 w-5" />
-            </Button>
-            <div className="flex items-center space-x-3">
-              <img src="/lovable-uploads/409330f0-2245-4147-b837-ff553d303814.png" alt="Kudos Academy" className="h-10 w-auto" />
-              <div>
-                <h1 className="text-2xl font-bold">Mathematics Curriculum</h1>
-                <p className="text-sm text-muted-foreground">Year 2-6 Learning Objectives</p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </header>
+      <AppNavigation 
+        title="Mathematics Curriculum" 
+        subtitle="Year 2-6 Learning Objectives"
+      />
 
       <div className="container mx-auto px-4 py-8">
         {/* Action Bar */}

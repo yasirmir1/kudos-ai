@@ -16,6 +16,7 @@ import { FocusAreaQuestionsModal } from '@/components/FocusAreaQuestionsModal';
 import { WorksheetGeneratorModal } from '@/components/WorksheetGeneratorModal';
 import { SessionsModal } from '@/components/SessionsModal';
 import { AgeGroupSelector } from '@/components/AgeGroupSelector';
+import { AppNavigation } from '@/components/AppNavigation';
 import { useAgeGroup } from '@/contexts/AgeGroupContext';
 
 interface PerformanceData {
@@ -288,32 +289,10 @@ const Dashboard = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-background via-background to-secondary/10">
-      {/* Header */}
-      <header className="border-b bg-card/50 backdrop-blur-sm">
-        <div className="container mx-auto px-4 py-4 flex justify-between items-center">
-          <div className="flex items-center space-x-3">
-            <img src="/lovable-uploads/409330f0-2245-4147-b837-ff553d303814.png" alt="Kudos Academy" className="h-10 w-auto" />
-            <div>
-              <h1 className="text-xl font-bold">Kudos Academy</h1>
-              <p className="text-sm text-muted-foreground">Welcome back, {user?.email}</p>
-            </div>
-          </div>
-          <div className="flex items-center space-x-6">
-            <div className="flex space-x-2">
-              <Button variant="ghost" onClick={() => navigate('/curriculum')}>
-                Curriculum
-              </Button>
-              <Button variant="ghost" onClick={() => navigate('/analytics')}>
-                Analytics
-              </Button>
-              <Button variant="ghost" onClick={() => navigate('/profile')}>
-                Profile
-              </Button>
-            </div>
-            <AgeGroupSelector />
-          </div>
-        </div>
-      </header>
+      <AppNavigation 
+        title="Kudos Academy" 
+        subtitle={`Welcome back, ${user?.email}`}
+      />
 
       <div className="container mx-auto px-4 py-8 space-y-8">
         {/* Quick Actions */}
