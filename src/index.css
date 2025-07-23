@@ -10,38 +10,38 @@ All colors MUST be HSL.
   :root {
     /* Clean white background with subtle warmth */
     --background: 0 0% 100%;
-    --foreground: 220 80% 25%;
+    --foreground: 220 80% 15%;
 
     --card: 0 0% 100%;
-    --card-foreground: 220 80% 25%;
+    --card-foreground: 220 80% 15%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 220 80% 25%;
+    --popover-foreground: 220 80% 15%;
 
     /* KUDOS blue primary colors */
     --primary: 220 80% 50%;
     --primary-foreground: 0 0% 100%;
     --primary-glow: 220 85% 60%;
 
-    /* Light blue-gray secondary */
-    --secondary: 220 20% 96%;
-    --secondary-foreground: 220 80% 25%;
+    /* Better contrast secondary */
+    --secondary: 220 30% 92%;
+    --secondary-foreground: 220 80% 20%;
 
-    /* Subtle gray muted tones */
-    --muted: 220 15% 96%;
-    --muted-foreground: 220 20% 50%;
+    /* Improved muted tones */
+    --muted: 220 20% 94%;
+    --muted-foreground: 220 30% 35%;
 
-    /* Light blue accent */
-    --accent: 220 30% 94%;
-    --accent-foreground: 220 80% 25%;
+    /* Better contrast accent */
+    --accent: 220 40% 90%;
+    --accent-foreground: 220 80% 20%;
 
     /* Professional red destructive */
     --destructive: 0 70% 55%;
     --destructive-foreground: 0 0% 100%;
 
     /* Clean borders and inputs */
-    --border: 220 15% 88%;
-    --input: 220 15% 88%;
+    --border: 220 20% 85%;
+    --input: 220 20% 85%;
     --ring: 220 80% 50%;
 
     --radius: 0.75rem;
@@ -62,12 +62,12 @@ All colors MUST be HSL.
 
     /* Sidebar colors with blue theme */
     --sidebar-background: 0 0% 100%;
-    --sidebar-foreground: 220 80% 25%;
+    --sidebar-foreground: 220 80% 20%;
     --sidebar-primary: 220 80% 50%;
     --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 220 20% 96%;
-    --sidebar-accent-foreground: 220 80% 25%;
-    --sidebar-border: 220 15% 88%;
+    --sidebar-accent: 220 30% 92%;
+    --sidebar-accent-foreground: 220 80% 20%;
+    --sidebar-border: 220 20% 85%;
     --sidebar-ring: 220 80% 50%;
   }
 
@@ -87,17 +87,17 @@ All colors MUST be HSL.
     --primary-foreground: 220 50% 8%;
     --primary-glow: 220 90% 75%;
 
-    /* Dark blue-gray secondary */
-    --secondary: 220 25% 15%;
-    --secondary-foreground: 0 0% 85%;
+    /* Better contrast dark secondary */
+    --secondary: 220 30% 20%;
+    --secondary-foreground: 0 0% 90%;
 
-    /* Dark muted tones */
-    --muted: 220 20% 15%;
-    --muted-foreground: 220 15% 65%;
+    /* Improved dark muted tones */
+    --muted: 220 25% 18%;
+    --muted-foreground: 220 20% 70%;
 
-    /* Dark blue accent */
-    --accent: 220 30% 18%;
-    --accent-foreground: 0 0% 85%;
+    /* Better contrast dark accent */
+    --accent: 220 35% 22%;
+    --accent-foreground: 0 0% 90%;
 
     /* Bright red for dark mode */
     --destructive: 0 75% 65%;
@@ -110,11 +110,11 @@ All colors MUST be HSL.
 
     /* Dark sidebar */
     --sidebar-background: 220 40% 10%;
-    --sidebar-foreground: 0 0% 85%;
+    --sidebar-foreground: 0 0% 90%;
     --sidebar-primary: 220 85% 65%;
     --sidebar-primary-foreground: 220 50% 8%;
-    --sidebar-accent: 220 25% 15%;
-    --sidebar-accent-foreground: 0 0% 85%;
+    --sidebar-accent: 220 30% 20%;
+    --sidebar-accent-foreground: 0 0% 90%;
     --sidebar-border: 220 20% 18%;
     --sidebar-ring: 220 85% 65%;
   }
