@@ -107,12 +107,22 @@ const Curriculum = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-background via-background to-secondary/10">
-      <AppNavigation 
-        title="Mathematics Curriculum" 
-        subtitle="Year 2-6 Learning Objectives"
-      />
+      <AppNavigation />
 
-      <div className="container mx-auto px-4 py-8">
+      {/* Page Title Section */}
+      <div className="container mx-auto px-4 py-6">
+        <div className="flex items-center space-x-3 mb-8">
+          <div className="p-2 bg-primary/10 rounded-lg">
+            <BookOpen className="h-6 w-6 text-primary" />
+          </div>
+          <div>
+            <h1 className="text-2xl font-bold">Mathematics Curriculum</h1>
+            <p className="text-sm text-muted-foreground">Year 2-6 Learning Objectives</p>
+          </div>
+        </div>
+      </div>
+
+      <div className="container mx-auto px-4 pb-8">
         {/* Action Bar */}
         <div className="flex justify-end mb-6">
           <CsvImportModal onImportComplete={loadCurriculumData}>
