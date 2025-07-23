@@ -232,13 +232,13 @@ export function MisconceptionQuestionsModal({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-4xl max-h-[85vh] overflow-y-auto bg-gradient-to-br from-destructive/10 to-secondary">
+      <DialogContent className="max-w-4xl max-h-[85vh] overflow-y-auto bg-gradient-to-br from-primary/10 to-secondary">
         <DialogHeader className="text-center pb-2">
           <DialogTitle className="flex items-center justify-center space-x-3 text-xl">
-            <div className="flex items-center justify-center w-10 h-10 bg-destructive/20 rounded-full">
-              <Brain className="h-6 w-6 text-destructive" />
+            <div className="flex items-center justify-center w-10 h-10 bg-primary/20 rounded-full">
+              <Brain className="h-6 w-6 text-primary" />
             </div>
-            <span className="bg-gradient-to-r from-destructive to-destructive/80 bg-clip-text text-transparent font-bold">
+            <span className="bg-gradient-to-r from-primary to-primary/80 bg-clip-text text-transparent font-bold">
               Common Mix-Up: {misconception ? formatMisconceptionName(misconception.red_herring) : ''}
             </span>
           </DialogTitle>
@@ -249,7 +249,7 @@ export function MisconceptionQuestionsModal({
               </p>
               {misconception && (
                 <p className="text-sm text-muted-foreground mt-1">
-                  This happened <span className="font-bold text-destructive">{misconception.frequency}</span> times in: 
+                  This happened <span className="font-bold text-primary">{misconception.frequency}</span> times in: 
                   <span className="font-bold"> {misconception.topics.join(', ')}</span>
                 </p>
               )}
@@ -260,8 +260,8 @@ export function MisconceptionQuestionsModal({
         <div className="space-y-4">
           {loading && (
             <div className="flex flex-col items-center justify-center py-8">
-              <div className="animate-spin rounded-full h-8 w-8 border-4 border-destructive/20 border-t-destructive mb-3"></div>
-              <span className="text-destructive font-medium">Finding questions with this mix-up...</span>
+              <div className="animate-spin rounded-full h-8 w-8 border-4 border-primary/20 border-t-primary mb-3"></div>
+              <span className="text-primary font-medium">Finding questions with this mix-up...</span>
             </div>
           )}
 
@@ -276,17 +276,17 @@ export function MisconceptionQuestionsModal({
           )}
 
           {!loading && questions.map((question, index) => (
-            <Card key={question.question_id} className="border-2 border-destructive/30 bg-card/80 backdrop-blur-sm hover:shadow-lg transition-all duration-300 animate-fade-in">
-              <CardHeader className="pb-3 bg-gradient-to-r from-destructive/10 to-destructive/5 rounded-t-lg">
+            <Card key={question.question_id} className="border-2 border-primary/30 bg-card/80 backdrop-blur-sm hover:shadow-lg transition-all duration-300 animate-fade-in">
+              <CardHeader className="pb-3 bg-gradient-to-r from-primary/10 to-primary/5 rounded-t-lg">
                 <div className="flex items-center justify-between">
-                  <CardTitle className="flex items-center space-x-2 text-lg text-destructive">
-                    <div className="flex items-center justify-center w-8 h-8 bg-destructive/20 rounded-full">
-                      <span className="text-destructive font-bold">{index + 1}</span>
+                  <CardTitle className="flex items-center space-x-2 text-lg text-primary">
+                    <div className="flex items-center justify-center w-8 h-8 bg-primary/20 rounded-full">
+                      <span className="text-primary font-bold">{index + 1}</span>
                     </div>
                     <span>Mix-Up Example {index + 1}</span>
                   </CardTitle>
                   <div className="flex items-center space-x-2">
-                    <Badge variant="outline" className="flex items-center space-x-1 text-xs bg-destructive/10 border-destructive/30 text-destructive">
+                    <Badge variant="outline" className="flex items-center space-x-1 text-xs bg-primary/10 border-primary/30 text-primary">
                       <AlertTriangle className="h-3 w-3" />
                       <span>Tried {question.attempts_count} time{question.attempts_count > 1 ? 's' : ''}</span>
                     </Badge>
@@ -297,7 +297,7 @@ export function MisconceptionQuestionsModal({
                     <Badge variant="secondary" className="text-xs">{question.topic}</Badge>
                   </div>
                 </div>
-                <p className="text-xs text-destructive/70 mt-1">
+                <p className="text-xs text-primary/70 mt-1">
                   Last tried on {new Date(question.latest_answered_at).toLocaleDateString()} • {question.subtopic}
                 </p>
               </CardHeader>
@@ -323,8 +323,8 @@ export function MisconceptionQuestionsModal({
                             <li 
                               key={optIndex}
                               className={`text-sm p-3 rounded-lg border-2 font-medium transition-all duration-200 ${
-                                option === question.latest_answer_given 
-                                  ? 'bg-destructive/10 text-destructive border-destructive/30 shadow-sm' 
+                                 option === question.latest_answer_given 
+                                   ? 'bg-primary/10 text-primary border-primary/30 shadow-sm'
                                   : option === question.curriculum?.correct_answer
                                   ? 'bg-green-50 text-green-800 border-green-300 shadow-sm'
                                   : 'bg-card border-border text-foreground'
@@ -332,8 +332,8 @@ export function MisconceptionQuestionsModal({
                             >
                               <div className="flex items-center space-x-2">
                                 {option === question.latest_answer_given && (
-                                  <div className="flex items-center space-x-1 text-destructive">
-                                    <X className="h-4 w-4" />
+                                   <div className="flex items-center space-x-1 text-primary">
+                                     <X className="h-4 w-4" />
                                     <span className="text-xs font-bold">Your answer</span>
                                   </div>
                                 )}
@@ -352,12 +352,12 @@ export function MisconceptionQuestionsModal({
                     )}
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                      <div className="bg-destructive/10 border-2 border-destructive/30 p-3 rounded-lg">
-                        <h4 className="font-bold mb-2 text-destructive flex items-center space-x-2">
+                      <div className="bg-primary/10 border-2 border-primary/30 p-3 rounded-lg">
+                        <h4 className="font-bold mb-2 text-primary flex items-center space-x-2">
                           <span>❌</span>
                           <span>What You Picked:</span>
                         </h4>
-                        <p className="text-destructive font-medium bg-card p-2 rounded border">{question.latest_answer_given}</p>
+                        <p className="text-primary font-medium bg-card p-2 rounded border">{question.latest_answer_given}</p>
                       </div>
                       <div className="bg-green-50 border-2 border-green-200 p-3 rounded-lg">
                         <h4 className="font-bold mb-2 text-green-700 flex items-center space-x-2">
