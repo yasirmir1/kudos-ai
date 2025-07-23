@@ -52,7 +52,7 @@ All colors MUST be HSL.
     --gradient-success: linear-gradient(135deg, hsl(120 60% 55%), hsl(140 70% 60%));
     --gradient-warning: linear-gradient(135deg, hsl(40 85% 60%), hsl(50 90% 65%));
     --gradient-focus: linear-gradient(135deg, hsl(220 60% 55%), hsl(220 70% 65%));
-    --gradient-misconception: linear-gradient(135deg, hsl(0 70% 55%), hsl(10 75% 60%));
+    --gradient-misconception: linear-gradient(135deg, hsl(220 70% 60%), hsl(220 80% 70%));
     
     /* Enhanced animations and shadows */
     --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
