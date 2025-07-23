@@ -121,36 +121,71 @@ export const WorksheetGeneratorModal = () => {
         
         console.log('Making authenticated request to generate-questions...');
         
-        // Use Supabase client to call the edge function
-        const { data, error } = await supabase.functions.invoke('generate-questions', {
-          body: {
+        // Use Supabase client to call the edge function with streaming response
+        const response = await fetch(`https://gqkfbxhuijpfcnjimlfj.functions.supabase.co/generate-questions`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${(await supabase.auth.getSession()).data.session?.access_token}`,
+            'apikey': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imdxa2ZieGh1aWpwZmNuamltbGZqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTI5MTQxMTcsImV4cCI6MjA2ODQ5MDExN30.n-sE8DxhfmuZmNju-L3zy6hWshTGzr_cpFEeBB0JZIo',
+          },
+          body: JSON.stringify({
             topic: selectedTopic,
             subtopic: subtopic,
             difficulty: selectedDifficulty,
             count: questionCount,
             age_group: selectedAgeGroup,
             saveToDatabase: true
-          }
+          }),
         });
 
-        if (error) {
-          console.error('Edge function error:', error);
-          throw new Error(`Failed to generate questions: ${error.message}`);
+        if (!response.ok) {
+          const errorText = await response.text();
+          console.error('Response error:', errorText);
+          throw new Error(`Failed to generate questions: ${response.status} ${errorText}`);
         }
 
-        // Handle the response data
-        if (data && data.questions) {
-          const formattedQuestions = data.questions.map((question: any) => ({
-            ...question,
-            options: Array.isArray(question.options) ? question.options : 
-                     typeof question.options === 'string' ? JSON.parse(question.options) : 
-                     Object.values(question.options || {})
-          }));
-          
-          setGeneratedQuestions(formattedQuestions);
-          setProgress(100);
-        } else {
-          throw new Error('No questions received from the generation service');
+        // Handle streaming response properly
+        const reader = response.body?.getReader();
+        const newQuestions: Question[] = [];
+        
+        if (reader) {
+          while (true) {
+            const { done, value } = await reader.read();
+            if (done) break;
+            
+            const chunk = new TextDecoder().decode(value);
+            const lines = chunk.split('\n');
+            
+            for (const line of lines) {
+              if (line.startsWith('data: ')) {
+                try {
+                  const data = JSON.parse(line.slice(6));
+                  if (data.type === 'question') {
+                    const question = data.data;
+                    const formattedQuestion: Question = {
+                      ...question,
+                      options: Array.isArray(question.options) ? question.options : 
+                               typeof question.options === 'string' ? JSON.parse(question.options) : 
+                               Object.values(question.options || {})
+                    };
+                    newQuestions.push(formattedQuestion);
+                    setGeneratedQuestions([...newQuestions]);
+                    setProgress((newQuestions.length / questionCount) * 100);
+                  } else if (data.type === 'error') {
+                    console.error('Generation error:', data.message);
+                  }
+                } catch (e) {
+                  console.error('Error parsing streaming data:', e);
+                }
+              }
+            }
+          }
+        }
+
+        // Final validation
+        if (newQuestions.length === 0) {
+          throw new Error('No questions were successfully generated');
         }
       }
 
