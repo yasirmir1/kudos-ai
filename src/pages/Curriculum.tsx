@@ -85,9 +85,9 @@ const Curriculum = () => {
   };
 
   const getAgeGroupInfo = (year: number) => {
-    if (year <= 3) return { label: 'Year 2-3', ages: '6-7 years' };
-    if (year <= 5) return { label: 'Year 4-5', ages: '9-10 years' };
-    return { label: '11+ Prep', ages: '11+ years' };
+    if (year <= 3) return { label: `Year ${year}` };
+    if (year <= 5) return { label: `Year ${year}` };
+    return { label: `Year ${year}` };
   };
 
   if (loading) {
@@ -116,7 +116,7 @@ const Curriculum = () => {
           </div>
           <div>
             <h1 className="text-2xl font-bold">Mathematics Curriculum</h1>
-            <p className="text-sm text-muted-foreground">Year 2-6 Learning Objectives</p>
+            <p className="text-sm text-muted-foreground">Mathematics Learning Objectives</p>
           </div>
         </div>
       </div>
@@ -145,7 +145,7 @@ const Curriculum = () => {
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold">{availableYears.length}</div>
-              <p className="text-xs text-muted-foreground">From Year 2 to Year 6</p>
+              <p className="text-xs text-muted-foreground">Available year levels</p>
             </CardContent>
           </Card>
 
@@ -155,8 +155,8 @@ const Curriculum = () => {
               <Users className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">3</div>
-              <p className="text-xs text-muted-foreground">Year 2-3, Year 4-5, 11+</p>
+              <div className="text-2xl font-bold">Multiple</div>
+              <p className="text-xs text-muted-foreground">Different learning levels</p>
             </CardContent>
           </Card>
         </div>
@@ -185,7 +185,6 @@ const Curriculum = () => {
                     <span>Year {year} Mathematics Curriculum</span>
                   </CardTitle>
                   <CardDescription>
-                    {getAgeGroupInfo(parseInt(year)).label} • 
                     {Object.keys(groupedData[parseInt(year)] || {}).length} topics covered
                   </CardDescription>
                 </CardHeader>
