@@ -46,13 +46,13 @@ All colors MUST be HSL.
 
     --radius: 0.75rem;
     
-    /* Beautiful learning theme gradients */
-    --gradient-primary: linear-gradient(135deg, hsl(195 85% 55%), hsl(185 90% 65%));
+    /* Beautiful learning theme gradients with better contrast */
+    --gradient-primary: linear-gradient(135deg, hsl(195 85% 45%), hsl(185 90% 55%));
     --gradient-learning: linear-gradient(180deg, hsl(45 100% 98%), hsl(280 50% 95%));
-    --gradient-success: linear-gradient(135deg, hsl(120 60% 65%), hsl(140 70% 70%));
-    --gradient-warning: linear-gradient(135deg, hsl(40 85% 70%), hsl(50 90% 75%));
-    --gradient-focus: linear-gradient(135deg, hsl(25 85% 70%), hsl(35 90% 75%));
-    --gradient-misconception: linear-gradient(135deg, hsl(350 70% 70%), hsl(340 75% 75%));
+    --gradient-success: linear-gradient(135deg, hsl(120 60% 55%), hsl(140 70% 60%));
+    --gradient-warning: linear-gradient(135deg, hsl(40 85% 60%), hsl(50 90% 65%));
+    --gradient-focus: linear-gradient(135deg, hsl(25 85% 60%), hsl(35 90% 65%));
+    --gradient-misconception: linear-gradient(135deg, hsl(350 70% 60%), hsl(340 75% 65%));
     
     /* Enhanced animations and shadows */
     --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
