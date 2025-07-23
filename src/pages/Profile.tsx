@@ -170,12 +170,7 @@ const Profile = () => {
               <p className="text-sm text-muted-foreground">{selectedAgeGroup} - {user?.email}</p>
             </div>
           </div>
-          <div className="flex items-center space-x-6">
-            <AgeGroupSelector />
-            <Button variant="outline" onClick={handleSignOut}>
-              Sign Out
-            </Button>
-          </div>
+          <AgeGroupSelector />
         </div>
       </header>
 
@@ -255,6 +250,12 @@ const Profile = () => {
                 <p className="text-xs text-muted-foreground">
                   Optional: Set your target exam date to help personalize your learning plan
                 </p>
+              </div>
+
+              <div className="pt-4 border-t">
+                <Button variant="outline" onClick={handleSignOut} className="w-full">
+                  Sign Out
+                </Button>
               </div>
             </CardContent>
           </Card>
