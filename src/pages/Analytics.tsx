@@ -245,7 +245,7 @@ const Analytics = () => {
         <div className="container mx-auto px-4 py-4 flex justify-between items-center">
           <Button variant="ghost" onClick={() => navigate('/dashboard')}>
             <ArrowLeft className="mr-2 h-4 w-4" />
-            Back to Dashboard
+            Back
           </Button>
           <div className="flex items-center space-x-3">
             <div className="p-2 bg-primary/10 rounded-lg">
