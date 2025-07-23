@@ -110,7 +110,7 @@ const Curriculum = () => {
       <AppNavigation />
 
       {/* Page Title Section */}
-      <div className="container mx-auto px-4 py-6">
+      <div className="container mx-auto px-4 pt-6 pb-2">
         <div className="flex items-center space-x-3">
           <div className="p-2 bg-primary/10 rounded-lg">
             <BookOpen className="h-6 w-6 text-primary" />
