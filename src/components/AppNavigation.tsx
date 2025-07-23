@@ -48,13 +48,11 @@ export const AppNavigation: React.FC<AppNavigationProps> = ({
               </Button>
             ) : (
               <div className="flex items-center space-x-2">
-                <div className="p-2 bg-primary/10 rounded-lg">
-                  <GraduationCap className="h-6 w-6 text-primary" />
-                </div>
-                <div className="hidden sm:block">
-                  <h1 className="text-xl font-bold">StudyBuddy</h1>
-                  <p className="text-xs text-muted-foreground">Smart Learning Platform</p>
-                </div>
+                <img 
+                  src="/lovable-uploads/343d37bc-a8af-452f-b2b9-250214aa6175.png" 
+                  alt="Kudos Academy" 
+                  className="h-10 w-auto"
+                />
               </div>
             )}
           </div>
