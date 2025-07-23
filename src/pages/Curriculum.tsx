@@ -184,8 +184,8 @@ const Curriculum = () => {
                     <Target className="h-5 w-5 text-primary" />
                     <span>Year {year} Mathematics Curriculum</span>
                   </CardTitle>
-                  <CardDescription>
-                    {Object.keys(groupedData[parseInt(year)] || {}).length} topics covered
+                  <CardDescription className="flex items-center justify-between">
+                    <span>{Object.keys(groupedData[parseInt(year)] || {}).length} topics covered</span>
                   </CardDescription>
                 </CardHeader>
                 <CardContent>
