@@ -155,12 +155,22 @@ const Profile = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-background via-background to-secondary/10">
-      <AppNavigation 
-        title="Profile Settings" 
-        subtitle={`${selectedAgeGroup} - ${user?.email}`}
-      />
+      <AppNavigation />
 
-      <div className="container mx-auto px-4 py-8 max-w-2xl">
+      {/* Page Title Section */}
+      <div className="container mx-auto px-4 py-6">
+        <div className="flex items-center space-x-3 mb-8">
+          <div className="p-2 bg-primary/10 rounded-lg">
+            <User className="h-6 w-6 text-primary" />
+          </div>
+          <div>
+            <h1 className="text-2xl font-bold">Profile Settings</h1>
+            <p className="text-sm text-muted-foreground">Manage your account details and learning preferences</p>
+          </div>
+        </div>
+      </div>
+
+      <div className="container mx-auto px-4 pb-8 max-w-2xl">
         <div className="space-y-6">
           {/* Profile Information */}
           <Card>
