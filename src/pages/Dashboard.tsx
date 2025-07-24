@@ -18,32 +18,36 @@ import { SessionsModal } from '@/components/SessionsModal';
 import { AgeGroupSelector } from '@/components/AgeGroupSelector';
 import { AppNavigation } from '@/components/AppNavigation';
 import { useAgeGroup } from '@/contexts/AgeGroupContext';
-
 interface PerformanceData {
   topic: string;
   accuracy: number;
   total_attempts: number;
 }
-
 interface WeakTopic {
   topic: string;
   accuracy: number;
   attempts: number;
 }
-
 const Dashboard = () => {
-  const { user, signOut } = useAuth();
-  const { selectedAgeGroup } = useAgeGroup();
+  const {
+    user,
+    signOut
+  } = useAuth();
+  const {
+    selectedAgeGroup
+  } = useAgeGroup();
   const navigate = useNavigate();
   const [performance, setPerformance] = useState<PerformanceData[]>([]);
   const [weakTopics, setWeakTopics] = useState<WeakTopic[]>([]);
   const [misconceptions, setMisconceptions] = useState<any[]>([]);
-  const [misconceptionExplanations, setMisconceptionExplanations] = useState<{[key: string]: string}>({});
+  const [misconceptionExplanations, setMisconceptionExplanations] = useState<{
+    [key: string]: string;
+  }>({});
   const [loadingExplanations, setLoadingExplanations] = useState(false);
   const [loading, setLoading] = useState(true);
   const [totalQuestions, setTotalQuestions] = useState(0);
   const [totalSessions, setTotalSessions] = useState(0);
-  
+
   // Modal states
   const [questionHistoryOpen, setQuestionHistoryOpen] = useState(false);
   const [topicAccuracyOpen, setTopicAccuracyOpen] = useState(false);
@@ -55,35 +59,41 @@ const Dashboard = () => {
   const [focusAreaQuestionsOpen, setFocusAreaQuestionsOpen] = useState(false);
   const [selectedFocusArea, setSelectedFocusArea] = useState<any>(null);
   const [sessionsModalOpen, setSessionsModalOpen] = useState(false);
-
   useEffect(() => {
     if (user) {
       loadDashboardData();
     }
   }, [user, selectedAgeGroup]);
-
   useEffect(() => {
     if (misconceptions.length > 0 && user) {
       loadMisconceptionExplanations();
     }
   }, [misconceptions, user]);
-
   const loadDashboardData = async () => {
     try {
       // Load performance data by calculating from age-group filtered answers
-      const { data: answersForPerformance } = await supabase
-        .from('student_answers')
-        .select('topic, is_correct, answered_at, time_taken_seconds')
-        .eq('student_id', user?.id)
-        .eq('age_group', selectedAgeGroup);
+      const {
+        data: answersForPerformance
+      } = await supabase.from('student_answers').select('topic, is_correct, answered_at, time_taken_seconds').eq('student_id', user?.id).eq('age_group', selectedAgeGroup);
 
       // Calculate performance data from filtered answers
-      const topicStats: { [key: string]: { correct: number; total: number; totalTime: number; lastAttempted: string } } = {};
-      
+      const topicStats: {
+        [key: string]: {
+          correct: number;
+          total: number;
+          totalTime: number;
+          lastAttempted: string;
+        };
+      } = {};
       if (answersForPerformance) {
         answersForPerformance.forEach(answer => {
           if (!topicStats[answer.topic]) {
-            topicStats[answer.topic] = { correct: 0, total: 0, totalTime: 0, lastAttempted: answer.answered_at };
+            topicStats[answer.topic] = {
+              correct: 0,
+              total: 0,
+              totalTime: 0,
+              lastAttempted: answer.answered_at
+            };
           }
           topicStats[answer.topic].total++;
           topicStats[answer.topic].totalTime += answer.time_taken_seconds;
@@ -96,7 +106,6 @@ const Dashboard = () => {
           }
         });
       }
-
       const calculatedPerformanceData = Object.entries(topicStats).map(([topic, stats]) => ({
         topic,
         accuracy: stats.correct / stats.total,
@@ -105,38 +114,37 @@ const Dashboard = () => {
         avg_time_seconds: stats.totalTime / stats.total,
         last_attempted: stats.lastAttempted
       })).sort((a, b) => b.accuracy - a.accuracy);
-
       setPerformance(calculatedPerformanceData);
 
       // Load weak topics from filtered performance data
-      const weakTopicsFromPerformance = calculatedPerformanceData
-        .filter(topic => topic.accuracy < 0.7 && topic.total_attempts >= 3)
-        .map(topic => ({
-          topic: topic.topic,
-          accuracy: topic.accuracy,
-          attempts: topic.total_attempts
-        }))
-        .sort((a, b) => a.accuracy - b.accuracy);
-
+      const weakTopicsFromPerformance = calculatedPerformanceData.filter(topic => topic.accuracy < 0.7 && topic.total_attempts >= 3).map(topic => ({
+        topic: topic.topic,
+        accuracy: topic.accuracy,
+        attempts: topic.total_attempts
+      })).sort((a, b) => a.accuracy - b.accuracy);
       setWeakTopics(weakTopicsFromPerformance);
 
       // Load misconception analysis from age-group filtered answers
-      const { data: ageGroupAnswers } = await supabase
-        .from('student_answers')
-        .select('red_herring_triggered, topic')
-        .eq('student_id', user?.id)
-        .eq('age_group', selectedAgeGroup)
-        .not('red_herring_triggered', 'is', null);
+      const {
+        data: ageGroupAnswers
+      } = await supabase.from('student_answers').select('red_herring_triggered, topic').eq('student_id', user?.id).eq('age_group', selectedAgeGroup).not('red_herring_triggered', 'is', null);
 
       // Calculate misconceptions from filtered data
-      const misconceptionStats: { [key: string]: { frequency: number; topics: Set<string> } } = {};
-      
+      const misconceptionStats: {
+        [key: string]: {
+          frequency: number;
+          topics: Set<string>;
+        };
+      } = {};
       if (ageGroupAnswers) {
         ageGroupAnswers.forEach(answer => {
           if (answer.red_herring_triggered && Array.isArray(answer.red_herring_triggered)) {
             answer.red_herring_triggered.forEach((redHerring: string) => {
               if (!misconceptionStats[redHerring]) {
-                misconceptionStats[redHerring] = { frequency: 0, topics: new Set() };
+                misconceptionStats[redHerring] = {
+                  frequency: 0,
+                  topics: new Set()
+                };
               }
               misconceptionStats[redHerring].frequency++;
               misconceptionStats[redHerring].topics.add(answer.topic);
@@ -144,31 +152,29 @@ const Dashboard = () => {
           }
         });
       }
-
       const calculatedMisconceptions = Object.entries(misconceptionStats).map(([redHerring, stats]) => ({
         red_herring: redHerring,
         frequency: stats.frequency,
         topics: Array.from(stats.topics)
       })).sort((a, b) => b.frequency - a.frequency);
-
       setMisconceptions(calculatedMisconceptions);
 
       // Get total questions answered for selected age group
-      const { count } = await supabase
-        .from('student_answers')
-        .select('*', { count: 'exact', head: true })
-        .eq('student_id', user?.id)
-        .eq('age_group', selectedAgeGroup);
-
+      const {
+        count
+      } = await supabase.from('student_answers').select('*', {
+        count: 'exact',
+        head: true
+      }).eq('student_id', user?.id).eq('age_group', selectedAgeGroup);
       setTotalQuestions(count || 0);
 
       // Get total sessions from practice_sessions table for selected age group
-      const { count: sessionCount } = await supabase
-        .from('practice_sessions')
-        .select('*', { count: 'exact', head: true })
-        .eq('student_id', user?.id)
-        .eq('age_group', selectedAgeGroup);
-
+      const {
+        count: sessionCount
+      } = await supabase.from('practice_sessions').select('*', {
+        count: 'exact',
+        head: true
+      }).eq('student_id', user?.id).eq('age_group', selectedAgeGroup);
       setTotalSessions(sessionCount || 0);
     } catch (error) {
       console.error('Error loading dashboard data:', error);
@@ -176,49 +182,43 @@ const Dashboard = () => {
       setLoading(false);
     }
   };
-
   const handleSignOut = async () => {
     await signOut();
     navigate('/auth');
   };
-
   const startLearning = () => {
     navigate('/practice');
   };
-
   const loadMisconceptionExplanations = async () => {
     if (!user || misconceptions.length === 0) return;
-    
     setLoadingExplanations(true);
     try {
-      const { data, error } = await supabase.functions.invoke('explain-misconceptions', {
-        body: { student_id: user.id }
+      const {
+        data,
+        error
+      } = await supabase.functions.invoke('explain-misconceptions', {
+        body: {
+          student_id: user.id
+        }
       });
-
       if (error) {
         console.error('Error getting explanations:', error);
         return;
       }
-
       if (data?.explanation) {
         // Parse the structured response to extract individual misconception labels
         const explanationText = data.explanation;
-        const labeledMisconceptions: {[key: string]: string} = {};
-        
+        const labeledMisconceptions: {
+          [key: string]: string;
+        } = {};
+
         // Simple parsing to extract human-readable labels
         misconceptions.forEach(misconception => {
           const variable = misconception.red_herring;
           // Create a human-readable label by formatting the variable name
-          const humanLabel = variable
-            ?.replace(/_/g, ' ')
-            .replace(/([a-z])([A-Z])/g, '$1 $2')
-            .toLowerCase()
-            .replace(/\b\w/g, l => l.toUpperCase())
-            .trim() || 'Unknown Misconception';
-          
+          const humanLabel = variable?.replace(/_/g, ' ').replace(/([a-z])([A-Z])/g, '$1 $2').toLowerCase().replace(/\b\w/g, l => l.toUpperCase()).trim() || 'Unknown Misconception';
           labeledMisconceptions[variable] = humanLabel;
         });
-        
         setMisconceptionExplanations(labeledMisconceptions);
       }
     } catch (error) {
@@ -227,7 +227,6 @@ const Dashboard = () => {
       setLoadingExplanations(false);
     }
   };
-
   const getFrequencyColorBadge = (frequency: number) => {
     if (frequency >= 5) {
       return <div title={`Oops! This happened ${frequency} times - let's work on this!`}><Circle className="w-3 h-3 fill-red-500 text-red-500" /></div>;
@@ -237,10 +236,11 @@ const Dashboard = () => {
       return <div title={`Only ${frequency} time${frequency > 1 ? 's' : ''} - you're learning!`}><Circle className="w-3 h-3 fill-green-500 text-green-500" /></div>;
     }
   };
-
   const formatMisconceptionForKids = (redHerring: string) => {
     // Create more kid-friendly labels for common misconceptions
-    const kidFriendlyLabels: {[key: string]: string} = {
+    const kidFriendlyLabels: {
+      [key: string]: string;
+    } = {
       'Decimals_IncorrectPlaceValueShift': 'Moving decimal points the wrong way 🔢',
       'Equivalence_PartialRecognition': 'Mixing up equal signs 🤔',
       'Fractions_AddNumeratorsAndDenominators': 'Adding fractions like whole numbers 🍕',
@@ -261,49 +261,31 @@ const Dashboard = () => {
     }
 
     // Fallback: make any other misconception kid-friendly
-    return redHerring
-      ?.replace(/_/g, ' ')
-      .replace(/([a-z])([A-Z])/g, '$1 $2')
-      .toLowerCase()
-      .replace(/\b\w/g, l => l.toUpperCase())
-      .trim() + ' 🤯';
+    return redHerring?.replace(/_/g, ' ').replace(/([a-z])([A-Z])/g, '$1 $2').toLowerCase().replace(/\b\w/g, l => l.toUpperCase()).trim() + ' 🤯';
   };
-
-  const overallAccuracy = performance.length > 0 
-    ? performance.reduce((sum, p) => sum + p.accuracy, 0) / performance.length 
-    : 0;
-
+  const overallAccuracy = performance.length > 0 ? performance.reduce((sum, p) => sum + p.accuracy, 0) / performance.length : 0;
   const strongestTopic = performance[0];
   const needsWork = weakTopics.slice(0, 3);
-
   if (loading) {
-    return (
-      <div className="min-h-screen bg-background flex items-center justify-center">
+    return <div className="min-h-screen bg-background flex items-center justify-center">
         <div className="text-center space-y-4">
           <img src="/lovable-uploads/409330f0-2245-4147-b837-ff553d303814.png" alt="Kudos Academy" className="h-12 w-auto mx-auto animate-pulse" />
           <p className="text-muted-foreground">Loading your progress...</p>
         </div>
-      </div>
-    );
+      </div>;
   }
-
-  return (
-    <div className="min-h-screen bg-gradient-to-br from-background via-background to-secondary/10">
+  return <div className="min-h-screen bg-gradient-to-br from-background via-background to-secondary/10">
       <AppNavigation />
 
       <div className="container mx-auto px-4 py-8 space-y-8">
         {/* Quick Actions */}
-        <div className="text-center space-y-4">
+        <div className="text-center space-y-4 py-[20px]">
           <h2 className="text-3xl font-bold">Ready to learn?</h2>
           <p className="text-muted-foreground max-w-2xl mx-auto">
             Your adaptive learning system has prepared personalized {selectedAgeGroup} questions based on your progress
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
-            <Button 
-              size="lg" 
-              onClick={startLearning}
-              className="bg-gradient-to-r from-primary to-primary-glow hover:from-primary-glow hover:to-primary"
-            >
+            <Button size="lg" onClick={startLearning} className="bg-gradient-to-r from-primary to-primary-glow hover:from-primary-glow hover:to-primary">
               <BookOpen className="mr-2 h-5 w-5" />
               Start Practice Session
             </Button>
@@ -371,8 +353,7 @@ const Dashboard = () => {
               <CardDescription>Topics where you're performing well</CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
-              {performance.filter(topic => topic.accuracy > 0.4).slice(0, 5).map((topic, index) => (
-                <div key={topic.topic} className="flex items-center justify-between">
+              {performance.filter(topic => topic.accuracy > 0.4).slice(0, 5).map((topic, index) => <div key={topic.topic} className="flex items-center justify-between">
                   <div className="flex items-center space-x-3">
                     <Badge variant="secondary" className="text-xs min-w-8 flex justify-center bg-green-100 text-green-700 border-green-200">
                       #{index + 1}
@@ -387,13 +368,10 @@ const Dashboard = () => {
                       {topic.total_attempts} attempts
                     </div>
                   </div>
-                </div>
-              ))}
-              {performance.filter(topic => topic.accuracy > 0.4).length === 0 && (
-                <div className="text-center py-4 text-muted-foreground">
+                </div>)}
+              {performance.filter(topic => topic.accuracy > 0.4).length === 0 && <div className="text-center py-4 text-muted-foreground">
                   Complete some practice questions to see your strengths!
-                </div>
-              )}
+                </div>}
             </CardContent>
           </Card>
 
@@ -407,15 +385,10 @@ const Dashboard = () => {
               <CardDescription>Topics that need more attention</CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
-              {needsWork.map((topic, index) => (
-                <div 
-                  key={topic.topic} 
-                  className="flex items-center justify-between cursor-pointer hover:bg-gray-50 p-2 rounded-lg transition-colors"
-                  onClick={() => {
-                    setSelectedFocusArea(topic);
-                    setFocusAreaQuestionsOpen(true);
-                  }}
-                >
+              {needsWork.map((topic, index) => <div key={topic.topic} className="flex items-center justify-between cursor-pointer hover:bg-gray-50 p-2 rounded-lg transition-colors" onClick={() => {
+              setSelectedFocusArea(topic);
+              setFocusAreaQuestionsOpen(true);
+            }}>
                   <div className="flex items-center space-x-3">
                     <Badge variant="destructive" className="text-xs min-w-8 flex justify-center">
                       #{index + 1}
@@ -430,13 +403,10 @@ const Dashboard = () => {
                       {topic.attempts} attempts • Click to view questions
                     </div>
                   </div>
-                </div>
-              ))}
-              {needsWork.length === 0 && (
-                <div className="text-center py-4 text-muted-foreground">
+                </div>)}
+              {needsWork.length === 0 && <div className="text-center py-4 text-muted-foreground">
                   Great job! No weak areas identified yet.
-                </div>
-              )}
+                </div>}
             </CardContent>
           </Card>
 
@@ -450,25 +420,17 @@ const Dashboard = () => {
               <CardDescription>Common mistakes to watch out for</CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
-              {loadingExplanations && misconceptions.length > 0 && (
-                <div className="flex items-center justify-center py-4">
+              {loadingExplanations && misconceptions.length > 0 && <div className="flex items-center justify-center py-4">
                   <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-primary"></div>
                   <span className="ml-2 text-sm text-muted-foreground">Analyzing misconceptions...</span>
-                </div>
-              )}
+                </div>}
               
               {!loadingExplanations && misconceptions.slice(0, 5).map((misconception, index) => {
-                const kidFriendlyLabel = formatMisconceptionForKids(misconception.red_herring);
-                
-                return (
-                  <div 
-                    key={`${misconception.red_herring}-${index}`} 
-                    className="space-y-2 p-3 rounded-lg border bg-gradient-to-r from-blue-50/50 to-purple-50/50 cursor-pointer hover:shadow-md transition-shadow"
-                    onClick={() => {
-                      setSelectedMisconceptionForQuestions(misconception);
-                      setMisconceptionQuestionsOpen(true);
-                    }}
-                  >
+              const kidFriendlyLabel = formatMisconceptionForKids(misconception.red_herring);
+              return <div key={`${misconception.red_herring}-${index}`} className="space-y-2 p-3 rounded-lg border bg-gradient-to-r from-blue-50/50 to-purple-50/50 cursor-pointer hover:shadow-md transition-shadow" onClick={() => {
+                setSelectedMisconceptionForQuestions(misconception);
+                setMisconceptionQuestionsOpen(true);
+              }}>
                     <div className="flex items-center justify-between">
                       <div className="flex items-center space-x-2">
                         {getFrequencyColorBadge(misconception.frequency)}
@@ -483,55 +445,26 @@ const Dashboard = () => {
                     <p className="text-xs text-blue-700">
                       Let's see what happened and learn together! 🌟
                     </p>
-                  </div>
-                );
-              })}
+                  </div>;
+            })}
               
-              {misconceptions.length === 0 && (
-                <div className="text-center py-4 text-muted-foreground">
+              {misconceptions.length === 0 && <div className="text-center py-4 text-muted-foreground">
                   Complete some practice questions to identify misconceptions.
-                </div>
-              )}
+                </div>}
             </CardContent>
           </Card>
         </div>
 
 
         {/* Modals */}
-        <QuestionHistoryModal 
-          open={questionHistoryOpen} 
-          onOpenChange={setQuestionHistoryOpen} 
-        />
-        <TopicAccuracyModal 
-          open={topicAccuracyOpen} 
-          onOpenChange={setTopicAccuracyOpen} 
-        />
-        <TopicsStudiedModal 
-          open={topicsStudiedOpen} 
-          onOpenChange={setTopicsStudiedOpen} 
-        />
-        <MisconceptionExplanationModal
-          open={misconceptionModalOpen}
-          onOpenChange={setMisconceptionModalOpen}
-          misconception={selectedMisconception}
-        />
-        <MisconceptionQuestionsModal
-          open={misconceptionQuestionsOpen}
-          onOpenChange={setMisconceptionQuestionsOpen}
-          misconception={selectedMisconceptionForQuestions}
-        />
-        <FocusAreaQuestionsModal
-          open={focusAreaQuestionsOpen}
-          onOpenChange={setFocusAreaQuestionsOpen}
-          focusArea={selectedFocusArea}
-        />
-        <SessionsModal
-          open={sessionsModalOpen}
-          onOpenChange={setSessionsModalOpen}
-        />
+        <QuestionHistoryModal open={questionHistoryOpen} onOpenChange={setQuestionHistoryOpen} />
+        <TopicAccuracyModal open={topicAccuracyOpen} onOpenChange={setTopicAccuracyOpen} />
+        <TopicsStudiedModal open={topicsStudiedOpen} onOpenChange={setTopicsStudiedOpen} />
+        <MisconceptionExplanationModal open={misconceptionModalOpen} onOpenChange={setMisconceptionModalOpen} misconception={selectedMisconception} />
+        <MisconceptionQuestionsModal open={misconceptionQuestionsOpen} onOpenChange={setMisconceptionQuestionsOpen} misconception={selectedMisconceptionForQuestions} />
+        <FocusAreaQuestionsModal open={focusAreaQuestionsOpen} onOpenChange={setFocusAreaQuestionsOpen} focusArea={selectedFocusArea} />
+        <SessionsModal open={sessionsModalOpen} onOpenChange={setSessionsModalOpen} />
       </div>
-    </div>
-  );
+    </div>;
 };
-
 export default Dashboard;
