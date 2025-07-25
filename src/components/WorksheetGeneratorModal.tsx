@@ -23,6 +23,32 @@ interface Question {
   difficulty: string;
 }
 
+// Helper function to shuffle an array
+const shuffleArray = (array: string[]): string[] => {
+  const shuffled = [...array];
+  for (let i = shuffled.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+  }
+  return shuffled;
+};
+
+// Helper function to process question and shuffle options
+const processQuestion = (question: any): Question => {
+  let options = Array.isArray(question.options) ? question.options : 
+                typeof question.options === 'string' ? JSON.parse(question.options) : 
+                Object.values(question.options || {});
+  
+  // Shuffle the options randomly
+  const shuffledOptions = shuffleArray(options);
+  
+  return {
+    ...question,
+    options: shuffledOptions,
+    correct_answer: question.correct_answer
+  };
+};
+
 
 const DIFFICULTIES = [
   { value: 'Easy', label: 'Easy', color: 'bg-green-100 text-green-800' },
@@ -106,13 +132,11 @@ export const WorksheetGeneratorModal = () => {
         .limit(questionCount);
 
       if (existingQuestions && existingQuestions.length >= questionCount) {
-        // Use existing questions
-        const formattedQuestions = existingQuestions.slice(0, questionCount).map(q => ({
-          ...q,
-          options: Array.isArray(q.options) ? q.options : 
-                   typeof q.options === 'string' ? JSON.parse(q.options) : 
-                   Object.values(q.options || {})
-        }));
+        // Use existing questions with shuffled options and remove duplicates
+        const uniqueQuestions = Array.from(
+          new Map(existingQuestions.map(q => [q.question_id, q])).values()
+        );
+        const formattedQuestions = uniqueQuestions.slice(0, questionCount).map(processQuestion);
         setGeneratedQuestions(formattedQuestions);
         setProgress(100);
       } else {
@@ -148,6 +172,7 @@ export const WorksheetGeneratorModal = () => {
         // Handle streaming response properly
         const reader = response.body?.getReader();
         const newQuestions: Question[] = [];
+        const seenQuestionIds = new Set<string>();
         
         if (reader) {
           while (true) {
@@ -163,15 +188,15 @@ export const WorksheetGeneratorModal = () => {
                   const data = JSON.parse(line.slice(6));
                   if (data.type === 'question') {
                     const question = data.data;
-                    const formattedQuestion: Question = {
-                      ...question,
-                      options: Array.isArray(question.options) ? question.options : 
-                               typeof question.options === 'string' ? JSON.parse(question.options) : 
-                               Object.values(question.options || {})
-                    };
-                    newQuestions.push(formattedQuestion);
-                    setGeneratedQuestions([...newQuestions]);
-                    setProgress((newQuestions.length / questionCount) * 100);
+                    
+                    // Check for duplicates
+                    if (!seenQuestionIds.has(question.question_id)) {
+                      seenQuestionIds.add(question.question_id);
+                      const formattedQuestion = processQuestion(question);
+                      newQuestions.push(formattedQuestion);
+                      setGeneratedQuestions([...newQuestions]);
+                      setProgress((newQuestions.length / questionCount) * 100);
+                    }
                   } else if (data.type === 'error') {
                     console.error('Generation error:', data.message);
                   }
