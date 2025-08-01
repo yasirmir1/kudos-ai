@@ -534,7 +534,7 @@ const Practice = () => {
                 
               </div>
             </div>
-            {currentQuestion.subtopic && <div className="mt-0 mb-8 bg-muted/20 rounded-lg border border-border mx-[10px] px-[5px] py-[5px] my-0">
+            {currentQuestion.subtopic && <div className="mt-0 mb-8 bg-muted/20 rounded-lg border border-border mx-[10px] px-[5px] my-0 py-[2px]">
                 <div className="flex items-start space-x-2 py-[5px] px-[5px] my-0">
                   <BookOpen className="h-4 w-4 text-primary mt-0.5 flex-shrink-0" />
                   <p className="text-muted-foreground leading-relaxed text-xs font-light">{currentQuestion.subtopic}</p>
