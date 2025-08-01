@@ -1,10 +1,11 @@
 import { useEffect, useState } from 'react';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
 import { Badge } from '@/components/ui/badge';
 import { useAuth } from '@/hooks/useAuth';
 import { supabase } from '@/integrations/supabase/client';
-import { Target, TrendingUp, Clock, Calendar, BookOpen, Circle, Award, Play } from 'lucide-react';
+import { Target, TrendingUp, Clock, Calendar, BookOpen, Circle, Award } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { QuestionHistoryModal } from '@/components/QuestionHistoryModal';
 import { TopicAccuracyModal } from '@/components/TopicAccuracyModal';
@@ -14,9 +15,8 @@ import { MisconceptionQuestionsModal } from '@/components/MisconceptionQuestions
 import { FocusAreaQuestionsModal } from '@/components/FocusAreaQuestionsModal';
 import { WorksheetGeneratorModal } from '@/components/WorksheetGeneratorModal';
 import { SessionsModal } from '@/components/SessionsModal';
-import { AppLayout } from '@/components/AppLayout';
-import { StatsCard } from '@/components/StatsCard';
-import { ModernCard } from '@/components/ModernCard';
+import { AgeGroupSelector } from '@/components/AgeGroupSelector';
+import { AppNavigation } from '@/components/AppNavigation';
 import { useAgeGroup } from '@/contexts/AgeGroupContext';
 interface PerformanceData {
   topic: string;
@@ -292,100 +292,93 @@ const Dashboard = () => {
   const strongestTopic = performance[0];
   const needsWork = weakTopics.slice(0, 3);
   if (loading) {
-    return (
-      <AppLayout>
-        <div className="min-h-[400px] flex items-center justify-center">
-          <div className="text-center space-y-4">
-            <img src="/lovable-uploads/409330f0-2245-4147-b837-ff553d303814.png" alt="Kudos Academy" className="h-16 w-auto mx-auto animate-pulse" />
-            <p className="text-muted-foreground">Loading your progress...</p>
-          </div>
+    return <div className="min-h-screen bg-background flex items-center justify-center">
+        <div className="text-center space-y-4">
+          <img src="/lovable-uploads/409330f0-2245-4147-b837-ff553d303814.png" alt="Kudos Academy" className="h-12 w-auto mx-auto animate-pulse" />
+          <p className="text-muted-foreground">Loading your progress...</p>
         </div>
-      </AppLayout>
-    );
+      </div>;
   }
-  return (
-    <AppLayout 
-      pageTitle="Welcome back!"
-      pageSubtitle={`Ready to continue your ${selectedAgeGroup} learning journey?`}
-    >
-      <div className="space-y-8">
-        {/* Hero Section */}
-        <div className="relative overflow-hidden rounded-2xl bg-gradient-primary p-8 text-white">
-          <div className="relative z-10">
-            <div className="flex flex-col lg:flex-row items-center justify-between gap-6">
-              <div className="text-center lg:text-left">
-                <h2 className="text-3xl lg:text-4xl font-display font-bold mb-3">
-                  Ready to learn?
-                </h2>
-                <p className="text-white/90 text-lg max-w-2xl">
-                  Your adaptive learning system has prepared personalized {selectedAgeGroup} questions based on your progress
-                </p>
-              </div>
-              <div className="flex flex-col sm:flex-row gap-4">
-                <Button 
-                  size="lg" 
-                  onClick={startLearning} 
-                  className="bg-white text-primary hover:bg-white/90 shadow-lg font-medium"
-                >
-                  <Play className="mr-2 h-5 w-5" />
-                  Start Practice Session
-                </Button>
-                <WorksheetGeneratorModal />
-              </div>
-            </div>
+  return <div className="min-h-screen bg-gradient-to-br from-background via-background to-secondary/10">
+      <AppNavigation />
+
+      <div className="container mx-auto px-4 py-8 space-y-8">
+        {/* Quick Actions */}
+        <div className="text-center space-y-4 py-[20px]">
+          <h2 className="text-3xl font-bold">Ready to learn?</h2>
+          <p className="text-muted-foreground max-w-2xl mx-auto">
+            Your adaptive learning system has prepared personalized {selectedAgeGroup} questions based on your progress
+          </p>
+          <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
+            <Button size="lg" onClick={startLearning} className="bg-gradient-to-r from-primary to-primary-glow hover:from-primary-glow hover:to-primary">
+              <BookOpen className="mr-2 h-5 w-5" />
+              Start Practice Session
+            </Button>
+            <WorksheetGeneratorModal />
           </div>
-          <div className="absolute inset-0 bg-gradient-to-r from-black/20 to-transparent" />
         </div>
 
         {/* Stats Overview */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          <StatsCard
-            title="Total Questions"
-            value={totalQuestions}
-            description="Questions completed • Click to view"
-            icon={Target}
-            onClick={() => setQuestionHistoryOpen(true)}
-          />
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+          <Card className="cursor-pointer hover:shadow-md transition-shadow" onClick={() => setQuestionHistoryOpen(true)}>
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium">Total Questions</CardTitle>
+              <Target className="h-4 w-4 text-muted-foreground" />
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold">{totalQuestions}</div>
+              <p className="text-xs text-muted-foreground">Questions completed • Click to view</p>
+            </CardContent>
+          </Card>
 
-          <StatsCard
-            title="Overall Accuracy"
-            value={`${Math.round(overallAccuracy * 100)}%`}
-            description="By topic • Click to view"
-            icon={TrendingUp}
-            onClick={() => setTopicAccuracyOpen(true)}
-          >
-            <Progress value={overallAccuracy * 100} className="mt-3 h-2" />
-          </StatsCard>
+          <Card className="cursor-pointer hover:shadow-md transition-shadow" onClick={() => setTopicAccuracyOpen(true)}>
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium">Overall Accuracy</CardTitle>
+              <TrendingUp className="h-4 w-4 text-muted-foreground" />
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold">{Math.round(overallAccuracy * 100)}%</div>
+              <Progress value={overallAccuracy * 100} className="mt-2" />
+              <p className="text-xs text-muted-foreground mt-2">By topic • Click to view</p>
+            </CardContent>
+          </Card>
 
-          <StatsCard
-            title="Topics Studied"
-            value={performance.length}
-            description="Different topics • Click to view"
-            icon={BookOpen}
-            onClick={() => setTopicsStudiedOpen(true)}
-          />
+          <Card className="cursor-pointer hover:shadow-md transition-shadow" onClick={() => setTopicsStudiedOpen(true)}>
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium">Topics Studied</CardTitle>
+              <BookOpen className="h-4 w-4 text-muted-foreground" />
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold">{performance.length}</div>
+              <p className="text-xs text-muted-foreground">Different topics • Click to view</p>
+            </CardContent>
+          </Card>
 
-          <StatsCard
-            title="Sessions"
-            value={totalSessions}
-            description="Practice sessions • Click to view"
-            icon={Calendar}
-            onClick={() => setSessionsModalOpen(true)}
-          />
+          <Card className="cursor-pointer hover:shadow-md transition-shadow" onClick={() => setSessionsModalOpen(true)}>
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium">Sessions</CardTitle>
+              <Calendar className="h-4 w-4 text-muted-foreground" />
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold">{totalSessions}</div>
+              <p className="text-xs text-muted-foreground">Practice sessions • Click to view</p>
+            </CardContent>
+          </Card>
         </div>
 
         {/* Performance Details */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* Strongest Topics */}
-          <ModernCard
-            title="Your Strengths"
-            description="Topics where you're performing well"
-            icon={Award}
-            variant="gradient"
-          >
-            <div className="space-y-4">
-              {performance.filter(topic => topic.accuracy >= 0.5).slice(0, 5).map((topic, index) => (
-                <div key={topic.topic} className="flex items-center justify-between">
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center space-x-2">
+                <Award className="h-5 w-5 text-green-500" />
+                <span>Your Strengths</span>
+              </CardTitle>
+              <CardDescription>Topics where you're performing well</CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              {performance.filter(topic => topic.accuracy >= 0.5).slice(0, 5).map((topic, index) => <div key={topic.topic} className="flex items-center justify-between">
                   <div className="flex items-center space-x-3">
                     <Badge variant="secondary" className="text-xs min-w-8 flex justify-center bg-green-100 text-green-700 border-green-200">
                       #{index + 1}
@@ -400,32 +393,27 @@ const Dashboard = () => {
                       {topic.total_attempts} attempts
                     </div>
                   </div>
-                </div>
-              ))}
-              {performance.filter(topic => topic.accuracy >= 0.5).length === 0 && (
-                <div className="text-center py-4 text-muted-foreground">
+                </div>)}
+              {performance.filter(topic => topic.accuracy >= 0.5).length === 0 && <div className="text-center py-4 text-muted-foreground">
                   Complete some practice questions to see your strengths!
-                </div>
-              )}
-            </div>
-          </ModernCard>
+                </div>}
+            </CardContent>
+          </Card>
 
           {/* Areas for Improvement */}
-          <ModernCard
-            title="Focus Areas"
-            description="Topics that need more attention"
-            icon={Target}
-          >
-            <div className="space-y-4">
-              {needsWork.map((topic, index) => (
-                <div 
-                  key={topic.topic} 
-                  className="flex items-center justify-between cursor-pointer hover:bg-muted/50 p-3 rounded-lg transition-colors" 
-                  onClick={() => {
-                    setSelectedFocusArea(topic);
-                    setFocusAreaQuestionsOpen(true);
-                  }}
-                >
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center space-x-2">
+                <Target className="h-5 w-5 text-orange-500" />
+                <span>Focus Areas</span>
+              </CardTitle>
+              <CardDescription>Topics that need more attention</CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              {needsWork.map((topic, index) => <div key={topic.topic} className="flex items-center justify-between cursor-pointer hover:bg-gray-50 p-2 rounded-lg transition-colors" onClick={() => {
+              setSelectedFocusArea(topic);
+              setFocusAreaQuestionsOpen(true);
+            }}>
                   <div className="flex items-center space-x-3">
                     <Badge variant="destructive" className="text-xs min-w-8 flex justify-center">
                       #{index + 1}
@@ -440,41 +428,34 @@ const Dashboard = () => {
                       {topic.attempts} attempts • Click to view questions
                     </div>
                   </div>
-                </div>
-              ))}
-              {needsWork.length === 0 && (
-                <div className="text-center py-4 text-muted-foreground">
+                </div>)}
+              {needsWork.length === 0 && <div className="text-center py-4 text-muted-foreground">
                   Great job! No weak areas identified yet.
-                </div>
-              )}
-            </div>
-          </ModernCard>
+                </div>}
+            </CardContent>
+          </Card>
 
           {/* Common Misconceptions */}
-          <ModernCard
-            title="Misconceptions"
-            description="Common mistakes to watch out for"
-            icon={Clock}
-          >
-            <div className="space-y-4">
-              {loadingExplanations && misconceptions.length > 0 && (
-                <div className="flex items-center justify-center py-4">
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center space-x-2">
+                <Clock className="h-5 w-5 text-blue-500" />
+                <span>Misconceptions</span>
+              </CardTitle>
+              <CardDescription>Common mistakes to watch out for</CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              {loadingExplanations && misconceptions.length > 0 && <div className="flex items-center justify-center py-4">
                   <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-primary"></div>
                   <span className="ml-2 text-sm text-muted-foreground">Analyzing misconceptions...</span>
-                </div>
-              )}
+                </div>}
               
               {!loadingExplanations && misconceptions.slice(0, 5).map((misconception, index) => {
-                const kidFriendlyLabel = formatMisconceptionForKids(misconception.red_herring);
-                return (
-                  <div 
-                    key={`${misconception.red_herring}-${index}`} 
-                    className="space-y-2 p-3 rounded-lg border bg-gradient-to-r from-blue-50/50 to-purple-50/50 cursor-pointer hover:shadow-md transition-shadow" 
-                    onClick={() => {
-                      setSelectedMisconceptionForQuestions(misconception);
-                      setMisconceptionQuestionsOpen(true);
-                    }}
-                  >
+              const kidFriendlyLabel = formatMisconceptionForKids(misconception.red_herring);
+              return <div key={`${misconception.red_herring}-${index}`} className="space-y-2 p-3 rounded-lg border bg-gradient-to-r from-blue-50/50 to-purple-50/50 cursor-pointer hover:shadow-md transition-shadow" onClick={() => {
+                setSelectedMisconceptionForQuestions(misconception);
+                setMisconceptionQuestionsOpen(true);
+              }}>
                     <div className="flex items-center justify-between">
                       <div className="flex items-center space-x-2">
                         {getFrequencyColorBadge(misconception.frequency)}
@@ -489,18 +470,16 @@ const Dashboard = () => {
                     <p className="text-xs text-blue-700">
                       Let's see what happened and learn together! 🌟
                     </p>
-                  </div>
-                );
-              })}
+                  </div>;
+            })}
               
-              {misconceptions.length === 0 && (
-                <div className="text-center py-4 text-muted-foreground">
+              {misconceptions.length === 0 && <div className="text-center py-4 text-muted-foreground">
                   Complete some practice questions to identify misconceptions.
-                </div>
-              )}
-            </div>
-          </ModernCard>
+                </div>}
+            </CardContent>
+          </Card>
         </div>
+
 
         {/* Modals */}
         <QuestionHistoryModal open={questionHistoryOpen} onOpenChange={setQuestionHistoryOpen} />
@@ -511,7 +490,6 @@ const Dashboard = () => {
         <FocusAreaQuestionsModal open={focusAreaQuestionsOpen} onOpenChange={setFocusAreaQuestionsOpen} focusArea={selectedFocusArea} />
         <SessionsModal open={sessionsModalOpen} onOpenChange={setSessionsModalOpen} />
       </div>
-    </AppLayout>
-  );
+    </div>;
 };
 export default Dashboard;
