@@ -540,7 +540,7 @@ const Practice = () => {
                   <p className="text-muted-foreground leading-relaxed text-xs font-light">{currentQuestion.subtopic}</p>
                 </div>
               </div>}
-            <h3 className="text-xl font-medium leading-relaxed text-left px-4 py-[10px] my-[20px]">{currentQuestion.example_question}</h3>
+            <h3 className="text-xl font-medium leading-relaxed text-left px-4 py-[10px] my-[30px]">{currentQuestion.example_question}</h3>
           </CardHeader>
           <CardContent className="px-8 pb-8">
             {/* Answer Options */}
