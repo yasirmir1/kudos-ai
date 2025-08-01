@@ -513,13 +513,7 @@ const Practice = () => {
             </p>
             <Progress value={progress} className="w-64 h-2 mx-auto" />
           </div>
-          <div className="flex items-center space-x-4">
-            <AgeGroupSelector />
-            <div className="text-center min-w-[80px]">
-              <p className="text-sm text-muted-foreground">Score</p>
-              <p className="font-bold text-lg">{score}/{currentIndex + (isAnswered ? 1 : 0)}</p>
-            </div>
-          </div>
+          <AgeGroupSelector />
         </div>
 
         {/* Question Card */}
@@ -530,8 +524,9 @@ const Practice = () => {
                 <Badge variant="secondary" className="px-3 py-1 mx-[10px] my-0">{currentQuestion.topic}</Badge>
                 <Badge variant="outline" className="px-3 py-1">{currentQuestion.difficulty}</Badge>
               </div>
-              <div className="flex items-center space-x-1 text-muted-foreground">
-                
+              <div className="text-center min-w-[80px]">
+                <p className="text-sm text-muted-foreground">Score</p>
+                <p className="font-bold text-lg">{score}/{currentIndex + (isAnswered ? 1 : 0)}</p>
               </div>
             </div>
             {currentQuestion.subtopic && <div className="mt-0 mb-8 bg-muted/20 rounded-lg border border-border mx-[10px] px-[5px] my-0 py-[2px]">
