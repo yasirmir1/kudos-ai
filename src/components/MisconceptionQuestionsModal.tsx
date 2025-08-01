@@ -334,7 +334,7 @@ export function MisconceptionQuestionsModal({
 
           {!loading && questions.map((question, index) => (
             <Card key={question.question_id} className="border border-border bg-card hover:shadow-lg transition-all duration-300">
-              <CardHeader className="pb-3 bg-muted/20 rounded-t-lg">
+              <CardHeader className="pb-3 bg-muted/30 rounded-t-lg">
                 <div className="flex items-center justify-between">
                   <CardTitle className="flex items-center space-x-2 text-lg text-primary">
                     <div className="flex items-center justify-center w-8 h-8 bg-primary/20 rounded-full">
@@ -361,7 +361,7 @@ export function MisconceptionQuestionsModal({
               <CardContent className="space-y-4 pt-4">
                 {question.curriculum && (
                   <>
-                    <div className="bg-muted/20 border-l-4 border-primary p-3 rounded-r-lg">
+                    <div className="bg-muted/30 border-l-4 border-primary p-3 rounded-r-lg">
                       <h4 className="font-bold mb-2 text-foreground flex items-center space-x-2">
                         <span>❓</span>
                         <span>The Question:</span>
@@ -409,7 +409,7 @@ export function MisconceptionQuestionsModal({
                     )}
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                      <div className="bg-muted/20 border p-3 rounded-lg">
+                      <div className="bg-muted/30 border p-3 rounded-lg">
                         <h4 className="font-bold mb-2 text-foreground flex items-center space-x-2">
                           <span>❌</span>
                           <span>What You Picked:</span>
@@ -425,7 +425,7 @@ export function MisconceptionQuestionsModal({
                       </div>
                     </div>
 
-                    <div className="bg-muted/20 border p-4 rounded-lg">
+                    <div className="bg-muted/30 border p-4 rounded-lg">
                       <h4 className="font-bold mb-3 text-foreground flex items-center space-x-2">
                         <Sparkles className="h-5 w-5" />
                         <span>🎓 Why This Happens & How to Fix It!</span>
