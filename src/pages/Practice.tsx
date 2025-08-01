@@ -535,12 +535,12 @@ const Practice = () => {
               </div>
             </div>
             {currentQuestion.subtopic && <div className="mt-6 mb-8 bg-muted/20 rounded-lg border border-border mx-[10px] px-[5px] py-[5px] my-0">
-                <div className="flex items-start space-x-2">
+                <div className="flex items-start space-x-2 py-[5px] px-[5px] my-0">
                   <BookOpen className="h-4 w-4 text-primary mt-0.5 flex-shrink-0" />
                   <p className="text-muted-foreground leading-relaxed text-xs font-light">{currentQuestion.subtopic}</p>
                 </div>
               </div>}
-            <h3 className="text-xl font-medium leading-relaxed text-left px-4 my-[25px] py-0">{currentQuestion.example_question}</h3>
+            <h3 className="text-xl font-medium leading-relaxed text-left px-4 my-[25px] py-[10px]">{currentQuestion.example_question}</h3>
           </CardHeader>
           <CardContent className="px-8 pb-8">
             {/* Answer Options */}
