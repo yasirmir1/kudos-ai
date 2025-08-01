@@ -126,53 +126,59 @@ const Index = () => {
         <div className="container mx-auto max-w-5xl">
           <div className="bg-background p-6 rounded-3xl shadow-card hover:shadow-learning transition-all duration-500 transform perspective-1000 hover:rotate-x-0 rotate-x-1">
             <svg viewBox="0 0 800 500" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-full h-auto">
-              <rect width="800" height="500" rx="12" fill="hsl(var(--background))" />
+              {/* Dashboard mockup */}
+              <rect width="800" height="500" rx="8" fill="#FBFBFD"></rect>
               
               {/* Header */}
-              <rect y="0" width="800" height="60" fill="hsl(var(--primary) / 0.1)" rx="12" />
-              <text x="30" y="38" fontFamily="system-ui" fontSize="20" fontWeight="600" fill="hsl(var(--primary))">Emma's Learning Dashboard</text>
+              <rect y="0" width="800" height="60" fill="#667EEA" fillOpacity="0.1"></rect>
+              <text x="30" y="38" fontFamily="Arial" fontSize="20" fontWeight="600" fill="#667EEA">Emma's Learning Dashboard</text>
               
               {/* Progress Cards */}
-              <rect x="30" y="90" width="230" height="140" rx="16" fill="hsl(var(--success) / 0.1)" />
-              <text x="50" y="120" fontFamily="system-ui" fontSize="16" fill="hsl(var(--muted-foreground))">Mathematics</text>
-              <text x="50" y="150" fontFamily="system-ui" fontSize="32" fontWeight="700" fill="hsl(var(--success))">87%</text>
-              <text x="50" y="180" fontFamily="system-ui" fontSize="14" fill="hsl(var(--success))">↑ 12% this month</text>
+              <rect x="30" y="90" width="230" height="140" rx="12" fill="#34C759" fillOpacity="0.1"></rect>
+              <text x="50" y="120" fontFamily="Arial" fontSize="16" fill="#86868B">Mathematics</text>
+              <text x="50" y="150" fontFamily="Arial" fontSize="28" fontWeight="600" fill="#34C759">87%</text>
+              <text x="50" y="180" fontFamily="Arial" fontSize="14" fill="#34C759">↑ 12% this month</text>
               
-              <rect x="285" y="90" width="230" height="140" rx="16" fill="hsl(var(--warning) / 0.1)" />
-              <text x="305" y="120" fontFamily="system-ui" fontSize="16" fill="hsl(var(--muted-foreground))">Verbal Reasoning</text>
-              <text x="305" y="150" fontFamily="system-ui" fontSize="32" fontWeight="700" fill="hsl(var(--warning))">72%</text>
-              <text x="305" y="180" fontFamily="system-ui" fontSize="14" fill="hsl(var(--warning))">Focus area</text>
+              <rect x="285" y="90" width="230" height="140" rx="12" fill="#FF9500" fillOpacity="0.1"></rect>
+              <text x="305" y="120" fontFamily="Arial" fontSize="16" fill="#86868B">Verbal Reasoning</text>
+              <text x="305" y="150" fontFamily="Arial" fontSize="28" fontWeight="600" fill="#FF9500">72%</text>
+              <text x="305" y="180" fontFamily="Arial" fontSize="14" fill="#FF9500">Focus area</text>
               
-              <rect x="540" y="90" width="230" height="140" rx="16" fill="hsl(var(--primary) / 0.1)" />
-              <text x="560" y="120" fontFamily="system-ui" fontSize="16" fill="hsl(var(--muted-foreground))">English</text>
-              <text x="560" y="150" fontFamily="system-ui" fontSize="32" fontWeight="700" fill="hsl(var(--primary))">91%</text>
-              <text x="560" y="180" fontFamily="system-ui" fontSize="14" fill="hsl(var(--primary))">↑ 5% this month</text>
+              <rect x="540" y="90" width="230" height="140" rx="12" fill="#0071E3" fillOpacity="0.1"></rect>
+              <text x="560" y="120" fontFamily="Arial" fontSize="16" fill="#86868B">English</text>
+              <text x="560" y="150" fontFamily="Arial" fontSize="28" fontWeight="600" fill="#0071E3">91%</text>
+              <text x="560" y="180" fontFamily="Arial" fontSize="14" fill="#0071E3">↑ 5% this month</text>
               
               {/* Topic Breakdown */}
-              <rect x="30" y="260" width="350" height="200" rx="16" fill="hsl(var(--muted))" />
-              <text x="50" y="290" fontFamily="system-ui" fontSize="18" fontWeight="600" fill="hsl(var(--foreground))">Topic Breakdown - Maths</text>
+              <rect x="30" y="260" width="350" height="200" rx="12" fill="#F3F4F6"></rect>
+              <text x="50" y="290" fontFamily="Arial" fontSize="18" fontWeight="600" fill="#1D1D1F">Topic Breakdown - Maths</text>
               
-              <text x="50" y="325" fontFamily="system-ui" fontSize="14" fill="hsl(var(--muted-foreground))">Fractions</text>
-              <rect x="50" y="335" width="280" height="8" rx="4" fill="hsl(var(--border))" />
-              <rect x="50" y="335" width="224" height="8" rx="4" fill="hsl(var(--success))" />
+              {/* Progress bars */}
+              <text x="50" y="325" fontFamily="Arial" fontSize="14" fill="#86868B">Fractions</text>
+              <rect x="50" y="335" width="280" height="8" rx="4" fill="#E5E5EA"></rect>
+              <rect x="50" y="335" width="224" height="8" rx="4" fill="#34C759"></rect>
               
-              <text x="50" y="365" fontFamily="system-ui" fontSize="14" fill="hsl(var(--muted-foreground))">Algebra</text>
-              <rect x="50" y="375" width="280" height="8" rx="4" fill="hsl(var(--border))" />
-              <rect x="50" y="375" width="252" height="8" rx="4" fill="hsl(var(--success))" />
+              <text x="50" y="365" fontFamily="Arial" fontSize="14" fill="#86868B">Algebra</text>
+              <rect x="50" y="375" width="280" height="8" rx="4" fill="#E5E5EA"></rect>
+              <rect x="50" y="375" width="252" height="8" rx="4" fill="#34C759"></rect>
               
-              <text x="50" y="405" fontFamily="system-ui" fontSize="14" fill="hsl(var(--muted-foreground))">Geometry</text>
-              <rect x="50" y="415" width="280" height="8" rx="4" fill="hsl(var(--border))" />
-              <rect x="50" y="415" width="168" height="8" rx="4" fill="hsl(var(--warning))" />
+              <text x="50" y="405" fontFamily="Arial" fontSize="14" fill="#86868B">Geometry</text>
+              <rect x="50" y="415" width="280" height="8" rx="4" fill="#E5E5EA"></rect>
+              <rect x="50" y="415" width="168" height="8" rx="4" fill="#FF9500"></rect>
               
               {/* Activity Graph */}
-              <rect x="410" y="260" width="360" height="200" rx="16" fill="hsl(var(--muted))" />
-              <text x="430" y="290" fontFamily="system-ui" fontSize="18" fontWeight="600" fill="hsl(var(--foreground))">Weekly Progress</text>
+              <rect x="410" y="260" width="360" height="200" rx="12" fill="#F3F4F6"></rect>
+              <text x="430" y="290" fontFamily="Arial" fontSize="18" fontWeight="600" fill="#1D1D1F">Weekly Progress</text>
               
-              <polyline points="450,400 500,380 550,370 600,340 650,320 700,300 750,280" 
-                       stroke="hsl(var(--primary))" strokeWidth="3" fill="none"/>
-              {[450, 500, 550, 600, 650, 700, 750].map((x, i) => (
-                <circle key={i} cx={x} cy={400 - i * 20} r="4" fill="hsl(var(--primary))" />
-              ))}
+              {/* Simple line graph */}
+              <polyline points="450,400 500,380 550,370 600,340 650,320 700,300 750,280" stroke="#667EEA" strokeWidth="3" fill="none"></polyline>
+              <circle cx="450" cy="400" r="4" fill="#667EEA"></circle>
+              <circle cx="500" cy="380" r="4" fill="#667EEA"></circle>
+              <circle cx="550" cy="370" r="4" fill="#667EEA"></circle>
+              <circle cx="600" cy="340" r="4" fill="#667EEA"></circle>
+              <circle cx="650" cy="320" r="4" fill="#667EEA"></circle>
+              <circle cx="700" cy="300" r="4" fill="#667EEA"></circle>
+              <circle cx="750" cy="280" r="4" fill="#667EEA"></circle>
             </svg>
           </div>
         </div>
