@@ -83,10 +83,10 @@ export function AppSidebar() {
             <SidebarMenu>
               {navigationItems.map((item) => (
                 <SidebarMenuItem key={item.title}>
-                  <SidebarMenuButton asChild>
+                  <SidebarMenuButton>
                     <NavLink 
                       to={item.url} 
-                      className={getNavClass(isActive(item.url))}
+                      className={`flex items-center gap-3 w-full ${getNavClass(isActive(item.url))}`}
                     >
                       <item.icon className="h-5 w-5" />
                       {!collapsed && <span className="font-medium">{item.title}</span>}
