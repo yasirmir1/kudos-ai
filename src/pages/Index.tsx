@@ -206,12 +206,57 @@ const Index = () => {
         </div>
       </section>
 
-      {/* Features Section */}
-      <section id="features" className="py-20 px-6 bg-card">
+      {/* Core Features - The 3 Tiles */}
+      <section id="features" className="py-20 px-6">
+        <div className="container mx-auto max-w-5xl">
+          <div className="text-center mb-16">
+            <h2 className="text-4xl md:text-5xl font-bold mb-6">Designed for 11+ success</h2>
+            <p className="text-xl md:text-2xl text-muted-foreground">Three powerful features that transform learning</p>
+          </div>
+          
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-20">
+            <div className="fade-on-scroll group bg-card p-8 rounded-2xl border border-border hover:border-primary/20 transition-all duration-300 hover:shadow-learning hover:-translate-y-1">
+              <div className="p-4 bg-gradient-to-br from-primary/10 to-primary-glow/10 rounded-2xl w-fit mx-auto mb-6 text-primary group-hover:scale-110 transition-transform duration-300">
+                <Brain className="h-10 w-10" />
+              </div>
+              <h3 className="text-2xl font-bold mb-4 text-center">Adaptive Learning</h3>
+              <p className="text-muted-foreground leading-relaxed text-center">
+                AI adjusts to your child's level in real-time. Every question is perfectly matched to their ability, 
+                ensuring optimal challenge without frustration.
+              </p>
+            </div>
+
+            <div className="fade-on-scroll group bg-card p-8 rounded-2xl border border-border hover:border-primary/20 transition-all duration-300 hover:shadow-learning hover:-translate-y-1">
+              <div className="p-4 bg-gradient-to-br from-primary/10 to-primary-glow/10 rounded-2xl w-fit mx-auto mb-6 text-primary group-hover:scale-110 transition-transform duration-300">
+                <Target className="h-10 w-10" />
+              </div>
+              <h3 className="text-2xl font-bold mb-4 text-center">Targeted Practice</h3>
+              <p className="text-muted-foreground leading-relaxed text-center">
+                Focus on exactly what matters. Our system identifies knowledge gaps and provides 
+                targeted practice to strengthen weak areas efficiently.
+              </p>
+            </div>
+
+            <div className="fade-on-scroll group bg-card p-8 rounded-2xl border border-border hover:border-primary/20 transition-all duration-300 hover:shadow-learning hover:-translate-y-1">
+              <div className="p-4 bg-gradient-to-br from-primary/10 to-primary-glow/10 rounded-2xl w-fit mx-auto mb-6 text-primary group-hover:scale-110 transition-transform duration-300">
+                <TrendingUp className="h-10 w-10" />
+              </div>
+              <h3 className="text-2xl font-bold mb-4 text-center">Progress Tracking</h3>
+              <p className="text-muted-foreground leading-relaxed text-center">
+                Crystal-clear visibility into learning progress. See improvements by topic, 
+                track readiness, and know exactly where to focus next.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Additional Features */}
+      <section className="py-20 px-6 bg-card">
         <div className="container mx-auto max-w-6xl">
           <div className="text-center mb-20">
-            <h2 className="text-4xl md:text-5xl font-bold mb-6">Everything you need for 11+ success</h2>
-            <p className="text-xl md:text-2xl text-muted-foreground">Powerful features that give you complete visibility</p>
+            <h2 className="text-4xl md:text-5xl font-bold mb-6">Everything you need</h2>
+            <p className="text-xl md:text-2xl text-muted-foreground">Comprehensive tools for 11+ preparation</p>
           </div>
           
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
@@ -220,21 +265,6 @@ const Index = () => {
                 icon: <BarChart3 className="h-10 w-10" />,
                 title: "Real-time Dashboard",
                 description: "See exactly where your child excels and where they need support. Updated after every question."
-              },
-              {
-                icon: <Target className="h-10 w-10" />,
-                title: "Topic-level Tracking",
-                description: "Not just 'maths' - see performance in fractions, algebra, geometry. Down to subtopic level."
-              },
-              {
-                icon: <Brain className="h-10 w-10" />,
-                title: "AI-Powered Insights",
-                description: "Our AI identifies why mistakes happen and adapts questions to your child's exact level."
-              },
-              {
-                icon: <TrendingUp className="h-10 w-10" />,
-                title: "Progress Predictions",
-                description: "See projected 11+ readiness based on current progress. Know which schools are realistic targets."
               },
               {
                 icon: <BookOpen className="h-10 w-10" />,
