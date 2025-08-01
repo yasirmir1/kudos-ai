@@ -525,7 +525,7 @@ const Practice = () => {
         {/* Question Card */}
         <Card className="mb-8 mx-auto max-w-3xl">
           <CardHeader className="pb-6 py-[10px] px-[10px]">
-            <div className="flex items-center justify-between mb-4 gap-6">
+            <div className="flex items-center justify-between mb-2 gap-6">
               <div className="flex items-center space-x-3 flex-shrink-0">
                 <Badge variant="secondary" className="px-3 py-1 mx-[10px] my-0">{currentQuestion.topic}</Badge>
                 <Badge variant="outline" className="px-3 py-1">{currentQuestion.difficulty}</Badge>
