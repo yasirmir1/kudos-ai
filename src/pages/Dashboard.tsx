@@ -117,7 +117,7 @@ const Dashboard = () => {
       setPerformance(calculatedPerformanceData);
 
       // Load weak topics from filtered performance data
-      const weakTopicsFromPerformance = calculatedPerformanceData.filter(topic => topic.accuracy < 0.7 && topic.total_attempts >= 3).map(topic => ({
+      const weakTopicsFromPerformance = calculatedPerformanceData.filter(topic => topic.accuracy < 0.5 && topic.total_attempts >= 3).map(topic => ({
         topic: topic.topic,
         accuracy: topic.accuracy,
         attempts: topic.total_attempts
@@ -378,7 +378,7 @@ const Dashboard = () => {
               <CardDescription>Topics where you're performing well</CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
-              {performance.filter(topic => topic.accuracy > 0.4).slice(0, 5).map((topic, index) => <div key={topic.topic} className="flex items-center justify-between">
+              {performance.filter(topic => topic.accuracy >= 0.5).slice(0, 5).map((topic, index) => <div key={topic.topic} className="flex items-center justify-between">
                   <div className="flex items-center space-x-3">
                     <Badge variant="secondary" className="text-xs min-w-8 flex justify-center bg-green-100 text-green-700 border-green-200">
                       #{index + 1}
@@ -394,7 +394,7 @@ const Dashboard = () => {
                     </div>
                   </div>
                 </div>)}
-              {performance.filter(topic => topic.accuracy > 0.4).length === 0 && <div className="text-center py-4 text-muted-foreground">
+              {performance.filter(topic => topic.accuracy >= 0.5).length === 0 && <div className="text-center py-4 text-muted-foreground">
                   Complete some practice questions to see your strengths!
                 </div>}
             </CardContent>
