@@ -524,7 +524,7 @@ const Practice = () => {
 
         {/* Question Card */}
         <Card className="mb-8 mx-auto max-w-3xl">
-          <CardHeader className="pb-6">
+          <CardHeader className="pb-6 py-[10px] px-[10px]">
             <div className="flex items-center justify-between mb-4 gap-6">
               <div className="flex items-center space-x-3 flex-shrink-0">
                 <Badge variant="secondary" className="px-3 py-1">{currentQuestion.topic}</Badge>
@@ -540,7 +540,7 @@ const Practice = () => {
                   <p className="text-muted-foreground leading-relaxed text-xs font-light">{currentQuestion.subtopic}</p>
                 </div>
               </div>}
-            <h3 className="text-xl font-medium leading-relaxed text-left px-4">{currentQuestion.example_question}</h3>
+            <h3 className="text-xl font-medium leading-relaxed text-left px-4 my-[25px]">{currentQuestion.example_question}</h3>
           </CardHeader>
           <CardContent className="px-8 pb-8">
             {/* Answer Options */}
