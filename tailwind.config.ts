@@ -18,33 +18,6 @@ export default {
 			}
 		},
 		extend: {
-			fontFamily: {
-				sans: ['var(--font-family)', 'system-ui', 'sans-serif'],
-			},
-			fontSize: {
-				'xs': 'var(--text-xs)',
-				'sm': 'var(--text-sm)',
-				'base': 'var(--text-base)',
-				'lg': 'var(--text-lg)',
-				'xl': 'var(--text-xl)',
-				'2xl': 'var(--text-2xl)',
-				'3xl': 'var(--text-3xl)',
-				'4xl': 'var(--text-4xl)',
-			},
-			fontWeight: {
-				'normal': 'var(--font-weight-normal)',
-				'medium': 'var(--font-weight-medium)',
-				'semibold': 'var(--font-weight-semibold)',
-				'bold': 'var(--font-weight-bold)',
-			},
-			lineHeight: {
-				'none': 'var(--leading-none)',
-				'tight': 'var(--leading-tight)',
-				'snug': 'var(--leading-snug)',
-				'normal': 'var(--leading-normal)',
-				'relaxed': 'var(--leading-relaxed)',
-				'loose': 'var(--leading-loose)',
-			},
 			colors: {
 				border: 'hsl(var(--border))',
 				input: 'hsl(var(--input))',

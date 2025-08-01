@@ -299,162 +299,197 @@ const Dashboard = () => {
         </div>
       </div>;
   }
-  return <div className="min-h-screen bg-background">
+  return <div className="min-h-screen bg-gradient-to-br from-background via-background to-secondary/10">
       <AppNavigation />
 
-      <div className="container mx-auto px-4 py-8 max-w-4xl">
-        {/* Hero Section */}
-        <div className="text-center space-y-6 py-8">
-          <h1 className="text-4xl font-bold text-foreground">Ready to learn?</h1>
-          <p className="text-lg text-muted-foreground max-w-2xl mx-auto leading-relaxed">
-            Your personalized learning journey continues with questions tailored just for you
+      <div className="container mx-auto px-4 py-8 space-y-8">
+        {/* Quick Actions */}
+        <div className="text-center space-y-4 py-[20px]">
+          <h2 className="text-3xl font-bold">Ready to learn?</h2>
+          <p className="text-muted-foreground max-w-2xl mx-auto">
+            Your adaptive learning system has prepared personalized {selectedAgeGroup} questions based on your progress
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
-            <Button size="lg" onClick={startLearning} className="bg-primary hover:bg-primary/90 text-primary-foreground px-8 py-3">
+            <Button size="lg" onClick={startLearning} className="bg-gradient-to-r from-primary to-primary-glow hover:from-primary-glow hover:to-primary">
               <BookOpen className="mr-2 h-5 w-5" />
-              Start Practice
+              Start Practice Session
             </Button>
             <WorksheetGeneratorModal />
           </div>
         </div>
 
-        {/* Stats Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-12">
-          <Card className="cursor-pointer hover:shadow-lg transition-shadow border-0 shadow-sm" onClick={() => setQuestionHistoryOpen(true)}>
-            <CardContent className="p-6">
-              <div className="flex items-center space-x-2 text-sm text-muted-foreground mb-2">
-                <Target className="h-4 w-4" />
-                <span>Questions</span>
-              </div>
-              <div className="text-3xl font-bold text-foreground">{totalQuestions}</div>
-              <p className="text-sm text-muted-foreground">completed</p>
+        {/* Stats Overview */}
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+          <Card className="cursor-pointer hover:shadow-md transition-shadow" onClick={() => setQuestionHistoryOpen(true)}>
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium">Total Questions</CardTitle>
+              <Target className="h-4 w-4 text-muted-foreground" />
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold">{totalQuestions}</div>
+              <p className="text-xs text-muted-foreground">Questions completed • Click to view</p>
             </CardContent>
           </Card>
 
-          <Card className="cursor-pointer hover:shadow-lg transition-shadow border-0 shadow-sm" onClick={() => setTopicAccuracyOpen(true)}>
-            <CardContent className="p-6">
-              <div className="flex items-center space-x-2 text-sm text-muted-foreground mb-2">
-                <TrendingUp className="h-4 w-4" />
-                <span>Accuracy</span>
-              </div>
-              <div className="text-3xl font-bold text-foreground">{Math.round(overallAccuracy * 100)}%</div>
-              <div className="w-full bg-muted h-2 rounded-full mt-2">
-                <div 
-                  className="bg-foreground h-2 rounded-full transition-all"
-                  style={{ width: `${overallAccuracy * 100}%` }}
-                />
-              </div>
+          <Card className="cursor-pointer hover:shadow-md transition-shadow" onClick={() => setTopicAccuracyOpen(true)}>
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium">Overall Accuracy</CardTitle>
+              <TrendingUp className="h-4 w-4 text-muted-foreground" />
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold">{Math.round(overallAccuracy * 100)}%</div>
+              <Progress value={overallAccuracy * 100} className="mt-2" />
+              <p className="text-xs text-muted-foreground mt-2">By topic • Click to view</p>
             </CardContent>
           </Card>
 
-          <Card className="cursor-pointer hover:shadow-lg transition-shadow border-0 shadow-sm" onClick={() => setTopicsStudiedOpen(true)}>
-            <CardContent className="p-6">
-              <div className="flex items-center space-x-2 text-sm text-muted-foreground mb-2">
-                <BookOpen className="h-4 w-4" />
-                <span>Topics</span>
-              </div>
-              <div className="text-3xl font-bold text-foreground">{performance.length}</div>
-              <p className="text-sm text-muted-foreground">studied</p>
+          <Card className="cursor-pointer hover:shadow-md transition-shadow" onClick={() => setTopicsStudiedOpen(true)}>
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium">Topics Studied</CardTitle>
+              <BookOpen className="h-4 w-4 text-muted-foreground" />
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold">{performance.length}</div>
+              <p className="text-xs text-muted-foreground">Different topics • Click to view</p>
             </CardContent>
           </Card>
 
-          <Card className="cursor-pointer hover:shadow-lg transition-shadow border-0 shadow-sm" onClick={() => setSessionsModalOpen(true)}>
-            <CardContent className="p-6">
-              <div className="flex items-center space-x-2 text-sm text-muted-foreground mb-2">
-                <Calendar className="h-4 w-4" />
-                <span>Sessions</span>
-              </div>
-              <div className="text-3xl font-bold text-foreground">{totalSessions}</div>
-              <p className="text-sm text-muted-foreground">practice sessions</p>
+          <Card className="cursor-pointer hover:shadow-md transition-shadow" onClick={() => setSessionsModalOpen(true)}>
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium">Sessions</CardTitle>
+              <Calendar className="h-4 w-4 text-muted-foreground" />
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold">{totalSessions}</div>
+              <p className="text-xs text-muted-foreground">Practice sessions • Click to view</p>
             </CardContent>
           </Card>
         </div>
 
-        {/* Three Column Layout */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          {/* Your Strengths */}
-          <div>
-            <div className="flex items-center space-x-2 mb-4">
-              <Award className="h-5 w-5 text-green-500" />
-              <h2 className="text-xl font-semibold">Your Strengths</h2>
-            </div>
-            <p className="text-sm text-muted-foreground mb-4">Topics where you're doing great</p>
-            <div className="space-y-3">
-              {performance.filter(topic => topic.accuracy >= 0.5).slice(0, 3).map((topic, index) => (
-                <div key={topic.topic} className="flex items-center justify-between">
+        {/* Performance Details */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          {/* Strongest Topics */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center space-x-2">
+                <Award className="h-5 w-5 text-green-500" />
+                <span>Your Strengths</span>
+              </CardTitle>
+              <CardDescription>Topics where you're performing well</CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              {performance.filter(topic => topic.accuracy >= 0.5).slice(0, 5).map((topic, index) => <div key={topic.topic} className="flex items-center justify-between">
                   <div className="flex items-center space-x-3">
-                    <div className="w-6 h-6 rounded-full bg-green-100 flex items-center justify-center">
-                      <span className="text-xs font-medium text-green-700">{index + 1}</span>
-                    </div>
-                    <span className="font-medium text-foreground">{topic.topic}</span>
+                    <Badge variant="secondary" className="text-xs min-w-8 flex justify-center bg-green-100 text-green-700 border-green-200">
+                      #{index + 1}
+                    </Badge>
+                    <span className="font-medium">{topic.topic}</span>
                   </div>
-                  <span className="text-sm font-medium text-green-600">{Math.round(topic.accuracy * 100)}%</span>
-                </div>
-              ))}
-            </div>
-          </div>
+                  <div className="text-right">
+                    <div className="text-sm font-medium text-green-600">
+                      {Math.round(topic.accuracy * 100)}%
+                    </div>
+                    <div className="text-xs text-muted-foreground">
+                      {topic.total_attempts} attempts
+                    </div>
+                  </div>
+                </div>)}
+              {performance.filter(topic => topic.accuracy >= 0.5).length === 0 && <div className="text-center py-4 text-muted-foreground">
+                  Complete some practice questions to see your strengths!
+                </div>}
+            </CardContent>
+          </Card>
 
-          {/* Focus Areas */}
-          <div>
-            <div className="flex items-center space-x-2 mb-4">
-              <Target className="h-5 w-5 text-blue-500" />
-              <h2 className="text-xl font-semibold">Focus Areas</h2>
-            </div>
-            <p className="text-sm text-muted-foreground mb-4">Topics to work on next</p>
-            <div className="space-y-3">
-              {needsWork.slice(0, 3).map((topic, index) => (
-                <div key={topic.topic} className="flex items-center justify-between">
+          {/* Areas for Improvement */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center space-x-2">
+                <Target className="h-5 w-5 text-orange-500" />
+                <span>Focus Areas</span>
+              </CardTitle>
+              <CardDescription>Topics that need more attention</CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              {needsWork.map((topic, index) => <div key={topic.topic} className="flex items-center justify-between cursor-pointer hover:bg-gray-50 p-2 rounded-lg transition-colors" onClick={() => {
+              setSelectedFocusArea(topic);
+              setFocusAreaQuestionsOpen(true);
+            }}>
                   <div className="flex items-center space-x-3">
-                    <div className="w-6 h-6 rounded-full bg-red-100 flex items-center justify-center">
-                      <span className="text-xs font-medium text-red-700">{index + 1}</span>
+                    <Badge variant="destructive" className="text-xs min-w-8 flex justify-center">
+                      #{index + 1}
+                    </Badge>
+                    <span className="font-medium">{topic.topic}</span>
+                  </div>
+                  <div className="text-right">
+                    <div className="text-sm font-medium text-orange-600">
+                      {Math.round(topic.accuracy * 100)}%
                     </div>
-                    <span className="font-medium text-foreground">{topic.topic}</span>
+                    <div className="text-xs text-muted-foreground">
+                      {topic.attempts} attempts • Click to view questions
+                    </div>
                   </div>
-                  <span className="text-sm text-red-600">{topic.attempts} attempts</span>
-                </div>
-              ))}
-            </div>
-          </div>
+                </div>)}
+              {needsWork.length === 0 && <div className="text-center py-4 text-muted-foreground">
+                  Great job! No weak areas identified yet.
+                </div>}
+            </CardContent>
+          </Card>
 
-          {/* Learning Notes */}
-          <div>
-            <div className="flex items-center space-x-2 mb-4">
-              <Clock className="h-5 w-5 text-orange-500" />
-              <h2 className="text-xl font-semibold">Learning Notes</h2>
-            </div>
-            <p className="text-sm text-muted-foreground mb-4">Things to remember</p>
-            <div className="space-y-3">
-              {misconceptions.slice(0, 3).map((misconception, index) => (
-                <div key={misconception.red_herring} className="space-y-2">
-                  <div className="flex items-center space-x-2">
-                    <div className="w-2 h-2 rounded-full bg-orange-500"></div>
-                    <span className="font-medium text-foreground">
-                      {formatMisconceptionForKids(misconception.red_herring).replace(/[🔢🤔🍕✖️🔍⬅️📐➖📍0️⃣⬇️🔄📊📝🔄✖️➗🍰🔍📐📏🎲📊🤯]/g, '').trim()}
-                    </span>
-                  </div>
-                  <p className="text-sm text-muted-foreground ml-4">
-                    {misconception.red_herring === 'Ratio and Proportion' ? 'Watch out for operation mix-ups' :
-                     misconception.red_herring === 'Algebra' ? 'Remember the order of operations' :
-                     misconception.red_herring === 'Place Value' ? 'Great improvement!' : 
-                     'Keep practicing!'}
-                  </p>
-                </div>
-              ))}
-            </div>
-          </div>
+          {/* Common Misconceptions */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center space-x-2">
+                <Clock className="h-5 w-5 text-blue-500" />
+                <span>Misconceptions</span>
+              </CardTitle>
+              <CardDescription>Common mistakes to watch out for</CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              {loadingExplanations && misconceptions.length > 0 && <div className="flex items-center justify-center py-4">
+                  <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-primary"></div>
+                  <span className="ml-2 text-sm text-muted-foreground">Analyzing misconceptions...</span>
+                </div>}
+              
+              {!loadingExplanations && misconceptions.slice(0, 5).map((misconception, index) => {
+              const kidFriendlyLabel = formatMisconceptionForKids(misconception.red_herring);
+              return <div key={`${misconception.red_herring}-${index}`} className="space-y-2 p-3 rounded-lg border bg-gradient-to-r from-blue-50/50 to-purple-50/50 cursor-pointer hover:shadow-md transition-shadow" onClick={() => {
+                setSelectedMisconceptionForQuestions(misconception);
+                setMisconceptionQuestionsOpen(true);
+              }}>
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center space-x-2">
+                        {getFrequencyColorBadge(misconception.frequency)}
+                        <span className="text-xs text-muted-foreground">
+                          {misconception.topics?.join(', ')}
+                        </span>
+                      </div>
+                    </div>
+                    <p className="text-sm font-medium text-blue-900">
+                      {kidFriendlyLabel}
+                    </p>
+                    <p className="text-xs text-blue-700">
+                      Let's see what happened and learn together! 🌟
+                    </p>
+                  </div>;
+            })}
+              
+              {misconceptions.length === 0 && <div className="text-center py-4 text-muted-foreground">
+                  Complete some practice questions to identify misconceptions.
+                </div>}
+            </CardContent>
+          </Card>
         </div>
-      
 
-      {/* Modals */}
-      <QuestionHistoryModal open={questionHistoryOpen} onOpenChange={setQuestionHistoryOpen} />
-      <TopicAccuracyModal open={topicAccuracyOpen} onOpenChange={setTopicAccuracyOpen} />
-      <TopicsStudiedModal open={topicsStudiedOpen} onOpenChange={setTopicsStudiedOpen} />
-      <MisconceptionExplanationModal open={misconceptionModalOpen} onOpenChange={setMisconceptionModalOpen} misconception={selectedMisconception} />
-      <MisconceptionQuestionsModal open={misconceptionQuestionsOpen} onOpenChange={setMisconceptionQuestionsOpen} misconception={selectedMisconceptionForQuestions} />
-      <FocusAreaQuestionsModal open={focusAreaQuestionsOpen} onOpenChange={setFocusAreaQuestionsOpen} focusArea={selectedFocusArea} />
-      <SessionsModal open={sessionsModalOpen} onOpenChange={setSessionsModalOpen} />
-    </div>
-  </div>;
+
+        {/* Modals */}
+        <QuestionHistoryModal open={questionHistoryOpen} onOpenChange={setQuestionHistoryOpen} />
+        <TopicAccuracyModal open={topicAccuracyOpen} onOpenChange={setTopicAccuracyOpen} />
+        <TopicsStudiedModal open={topicsStudiedOpen} onOpenChange={setTopicsStudiedOpen} />
+        <MisconceptionExplanationModal open={misconceptionModalOpen} onOpenChange={setMisconceptionModalOpen} misconception={selectedMisconception} />
+        <MisconceptionQuestionsModal open={misconceptionQuestionsOpen} onOpenChange={setMisconceptionQuestionsOpen} misconception={selectedMisconceptionForQuestions} />
+        <FocusAreaQuestionsModal open={focusAreaQuestionsOpen} onOpenChange={setFocusAreaQuestionsOpen} focusArea={selectedFocusArea} />
+        <SessionsModal open={sessionsModalOpen} onOpenChange={setSessionsModalOpen} />
+      </div>
+    </div>;
 };
-
 export default Dashboard;
