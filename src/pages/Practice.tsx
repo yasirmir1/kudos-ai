@@ -6,7 +6,7 @@ import { Badge } from '@/components/ui/badge';
 import { useAuth } from '@/hooks/useAuth';
 import { supabase } from '@/integrations/supabase/client';
 import { useNavigate } from 'react-router-dom';
-import { ArrowLeft, Clock, CheckCircle, XCircle, RotateCcw, Sparkles } from 'lucide-react';
+import { ArrowLeft, Clock, CheckCircle, XCircle, RotateCcw, Sparkles, BookOpen } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { useAgeGroup } from '@/contexts/AgeGroupContext';
 import { AgeGroupSelector } from '@/components/AgeGroupSelector';
@@ -601,8 +601,11 @@ const Practice = () => {
               </div>
             </div>
             {currentQuestion.subtopic && (
-              <div className="mb-4">
-                <p className="text-sm text-muted-foreground leading-relaxed">{currentQuestion.subtopic}</p>
+              <div className="mb-6 px-4 py-3 bg-muted/20 rounded-lg border-l-4 border-primary/30">
+                <div className="flex items-start space-x-2">
+                  <BookOpen className="h-4 w-4 text-primary mt-0.5 flex-shrink-0" />
+                  <p className="text-xs text-muted-foreground leading-relaxed">{currentQuestion.subtopic}</p>
+                </div>
               </div>
             )}
             <h3 className="text-xl font-medium leading-relaxed text-left px-4">{currentQuestion.example_question}</h3>
