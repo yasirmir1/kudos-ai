@@ -18,59 +18,59 @@ All colors MUST be HSL.
     --popover: 0 0% 100%;
     --popover-foreground: 220 80% 15%;
 
-    /* Vibrant pink/magenta primary colors inspired by Kudoity */
-    --primary: 330 81% 60%;
+    /* Professional KUDOS blue colors from brand assets */
+    --primary: 220 85% 50%;
     --primary-foreground: 0 0% 100%;
-    --primary-glow: 330 81% 70%;
+    --primary-glow: 220 90% 60%;
 
-    /* Modern secondary with pink undertones */
-    --secondary: 330 20% 96%;
-    --secondary-foreground: 330 30% 20%;
+    /* Professional secondary with blue undertones */
+    --secondary: 220 15% 96%;
+    --secondary-foreground: 220 25% 25%;
 
     /* Clean neutral muted tones */
-    --muted: 240 10% 96%;
-    --muted-foreground: 240 20% 40%;
+    --muted: 220 10% 96%;
+    --muted-foreground: 220 15% 45%;
 
-    /* Soft accent with pink tint */
-    --accent: 330 30% 94%;
-    --accent-foreground: 330 60% 30%;
+    /* Subtle accent with blue tint */
+    --accent: 220 20% 94%;
+    --accent-foreground: 220 30% 30%;
 
     /* Professional red destructive */
     --destructive: 0 70% 55%;
     --destructive-foreground: 0 0% 100%;
 
-    /* Modern borders and inputs */
-    --border: 240 15% 88%;
-    --input: 240 15% 88%;
-    --ring: 330 81% 60%;
+    /* Professional borders and inputs */
+    --border: 220 20% 85%;
+    --input: 220 20% 85%;
+    --ring: 220 85% 50%;
 
     --radius: 0.75rem;
     
-    /* Vibrant gradients inspired by modern app design */
-    --gradient-primary: linear-gradient(135deg, hsl(330 81% 60%), hsl(330 81% 70%));
-    --gradient-vibrant: linear-gradient(135deg, hsl(330 81% 60%), hsl(290 100% 65%));
-    --gradient-learning: linear-gradient(180deg, hsl(0 0% 100%), hsl(330 20% 98%));
+    /* Professional gradients with KUDOS blue theme */
+    --gradient-primary: linear-gradient(135deg, hsl(220 85% 50%), hsl(220 90% 60%));
+    --gradient-vibrant: linear-gradient(135deg, hsl(220 85% 50%), hsl(210 90% 55%));
+    --gradient-learning: linear-gradient(180deg, hsl(0 0% 100%), hsl(220 15% 98%));
     --gradient-success: linear-gradient(135deg, hsl(120 60% 55%), hsl(140 70% 60%));
     --gradient-warning: linear-gradient(135deg, hsl(40 85% 60%), hsl(50 90% 65%));
-    --gradient-focus: linear-gradient(135deg, hsl(330 60% 55%), hsl(330 70% 65%));
-    --gradient-misconception: linear-gradient(135deg, hsl(330 70% 60%), hsl(330 80% 70%));
+    --gradient-focus: linear-gradient(135deg, hsl(220 70% 55%), hsl(220 80% 65%));
+    --gradient-misconception: linear-gradient(135deg, hsl(220 75% 60%), hsl(220 85% 70%));
     
-    /* Modern shadows with vibrant glow effects */
+    /* Professional shadows with blue glow effects */
     --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    --shadow-learning: 0 10px 30px -10px hsl(330 81% 60% / 0.3);
-    --shadow-card: 0 4px 20px -4px hsl(330 20% 60% / 0.08);
-    --shadow-glow: 0 0 40px hsl(330 81% 70% / 0.4);
-    --shadow-vibrant: 0 8px 32px hsl(330 81% 60% / 0.2);
+    --shadow-learning: 0 10px 30px -10px hsl(220 85% 50% / 0.25);
+    --shadow-card: 0 4px 20px -4px hsl(220 30% 50% / 0.08);
+    --shadow-glow: 0 0 40px hsl(220 90% 60% / 0.3);
+    --shadow-vibrant: 0 8px 32px hsl(220 85% 50% / 0.15);
 
-    /* Sidebar colors with modern pink theme */
+    /* Sidebar colors with professional blue theme */
     --sidebar-background: 0 0% 100%;
-    --sidebar-foreground: 330 30% 20%;
-    --sidebar-primary: 330 81% 60%;
+    --sidebar-foreground: 220 25% 25%;
+    --sidebar-primary: 220 85% 50%;
     --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 330 20% 96%;
-    --sidebar-accent-foreground: 330 30% 20%;
-    --sidebar-border: 240 15% 88%;
-    --sidebar-ring: 330 81% 60%;
+    --sidebar-accent: 220 15% 96%;
+    --sidebar-accent-foreground: 220 25% 25%;
+    --sidebar-border: 220 20% 85%;
+    --sidebar-ring: 220 85% 50%;
   }
 
   .dark {
@@ -84,41 +84,41 @@ All colors MUST be HSL.
     --popover: 220 40% 10%;
     --popover-foreground: 0 0% 95%;
 
-    /* Bright vibrant pink for dark mode */
-    --primary: 330 85% 65%;
+    /* Bright professional blue for dark mode */
+    --primary: 220 90% 65%;
     --primary-foreground: 220 50% 8%;
-    --primary-glow: 330 90% 75%;
+    --primary-glow: 220 95% 75%;
 
-    /* Dark secondary with pink undertones */
-    --secondary: 330 20% 18%;
+    /* Dark secondary with blue undertones */
+    --secondary: 220 20% 18%;
     --secondary-foreground: 0 0% 90%;
 
     /* Improved dark muted tones */
-    --muted: 240 15% 16%;
-    --muted-foreground: 240 15% 70%;
+    --muted: 220 15% 16%;
+    --muted-foreground: 220 15% 70%;
 
-    /* Dark accent with pink tint */
-    --accent: 330 25% 20%;
+    /* Dark accent with blue tint */
+    --accent: 220 25% 20%;
     --accent-foreground: 0 0% 90%;
 
     /* Bright red for dark mode */
     --destructive: 0 75% 65%;
     --destructive-foreground: 0 0% 95%;
 
-    /* Dark borders with modern styling */
-    --border: 240 15% 16%;
-    --input: 240 15% 16%;
-    --ring: 330 85% 65%;
+    /* Dark borders with professional styling */
+    --border: 220 15% 16%;
+    --input: 220 15% 16%;
+    --ring: 220 90% 65%;
 
-    /* Dark sidebar with pink theme */
-    --sidebar-background: 240 30% 8%;
+    /* Dark sidebar with professional blue theme */
+    --sidebar-background: 220 30% 8%;
     --sidebar-foreground: 0 0% 90%;
-    --sidebar-primary: 330 85% 65%;
+    --sidebar-primary: 220 90% 65%;
     --sidebar-primary-foreground: 220 50% 8%;
-    --sidebar-accent: 330 20% 18%;
+    --sidebar-accent: 220 20% 18%;
     --sidebar-accent-foreground: 0 0% 90%;
-    --sidebar-border: 240 15% 16%;
-    --sidebar-ring: 330 85% 65%;
+    --sidebar-border: 220 15% 16%;
+    --sidebar-ring: 220 90% 65%;
   }
 }
 
