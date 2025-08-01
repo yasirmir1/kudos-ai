@@ -596,11 +596,15 @@ const Practice = () => {
                 <Badge variant="secondary" className="px-3 py-1">{currentQuestion.topic}</Badge>
                 <Badge variant="outline" className="px-3 py-1">{currentQuestion.difficulty}</Badge>
               </div>
-              <div className="flex items-start space-x-1 text-muted-foreground min-w-0 flex-1 justify-end">
-                <Clock className="h-4 w-4 flex-shrink-0 mt-0.5" />
-                <span className="text-sm text-right leading-tight max-w-[12rem] sm:max-w-xs" style={{ textWrap: 'balance' }}>{currentQuestion.subtopic}</span>
+              <div className="flex items-center space-x-1 text-muted-foreground">
+                <Clock className="h-4 w-4 flex-shrink-0" />
               </div>
             </div>
+            {currentQuestion.subtopic && (
+              <div className="mb-4">
+                <p className="text-sm text-muted-foreground leading-relaxed">{currentQuestion.subtopic}</p>
+              </div>
+            )}
             <h3 className="text-xl font-medium leading-relaxed text-left px-4">{currentQuestion.example_question}</h3>
           </CardHeader>
           <CardContent className="px-8 pb-8">
