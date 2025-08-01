@@ -695,28 +695,6 @@ const Practice = () => {
           </Card>
         )}
 
-        {/* Static Explanation Card for correct answers or fallback */}
-        {showExplanation && selectedAnswer === currentQuestion.correct_answer && (currentQuestion.red_herring_explanation || currentQuestion.pedagogical_notes) && (
-          <Card className="mx-auto max-w-3xl">
-            <CardHeader className="pb-4">
-              <CardTitle className="text-lg text-center">Great job!</CardTitle>
-            </CardHeader>
-            <CardContent className="px-8 pb-6 space-y-6">
-              {currentQuestion.red_herring_explanation && (
-                <div className="text-center">
-                  <h4 className="font-medium text-sm text-muted-foreground mb-3">Why other answers might seem tempting:</h4>
-                  <p className="text-sm leading-relaxed">{currentQuestion.red_herring_explanation}</p>
-                </div>
-              )}
-              {currentQuestion.pedagogical_notes && (
-                <div className="text-center">
-                  <h4 className="font-medium text-sm text-muted-foreground mb-3">Learning tip:</h4>
-                  <p className="text-sm leading-relaxed">{currentQuestion.pedagogical_notes}</p>
-                </div>
-              )}
-            </CardContent>
-          </Card>
-        )}
       </div>
     </div>
   );
