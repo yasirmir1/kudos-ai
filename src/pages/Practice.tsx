@@ -527,20 +527,20 @@ const Practice = () => {
           <CardHeader className="pb-6 py-[10px] px-[10px]">
             <div className="flex items-center justify-between mb-4 gap-6">
               <div className="flex items-center space-x-3 flex-shrink-0">
-                <Badge variant="secondary" className="px-3 py-1">{currentQuestion.topic}</Badge>
+                <Badge variant="secondary" className="px-3 py-1 mx-[10px] my-[10px]">{currentQuestion.topic}</Badge>
                 <Badge variant="outline" className="px-3 py-1">{currentQuestion.difficulty}</Badge>
               </div>
               <div className="flex items-center space-x-1 text-muted-foreground">
                 
               </div>
             </div>
-            {currentQuestion.subtopic && <div className="mt-6 mb-8 px-4 py-3 bg-muted/20 rounded-lg border border-border">
+            {currentQuestion.subtopic && <div className="mt-6 mb-8 bg-muted/20 rounded-lg border border-border mx-[10px] px-[5px] py-[5px] my-0">
                 <div className="flex items-start space-x-2">
                   <BookOpen className="h-4 w-4 text-primary mt-0.5 flex-shrink-0" />
                   <p className="text-muted-foreground leading-relaxed text-xs font-light">{currentQuestion.subtopic}</p>
                 </div>
               </div>}
-            <h3 className="text-xl font-medium leading-relaxed text-left px-4 my-[25px]">{currentQuestion.example_question}</h3>
+            <h3 className="text-xl font-medium leading-relaxed text-left px-4 my-[25px] py-0">{currentQuestion.example_question}</h3>
           </CardHeader>
           <CardContent className="px-8 pb-8">
             {/* Answer Options */}
