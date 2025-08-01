@@ -206,15 +206,15 @@ const Index = () => {
         </div>
       </section>
 
-      {/* Core Features - The 3 Tiles */}
+      {/* Core Features - The 4 Tiles */}
       <section id="features" className="py-20 px-6">
-        <div className="container mx-auto max-w-5xl">
+        <div className="container mx-auto max-w-6xl">
           <div className="text-center mb-16">
             <h2 className="text-4xl md:text-5xl font-bold mb-6">Designed for 11+ success</h2>
-            <p className="text-xl md:text-2xl text-muted-foreground">Three powerful features that transform learning</p>
+            <p className="text-xl md:text-2xl text-muted-foreground">Four powerful features that transform learning</p>
           </div>
           
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-20">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
             <div className="fade-on-scroll group bg-card p-8 rounded-2xl border border-border hover:border-primary/20 transition-all duration-300 hover:shadow-learning hover:-translate-y-1">
               <div className="p-4 bg-gradient-to-br from-primary/10 to-primary-glow/10 rounded-2xl w-fit mx-auto mb-6 text-primary group-hover:scale-110 transition-transform duration-300">
                 <Brain className="h-10 w-10" />
@@ -247,44 +247,16 @@ const Index = () => {
                 track readiness, and know exactly where to focus next.
               </p>
             </div>
-          </div>
-        </div>
-      </section>
 
-      {/* Additional Features */}
-      <section className="py-20 px-6 bg-card">
-        <div className="container mx-auto max-w-6xl">
-          <div className="text-center mb-20">
-            <h2 className="text-4xl md:text-5xl font-bold mb-6">Everything you need</h2>
-            <p className="text-xl md:text-2xl text-muted-foreground">Comprehensive tools for 11+ preparation</p>
-          </div>
-          
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {[
-              {
-                icon: <BarChart3 className="h-10 w-10" />,
-                title: "Real-time Dashboard",
-                description: "See exactly where your child excels and where they need support. Updated after every question."
-              },
-              {
-                icon: <BookOpen className="h-10 w-10" />,
-                title: "Complete Curriculum",
-                description: "Covers all 11+ exam types: CEM, GL Assessment, and school-specific formats."
-              },
-              {
-                icon: <Users className="h-10 w-10" />,
-                title: "Parent Resources",
-                description: "Understand how to help with clear explanations for every topic. No more YouTube University!"
-              }
-            ].map((feature, index) => (
-              <div key={index} className="fade-on-scroll group p-8 rounded-2xl bg-background border border-border hover:border-primary/20 transition-all duration-300 hover:shadow-card hover:-translate-y-1">
-                <div className="p-4 bg-gradient-to-br from-primary/10 to-primary-glow/10 rounded-2xl w-fit mx-auto mb-6 text-primary group-hover:scale-110 transition-transform duration-300">
-                  {feature.icon}
-                </div>
-                <h3 className="text-xl font-bold mb-4 text-center">{feature.title}</h3>
-                <p className="text-muted-foreground leading-relaxed text-center">{feature.description}</p>
+            <div className="fade-on-scroll group bg-card p-8 rounded-2xl border border-border hover:border-primary/20 transition-all duration-300 hover:shadow-learning hover:-translate-y-1">
+              <div className="p-4 bg-gradient-to-br from-primary/10 to-primary-glow/10 rounded-2xl w-fit mx-auto mb-6 text-primary group-hover:scale-110 transition-transform duration-300">
+                <BarChart3 className="h-10 w-10" />
               </div>
-            ))}
+              <h3 className="text-2xl font-bold mb-4 text-center">Real-time Dashboard</h3>
+              <p className="text-muted-foreground leading-relaxed text-center">
+                See exactly where your child excels and where they need support. Updated after every question.
+              </p>
+            </div>
           </div>
         </div>
       </section>
