@@ -10,6 +10,7 @@ import { ArrowLeft, Clock, CheckCircle, XCircle, RotateCcw, Sparkles, BookOpen }
 import { useToast } from '@/hooks/use-toast';
 import { useAgeGroup } from '@/contexts/AgeGroupContext';
 import { AgeGroupSelector } from '@/components/AgeGroupSelector';
+import { SessionStartModal } from '@/components/SessionStartModal';
 interface Question {
   question_id: string;
   topic: string;
@@ -39,7 +40,7 @@ const Practice = () => {
   const [selectedAnswer, setSelectedAnswer] = useState<string>('');
   const [isAnswered, setIsAnswered] = useState(false);
   const [showExplanation, setShowExplanation] = useState(false);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [score, setScore] = useState(0);
   const [startTime, setStartTime] = useState<Date>(new Date());
   const [sessionStartTime, setSessionStartTime] = useState<Date>(new Date());
@@ -52,11 +53,12 @@ const Practice = () => {
     isCorrect: boolean;
     timeTaken: number;
   }[]>([]);
+  const [showSessionStartModal, setShowSessionStartModal] = useState(true);
+  const [sessionQuestionCount, setSessionQuestionCount] = useState(10);
+  const [sessionDifficulty, setSessionDifficulty] = useState<string | undefined>(undefined);
   useEffect(() => {
     setSessionStartTime(new Date());
-    if (user) {
-      loadAdaptiveQuestions(selectedAgeGroup);
-    }
+    // Don't automatically load questions - wait for user to start session
   }, [user, selectedAgeGroup]);
 
   // Record session when user leaves the practice page
@@ -88,7 +90,7 @@ const Practice = () => {
 
   // Function removed - now using selectedAgeGroup from context
 
-  const loadAdaptiveQuestions = async (ageGroup: 'year 2-3' | 'year 4-5' | '11+' = 'year 4-5') => {
+  const loadAdaptiveQuestions = async (ageGroup: 'year 2-3' | 'year 4-5' | '11+' = 'year 4-5', questionCount: number = 20, difficulty?: string) => {
     try {
       setLoading(true);
 
@@ -99,9 +101,12 @@ const Practice = () => {
       const answeredQuestionIds = answeredQuestions?.map(q => q.question_id) || [];
 
       // Get random questions from ALL topics that the user has never seen for their age group
-      let query = supabase.from('curriculum').select('*').eq('age_group', ageGroup).limit(20);
+      let query = supabase.from('curriculum').select('*').eq('age_group', ageGroup).limit(questionCount);
       if (answeredQuestionIds.length > 0) {
         query = query.not('question_id', 'in', `(${answeredQuestionIds.map(id => `'${id}'`).join(',')})`);
+      }
+      if (difficulty) {
+        query = query.eq('difficulty', difficulty);
       }
       const {
         data: newQuestions,
@@ -123,9 +128,13 @@ const Practice = () => {
         await generateAdditionalQuestions();
 
         // After generation, try loading new questions again
+        let freshQuery = supabase.from('curriculum').select('*').not('question_id', 'in', answeredQuestionIds.length > 0 ? `(${answeredQuestionIds.map(id => `'${id}'`).join(',')})` : '()').limit(questionCount);
+        if (difficulty) {
+          freshQuery = freshQuery.eq('difficulty', difficulty);
+        }
         const {
           data: freshQuestions
-        } = await supabase.from('curriculum').select('*').not('question_id', 'in', answeredQuestionIds.length > 0 ? `(${answeredQuestionIds.map(id => `'${id}'`).join(',')})` : '()').limit(20);
+        } = await freshQuery;
         if (freshQuestions && freshQuestions.length > 0) {
           questions = freshQuestions.map(q => ({
             ...q,
@@ -368,7 +377,7 @@ const Practice = () => {
         }
       }, 2000); // Wait for generation to complete
     }
-    if (currentIndex + 1 >= questions.length) {
+    if (currentIndex + 1 >= sessionQuestionCount) {
       setSessionComplete(true);
       // Record the session in the database
       recordSessionResults();
@@ -444,7 +453,15 @@ const Practice = () => {
     setStartTime(new Date());
     setSessionStartTime(new Date());
     setAnsweredQuestions([]);
-    loadAdaptiveQuestions(selectedAgeGroup);
+    setShowSessionStartModal(true);
+  };
+
+  const handleSessionStart = (questionCount: number, difficulty?: string) => {
+    setSessionQuestionCount(questionCount);
+    setSessionDifficulty(difficulty);
+    setSessionStartTime(new Date());
+    setStartTime(new Date());
+    loadAdaptiveQuestions(selectedAgeGroup, questionCount, difficulty);
   };
   if (loading) {
     return <div className="min-h-screen bg-background flex items-center justify-center">
@@ -454,7 +471,7 @@ const Practice = () => {
         </div>
       </div>;
   }
-  if (questions.length === 0 && !loading) {
+  if (questions.length === 0 && !loading && !showSessionStartModal) {
     return <div className="min-h-screen bg-background flex items-center justify-center">
         <div className="text-center space-y-4">
           <p className="text-muted-foreground">No questions available at the moment.</p>
@@ -463,7 +480,7 @@ const Practice = () => {
       </div>;
   }
   if (sessionComplete) {
-    const accuracy = Math.round(score / questions.length * 100);
+    const accuracy = answeredQuestions.length > 0 ? Math.round(score / answeredQuestions.length * 100) : 0;
     return <div className="min-h-screen bg-gradient-to-br from-background via-background to-secondary/10 flex items-center justify-center p-4">
         <Card className="w-full max-w-md">
           <CardHeader className="text-center">
@@ -474,7 +491,7 @@ const Practice = () => {
             <div className="text-center">
               <div className="text-4xl font-bold text-primary mb-2">{accuracy}%</div>
               <div className="text-muted-foreground">
-                {score} out of {questions.length} correct
+                {score} out of {answeredQuestions.length} correct
               </div>
             </div>
             
@@ -494,9 +511,26 @@ const Practice = () => {
         </Card>
       </div>;
   }
+  
+  // Don't render the practice interface if no questions are available yet
+  if (questions.length === 0) {
+    return <div className="min-h-screen bg-gradient-to-br from-background via-background to-secondary/10">
+      <SessionStartModal 
+        isOpen={showSessionStartModal}
+        onClose={() => navigate('/dashboard')}
+        onStart={handleSessionStart}
+      />
+    </div>;
+  }
+  
   const currentQuestion = questions[currentIndex];
-  const progress = (currentIndex + 1) / questions.length * 100;
+  const progress = (currentIndex + 1) / sessionQuestionCount * 100;
   return <div className="min-h-screen bg-gradient-to-br from-background via-background to-secondary/10">
+      <SessionStartModal 
+        isOpen={showSessionStartModal}
+        onClose={() => setShowSessionStartModal(false)}
+        onStart={handleSessionStart}
+      />
       <div className="container mx-auto max-w-4xl px-6 py-8">
         {/* Header */}
         <div className="flex items-center justify-between mb-8">
@@ -506,7 +540,7 @@ const Practice = () => {
           </Button>
           <div className="text-center flex-1 mx-8">
             <p className="text-sm text-muted-foreground mb-2">
-              Question {currentIndex + 1} of {questions.length}
+              Question {currentIndex + 1} of {sessionQuestionCount}
               {generatingQuestions && <span className="ml-2 text-blue-600 text-xs">
                   • Generating more questions...
                 </span>}
@@ -557,7 +591,7 @@ const Practice = () => {
               {!isAnswered ? <Button onClick={handleSubmitAnswer} disabled={!selectedAnswer} size="lg" className="px-8">
                   Submit Answer
                 </Button> : <Button onClick={handleNextQuestion} size="lg" className="px-8">
-                  {currentIndex + 1 >= questions.length ? 'Finish Session' : 'Next Question'}
+                  {currentIndex + 1 >= sessionQuestionCount ? 'Finish Session' : 'Next Question'}
                 </Button>}
             </div>
           </CardContent>
