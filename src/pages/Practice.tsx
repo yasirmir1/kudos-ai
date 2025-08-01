@@ -525,80 +525,136 @@ const Practice = () => {
   
   const currentQuestion = questions[currentIndex];
   const progress = (currentIndex + 1) / sessionQuestionCount * 100;
-  return <div className="min-h-screen bg-gradient-to-br from-background via-background to-secondary/10">
+  return <div className="min-h-screen bg-background">
       <SessionStartModal 
         isOpen={showSessionStartModal}
         onClose={() => setShowSessionStartModal(false)}
         onStart={handleSessionStart}
       />
-      <div className="container mx-auto max-w-4xl px-6 py-8">
-        {/* Header */}
-        <div className="flex items-center justify-between mb-8">
-          <Button variant="ghost" onClick={() => navigate('/dashboard')} className="px-4">
+      
+      {/* Clean Header */}
+      <div className="border-b border-border bg-background">
+        <div className="container mx-auto px-4 py-4 flex items-center justify-between max-w-4xl">
+          <Button variant="ghost" onClick={() => navigate('/dashboard')} className="text-muted-foreground hover:text-foreground">
             <ArrowLeft className="mr-2 h-4 w-4" />
             Dashboard
           </Button>
-          <div className="text-center flex-1 mx-8">
-            <p className="text-sm text-muted-foreground mb-2">
+          
+          <div className="text-center">
+            <p className="text-sm font-medium text-foreground">
               Question {currentIndex + 1} of {sessionQuestionCount}
-              {generatingQuestions && <span className="ml-2 text-blue-600 text-xs">
-                  • Generating more questions...
-                </span>}
             </p>
-            <Progress value={progress} className="w-64 h-2 mx-auto" />
+            <div className="w-64 bg-muted h-1 rounded-full mt-2">
+              <div 
+                className="bg-foreground h-1 rounded-full transition-all duration-300"
+                style={{ width: `${progress}%` }}
+              />
+            </div>
           </div>
-          <AgeGroupSelector />
+          
+          <div className="flex items-center space-x-2">
+            <Badge variant="outline" className="bg-primary text-primary-foreground border-primary">
+              11+ Prep
+            </Badge>
+            <div className="text-sm font-medium">
+              {score}/{currentIndex + (isAnswered ? 1 : 0)}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div className="container mx-auto px-4 py-8 max-w-4xl">
+        {/* Topic and Difficulty */}
+        <div className="text-center mb-8">
+          <div className="flex items-center justify-center space-x-3 mb-4">
+            <Badge variant="secondary" className="bg-primary/10 text-primary border-primary/20">
+              {currentQuestion.topic}
+            </Badge>
+            <Badge variant="outline" className="text-green-600 border-green-200 bg-green-50">
+              {currentQuestion.difficulty}
+            </Badge>
+            <div className="flex items-center space-x-1">
+              <div className="w-4 h-4 text-blue-500">★</div>
+              <span className="text-sm text-muted-foreground">Express missing number problems algebraically</span>
+            </div>
+          </div>
         </div>
 
-        {/* Question Card */}
-        <Card className="mb-8 mx-auto max-w-3xl">
-          <CardHeader className="pb-6 py-[10px] px-[10px]">
-            <div className="flex items-center justify-between mb-2 gap-6 mx-[20px]">
-              <div className="flex items-center space-x-3 flex-shrink-0 my-[3px]">
-                <Badge variant="secondary" className="px-3 my-0 py-[5px] mx-0">{currentQuestion.topic}</Badge>
-                <Badge variant="outline" className="px-3 py-[5px] mx-0 my-[3px]">{currentQuestion.difficulty}</Badge>
-              </div>
-              <div className="text-center min-w-[80px]">
-                <Badge variant="outline" className="px-3 py-1 mx-0">Score: {score}/{currentIndex + (isAnswered ? 1 : 0)}</Badge>
-              </div>
-            </div>
-            {currentQuestion.subtopic && <div className="mt-0 mb-8 bg-muted/20 rounded-lg border border-border px-[5px] my-0 py-px mx-[20px]">
-                <div className="flex items-start space-x-2 py-[5px] my-0 px-[5px] mx-0">
-                  <BookOpen className="h-4 w-4 text-primary mt-0.5 flex-shrink-0" />
-                  <p className="text-muted-foreground leading-relaxed text-xs font-extralight">{currentQuestion.subtopic}</p>
-                </div>
-              </div>}
-            <h3 className="text-xl font-medium leading-relaxed text-left px-4 mx-0 my-[20px] py-[20px]">{currentQuestion.example_question}</h3>
-          </CardHeader>
-          <CardContent className="px-8 pb-8">
-            {/* Answer Options */}
-            <div className="space-y-4 mb-8">
-              {currentQuestion.options.map((option, index) => {
-              const isSelected = selectedAnswer === option;
-              const isCorrect = option === currentQuestion.correct_answer;
-              const showCorrectness = isAnswered && (isSelected || isCorrect);
-              return <button key={index} onClick={() => handleAnswerSelect(option)} disabled={isAnswered} className={`w-full p-5 text-left border rounded-lg transition-all ${isSelected ? isAnswered ? isCorrect ? 'border-green-500 bg-green-50 text-green-900' : 'border-red-500 bg-red-50 text-red-900' : 'border-primary bg-primary/5' : showCorrectness && isCorrect ? 'border-green-500 bg-green-50 text-green-900' : 'border-border hover:border-primary/50 hover:bg-accent/50'} ${isAnswered ? 'cursor-not-allowed' : 'cursor-pointer'}`}>
-                    <div className="flex items-center justify-between">
-                      <span className="text-base leading-relaxed">{option}</span>
-                      {showCorrectness && (isCorrect ? <CheckCircle className="h-5 w-5 text-green-600 ml-4 flex-shrink-0" /> : isSelected ? <XCircle className="h-5 w-5 text-red-600 ml-4 flex-shrink-0" /> : null)}
-                    </div>
-                  </button>;
-            })}
-            </div>
+        {/* Main Question Card */}
+        <Card className="border-0 shadow-sm mb-8">
+          <CardContent className="p-8">
+            <h2 className="text-2xl font-medium text-foreground leading-relaxed mb-8 text-center">
+              {currentQuestion.example_question}
+            </h2>
 
-            {/* Action Buttons */}
-            <div className="flex justify-center">
-              {!isAnswered ? <Button onClick={handleSubmitAnswer} disabled={!selectedAnswer} size="lg" className="px-8">
-                  Submit Answer
-                </Button> : <Button onClick={handleNextQuestion} size="lg" className="px-8">
-                  {currentIndex + 1 >= sessionQuestionCount ? 'Finish Session' : 'Next Question'}
-                </Button>}
+            {/* Answer Options */}
+            <div className="space-y-4 max-w-md mx-auto">
+              {currentQuestion.options.map((option, index) => {
+                const isSelected = selectedAnswer === option;
+                const isCorrect = option === currentQuestion.correct_answer;
+                const showCorrectness = isAnswered && (isSelected || isCorrect);
+                const optionLabel = String.fromCharCode(65 + index); // A, B, C, D
+                
+                return (
+                  <button
+                    key={index}
+                    onClick={() => handleAnswerSelect(option)}
+                    disabled={isAnswered}
+                    className={`w-full p-4 text-left border rounded-lg transition-all flex items-center space-x-4 ${
+                      isSelected 
+                        ? isAnswered 
+                          ? isCorrect 
+                            ? 'border-green-500 bg-green-50 text-green-900' 
+                            : 'border-red-500 bg-red-50 text-red-900'
+                          : 'border-primary bg-primary/5'
+                        : showCorrectness && isCorrect 
+                          ? 'border-green-500 bg-green-50 text-green-900'
+                          : 'border-border hover:border-muted-foreground hover:bg-muted/50'
+                    } ${isAnswered ? 'cursor-not-allowed' : 'cursor-pointer'}`}
+                  >
+                    <div className="w-8 h-8 rounded border border-muted-foreground/30 flex items-center justify-center font-medium text-sm">
+                      {optionLabel}
+                    </div>
+                    <span className="text-base">{option}</span>
+                    {showCorrectness && (
+                      isCorrect ? (
+                        <CheckCircle className="h-5 w-5 text-green-600 ml-auto" />
+                      ) : isSelected ? (
+                        <XCircle className="h-5 w-5 text-red-600 ml-auto" />
+                      ) : null
+                    )}
+                  </button>
+                );
+              })}
             </div>
           </CardContent>
         </Card>
 
+        {/* Submit Button */}
+        <div className="text-center">
+          {!isAnswered ? (
+            <Button 
+              onClick={handleSubmitAnswer} 
+              disabled={!selectedAnswer} 
+              size="lg" 
+              className="bg-primary hover:bg-primary/90 text-primary-foreground px-8 py-3"
+            >
+              Submit Answer
+            </Button>
+          ) : (
+            <Button 
+              onClick={handleNextQuestion} 
+              size="lg" 
+              className="bg-primary hover:bg-primary/90 text-primary-foreground px-8 py-3"
+            >
+              {currentIndex + 1 >= sessionQuestionCount ? 'Finish Session' : 'Next Question'}
+            </Button>
+          )}
+        </div>
+
         {/* AI Explanation Card */}
-        {showExplanation && !selectedAnswer?.includes(currentQuestion.correct_answer) && <Card className="mx-auto max-w-3xl">
+        {showExplanation && !selectedAnswer?.includes(currentQuestion.correct_answer) && (
+          <Card className="mt-8 border-0 shadow-sm">
             <CardHeader className="pb-4">
               <CardTitle className="text-lg text-center flex items-center justify-center space-x-2">
                 <Sparkles className="h-5 w-5" />
@@ -606,21 +662,27 @@ const Practice = () => {
               </CardTitle>
             </CardHeader>
             <CardContent className="px-8 pb-6">
-              {generatingExplanation && <div className="bg-blue-50 p-4 rounded border flex items-center space-x-3">
+              {generatingExplanation && (
+                <div className="bg-blue-50 p-4 rounded border flex items-center space-x-3">
                   <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-blue-500"></div>
                   <span className="text-sm text-blue-700">Creating a helpful explanation just for you...</span>
-                </div>}
+                </div>
+              )}
               
-              {aiExplanation && <div className="bg-blue-50 p-4 rounded border">
+              {aiExplanation && (
+                <div className="bg-blue-50 p-4 rounded border">
                   <div className="text-sm whitespace-pre-line leading-[1.4] [&>div]:mb-6 [&>p]:mb-6 [&_h4]:mb-4">{aiExplanation}</div>
-                </div>}
+                </div>
+              )}
               
-              {!aiExplanation && !generatingExplanation && <div className="bg-gray-50 p-4 rounded border text-center">
+              {!aiExplanation && !generatingExplanation && (
+                <div className="bg-gray-50 p-4 rounded border text-center">
                   <p className="text-sm text-gray-600">Explanation will appear here automatically</p>
-                </div>}
+                </div>
+              )}
             </CardContent>
-          </Card>}
-
+          </Card>
+        )}
       </div>
     </div>;
 };
