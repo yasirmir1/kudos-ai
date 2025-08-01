@@ -60,7 +60,10 @@ export function MisconceptionQuestionsModal({
 
     setLoading(true);
     try {
+      console.log('🔍 Looking for misconception:', misconception.red_herring);
+      
       // Get student answers that triggered this specific misconception
+      // We need to handle both array and string formats in the database
       const { data: answersData, error } = await supabase
         .from('student_answers')
         .select(`
@@ -69,22 +72,51 @@ export function MisconceptionQuestionsModal({
           answered_at,
           time_taken_seconds,
           topic,
-          subtopic
+          subtopic,
+          red_herring_triggered
         `)
         .eq('student_id', user.id)
         .eq('is_correct', false)
-        .contains('red_herring_triggered', [misconception.red_herring])
         .order('answered_at', { ascending: false });
+
+      console.log('📊 Total incorrect answers found:', answersData?.length || 0);
+      
+      // Filter client-side to handle both string and array formats
+      const filteredAnswers = answersData?.filter(answer => {
+        if (!answer.red_herring_triggered) return false;
+        
+        // Handle array format: ["Misconception_Name"]
+        if (Array.isArray(answer.red_herring_triggered)) {
+          return answer.red_herring_triggered.includes(misconception.red_herring);
+        }
+        
+        // Handle string format that might be JSON: '["Misconception_Name"]'
+        if (typeof answer.red_herring_triggered === 'string') {
+          try {
+            const parsed = JSON.parse(answer.red_herring_triggered);
+            if (Array.isArray(parsed)) {
+              return parsed.includes(misconception.red_herring);
+            }
+          } catch (e) {
+            // Not JSON, treat as plain string
+          }
+          return answer.red_herring_triggered === misconception.red_herring;
+        }
+        
+        return false;
+      }) || [];
+
+      console.log('🎯 Filtered answers matching misconception:', filteredAnswers.length);
 
       if (error) {
         console.error('Error fetching misconception questions:', error);
         return;
       }
 
-      if (answersData && answersData.length > 0) {
+      if (filteredAnswers && filteredAnswers.length > 0) {
         // Group by question_id to get unique questions with counts
         const uniqueQuestions = new Map();
-        answersData.forEach(answer => {
+        filteredAnswers.forEach(answer => {
           if (!uniqueQuestions.has(answer.question_id)) {
             uniqueQuestions.set(answer.question_id, {
               question_id: answer.question_id,
