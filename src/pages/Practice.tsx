@@ -519,16 +519,16 @@ const Practice = () => {
         {/* Question Card */}
         <Card className="mb-8 mx-auto max-w-3xl">
           <CardHeader className="pb-6 py-[10px] px-[10px]">
-            <div className="flex items-center justify-between mb-2 gap-6">
+            <div className="flex items-center justify-between mb-2 gap-6 mx-[20px]">
               <div className="flex items-center space-x-3 flex-shrink-0 my-[3px]">
-                <Badge variant="secondary" className="px-3 mx-[10px] my-0 py-[5px]">{currentQuestion.topic}</Badge>
+                <Badge variant="secondary" className="px-3 my-0 py-[5px] mx-0">{currentQuestion.topic}</Badge>
                 <Badge variant="outline" className="px-3 py-[5px] mx-0 my-[3px]">{currentQuestion.difficulty}</Badge>
               </div>
               <div className="text-center min-w-[80px]">
-                <Badge variant="outline" className="px-3 py-1 mx-[20px]">Score: {score}/{currentIndex + (isAnswered ? 1 : 0)}</Badge>
+                <Badge variant="outline" className="px-3 py-1 mx-0">Score: {score}/{currentIndex + (isAnswered ? 1 : 0)}</Badge>
               </div>
             </div>
-            {currentQuestion.subtopic && <div className="mt-0 mb-8 bg-muted/20 rounded-lg border border-border px-[5px] my-0 py-px mx-[10px]">
+            {currentQuestion.subtopic && <div className="mt-0 mb-8 bg-muted/20 rounded-lg border border-border px-[5px] my-0 py-px mx-[20px]">
                 <div className="flex items-start space-x-2 py-[5px] my-0 px-[5px] mx-0">
                   <BookOpen className="h-4 w-4 text-primary mt-0.5 flex-shrink-0" />
                   <p className="text-muted-foreground leading-relaxed text-xs font-extralight">{currentQuestion.subtopic}</p>
