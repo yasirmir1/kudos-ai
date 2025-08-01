@@ -140,14 +140,17 @@ const Dashboard = () => {
         ageGroupAnswers.forEach(answer => {
           if (answer.red_herring_triggered && Array.isArray(answer.red_herring_triggered)) {
             answer.red_herring_triggered.forEach((redHerring: string) => {
-              if (!misconceptionStats[redHerring]) {
-                misconceptionStats[redHerring] = {
-                  frequency: 0,
-                  topics: new Set()
-                };
+              // Filter out empty strings and invalid misconceptions
+              if (redHerring && redHerring.trim() !== '') {
+                if (!misconceptionStats[redHerring]) {
+                  misconceptionStats[redHerring] = {
+                    frequency: 0,
+                    topics: new Set()
+                  };
+                }
+                misconceptionStats[redHerring].frequency++;
+                misconceptionStats[redHerring].topics.add(answer.topic);
               }
-              misconceptionStats[redHerring].frequency++;
-              misconceptionStats[redHerring].topics.add(answer.topic);
             });
           }
         });
@@ -237,6 +240,11 @@ const Dashboard = () => {
     }
   };
   const formatMisconceptionForKids = (redHerring: string) => {
+    // Handle empty or invalid misconceptions
+    if (!redHerring || redHerring.trim() === '') {
+      return 'Unknown thinking pattern 🤔';
+    }
+
     // Create more kid-friendly labels for common misconceptions
     const kidFriendlyLabels: {
       [key: string]: string;
@@ -252,16 +260,33 @@ const Dashboard = () => {
       'PlaceValue_DigitValueConfusion': 'Mixing up what position means 📍',
       'PlaceValue_OrderingConfusion_ZeroPlacement': 'Zero placement puzzles 0️⃣',
       'Rounding_DownInsteadOfUp': 'Rounding the wrong direction ⬇️',
-      'Rounding_IncorrectDirection': 'Getting confused which way to round 🔄'
+      'Rounding_IncorrectDirection': 'Getting confused which way to round 🔄',
+      'Percentage_IncorrectOperation': 'Getting percentages mixed up 📊',
+      'Algebra_IncorrectOperation': 'Mix-ups with algebra steps 🔢',
+      'Addition_CarryError': 'Forgetting to carry numbers 📝',
+      'Subtraction_BorrowError': 'Mix-ups when borrowing 🔄',
+      'Multiplication_TableError': 'Times table mix-ups ✖️',
+      'Division_RemainderError': 'Getting remainders wrong ➗',
+      'FractionEquivalence_Error': 'Finding equal fractions tricky 🍰',
+      'DecimalComparison_Error': 'Comparing decimals wrongly 🔍',
+      'GeometryAngle_Error': 'Angle measurements confusing 📐',
+      'MeasurementUnit_Error': 'Unit conversion mix-ups 📏',
+      'ProbabilityLogic_Error': 'Probability thinking tricky 🎲',
+      'DataInterpretation_Error': 'Reading charts confusing 📊'
     };
 
-    // If we have a kid-friendly version, use it, otherwise create one
+    // If we have a kid-friendly version, use it
     if (kidFriendlyLabels[redHerring]) {
       return kidFriendlyLabels[redHerring];
     }
 
     // Fallback: make any other misconception kid-friendly
-    return redHerring?.replace(/_/g, ' ').replace(/([a-z])([A-Z])/g, '$1 $2').toLowerCase().replace(/\b\w/g, l => l.toUpperCase()).trim() + ' 🤯';
+    return redHerring
+      .replace(/_/g, ' ')
+      .replace(/([a-z])([A-Z])/g, '$1 $2')
+      .toLowerCase()
+      .replace(/\b\w/g, l => l.toUpperCase())
+      .trim() + ' 🤯';
   };
   const overallAccuracy = performance.length > 0 ? performance.reduce((sum, p) => sum + p.accuracy, 0) / performance.length : 0;
   const strongestTopic = performance[0];

@@ -70,7 +70,36 @@ export const MisconceptionExplanationModal: React.FC<MisconceptionExplanationMod
   };
 
   const formatMisconceptionName = (name: string) => {
-    return name?.replace(/_/g, ' ').replace(/([A-Z])/g, ' $1').trim();
+    // Handle empty or invalid misconceptions
+    if (!name || name.trim() === '') {
+      return 'Unknown Misconception';
+    }
+
+    // Create friendly labels for common misconceptions
+    const friendlyLabels: { [key: string]: string } = {
+      'Percentage_IncorrectOperation': 'Percentage Calculation Error',
+      'PlaceValue_DigitValueConfusion': 'Place Value Confusion',
+      'Rounding_IncorrectDirection': 'Rounding Direction Error',
+      'Algebra_IncorrectOperation': 'Algebra Operation Mix-up',
+      'Fractions_AddNumeratorsAndDenominators': 'Fraction Addition Error',
+      'Decimals_IncorrectPlaceValueShift': 'Decimal Point Movement Error',
+      'OrderOfOperations_ParenthesesIgnored': 'Parentheses Order Error',
+      'Multiplication_TableError': 'Times Table Mix-up',
+      'Division_RemainderError': 'Division Remainder Error',
+      'Addition_CarryError': 'Addition Carrying Error',
+      'Subtraction_BorrowError': 'Subtraction Borrowing Error'
+    };
+
+    if (friendlyLabels[name]) {
+      return friendlyLabels[name];
+    }
+
+    // Fallback formatting
+    return name
+      .replace(/_/g, ' ')
+      .replace(/([a-z])([A-Z])/g, '$1 $2')
+      .replace(/\b\w/g, l => l.toUpperCase())
+      .trim();
   };
 
   return (
