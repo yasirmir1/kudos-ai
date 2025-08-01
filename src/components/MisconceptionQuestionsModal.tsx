@@ -289,7 +289,7 @@ export function MisconceptionQuestionsModal({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-4xl max-h-[85vh] overflow-y-auto bg-gradient-to-br from-primary/10 to-secondary">
+      <DialogContent className="max-w-4xl max-h-[85vh] overflow-y-auto bg-background">
         <DialogHeader className="text-center pb-2">
           <DialogTitle className="flex items-center justify-center space-x-3 text-xl">
             <div className="flex items-center justify-center w-10 h-10 bg-primary/20 rounded-full">
@@ -333,8 +333,8 @@ export function MisconceptionQuestionsModal({
           )}
 
           {!loading && questions.map((question, index) => (
-            <Card key={question.question_id} className="border-2 border-primary/30 bg-card/80 backdrop-blur-sm hover:shadow-lg transition-all duration-300 animate-fade-in">
-              <CardHeader className="pb-3 bg-gradient-to-r from-primary/10 to-primary/5 rounded-t-lg">
+            <Card key={question.question_id} className="border border-border bg-card hover:shadow-lg transition-all duration-300">
+              <CardHeader className="pb-3 bg-muted/50 rounded-t-lg">
                 <div className="flex items-center justify-between">
                   <CardTitle className="flex items-center space-x-2 text-lg text-primary">
                     <div className="flex items-center justify-center w-8 h-8 bg-primary/20 rounded-full">
@@ -343,11 +343,11 @@ export function MisconceptionQuestionsModal({
                     <span>Mix-Up Example {index + 1}</span>
                   </CardTitle>
                   <div className="flex items-center space-x-2">
-                    <Badge variant="outline" className="flex items-center space-x-1 text-xs bg-primary/10 border-primary/30 text-primary">
+                    <Badge variant="outline" className="flex items-center space-x-1 text-xs">
                       <AlertTriangle className="h-3 w-3" />
                       <span>Tried {question.attempts_count} time{question.attempts_count > 1 ? 's' : ''}</span>
                     </Badge>
-                    <Badge variant="outline" className="flex items-center space-x-1 text-xs bg-primary/10 border-primary/30 text-primary">
+                    <Badge variant="outline" className="flex items-center space-x-1 text-xs">
                       <Clock className="h-3 w-3" />
                       <span>{Math.round(question.avg_time_taken_seconds)}s</span>
                     </Badge>
@@ -361,8 +361,8 @@ export function MisconceptionQuestionsModal({
               <CardContent className="space-y-4 pt-4">
                 {question.curriculum && (
                   <>
-                    <div className="bg-primary/10 border-l-4 border-primary p-3 rounded-r-lg">
-                      <h4 className="font-bold mb-2 text-primary flex items-center space-x-2">
+                    <div className="bg-muted border-l-4 border-primary p-3 rounded-r-lg">
+                      <h4 className="font-bold mb-2 text-foreground flex items-center space-x-2">
                         <span>❓</span>
                         <span>The Question:</span>
                       </h4>
@@ -381,21 +381,21 @@ export function MisconceptionQuestionsModal({
                               key={optIndex}
                               className={`text-sm p-3 rounded-lg border-2 font-medium transition-all duration-200 ${
                                  option === question.latest_answer_given 
-                                   ? 'bg-primary/10 text-primary border-primary/30 shadow-sm'
+                                   ? 'bg-muted text-foreground border-muted-foreground/40 shadow-sm'
                                   : option === question.curriculum?.correct_answer
-                                  ? 'bg-green-50 text-green-800 border-green-300 shadow-sm'
+                                  ? 'bg-primary/10 text-primary border-primary/30 shadow-sm'
                                   : 'bg-card border-border text-foreground'
                               }`}
                             >
                               <div className="flex items-center space-x-2">
                                 {option === question.latest_answer_given && (
-                                   <div className="flex items-center space-x-1 text-primary">
+                                   <div className="flex items-center space-x-1 text-muted-foreground">
                                      <X className="h-4 w-4" />
                                     <span className="text-xs font-bold">Your answer</span>
                                   </div>
                                 )}
                                 {option === question.curriculum?.correct_answer && (
-                                  <div className="flex items-center space-x-1 text-green-600">
+                                  <div className="flex items-center space-x-1 text-primary">
                                     <CheckCircle className="h-4 w-4" />
                                     <span className="text-xs font-bold">Correct answer</span>
                                   </div>
@@ -409,24 +409,24 @@ export function MisconceptionQuestionsModal({
                     )}
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                      <div className="bg-primary/10 border-2 border-primary/30 p-3 rounded-lg">
-                        <h4 className="font-bold mb-2 text-primary flex items-center space-x-2">
+                      <div className="bg-muted border p-3 rounded-lg">
+                        <h4 className="font-bold mb-2 text-foreground flex items-center space-x-2">
                           <span>❌</span>
                           <span>What You Picked:</span>
                         </h4>
-                        <p className="text-primary font-medium bg-card p-2 rounded border">{question.latest_answer_given}</p>
+                        <p className="text-foreground font-medium bg-card p-2 rounded border">{question.latest_answer_given}</p>
                       </div>
-                      <div className="bg-green-50 border-2 border-green-200 p-3 rounded-lg">
-                        <h4 className="font-bold mb-2 text-green-700 flex items-center space-x-2">
+                      <div className="bg-primary/10 border border-primary/30 p-3 rounded-lg">
+                        <h4 className="font-bold mb-2 text-primary flex items-center space-x-2">
                           <span>✅</span>
                           <span>The Right Answer:</span>
                         </h4>
-                        <p className="text-green-800 font-medium bg-card p-2 rounded border">{question.curriculum.correct_answer}</p>
+                        <p className="text-primary font-medium bg-card p-2 rounded border">{question.curriculum.correct_answer}</p>
                       </div>
                     </div>
 
-                    <div className="bg-gradient-to-r from-accent to-secondary border-2 border-accent-foreground/20 p-4 rounded-lg">
-                      <h4 className="font-bold mb-3 text-accent-foreground flex items-center space-x-2">
+                    <div className="bg-muted border p-4 rounded-lg">
+                      <h4 className="font-bold mb-3 text-foreground flex items-center space-x-2">
                         <Sparkles className="h-5 w-5" />
                         <span>🎓 Why This Happens & How to Fix It!</span>
                       </h4>
@@ -435,13 +435,13 @@ export function MisconceptionQuestionsModal({
                         <div className="bg-card/70 p-4 rounded-lg border border-border flex items-center space-x-3">
                           <div className="animate-spin rounded-full h-5 w-5 border-2 border-primary/30 border-t-primary"></div>
                           <span className="text-primary font-medium">Creating a fun explanation just for you...</span>
-                          <Star className="h-4 w-4 text-yellow-500 animate-pulse" />
+                          <Star className="h-4 w-4 text-primary animate-pulse" />
                         </div>
                       )}
                       
                       {question.aiExplanation && (
                         <div className="bg-card/80 p-4 rounded-lg border border-border">
-                          <div className="text-sm leading-relaxed text-foreground whitespace-pre-line [&>div]:mb-3 [&>p]:mb-3 [&_h4]:mb-2 [&_strong]:font-bold [&_strong]:text-accent-foreground [&>h1]:mb-3 [&>h2]:mb-3 [&>h3]:mb-3">
+                          <div className="text-sm leading-relaxed text-foreground whitespace-pre-line [&>div]:mb-3 [&>p]:mb-3 [&_h4]:mb-2 [&_strong]:font-bold [&_strong]:text-primary [&>h1]:mb-3 [&>h2]:mb-3 [&>h3]:mb-3">
                             {question.aiExplanation}
                           </div>
                         </div>
