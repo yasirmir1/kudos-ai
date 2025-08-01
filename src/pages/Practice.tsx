@@ -525,7 +525,7 @@ const Practice = () => {
                 <Badge variant="outline" className="px-3 py-1">{currentQuestion.difficulty}</Badge>
               </div>
               <div className="text-center min-w-[80px]">
-                <p className="font-bold text-lg">Score: {score}/{currentIndex + (isAnswered ? 1 : 0)}</p>
+                <p className="py-0 text-sm px-[30px] font-semibold">Score: {score}/{currentIndex + (isAnswered ? 1 : 0)}</p>
               </div>
             </div>
             {currentQuestion.subtopic && <div className="mt-0 mb-8 bg-muted/20 rounded-lg border border-border mx-[10px] px-[5px] my-0 py-[2px]">
