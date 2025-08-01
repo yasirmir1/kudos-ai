@@ -10,7 +10,6 @@ import { ArrowLeft, Clock, CheckCircle, XCircle, RotateCcw, Sparkles, BookOpen }
 import { useToast } from '@/hooks/use-toast';
 import { useAgeGroup } from '@/contexts/AgeGroupContext';
 import { AgeGroupSelector } from '@/components/AgeGroupSelector';
-
 interface Question {
   question_id: string;
   topic: string;
@@ -24,13 +23,17 @@ interface Question {
   red_herring_explanation: string | null;
   pedagogical_notes: string | null;
 }
-
 const Practice = () => {
-  const { user } = useAuth();
-  const { selectedAgeGroup } = useAgeGroup();
+  const {
+    user
+  } = useAuth();
+  const {
+    selectedAgeGroup
+  } = useAgeGroup();
   const navigate = useNavigate();
-  const { toast } = useToast();
-  
+  const {
+    toast
+  } = useToast();
   const [questions, setQuestions] = useState<Question[]>([]);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [selectedAnswer, setSelectedAnswer] = useState<string>('');
@@ -44,8 +47,11 @@ const Practice = () => {
   const [aiExplanation, setAiExplanation] = useState<string>('');
   const [generatingExplanation, setGeneratingExplanation] = useState(false);
   const [generatingQuestions, setGeneratingQuestions] = useState(false);
-  const [answeredQuestions, setAnsweredQuestions] = useState<{question: Question, isCorrect: boolean, timeTaken: number}[]>([]);
-
+  const [answeredQuestions, setAnsweredQuestions] = useState<{
+    question: Question;
+    isCorrect: boolean;
+    timeTaken: number;
+  }[]>([]);
   useEffect(() => {
     setSessionStartTime(new Date());
     if (user) {
@@ -74,122 +80,95 @@ const Practice = () => {
         recordSessionResults();
       }
     };
-
     window.addEventListener('beforeunload', handleBeforeUnload);
-    
     return () => {
       window.removeEventListener('beforeunload', handleBeforeUnload);
     };
   }, [answeredQuestions]);
 
-// Function removed - now using selectedAgeGroup from context
+  // Function removed - now using selectedAgeGroup from context
 
   const loadAdaptiveQuestions = async (ageGroup: 'year 2-3' | 'year 4-5' | '11+' = 'year 4-5') => {
     try {
       setLoading(true);
-      
-      // Get all question IDs the user has already answered to ensure no repeats
-      const { data: answeredQuestions } = await supabase
-        .from('student_answers')
-        .select('question_id')
-        .eq('student_id', user?.id);
 
+      // Get all question IDs the user has already answered to ensure no repeats
+      const {
+        data: answeredQuestions
+      } = await supabase.from('student_answers').select('question_id').eq('student_id', user?.id);
       const answeredQuestionIds = answeredQuestions?.map(q => q.question_id) || [];
 
       // Get random questions from ALL topics that the user has never seen for their age group
-      let query = supabase
-        .from('curriculum')
-        .select('*')
-        .eq('age_group', ageGroup)
-        .limit(20);
-
+      let query = supabase.from('curriculum').select('*').eq('age_group', ageGroup).limit(20);
       if (answeredQuestionIds.length > 0) {
         query = query.not('question_id', 'in', `(${answeredQuestionIds.map(id => `'${id}'`).join(',')})`);
       }
-
-      const { data: newQuestions, error: newError } = await query;
-
+      const {
+        data: newQuestions,
+        error: newError
+      } = await query;
       let questions: Question[] = [];
-
       if (newQuestions && newQuestions.length > 0) {
         // Format questions and shuffle them randomly for variety
-        questions = newQuestions
-          .map(q => ({
-            ...q,
-            options: Array.isArray(q.options) ? q.options : 
-                     typeof q.options === 'string' ? JSON.parse(q.options) : 
-                     Object.values(q.options || {})
-          }))
-          .sort(() => Math.random() - 0.5); // Randomize the order
+        questions = newQuestions.map(q => ({
+          ...q,
+          options: Array.isArray(q.options) ? q.options : typeof q.options === 'string' ? JSON.parse(q.options) : Object.values(q.options || {})
+        })).sort(() => Math.random() - 0.5); // Randomize the order
 
         console.log(`Loaded ${questions.length} new questions from ${new Set(questions.map(q => q.topic)).size} different topics`);
       } else {
         console.log('No new questions available, need to generate more');
-        
+
         // If no new questions available, generate more AI questions from random topics
         await generateAdditionalQuestions();
-        
-        // After generation, try loading new questions again
-        const { data: freshQuestions } = await supabase
-          .from('curriculum')
-          .select('*')
-          .not('question_id', 'in', answeredQuestionIds.length > 0 ? `(${answeredQuestionIds.map(id => `'${id}'`).join(',')})` : '()')
-          .limit(20);
 
+        // After generation, try loading new questions again
+        const {
+          data: freshQuestions
+        } = await supabase.from('curriculum').select('*').not('question_id', 'in', answeredQuestionIds.length > 0 ? `(${answeredQuestionIds.map(id => `'${id}'`).join(',')})` : '()').limit(20);
         if (freshQuestions && freshQuestions.length > 0) {
-          questions = freshQuestions
-            .map(q => ({
-              ...q,
-              options: Array.isArray(q.options) ? q.options : 
-                       typeof q.options === 'string' ? JSON.parse(q.options) : 
-                       Object.values(q.options || {})
-            }))
-            .sort(() => Math.random() - 0.5); // Randomize the order
+          questions = freshQuestions.map(q => ({
+            ...q,
+            options: Array.isArray(q.options) ? q.options : typeof q.options === 'string' ? JSON.parse(q.options) : Object.values(q.options || {})
+          })).sort(() => Math.random() - 0.5); // Randomize the order
         } else {
           toast({
             title: "No new questions available",
             description: "Please try again later or contact support.",
-            variant: "destructive",
+            variant: "destructive"
           });
           return;
         }
       }
-
       setQuestions(questions);
-
     } catch (error) {
       console.error('Error:', error);
       toast({
         title: "Error loading questions",
         description: "Failed to load practice questions.",
-        variant: "destructive",
+        variant: "destructive"
       });
     } finally {
       setLoading(false);
     }
   };
-
   const handleAnswerSelect = (answer: string) => {
     if (isAnswered) return;
     setSelectedAnswer(answer);
   };
-
   const handleSubmitAnswer = async () => {
     if (!selectedAnswer || isAnswered) return;
-    
     setIsAnswered(true);
     setShowExplanation(true);
-    
     const currentQuestion = questions[currentIndex];
     const isCorrect = selectedAnswer === currentQuestion.correct_answer;
-    
     if (isCorrect) {
       setScore(score + 1);
     }
 
     // Calculate time taken for this question
     const timeTaken = Math.floor((new Date().getTime() - startTime.getTime()) / 1000);
-    
+
     // Store question result for session recording
     setAnsweredQuestions(prev => [...prev, {
       question: currentQuestion,
@@ -208,7 +187,7 @@ const Practice = () => {
 
     // Determine if difficulty was appropriate (based on time taken and correctness)
     const difficultyAppropriate = (() => {
-      if (isCorrect && timeTaken < 30) return true;  // Too easy
+      if (isCorrect && timeTaken < 30) return true; // Too easy
       if (isCorrect && timeTaken < 120) return true; // Just right
       if (!isCorrect && timeTaken > 180) return false; // Too hard
       return null; // Uncertain
@@ -217,29 +196,28 @@ const Practice = () => {
     // Save enhanced answer data to database immediately
     try {
       console.log('Saving answer for question:', currentQuestion.question_id);
-      
-      const { data, error } = await supabase
-        .from('student_answers')
-        .insert({
-          student_id: user?.id,
-          question_id: currentQuestion.question_id,
-          topic: currentQuestion.topic,
-          subtopic: currentQuestion.subtopic,
-          difficulty: currentQuestion.difficulty,
-          answer_given: selectedAnswer,
-          is_correct: isCorrect,
-          time_taken_seconds: timeTaken,
-          red_herring_triggered: redHerringTriggered.length > 0 ? redHerringTriggered : null,
-          difficulty_appropriate: difficultyAppropriate,
-          age_group: selectedAgeGroup
-        });
-
+      const {
+        data,
+        error
+      } = await supabase.from('student_answers').insert({
+        student_id: user?.id,
+        question_id: currentQuestion.question_id,
+        topic: currentQuestion.topic,
+        subtopic: currentQuestion.subtopic,
+        difficulty: currentQuestion.difficulty,
+        answer_given: selectedAnswer,
+        is_correct: isCorrect,
+        time_taken_seconds: timeTaken,
+        red_herring_triggered: redHerringTriggered.length > 0 ? redHerringTriggered : null,
+        difficulty_appropriate: difficultyAppropriate,
+        age_group: selectedAgeGroup
+      });
       if (error) {
         console.error('Error saving answer:', error);
         toast({
           title: "Failed to save answer",
           description: "Your answer wasn't saved. Please check your connection.",
-          variant: "destructive",
+          variant: "destructive"
         });
       } else {
         console.log('Answer saved successfully:', data);
@@ -247,7 +225,7 @@ const Practice = () => {
         if (currentIndex < 3) {
           toast({
             title: "Answer saved!",
-            description: `Your ${isCorrect ? 'correct' : 'incorrect'} answer has been recorded.`,
+            description: `Your ${isCorrect ? 'correct' : 'incorrect'} answer has been recorded.`
           });
         }
       }
@@ -256,7 +234,7 @@ const Practice = () => {
       toast({
         title: "Failed to save answer",
         description: "Your answer wasn't saved. Please check your connection.",
-        variant: "destructive",
+        variant: "destructive"
       });
     }
 
@@ -265,13 +243,14 @@ const Practice = () => {
       generateAiExplanation(currentQuestion, selectedAnswer);
     }
   };
-
   const generateAiExplanation = async (question: Question, studentAnswer: string) => {
     setGeneratingExplanation(true);
     setAiExplanation('');
-
     try {
-      const { data, error } = await supabase.functions.invoke('explain-question-mistake', {
+      const {
+        data,
+        error
+      } = await supabase.functions.invoke('explain-question-mistake', {
         body: {
           question: question.example_question,
           student_answer: studentAnswer,
@@ -280,13 +259,11 @@ const Practice = () => {
           topic: question.topic
         }
       });
-
       if (error) {
         console.error('Error generating explanation:', error);
         setAiExplanation("I'm having trouble creating your explanation right now. The main thing is to learn from this mistake and try a different approach next time!");
         return;
       }
-
       if (data?.explanation) {
         setAiExplanation(data.explanation);
       } else {
@@ -299,36 +276,27 @@ const Practice = () => {
       setGeneratingExplanation(false);
     }
   };
-
   const generateAdditionalQuestions = async () => {
     if (generatingQuestions) return;
-    
     setGeneratingQuestions(true);
     toast({
       title: "Generating new questions...",
-      description: "Creating random questions from various topics.",
+      description: "Creating random questions from various topics."
     });
-
     try {
       // Get already answered questions to avoid duplicates
-      const { data: answeredQuestions } = await supabase
-        .from('student_answers')
-        .select('question_id')
-        .eq('student_id', user?.id);
-      
+      const {
+        data: answeredQuestions
+      } = await supabase.from('student_answers').select('question_id').eq('student_id', user?.id);
       const answeredQuestionIds = answeredQuestions?.map(q => q.question_id) || [];
-      
+
       // Get a random existing topic/subtopic combination from the curriculum
-      const { data: existingTopics } = await supabase
-        .from('curriculum')
-        .select('topic, subtopic, difficulty')
-        .not('question_id', 'in', answeredQuestionIds.length > 0 ? `(${answeredQuestionIds.map(id => `'${id}'`).join(',')})` : '()')
-        .limit(50);
-      
+      const {
+        data: existingTopics
+      } = await supabase.from('curriculum').select('topic, subtopic, difficulty').not('question_id', 'in', answeredQuestionIds.length > 0 ? `(${answeredQuestionIds.map(id => `'${id}'`).join(',')})` : '()').limit(50);
       let targetTopic = 'Number - Number and Place Value';
       let targetSubtopic = 'Read, write, order and compare numbers';
       let targetDifficulty = 'Medium';
-      
       if (existingTopics && existingTopics.length > 0) {
         // Pick a completely random topic/subtopic combination
         const randomSelection = existingTopics[Math.floor(Math.random() * existingTopics.length)];
@@ -336,92 +304,76 @@ const Practice = () => {
         targetSubtopic = randomSelection.subtopic;
         targetDifficulty = randomSelection.difficulty;
       }
-
       console.log(`Generating questions for ${targetTopic} - ${targetSubtopic} (${targetDifficulty})`);
-      
-      const { data: response, error: functionError } = await supabase.functions.invoke('generate-questions', {
+      const {
+        data: response,
+        error: functionError
+      } = await supabase.functions.invoke('generate-questions', {
         body: {
           topic: targetTopic,
           subtopic: targetSubtopic,
           difficulty: targetDifficulty,
-          count: 10, // Generate more questions to reduce future generation needs
+          count: 10,
+          // Generate more questions to reduce future generation needs
           saveToDatabase: true
         }
       });
-
       if (functionError) {
         console.error('Function error:', functionError);
         throw new Error('Failed to generate questions');
       }
-
       console.log('Generated questions response:', response);
-      
       if (response) {
         toast({
           title: "Questions generated successfully!",
-          description: `New questions added for topic: ${targetTopic}`,
+          description: `New questions added for topic: ${targetTopic}`
         });
       }
-      
     } catch (error) {
       console.error('Error generating questions:', error);
       toast({
         title: "Failed to generate questions",
         description: "We'll try again when you need more questions.",
-        variant: "destructive",
+        variant: "destructive"
       });
     } finally {
       setGeneratingQuestions(false);
     }
   };
-
   const handleNextQuestion = async () => {
     // Check if we're running low on questions and generate more if needed
     const remainingQuestions = questions.length - (currentIndex + 1);
-    
     if (remainingQuestions <= 5 && !generatingQuestions) {
       console.log(`Running low on questions (${remainingQuestions} remaining), generating more...`);
       await generateAdditionalQuestions();
-      
+
       // Reload questions to include newly generated ones
       setTimeout(async () => {
-        const { data: answeredQuestions } = await supabase
-          .from('student_answers')
-          .select('question_id')
-          .eq('student_id', user?.id);
-
+        const {
+          data: answeredQuestions
+        } = await supabase.from('student_answers').select('question_id').eq('student_id', user?.id);
         const answeredQuestionIds = answeredQuestions?.map(q => q.question_id) || [];
-
-        const { data: newQuestions } = await supabase
-          .from('curriculum')
-          .select('*')
-          .not('question_id', 'in', answeredQuestionIds.length > 0 ? `(${answeredQuestionIds.map(id => `'${id}'`).join(',')})` : '()')
-          .limit(20);
-
+        const {
+          data: newQuestions
+        } = await supabase.from('curriculum').select('*').not('question_id', 'in', answeredQuestionIds.length > 0 ? `(${answeredQuestionIds.map(id => `'${id}'`).join(',')})` : '()').limit(20);
         if (newQuestions && newQuestions.length > 0) {
-          const formattedQuestions = newQuestions
-            .map(q => ({
-              ...q,
-              options: Array.isArray(q.options) ? q.options : 
-                       typeof q.options === 'string' ? JSON.parse(q.options) : 
-                       Object.values(q.options || {})
-            }))
-            .sort(() => Math.random() - 0.5); // Randomize order for variety
-          
+          const formattedQuestions = newQuestions.map(q => ({
+            ...q,
+            options: Array.isArray(q.options) ? q.options : typeof q.options === 'string' ? JSON.parse(q.options) : Object.values(q.options || {})
+          })).sort(() => Math.random() - 0.5); // Randomize order for variety
+
           // Replace current questions with fresh randomized set
           setQuestions(formattedQuestions);
           console.log(`Refreshed with ${formattedQuestions.length} questions from ${new Set(formattedQuestions.map(q => q.topic)).size} topics`);
         }
       }, 2000); // Wait for generation to complete
     }
-    
     if (currentIndex + 1 >= questions.length) {
       setSessionComplete(true);
       // Record the session in the database
       recordSessionResults();
       return;
     }
-    
     setCurrentIndex(currentIndex + 1);
     setSelectedAnswer('');
     setIsAnswered(false);
@@ -430,47 +382,45 @@ const Practice = () => {
     setGeneratingExplanation(false);
     setStartTime(new Date());
   };
-
   const recordSessionResults = async () => {
     try {
       const sessionEndTime = new Date();
       const totalQuestions = answeredQuestions.length;
       const correctAnswers = answeredQuestions.filter(q => q.isCorrect).length;
-      
+
       // Calculate average time per question
       const totalTime = answeredQuestions.reduce((sum, q) => sum + q.timeTaken, 0);
       const averageTimePerQuestion = totalQuestions > 0 ? totalTime / totalQuestions : 0;
-      
+
       // Get unique topics and difficulty levels
       const topicsCovered = [...new Set(answeredQuestions.map(q => q.question.topic))];
       const difficultyLevels = [...new Set(answeredQuestions.map(q => q.question.difficulty))];
-      
-      const { data, error } = await supabase
-        .from('practice_sessions')
-        .insert({
-          student_id: user?.id,
-          session_start: sessionStartTime.toISOString(),
-          session_end: sessionEndTime.toISOString(),
-          total_questions: totalQuestions,
-          correct_answers: correctAnswers,
-          average_time_per_question: averageTimePerQuestion,
-          topics_covered: topicsCovered,
-          difficulty_levels: difficultyLevels,
-          age_group: selectedAgeGroup
-        });
-
+      const {
+        data,
+        error
+      } = await supabase.from('practice_sessions').insert({
+        student_id: user?.id,
+        session_start: sessionStartTime.toISOString(),
+        session_end: sessionEndTime.toISOString(),
+        total_questions: totalQuestions,
+        correct_answers: correctAnswers,
+        average_time_per_question: averageTimePerQuestion,
+        topics_covered: topicsCovered,
+        difficulty_levels: difficultyLevels,
+        age_group: selectedAgeGroup
+      });
       if (error) {
         console.error('Error recording session:', error);
         toast({
           title: "Session not saved",
           description: "Your practice session results couldn't be saved.",
-          variant: "destructive",
+          variant: "destructive"
         });
       } else {
         console.log('Session recorded successfully:', data);
         toast({
           title: "Session saved!",
-          description: "Your practice session has been recorded.",
+          description: "Your practice session has been recorded."
         });
       }
     } catch (error) {
@@ -478,11 +428,10 @@ const Practice = () => {
       toast({
         title: "Session not saved",
         description: "There was an error saving your session.",
-        variant: "destructive",
+        variant: "destructive"
       });
     }
   };
-
   const handleRestart = () => {
     setCurrentIndex(0);
     setSelectedAnswer('');
@@ -497,34 +446,25 @@ const Practice = () => {
     setAnsweredQuestions([]);
     loadAdaptiveQuestions(selectedAgeGroup);
   };
-
   if (loading) {
-    return (
-      <div className="min-h-screen bg-background flex items-center justify-center">
+    return <div className="min-h-screen bg-background flex items-center justify-center">
         <div className="text-center space-y-4">
           <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto"></div>
           <p className="text-muted-foreground">Preparing your personalized questions...</p>
         </div>
-      </div>
-    );
+      </div>;
   }
-
   if (questions.length === 0 && !loading) {
-    return (
-      <div className="min-h-screen bg-background flex items-center justify-center">
+    return <div className="min-h-screen bg-background flex items-center justify-center">
         <div className="text-center space-y-4">
           <p className="text-muted-foreground">No questions available at the moment.</p>
           <Button onClick={() => navigate('/')}>Return to Dashboard</Button>
         </div>
-      </div>
-    );
+      </div>;
   }
-
   if (sessionComplete) {
-    const accuracy = Math.round((score / questions.length) * 100);
-    
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-background via-background to-secondary/10 flex items-center justify-center p-4">
+    const accuracy = Math.round(score / questions.length * 100);
+    return <div className="min-h-screen bg-gradient-to-br from-background via-background to-secondary/10 flex items-center justify-center p-4">
         <Card className="w-full max-w-md">
           <CardHeader className="text-center">
             <CardTitle className="text-2xl">Session Complete!</CardTitle>
@@ -552,15 +492,11 @@ const Practice = () => {
             </div>
           </CardContent>
         </Card>
-      </div>
-    );
+      </div>;
   }
-
   const currentQuestion = questions[currentIndex];
-  const progress = ((currentIndex + 1) / questions.length) * 100;
-
-  return (
-    <div className="min-h-screen bg-gradient-to-br from-background via-background to-secondary/10">
+  const progress = (currentIndex + 1) / questions.length * 100;
+  return <div className="min-h-screen bg-gradient-to-br from-background via-background to-secondary/10">
       <div className="container mx-auto max-w-4xl px-6 py-8">
         {/* Header */}
         <div className="flex items-center justify-between mb-8">
@@ -571,11 +507,9 @@ const Practice = () => {
           <div className="text-center flex-1 mx-8">
             <p className="text-sm text-muted-foreground mb-2">
               Question {currentIndex + 1} of {questions.length}
-              {generatingQuestions && (
-                <span className="ml-2 text-blue-600 text-xs">
+              {generatingQuestions && <span className="ml-2 text-blue-600 text-xs">
                   • Generating more questions...
-                </span>
-              )}
+                </span>}
             </p>
             <Progress value={progress} className="w-64 h-2 mx-auto" />
           </div>
@@ -597,82 +531,46 @@ const Practice = () => {
                 <Badge variant="outline" className="px-3 py-1">{currentQuestion.difficulty}</Badge>
               </div>
               <div className="flex items-center space-x-1 text-muted-foreground">
-                <Clock className="h-4 w-4 flex-shrink-0" />
+                
               </div>
             </div>
-            {currentQuestion.subtopic && (
-              <div className="mb-6 px-4 py-3 bg-muted/20 rounded-lg border-l-4 border-primary/30">
+            {currentQuestion.subtopic && <div className="mb-6 px-4 py-3 bg-muted/20 rounded-lg border-l-4 border-primary/30">
                 <div className="flex items-start space-x-2">
                   <BookOpen className="h-4 w-4 text-primary mt-0.5 flex-shrink-0" />
-                  <p className="text-xs text-muted-foreground leading-relaxed">{currentQuestion.subtopic}</p>
+                  <p className="text-muted-foreground leading-relaxed text-xs font-light">{currentQuestion.subtopic}</p>
                 </div>
-              </div>
-            )}
+              </div>}
             <h3 className="text-xl font-medium leading-relaxed text-left px-4">{currentQuestion.example_question}</h3>
           </CardHeader>
           <CardContent className="px-8 pb-8">
             {/* Answer Options */}
             <div className="space-y-4 mb-8">
               {currentQuestion.options.map((option, index) => {
-                const isSelected = selectedAnswer === option;
-                const isCorrect = option === currentQuestion.correct_answer;
-                const showCorrectness = isAnswered && (isSelected || isCorrect);
-                
-                return (
-                  <button
-                    key={index}
-                    onClick={() => handleAnswerSelect(option)}
-                    disabled={isAnswered}
-                    className={`w-full p-5 text-left border rounded-lg transition-all ${
-                      isSelected
-                        ? isAnswered
-                          ? isCorrect
-                            ? 'border-green-500 bg-green-50 text-green-900'
-                            : 'border-red-500 bg-red-50 text-red-900'
-                          : 'border-primary bg-primary/5'
-                        : showCorrectness && isCorrect
-                        ? 'border-green-500 bg-green-50 text-green-900'
-                        : 'border-border hover:border-primary/50 hover:bg-accent/50'
-                    } ${isAnswered ? 'cursor-not-allowed' : 'cursor-pointer'}`}
-                  >
+              const isSelected = selectedAnswer === option;
+              const isCorrect = option === currentQuestion.correct_answer;
+              const showCorrectness = isAnswered && (isSelected || isCorrect);
+              return <button key={index} onClick={() => handleAnswerSelect(option)} disabled={isAnswered} className={`w-full p-5 text-left border rounded-lg transition-all ${isSelected ? isAnswered ? isCorrect ? 'border-green-500 bg-green-50 text-green-900' : 'border-red-500 bg-red-50 text-red-900' : 'border-primary bg-primary/5' : showCorrectness && isCorrect ? 'border-green-500 bg-green-50 text-green-900' : 'border-border hover:border-primary/50 hover:bg-accent/50'} ${isAnswered ? 'cursor-not-allowed' : 'cursor-pointer'}`}>
                     <div className="flex items-center justify-between">
                       <span className="text-base leading-relaxed">{option}</span>
-                      {showCorrectness && (
-                        isCorrect ? (
-                          <CheckCircle className="h-5 w-5 text-green-600 ml-4 flex-shrink-0" />
-                        ) : isSelected ? (
-                          <XCircle className="h-5 w-5 text-red-600 ml-4 flex-shrink-0" />
-                        ) : null
-                      )}
+                      {showCorrectness && (isCorrect ? <CheckCircle className="h-5 w-5 text-green-600 ml-4 flex-shrink-0" /> : isSelected ? <XCircle className="h-5 w-5 text-red-600 ml-4 flex-shrink-0" /> : null)}
                     </div>
-                  </button>
-                );
-              })}
+                  </button>;
+            })}
             </div>
 
             {/* Action Buttons */}
             <div className="flex justify-center">
-              {!isAnswered ? (
-                <Button 
-                  onClick={handleSubmitAnswer}
-                  disabled={!selectedAnswer}
-                  size="lg"
-                  className="px-8"
-                >
+              {!isAnswered ? <Button onClick={handleSubmitAnswer} disabled={!selectedAnswer} size="lg" className="px-8">
                   Submit Answer
-                </Button>
-              ) : (
-                <Button onClick={handleNextQuestion} size="lg" className="px-8">
+                </Button> : <Button onClick={handleNextQuestion} size="lg" className="px-8">
                   {currentIndex + 1 >= questions.length ? 'Finish Session' : 'Next Question'}
-                </Button>
-              )}
+                </Button>}
             </div>
           </CardContent>
         </Card>
 
         {/* AI Explanation Card */}
-        {showExplanation && !selectedAnswer?.includes(currentQuestion.correct_answer) && (
-          <Card className="mx-auto max-w-3xl">
+        {showExplanation && !selectedAnswer?.includes(currentQuestion.correct_answer) && <Card className="mx-auto max-w-3xl">
             <CardHeader className="pb-4">
               <CardTitle className="text-lg text-center flex items-center justify-center space-x-2">
                 <Sparkles className="h-5 w-5" />
@@ -680,31 +578,22 @@ const Practice = () => {
               </CardTitle>
             </CardHeader>
             <CardContent className="px-8 pb-6">
-              {generatingExplanation && (
-                <div className="bg-blue-50 p-4 rounded border flex items-center space-x-3">
+              {generatingExplanation && <div className="bg-blue-50 p-4 rounded border flex items-center space-x-3">
                   <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-blue-500"></div>
                   <span className="text-sm text-blue-700">Creating a helpful explanation just for you...</span>
-                </div>
-              )}
+                </div>}
               
-              {aiExplanation && (
-                <div className="bg-blue-50 p-4 rounded border">
+              {aiExplanation && <div className="bg-blue-50 p-4 rounded border">
                   <div className="text-sm whitespace-pre-line leading-[1.4] [&>div]:mb-6 [&>p]:mb-6 [&_h4]:mb-4">{aiExplanation}</div>
-                </div>
-              )}
+                </div>}
               
-              {!aiExplanation && !generatingExplanation && (
-                <div className="bg-gray-50 p-4 rounded border text-center">
+              {!aiExplanation && !generatingExplanation && <div className="bg-gray-50 p-4 rounded border text-center">
                   <p className="text-sm text-gray-600">Explanation will appear here automatically</p>
-                </div>
-              )}
+                </div>}
             </CardContent>
-          </Card>
-        )}
+          </Card>}
 
       </div>
-    </div>
-  );
+    </div>;
 };
-
 export default Practice;
