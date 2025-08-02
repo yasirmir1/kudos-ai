@@ -3,51 +3,47 @@ import { Navigate } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
 import { Button } from '@/components/ui/button';
 import { BookOpen, Target, TrendingUp, Brain, BarChart3, Users } from 'lucide-react';
-
 const Index = () => {
-  const { user, loading } = useAuth();
+  const {
+    user,
+    loading
+  } = useAuth();
   const [isScrolled, setIsScrolled] = useState(false);
-
   useEffect(() => {
     const handleScroll = () => {
       setIsScrolled(window.scrollY > 50);
     };
-
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
-
   useEffect(() => {
     // Intersection Observer for animations
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            entry.target.classList.add('animate-fade-in');
-          }
-        });
-      },
-      { threshold: 0.1, rootMargin: '0px 0px -50px 0px' }
-    );
-
-    // Observe all animatable elements
-    document.querySelectorAll('.fade-on-scroll').forEach((el) => {
-      observer.observe(el);
+    const observer = new IntersectionObserver(entries => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('animate-fade-in');
+        }
+      });
+    }, {
+      threshold: 0.1,
+      rootMargin: '0px 0px -50px 0px'
     });
 
+    // Observe all animatable elements
+    document.querySelectorAll('.fade-on-scroll').forEach(el => {
+      observer.observe(el);
+    });
     return () => observer.disconnect();
   }, []);
 
   // Show loading state while checking authentication
   if (loading) {
-    return (
-      <div className="min-h-screen bg-background flex items-center justify-center">
+    return <div className="min-h-screen bg-background flex items-center justify-center">
         <div className="text-center space-y-2">
           <img src="/lovable-uploads/409330f0-2245-4147-b837-ff553d303814.png" alt="Kudos Academy" className="h-8 w-8 mx-auto animate-pulse" />
           <p className="text-muted-foreground">Loading...</p>
         </div>
-      </div>
-    );
+      </div>;
   }
 
   // Redirect authenticated users to dashboard
@@ -56,14 +52,9 @@ const Index = () => {
   }
 
   // Landing page for non-authenticated users
-  return (
-    <div className="min-h-screen bg-background overflow-x-hidden">
+  return <div className="min-h-screen bg-background overflow-x-hidden">
       {/* Fixed Navigation */}
-      <nav className={`fixed top-0 w-full z-50 transition-all duration-300 ${
-        isScrolled 
-          ? 'bg-background/95 backdrop-blur-xl border-b border-border shadow-card' 
-          : 'bg-background/80 backdrop-blur-xl'
-      }`}>
+      <nav className={`fixed top-0 w-full z-50 transition-all duration-300 ${isScrolled ? 'bg-background/95 backdrop-blur-xl border-b border-border shadow-card' : 'bg-background/80 backdrop-blur-xl'}`}>
         <div className="container mx-auto px-6 h-16 flex items-center justify-between">
           <div className="flex items-center space-x-3">
             <div className="p-2 bg-gradient-to-br from-primary to-primary-glow rounded-xl shadow-lg">
@@ -78,7 +69,7 @@ const Index = () => {
             <a href="#how-it-works" className="text-sm font-medium text-foreground hover:text-primary transition-colors">How It Works</a>
             <a href="#testimonials" className="text-sm font-medium text-foreground hover:text-primary transition-colors">Success Stories</a>
             <Button asChild className="bg-primary hover:bg-primary/90 text-primary-foreground font-medium px-6 shadow-learning hover:shadow-glow transition-all duration-300 hover:scale-105">
-              <a href="/auth">Start Free Trial</a>
+              <a href="/auth">Sign Up</a>
             </Button>
           </div>
         </div>
@@ -276,27 +267,22 @@ const Index = () => {
           </div>
           
           <div className="space-y-32">
-            {[
-              {
-                step: "1",
-                title: "Quick Setup",
-                description: "Sign up in 30 seconds. Your child takes a fun 15-minute assessment. Their personalized learning profile is created instantly.",
-                highlight: "⚡ 30 seconds"
-              },
-              {
-                step: "2",
-                title: "Smart Practice",
-                description: "AI selects perfect questions for their level. Real-time feedback shows exactly where they went wrong. Just 15-20 minutes daily.",
-                highlight: "🎯 Personalized"
-              },
-              {
-                step: "3",
-                title: "Clear Insights",
-                description: "Check progress anytime on your phone. See improvements by topic. Know exactly how to help. Watch their confidence grow.",
-                highlight: "📱 Always visible"
-              }
-            ].map((item, index) => (
-              <div key={index} className={`fade-on-scroll grid grid-cols-1 lg:grid-cols-2 gap-16 items-center ${index % 2 === 1 ? 'lg:grid-flow-col-dense' : ''}`}>
+            {[{
+            step: "1",
+            title: "Quick Setup",
+            description: "Sign up in 30 seconds. Your child takes a fun 15-minute assessment. Their personalized learning profile is created instantly.",
+            highlight: "⚡ 30 seconds"
+          }, {
+            step: "2",
+            title: "Smart Practice",
+            description: "AI selects perfect questions for their level. Real-time feedback shows exactly where they went wrong. Just 15-20 minutes daily.",
+            highlight: "🎯 Personalized"
+          }, {
+            step: "3",
+            title: "Clear Insights",
+            description: "Check progress anytime on your phone. See improvements by topic. Know exactly how to help. Watch their confidence grow.",
+            highlight: "📱 Always visible"
+          }].map((item, index) => <div key={index} className={`fade-on-scroll grid grid-cols-1 lg:grid-cols-2 gap-16 items-center ${index % 2 === 1 ? 'lg:grid-flow-col-dense' : ''}`}>
                 <div className={index % 2 === 1 ? 'lg:col-start-2' : ''}>
                   <h3 className="text-3xl md:text-4xl font-bold mb-6">{item.step}. {item.title}</h3>
                   <p className="text-lg md:text-xl text-muted-foreground leading-relaxed">{item.description}</p>
@@ -304,8 +290,7 @@ const Index = () => {
                 <div className={`bg-muted rounded-2xl p-12 text-center text-4xl md:text-5xl font-bold h-80 flex items-center justify-center ${index % 2 === 1 ? 'lg:col-start-1' : ''}`}>
                   {item.highlight}
                 </div>
-              </div>
-            ))}
+              </div>)}
           </div>
         </div>
       </section>
@@ -319,32 +304,26 @@ const Index = () => {
           </div>
           
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {[
-              {
-                quote: "I finally understood why Oliver kept getting fraction questions wrong. It wasn't the maths - he didn't understand the notation! Two weeks later, he'd mastered it.",
-                author: "Sarah Mitchell",
-                role: "Mother of Year 5 student"
-              },
-              {
-                quote: "The dashboard is brilliant. I can check Aisha's progress on my phone during lunch break. No more Sunday marking sessions!",
-                author: "James Chen",
-                role: "Father of twins, Year 6"
-              },
-              {
-                quote: "Emma passed the 11+ for our first choice school! Kudos showed us she was brilliant at maths but needed help with comprehension. We knew exactly what to focus on.",
-                author: "Priya Patel",
-                role: "Mother, Grammar school success"
-              }
-            ].map((testimonial, index) => (
-              <div key={index} className="fade-on-scroll bg-card p-8 rounded-2xl relative shadow-card hover:shadow-learning transition-all duration-300">
+            {[{
+            quote: "I finally understood why Oliver kept getting fraction questions wrong. It wasn't the maths - he didn't understand the notation! Two weeks later, he'd mastered it.",
+            author: "Sarah Mitchell",
+            role: "Mother of Year 5 student"
+          }, {
+            quote: "The dashboard is brilliant. I can check Aisha's progress on my phone during lunch break. No more Sunday marking sessions!",
+            author: "James Chen",
+            role: "Father of twins, Year 6"
+          }, {
+            quote: "Emma passed the 11+ for our first choice school! Kudos showed us she was brilliant at maths but needed help with comprehension. We knew exactly what to focus on.",
+            author: "Priya Patel",
+            role: "Mother, Grammar school success"
+          }].map((testimonial, index) => <div key={index} className="fade-on-scroll bg-card p-8 rounded-2xl relative shadow-card hover:shadow-learning transition-all duration-300">
                 <div className="text-6xl text-primary opacity-20 absolute top-4 left-6">"</div>
                 <p className="text-lg leading-relaxed mb-6 relative z-10">{testimonial.quote}</p>
                 <div>
                   <div className="font-semibold">{testimonial.author}</div>
                   <div className="text-sm text-muted-foreground">{testimonial.role}</div>
                 </div>
-              </div>
-            ))}
+              </div>)}
           </div>
         </div>
       </section>
@@ -352,10 +331,11 @@ const Index = () => {
       {/* CTA Section */}
       <section className="py-32 px-6 bg-gradient-to-r from-primary via-primary-glow to-primary text-primary-foreground text-center">
         <div className="container mx-auto max-w-4xl">
-          <h2 className="text-4xl md:text-6xl font-bold mb-6">The 11+ won't wait. Neither should you.</h2>
-          <p className="text-xl md:text-2xl mb-10 opacity-90">Join thousands of parents who've stopped guessing and started knowing.</p>
+          <h2 className="text-4xl md:text-6xl font-bold mb-6">Work Smarter not Harder
+  with Kudos</h2>
+          <p className="text-xl md:text-2xl mb-10 opacity-90">Join happy parents who've stopped guessing and started knowing.</p>
           <Button asChild size="lg" className="bg-background text-primary hover:bg-background/90 font-semibold px-12 py-6 text-xl shadow-learning hover:shadow-glow transition-all duration-300 hover:scale-105">
-            <a href="/auth">Start Your Free Trial</a>
+            <a href="/auth">Sign Up Free</a>
           </Button>
           <p className="text-sm mt-6 opacity-80">No credit card required • Instant access • Cancel anytime</p>
         </div>
@@ -409,8 +389,6 @@ const Index = () => {
           </div>
         </div>
       </footer>
-    </div>
-  );
+    </div>;
 };
-
 export default Index;
