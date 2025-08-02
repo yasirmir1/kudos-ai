@@ -4,9 +4,10 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
-import { BookOpen, Clock, ChevronRight, Play, Users, CheckCircle, Target } from 'lucide-react';
+import { BookOpen, Clock, ChevronRight, Play, Users, CheckCircle, Target, GraduationCap } from 'lucide-react';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Loader2 } from 'lucide-react';
+import { LearningJourney } from './LearningJourney';
 
 interface Module {
   id: string;
@@ -50,8 +51,11 @@ export const TopicsView: React.FC<TopicsViewProps> = ({ setCurrentView }) => {
   const [topics, setTopics] = useState<Topic[]>([]);
   const [subtopics, setSubtopics] = useState<Subtopic[]>([]);
   const [curriculum, setCurriculum] = useState<CurriculumItem[]>([]);
+  const [curriculumContent, setCurriculumContent] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [selectedTopic, setSelectedTopic] = useState<Topic | null>(null);
+  const [showLearningJourney, setShowLearningJourney] = useState(false);
 
   useEffect(() => {
     loadContent();
@@ -61,23 +65,35 @@ export const TopicsView: React.FC<TopicsViewProps> = ({ setCurrentView }) => {
     try {
       setLoading(true);
       
-      // Fetch all data in parallel
-      const [modulesRes, topicsRes, subtopicsRes, curriculumRes] = await Promise.all([
+      // Fetch all data in parallel including the new curriculum content
+      const [modulesRes, topicsRes, subtopicsRes, curriculumRes, curriculumContentRes] = await Promise.all([
         supabase.from('bootcamp_modules').select('*').order('module_order'),
-        supabase.from('bootcamp_topics').select('*').order('topic_order'),
+        supabase.from('bootcamp_curriculum_topics').select('*').order('topic_order'),
         supabase.from('bootcamp_subtopics').select('*').order('subtopic_order'),
-        supabase.from('curriculum').select('question_id, topic, subtopic, example_question, difficulty, pedagogical_notes').limit(50)
+        supabase.from('curriculum').select('question_id, topic, subtopic, example_question, difficulty, pedagogical_notes').limit(50),
+        supabase.from('bootcamp_curriculum_content').select('*').order('stage_order')
       ]);
 
       if (modulesRes.error) throw modulesRes.error;
       if (topicsRes.error) throw topicsRes.error;
       if (subtopicsRes.error) throw subtopicsRes.error;
       if (curriculumRes.error) throw curriculumRes.error;
+      if (curriculumContentRes.error) throw curriculumContentRes.error;
 
       setModules(modulesRes.data || []);
-      setTopics(topicsRes.data || []);
+      // Convert bootcamp_curriculum_topics to match the Topic interface
+      const convertedTopics = (topicsRes.data || []).map((topic: any) => ({
+        id: topic.id,
+        name: topic.topic_name,
+        module_id: topic.module_id,
+        difficulty: topic.difficulty,
+        skills: topic.learning_objectives || [],
+        topic_order: topic.topic_order
+      }));
+      setTopics(convertedTopics);
       setSubtopics(subtopicsRes.data || []);
       setCurriculum(curriculumRes.data || []);
+      setCurriculumContent(curriculumContentRes.data || []);
     } catch (err) {
       console.error('Error loading content:', err);
       setError('Failed to load content');
@@ -101,6 +117,20 @@ export const TopicsView: React.FC<TopicsViewProps> = ({ setCurrentView }) => {
     );
   };
 
+  const getCurriculumContentForTopic = (topicId: string) => {
+    return curriculumContent.filter(content => content.topic_id === topicId);
+  };
+
+  const hasLearningJourney = (topicId: string) => {
+    const content = getCurriculumContentForTopic(topicId);
+    return content.length > 0;
+  };
+
+  const startLearningJourney = (topic: Topic) => {
+    setSelectedTopic(topic);
+    setShowLearningJourney(true);
+  };
+
   const getDifficultyColor = (difficulty: string) => {
     switch (difficulty.toLowerCase()) {
       case 'foundation': return 'bg-emerald-100 text-emerald-700 border-emerald-200';
@@ -116,6 +146,8 @@ export const TopicsView: React.FC<TopicsViewProps> = ({ setCurrentView }) => {
   const TopicPopover = ({ topic, moduleData }: { topic: Topic; moduleData?: Module }) => {
     const topicSubtopics = getSubtopicsForTopic(topic.id);
     const sampleQuestions = getCurriculumForTopic(topic.name);
+    const topicContent = getCurriculumContentForTopic(topic.id);
+    const hasJourney = hasLearningJourney(topic.id);
 
     return (
       <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto">
@@ -185,47 +217,104 @@ export const TopicsView: React.FC<TopicsViewProps> = ({ setCurrentView }) => {
             </div>
           )}
 
-          {/* Sample Questions */}
-          {sampleQuestions.length > 0 && (
-            <div>
-              <h4 className="font-medium mb-3 flex items-center gap-2">
-                <Play className="h-4 w-4" />
-                Sample Questions ({sampleQuestions.length})
-              </h4>
-              <div className="space-y-3">
-                {sampleQuestions.slice(0, 3).map((question) => (
-                  <div key={question.question_id} className="border rounded-lg p-4 bg-background">
-                    <div className="flex items-center justify-between mb-2">
-                      <Badge className={getDifficultyColor(question.difficulty)} variant="outline">
-                        {question.difficulty}
-                      </Badge>
-                      <span className="text-xs text-muted-foreground">{question.subtopic}</span>
-                    </div>
-                    <p className="text-sm mb-2">{question.example_question}</p>
-                    {question.pedagogical_notes && (
-                      <p className="text-xs text-muted-foreground bg-muted/50 p-2 rounded">
-                        <span className="font-medium">Teaching note:</span> {question.pedagogical_notes}
-                      </p>
-                    )}
-                  </div>
-                ))}
-                {sampleQuestions.length > 3 && (
-                  <p className="text-xs text-muted-foreground text-center">
-                    +{sampleQuestions.length - 3} more questions available
-                  </p>
-                )}
-              </div>
-            </div>
-          )}
+           {/* Learning Journey Content */}
+           {hasJourney && (
+             <div>
+               <h4 className="font-medium mb-3 flex items-center gap-2">
+                 <GraduationCap className="h-4 w-4 text-primary" />
+                 Structured Learning Journey ({topicContent.length} stages)
+               </h4>
+               <div className="grid grid-cols-2 gap-3">
+                 {topicContent.map((content: any) => (
+                   <div key={content.id} className="flex items-center gap-2 p-3 bg-primary/5 border border-primary/20 rounded-lg">
+                     <div className="w-6 h-6 rounded-full bg-primary text-primary-foreground flex items-center justify-center text-xs font-medium">
+                       {content.stage_order}
+                     </div>
+                     <div className="flex-1 min-w-0">
+                       <p className="text-sm font-medium truncate">{content.title}</p>
+                       <p className="text-xs text-muted-foreground">{content.stage_type.replace('_', ' ')}</p>
+                     </div>
+                   </div>
+                 ))}
+               </div>
+               <div className="mt-3 p-3 bg-gradient-to-r from-blue-50 to-purple-50 dark:from-blue-950 dark:to-purple-950 rounded-lg border">
+                 <p className="text-sm text-center">
+                   🎯 <strong>Complete learning experience:</strong> From concept introduction to final assessment
+                 </p>
+               </div>
+             </div>
+           )}
 
-          {/* Action Button */}
-          <Button 
-            onClick={() => setCurrentView('practice')} 
-            className="w-full"
-          >
-            <Play className="h-4 w-4 mr-2" />
-            Start Practicing {topic.name}
-          </Button>
+           {/* Sample Questions */}
+           {sampleQuestions.length > 0 && (
+             <div>
+               <h4 className="font-medium mb-3 flex items-center gap-2">
+                 <Play className="h-4 w-4" />
+                 Sample Questions ({sampleQuestions.length})
+               </h4>
+               <div className="space-y-3">
+                 {sampleQuestions.slice(0, 3).map((question) => (
+                   <div key={question.question_id} className="border rounded-lg p-4 bg-background">
+                     <div className="flex items-center justify-between mb-2">
+                       <Badge className={getDifficultyColor(question.difficulty)} variant="outline">
+                         {question.difficulty}
+                       </Badge>
+                       <span className="text-xs text-muted-foreground">{question.subtopic}</span>
+                     </div>
+                     <p className="text-sm mb-2">{question.example_question}</p>
+                     {question.pedagogical_notes && (
+                       <p className="text-xs text-muted-foreground bg-muted/50 p-2 rounded">
+                         <span className="font-medium">Teaching note:</span> {question.pedagogical_notes}
+                       </p>
+                     )}
+                   </div>
+                 ))}
+                 {sampleQuestions.length > 3 && (
+                   <p className="text-xs text-muted-foreground text-center">
+                     +{sampleQuestions.length - 3} more questions available
+                   </p>
+                 )}
+               </div>
+             </div>
+           )}
+
+          {/* Action Buttons */}
+          <div className="space-y-3">
+            {hasJourney ? (
+              <div className="grid grid-cols-2 gap-3">
+                <Button 
+                  onClick={() => startLearningJourney(topic)}
+                  className="flex-1"
+                  variant="default"
+                >
+                  <GraduationCap className="h-4 w-4 mr-2" />
+                  Start Learning Journey
+                </Button>
+                <Button 
+                  onClick={() => setCurrentView('practice')} 
+                  className="flex-1"
+                  variant="outline"
+                >
+                  <Play className="h-4 w-4 mr-2" />
+                  Quick Practice
+                </Button>
+              </div>
+            ) : (
+              <Button 
+                onClick={() => setCurrentView('practice')} 
+                className="w-full"
+              >
+                <Play className="h-4 w-4 mr-2" />
+                Start Practicing {topic.name}
+              </Button>
+            )}
+            
+            {hasJourney && (
+              <div className="text-center text-xs text-muted-foreground">
+                💡 Learning Journey includes guided instruction, practice, and assessment
+              </div>
+            )}
+          </div>
         </div>
       </DialogContent>
     );
@@ -327,6 +416,22 @@ export const TopicsView: React.FC<TopicsViewProps> = ({ setCurrentView }) => {
           </div>
         );
       })}
+
+      {/* Learning Journey Modal */}
+      <LearningJourney
+        topic={selectedTopic}
+        isOpen={showLearningJourney}
+        onClose={() => {
+          setShowLearningJourney(false);
+          setSelectedTopic(null);
+        }}
+        onComplete={() => {
+          // Handle completion - could track progress, show celebration, etc.
+          console.log('Learning journey completed for:', selectedTopic?.name);
+          setShowLearningJourney(false);
+          setSelectedTopic(null);
+        }}
+      />
     </div>
   );
 };
