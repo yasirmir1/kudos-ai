@@ -1,10 +1,12 @@
 import React, { useState } from 'react';
-import { Calculator, BarChart3, Brain, BookOpen, TrendingUp, Zap, Star, Plus, GraduationCap, Users, Settings } from 'lucide-react';
+import { Calculator, BarChart3, Brain, BookOpen, TrendingUp, Zap, Star, Plus, GraduationCap, Users, Settings, Trophy, HelpCircle, Medal } from 'lucide-react';
+
 interface NavItem {
   id: string;
   label: string;
   icon: React.ComponentType<any>;
 }
+
 interface User {
   name: string;
   level: string;
@@ -13,72 +15,150 @@ interface User {
   accuracy: number;
   questionsToday: number;
 }
+
 interface NavigationProps {
   currentView: string;
   setCurrentView: (view: string) => void;
   user: User;
 }
+
 export const Navigation: React.FC<NavigationProps> = ({
   currentView,
   setCurrentView,
   user
 }) => {
-  const navItems: NavItem[] = [{
-    id: 'dashboard',
-    label: 'Home',
-    icon: BarChart3
-  }, {
-    id: 'practice',
-    label: 'Practice',
-    icon: Brain
-  }, {
-    id: 'learn',
-    label: 'Learn',
-    icon: GraduationCap
-  }, {
-    id: 'tools',
-    label: 'Tools',
-    icon: Calculator
-  }, {
-    id: 'topics',
-    label: 'Topics',
-    icon: BookOpen
-  }, {
-    id: 'progress',
-    label: 'Progress',
-    icon: TrendingUp
-  }, {
-    id: 'questions',
-    label: 'Questions',
-    icon: Settings
-  }, {
-    id: 'generate',
-    label: 'Generate',
-    icon: Plus
-  }];
-  return <nav className="bg-card shadow-sm border-b sticky top-0 z-50">
+  const navItems: NavItem[] = [
+    {
+      id: 'dashboard',
+      label: 'Home',
+      icon: BarChart3
+    },
+    {
+      id: 'practice',
+      label: 'Practice',
+      icon: Brain
+    },
+    {
+      id: 'learn',
+      label: 'Learn',
+      icon: GraduationCap
+    },
+    {
+      id: 'tools',
+      label: 'Tools',
+      icon: Calculator
+    },
+    {
+      id: 'topics',
+      label: 'Topics',
+      icon: BookOpen
+    },
+    {
+      id: 'progress',
+      label: 'Progress',
+      icon: TrendingUp
+    },
+    {
+      id: 'achievements',
+      label: 'Achievements',
+      icon: Trophy
+    },
+    {
+      id: 'leaderboard',
+      label: 'Leaderboard',
+      icon: Medal
+    },
+    {
+      id: 'questions',
+      label: 'Questions',
+      icon: Settings
+    },
+    {
+      id: 'generate',
+      label: 'Generate',
+      icon: Plus
+    },
+    {
+      id: 'settings',
+      label: 'Settings',
+      icon: Settings
+    },
+    {
+      id: 'help',
+      label: 'Help',
+      icon: HelpCircle
+    }
+  ];
+  return (
+    <nav className="bg-card shadow-sm border-b sticky top-0 z-50">
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between h-16">
           <div className="flex items-center space-x-8">
-            
-            <div className="hidden md:flex space-x-4">
-              {navItems.map(item => <button key={item.id} onClick={() => setCurrentView(item.id)} className={`flex items-center space-x-1 px-3 py-2 rounded-md text-sm font-medium transition-colors ${currentView === item.id ? 'bg-primary/10 text-primary' : 'text-muted-foreground hover:text-foreground hover:bg-muted'}`}>
+            <div className="hidden lg:flex space-x-1">
+              {navItems.slice(0, 8).map(item => (
+                <button 
+                  key={item.id} 
+                  onClick={() => setCurrentView(item.id)} 
+                  className={`flex items-center space-x-1 px-3 py-2 rounded-md text-sm font-medium transition-colors ${
+                    currentView === item.id 
+                      ? 'bg-primary/10 text-primary' 
+                      : 'text-muted-foreground hover:text-foreground hover:bg-muted'
+                  }`}
+                >
                   <item.icon className="h-4 w-4" />
                   <span>{item.label}</span>
-                </button>)}
+                </button>
+              ))}
+            </div>
+            
+            <div className="lg:hidden flex space-x-1">
+              {navItems.slice(0, 4).map(item => (
+                <button 
+                  key={item.id} 
+                  onClick={() => setCurrentView(item.id)} 
+                  className={`flex items-center space-x-1 px-2 py-2 rounded-md text-xs font-medium transition-colors ${
+                    currentView === item.id 
+                      ? 'bg-primary/10 text-primary' 
+                      : 'text-muted-foreground hover:text-foreground hover:bg-muted'
+                  }`}
+                >
+                  <item.icon className="h-4 w-4" />
+                  <span className="hidden sm:inline">{item.label}</span>
+                </button>
+              ))}
             </div>
           </div>
+          
           <div className="flex items-center space-x-4">
             <div className="flex items-center space-x-2 text-sm">
-              <Zap className="h-4 w-4 text-warning" />
+              <Zap className="h-4 w-4 text-yellow-500" />
               <span className="font-medium">{user.streakDays} day streak</span>
             </div>
             <div className="flex items-center space-x-2 text-sm">
               <Star className="h-4 w-4 text-primary" />
               <span className="font-medium">{user.totalPoints}</span>
             </div>
+            
+            {/* Secondary nav items as dropdown or icons */}
+            <div className="hidden lg:flex space-x-1">
+              {navItems.slice(8).map(item => (
+                <button 
+                  key={item.id} 
+                  onClick={() => setCurrentView(item.id)} 
+                  className={`p-2 rounded-md transition-colors ${
+                    currentView === item.id 
+                      ? 'bg-primary/10 text-primary' 
+                      : 'text-muted-foreground hover:text-foreground hover:bg-muted'
+                  }`}
+                  title={item.label}
+                >
+                  <item.icon className="h-4 w-4" />
+                </button>
+              ))}
+            </div>
           </div>
         </div>
       </div>
-    </nav>;
+    </nav>
+  );
 };

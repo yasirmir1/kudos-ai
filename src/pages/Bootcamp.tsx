@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { AppNavigation } from '@/components/AppNavigation';
 import { Dashboard } from '@/components/bootcamp/Dashboard';
-import { PracticeSession } from '@/components/bootcamp/PracticeSession';
+import { EnhancedPracticeSession } from '@/components/bootcamp/EnhancedPracticeSession';
 import { ProgressView } from '@/components/bootcamp/ProgressView';
 import { TopicsView } from '@/components/bootcamp/TopicsView';
 import { LearnView } from '@/components/bootcamp/LearnView';
@@ -10,6 +10,11 @@ import { QuestionManager } from '@/components/bootcamp/QuestionManager';
 import { AnalyticsDashboard } from '@/components/bootcamp/AnalyticsDashboard';
 import { Navigation } from '@/components/bootcamp/Navigation';
 import { BulkQuestionGenerator } from '@/components/BulkQuestionGenerator';
+import AchievementCenter from '@/components/bootcamp/AchievementCenter';
+import Leaderboard from '@/components/bootcamp/Leaderboard';
+import SettingsPage from '@/components/bootcamp/SettingsPage';
+import HelpCenter from '@/components/bootcamp/HelpCenter';
+import PracticeReport from '@/components/bootcamp/PracticeReport';
 import { useBootcampData } from '@/hooks/useBootcampData';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
@@ -69,13 +74,18 @@ const Bootcamp = () => {
         {stats.totalQuestions === 0}
 
         {currentView === 'dashboard' && <Dashboard user={user} setCurrentView={setCurrentView} />}
-        {currentView === 'practice' && <PracticeSession />}
+        {currentView === 'practice' && <EnhancedPracticeSession />}
         {currentView === 'learn' && <LearnView />}
         {currentView === 'progress' && <ProgressView />}
         {currentView === 'topics' && <TopicsView setCurrentView={setCurrentView} />}
+        {currentView === 'achievements' && <AchievementCenter />}
+        {currentView === 'leaderboard' && <Leaderboard />}
         {currentView === 'analytics' && <AnalyticsDashboard />}
         {currentView === 'questions' && <QuestionManager />}
         {currentView === 'generate' && <BulkQuestionGenerator />}
+        {currentView === 'settings' && <SettingsPage />}
+        {currentView === 'help' && <HelpCenter />}
+        {currentView === 'report' && <PracticeReport />}
       </main>
     </div>;
 };
