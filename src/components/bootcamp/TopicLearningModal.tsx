@@ -193,15 +193,15 @@ export function TopicLearningModal({ topic, isOpen, onClose, onStartPractice }: 
               <p className="text-muted-foreground leading-relaxed">
                 {learningContent.overview}
               </p>
-              {/* Debug info - remove in production */}
-              {process.env.NODE_ENV === 'development' && (
-                <div className="mt-4 p-3 bg-gray-100 rounded text-xs">
-                  <strong>Debug:</strong> Found {curriculumContent.length} curriculum stages
-                  {curriculumContent.length > 0 && (
-                    <pre className="mt-2 text-xs overflow-auto max-h-20">
-                      {JSON.stringify(curriculumContent.map(c => ({ stage: c.stage_type, title: c.title })), null, 2)}
-                    </pre>
-                  )}
+              {curriculumContent.length > 0 && (
+                <div className="mt-4 p-3 bg-primary/5 border border-primary/20 rounded-lg">
+                  <div className="flex items-center gap-2 text-sm font-medium text-primary mb-2">
+                    <GraduationCap className="h-4 w-4" />
+                    Structured Learning Journey Available
+                  </div>
+                  <p className="text-xs text-muted-foreground">
+                    This topic includes {curriculumContent.length} guided learning stages: concept introduction, guided practice, independent practice, and assessment.
+                  </p>
                 </div>
               )}
             </CardContent>
