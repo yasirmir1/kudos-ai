@@ -44,7 +44,7 @@ export const ProgressView: React.FC = () => {
 
         // Map progress to skills data
         const skills: Skill[] = progress.map((p: any) => ({
-          name: p.bootcamp_enhanced_topics?.topic_name || p.topic_id,
+          name: p.topic_id,
           level: Math.round(p.accuracy_percentage || 0),
           trend: (p.accuracy_percentage >= 80 ? 'up' : 
                  p.accuracy_percentage >= 60 ? 'stable' : 'down') as 'up' | 'down' | 'stable'

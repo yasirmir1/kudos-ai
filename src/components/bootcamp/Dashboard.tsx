@@ -53,7 +53,7 @@ export const Dashboard: React.FC<DashboardProps> = ({ user, setCurrentView }) =>
         const progress = await BootcampAPI.getStudentProgress(studentProfile.student_id);
         
         const topicsData: RecentTopic[] = progress.map((p: any) => ({
-          name: p.bootcamp_enhanced_topics?.topic_name || p.topic_id,
+          name: p.topic_id,
           accuracy: Math.round(p.accuracy_percentage || 0),
           questions: 0, // This would need additional query
           status: (p.accuracy_percentage >= 80 ? 'improving' : 

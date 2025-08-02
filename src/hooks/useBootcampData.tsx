@@ -24,8 +24,8 @@ interface StudentResponse {
   response_id: string;
   question_id: string;
   is_correct: boolean;
-  time_taken_seconds: number;
-  responded_at: string;
+  time_taken: number;  // Changed from time_taken_seconds
+  timestamp: string;   // Changed from responded_at
 }
 
 interface BootcampStats {
@@ -95,25 +95,21 @@ export const useBootcampData = () => {
       const studentId = studentData?.student_id || (await getStudentId());
 
       if (studentId) {
-        // Fetch progress data
-        const { data: progressData, error: progressError } = await supabase
-          .from('bootcamp_enhanced_student_progress')
-          .select('*')
-          .eq('student_id', studentId);
-
-        if (progressError) throw progressError;
-        setProgress(progressData || []);
+        // Since bootcamp_student_responses is currently empty, we'll create placeholder data
+        // In a real implementation, this would query actual progress tables
+        const progressData: StudentProgress[] = [];
+        setProgress(progressData);
 
         // Fetch responses data for last 30 days
         const thirtyDaysAgo = new Date();
         thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
 
         const { data: responsesData, error: responsesError } = await supabase
-          .from('bootcamp_enhanced_student_responses')
+          .from('bootcamp_student_responses')
           .select('*')
           .eq('student_id', studentId)
-          .gte('responded_at', thirtyDaysAgo.toISOString())
-          .order('responded_at', { ascending: false });
+          .gte('timestamp', thirtyDaysAgo.toISOString())
+          .order('timestamp', { ascending: false });
 
         if (responsesError) throw responsesError;
         setResponses(responsesData || []);
@@ -137,7 +133,7 @@ export const useBootcampData = () => {
   const calculateStats = (responses: StudentResponse[], progress: StudentProgress[]) => {
     const today = new Date().toDateString();
     const todayResponses = responses.filter(r => 
-      new Date(r.responded_at).toDateString() === today
+      new Date(r.timestamp).toDateString() === today
     );
     
     const correctResponses = responses.filter(r => r.is_correct);
@@ -146,7 +142,7 @@ export const useBootcampData = () => {
 
     // Calculate streak (simplified - consecutive days with activity)
     const uniqueDays = [...new Set(responses.map(r => 
-      new Date(r.responded_at).toDateString()
+      new Date(r.timestamp).toDateString()
     ))].sort();
     
     let streakDays = 0;

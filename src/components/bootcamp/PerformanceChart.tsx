@@ -25,12 +25,12 @@ export const PerformanceChart: React.FC = () => {
     lastWeek.setDate(lastWeek.getDate() - 7);
     
     const weeklyResponses = responses.filter(r => 
-      new Date(r.responded_at) >= lastWeek
+      new Date(r.timestamp) >= lastWeek
     );
 
     // Group by day of week
     weeklyResponses.forEach(response => {
-      const dayOfWeek = days[new Date(response.responded_at).getDay()];
+      const dayOfWeek = days[new Date(response.timestamp).getDay()];
       dayData[dayOfWeek].questions++;
       if (response.is_correct) {
         dayData[dayOfWeek].correct++;
