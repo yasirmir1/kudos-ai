@@ -124,9 +124,14 @@ export class BootcampAPI {
 
   static async getStudentProgress(studentId: string) {
     try {
-      // For now, return mock data since bootcamp_ tables don't have student progress yet
-      // This would need a proper student progress table in the bootcamp_ schema
-      return [];
+      const { data, error } = await supabase
+        .from('bootcamp_student_progress')
+        .select('*')
+        .eq('student_id', studentId)
+        .order('last_activity', { ascending: false });
+
+      if (error) throw error;
+      return data || [];
     } catch (error) {
       console.error('Error getting student progress:', error);
       throw error;
@@ -182,36 +187,138 @@ export class BootcampAPI {
     }
   }
 
-  static async startLearningSession(studentId: string, sessionType: string = 'practice') {
+  static async updateStudentProgress(studentId: string, topicId: string, accuracy: number, averageTime: number) {
     try {
-      // For now, return mock session data since bootcamp_ tables don't have learning sessions yet
-      // This would need a proper learning sessions table in the bootcamp_ schema
-      return {
-        session_id: `session_${Date.now()}`,
-        student_id: studentId,
-        session_type: sessionType,
-        session_start: new Date().toISOString()
-      };
+      const status = accuracy >= 90 ? 'mastered' : accuracy >= 70 ? 'completed' : 'in_progress';
+      const masteryScore = accuracy / 100;
+
+      const { data, error } = await supabase
+        .from('bootcamp_student_progress')
+        .upsert({
+          student_id: studentId,
+          topic_id: topicId,
+          status,
+          accuracy_percentage: accuracy,
+          average_speed_seconds: averageTime,
+          mastery_score: masteryScore,
+          last_activity: new Date().toISOString()
+        })
+        .select()
+        .single();
+
+      if (error) throw error;
+      return data;
+    } catch (error) {
+      console.error('Error updating student progress:', error);
+      throw error;
+    }
+  }
+
+  static async getStudentSkills(studentId: string) {
+    try {
+      const { data, error } = await supabase
+        .from('bootcamp_student_skills')
+        .select('*')
+        .eq('student_id', studentId)
+        .order('last_assessed', { ascending: false });
+
+      if (error) throw error;
+      return data || [];
+    } catch (error) {
+      console.error('Error getting student skills:', error);
+      throw error;
+    }
+  }
+
+  static async updateStudentSkill(studentId: string, skillName: string, proficiency: number, questionsAttempted: number, questionsCorrect: number, averageTime: number) {
+    try {
+      const { data, error } = await supabase
+        .from('bootcamp_student_skills')
+        .upsert({
+          student_id: studentId,
+          skill_name: skillName,
+          proficiency_level: proficiency,
+          questions_attempted: questionsAttempted,
+          questions_correct: questionsCorrect,
+          average_time_seconds: averageTime,
+          last_assessed: new Date().toISOString()
+        })
+        .select()
+        .single();
+
+      if (error) throw error;
+      return data;
+    } catch (error) {
+      console.error('Error updating student skill:', error);
+      throw error;
+    }
+  }
+
+  static async getLearningPath(studentId: string) {
+    try {
+      // Get current progress
+      const progress = await this.getStudentProgress(studentId);
+      
+      // Get topics that haven't been started or are in progress
+      const { data: allTopics, error } = await supabase
+        .from('bootcamp_topics')
+        .select('*')
+        .order('topic_order');
+
+      if (error) throw error;
+
+      const progressMap = new Map(progress.map(p => [p.topic_id, p]));
+      
+      return allTopics.map(topic => ({
+        ...topic,
+        progress: progressMap.get(topic.id) || { status: 'not_started', accuracy_percentage: 0, mastery_score: 0 }
+      }));
+    } catch (error) {
+      console.error('Error getting learning path:', error);
+      throw error;
+    }
+  }
+
+  static async startLearningSession(studentId: string, sessionType: string = 'learning') {
+    try {
+      const { data, error } = await supabase
+        .from('bootcamp_learning_sessions')
+        .insert({
+          student_id: studentId,
+          session_type: sessionType,
+          session_start: new Date().toISOString()
+        })
+        .select()
+        .single();
+
+      if (error) throw error;
+      return data;
     } catch (error) {
       console.error('Error starting learning session:', error);
       throw error;
     }
   }
 
-  static async endLearningSession(sessionId: string, questionsAttempted: number, questionsCorrect: number) {
+  static async endLearningSession(sessionId: string, questionsAttempted: number, questionsCorrect: number, topicsCovered: string[] = []) {
     try {
       const performanceScore = questionsAttempted > 0 ? 
         Math.round((questionsCorrect / questionsAttempted) * 100) : 0;
 
-      // For now, return mock data since bootcamp_ tables don't have learning sessions yet
-      // This would need a proper learning sessions table in the bootcamp_ schema
-      return {
-        session_id: sessionId,
-        session_end: new Date().toISOString(),
-        questions_attempted: questionsAttempted,
-        questions_correct: questionsCorrect,
-        performance_score: performanceScore
-      };
+      const { data, error } = await supabase
+        .from('bootcamp_learning_sessions')
+        .update({
+          session_end: new Date().toISOString(),
+          questions_attempted: questionsAttempted,
+          questions_correct: questionsCorrect,
+          performance_score: performanceScore,
+          topics_covered: topicsCovered
+        })
+        .eq('session_id', sessionId)
+        .select()
+        .single();
+
+      if (error) throw error;
+      return data;
     } catch (error) {
       console.error('Error ending learning session:', error);
       throw error;

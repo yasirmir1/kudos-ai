@@ -8,6 +8,7 @@ import { BookOpen, Clock, Users, ChevronRight, Play, CheckCircle } from 'lucide-
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Loader2 } from 'lucide-react';
+import { LearningExperience } from './LearningExperience';
 
 interface Module {
   id: string;
@@ -60,6 +61,7 @@ export const LearnView: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [selectedModule, setSelectedModule] = useState<string | null>(null);
+  const [showLearningExperience, setShowLearningExperience] = useState(false);
 
   useEffect(() => {
     loadLearningContent();
@@ -219,6 +221,26 @@ export const LearnView: React.FC = () => {
     );
   }
 
+  if (showLearningExperience) {
+    return (
+      <div className="space-y-6">
+        <div className="flex items-center justify-between">
+          <h2 className="text-2xl font-bold">Learning Experience</h2>
+          <Button 
+            variant="outline" 
+            onClick={() => setShowLearningExperience(false)}
+          >
+            Back to Overview
+          </Button>
+        </div>
+        <LearningExperience 
+          studentId={'demo-student'} 
+          onComplete={() => setShowLearningExperience(false)}
+        />
+      </div>
+    );
+  }
+
   return (
     <div className="space-y-6">
       <div className="bg-card rounded-xl shadow-sm border p-6">
@@ -298,6 +320,7 @@ export const LearnView: React.FC = () => {
                       size="sm" 
                       className="w-full mt-4"
                       disabled={false} // Placeholder for week unlocking logic
+                      onClick={() => setShowLearningExperience(true)}
                     >
                       <Play className="h-3 w-3 mr-2" />
                       {week.week <= 36 ? 'Start Learning' : week.week <= 46 ? 'Practice' : week.week <= 50 ? 'Review' : 'Final Prep'}
