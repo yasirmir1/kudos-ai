@@ -49,15 +49,7 @@ export const InteractiveInsights = ({
           
         </div>
         <div className="flex items-center gap-2">
-          <Button onClick={toggleAllCards} variant="outline" size="sm" className="gap-2">
-            {viewMode === 'compact' ? <>
-                <Expand className="h-4 w-4" />
-                Expand All
-              </> : <>
-                <Minimize2 className="h-4 w-4" />
-                Collapse All
-              </>}
-          </Button>
+          
         </div>
       </div>
 
