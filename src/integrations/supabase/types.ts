@@ -1351,6 +1351,10 @@ export type Database = {
           question_data: Json
         }[]
       }
+      get_current_student_id: {
+        Args: Record<PropertyKey, never>
+        Returns: string
+      }
       get_student_misconceptions: {
         Args: { p_student_id: string }
         Returns: {
