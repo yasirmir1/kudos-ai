@@ -144,3 +144,6 @@ export async function importSampleData() {
     throw error;
   }
 }
+
+// Auto-import sample data when this module is loaded
+importSampleData();
