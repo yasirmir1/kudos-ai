@@ -41,6 +41,244 @@ export type Database = {
         }
         Relationships: []
       }
+      bootcamp_answers: {
+        Row: {
+          answer_id: string
+          answer_option: Database["public"]["Enums"]["answer_option"] | null
+          answer_value: string
+          created_at: string | null
+          diagnostic_feedback: string
+          error_category: string | null
+          id: number
+          is_correct: boolean
+          misconception_type: string | null
+          question_id: string
+          remedial_topic: string | null
+        }
+        Insert: {
+          answer_id: string
+          answer_option?: Database["public"]["Enums"]["answer_option"] | null
+          answer_value: string
+          created_at?: string | null
+          diagnostic_feedback: string
+          error_category?: string | null
+          id?: number
+          is_correct?: boolean
+          misconception_type?: string | null
+          question_id: string
+          remedial_topic?: string | null
+        }
+        Update: {
+          answer_id?: string
+          answer_option?: Database["public"]["Enums"]["answer_option"] | null
+          answer_value?: string
+          created_at?: string | null
+          diagnostic_feedback?: string
+          error_category?: string | null
+          id?: number
+          is_correct?: boolean
+          misconception_type?: string | null
+          question_id?: string
+          remedial_topic?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "bootcamp_answers_question_id_fkey"
+            columns: ["question_id"]
+            isOneToOne: false
+            referencedRelation: "bootcamp_questions"
+            referencedColumns: ["question_id"]
+          },
+        ]
+      }
+      bootcamp_misconceptions_catalog: {
+        Row: {
+          category: string
+          common_indicators: string[] | null
+          created_at: string | null
+          description: string
+          id: number
+          misconception_id: string
+          misconception_name: string
+          related_topics: string[] | null
+          remediation_strategy: string
+          updated_at: string | null
+        }
+        Insert: {
+          category: string
+          common_indicators?: string[] | null
+          created_at?: string | null
+          description: string
+          id?: number
+          misconception_id: string
+          misconception_name: string
+          related_topics?: string[] | null
+          remediation_strategy: string
+          updated_at?: string | null
+        }
+        Update: {
+          category?: string
+          common_indicators?: string[] | null
+          created_at?: string | null
+          description?: string
+          id?: number
+          misconception_id?: string
+          misconception_name?: string
+          related_topics?: string[] | null
+          remediation_strategy?: string
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
+      bootcamp_questions: {
+        Row: {
+          cognitive_level: Database["public"]["Enums"]["cognitive_level"]
+          created_at: string | null
+          difficulty: Database["public"]["Enums"]["difficulty_level"]
+          exam_boards: string[] | null
+          id: number
+          marks: number
+          module_id: string
+          prerequisite_skills: string[] | null
+          question_category: Database["public"]["Enums"]["question_category"]
+          question_id: string
+          question_text: string
+          question_type: Database["public"]["Enums"]["question_type"]
+          subtopic_id: string | null
+          time_seconds: number
+          topic_id: string
+          updated_at: string | null
+          visual_aid: string | null
+        }
+        Insert: {
+          cognitive_level: Database["public"]["Enums"]["cognitive_level"]
+          created_at?: string | null
+          difficulty: Database["public"]["Enums"]["difficulty_level"]
+          exam_boards?: string[] | null
+          id?: number
+          marks?: number
+          module_id: string
+          prerequisite_skills?: string[] | null
+          question_category: Database["public"]["Enums"]["question_category"]
+          question_id: string
+          question_text: string
+          question_type: Database["public"]["Enums"]["question_type"]
+          subtopic_id?: string | null
+          time_seconds?: number
+          topic_id: string
+          updated_at?: string | null
+          visual_aid?: string | null
+        }
+        Update: {
+          cognitive_level?: Database["public"]["Enums"]["cognitive_level"]
+          created_at?: string | null
+          difficulty?: Database["public"]["Enums"]["difficulty_level"]
+          exam_boards?: string[] | null
+          id?: number
+          marks?: number
+          module_id?: string
+          prerequisite_skills?: string[] | null
+          question_category?: Database["public"]["Enums"]["question_category"]
+          question_id?: string
+          question_text?: string
+          question_type?: Database["public"]["Enums"]["question_type"]
+          subtopic_id?: string | null
+          time_seconds?: number
+          topic_id?: string
+          updated_at?: string | null
+          visual_aid?: string | null
+        }
+        Relationships: []
+      }
+      bootcamp_student_profiles: {
+        Row: {
+          accuracy_by_topic: Json | null
+          arithmetic_proficiency: number | null
+          common_misconceptions: string[] | null
+          created_at: string | null
+          id: number
+          reasoning_proficiency: number | null
+          skill_strengths: Json | null
+          skill_weaknesses: Json | null
+          speed_percentile: number | null
+          student_id: string
+          updated_at: string | null
+        }
+        Insert: {
+          accuracy_by_topic?: Json | null
+          arithmetic_proficiency?: number | null
+          common_misconceptions?: string[] | null
+          created_at?: string | null
+          id?: number
+          reasoning_proficiency?: number | null
+          skill_strengths?: Json | null
+          skill_weaknesses?: Json | null
+          speed_percentile?: number | null
+          student_id: string
+          updated_at?: string | null
+        }
+        Update: {
+          accuracy_by_topic?: Json | null
+          arithmetic_proficiency?: number | null
+          common_misconceptions?: string[] | null
+          created_at?: string | null
+          id?: number
+          reasoning_proficiency?: number | null
+          skill_strengths?: Json | null
+          skill_weaknesses?: Json | null
+          speed_percentile?: number | null
+          student_id?: string
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
+      bootcamp_student_responses: {
+        Row: {
+          created_at: string | null
+          id: number
+          is_correct: boolean
+          misconception_detected: string | null
+          question_id: string
+          response_id: string
+          selected_answer: string
+          student_id: string
+          time_taken: number
+          timestamp: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          id?: number
+          is_correct: boolean
+          misconception_detected?: string | null
+          question_id: string
+          response_id?: string
+          selected_answer: string
+          student_id: string
+          time_taken: number
+          timestamp?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          id?: number
+          is_correct?: boolean
+          misconception_detected?: string | null
+          question_id?: string
+          response_id?: string
+          selected_answer?: string
+          student_id?: string
+          time_taken?: number
+          timestamp?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "bootcamp_student_responses_question_id_fkey"
+            columns: ["question_id"]
+            isOneToOne: false
+            referencedRelation: "bootcamp_questions"
+            referencedColumns: ["question_id"]
+          },
+        ]
+      }
       curriculum: {
         Row: {
           age_group: Database["public"]["Enums"]["age_group"] | null
@@ -303,6 +541,11 @@ export type Database = {
     }
     Enums: {
       age_group: "year 2-3" | "year 4-5" | "11+"
+      answer_option: "A" | "B" | "C" | "D"
+      cognitive_level: "recall" | "application" | "analysis" | "synthesis"
+      difficulty_level: "foundation" | "intermediate" | "advanced"
+      question_category: "arithmetic" | "reasoning" | "mixed"
+      question_type: "multiple_choice" | "numeric_entry" | "multi_step"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -431,6 +674,11 @@ export const Constants = {
   public: {
     Enums: {
       age_group: ["year 2-3", "year 4-5", "11+"],
+      answer_option: ["A", "B", "C", "D"],
+      cognitive_level: ["recall", "application", "analysis", "synthesis"],
+      difficulty_level: ["foundation", "intermediate", "advanced"],
+      question_category: ["arithmetic", "reasoning", "mixed"],
+      question_type: ["multiple_choice", "numeric_entry", "multi_step"],
     },
   },
 } as const
