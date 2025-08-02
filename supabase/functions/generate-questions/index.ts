@@ -114,75 +114,40 @@ serve(async (req) => {
         try {
           const yearGuidance = getYearLevelGuidance(age_group || 'year 4-5');
           
-          const prompt = `You are an expert educational content creator. Generate ${count} high-quality multiple choice questions for mathematics education that match the EXACT curriculum table schema.
+          const prompt = `Generate ${count} mathematics multiple choice questions in JSON format.
 
-TOPIC: ${topic}
-SUBTOPIC: ${subtopic}  
-DIFFICULTY: ${difficulty}
-AGE GROUP: ${age_group || 'year 4-5'}
+Topic: ${topic}
+Subtopic: ${subtopic}
+Difficulty: ${difficulty}
+Age Group: ${age_group || 'year 4-5'}
 
-YEAR LEVEL PROGRESSION GUIDE:
-${Object.entries(yearGuidance.progression).map(([year, description]) => `${year}: ${description}`).join('\n')}
-
-Generate questions across BOTH year levels: ${yearGuidance.yearLevels.join(' and ')}
-
-CRITICAL: Generate JSON that matches the EXACT curriculum table schema:
-
-{
+Required JSON format:
+[{
   "question_id": "TEMP_ID",
   "topic": "${topic}",
   "subtopic": "${subtopic}",
-  "example_question": "Clear, age-appropriate question text here",
+  "example_question": "Question text here",
   "question_type": "Multiple Choice",
-  "options": [
-    "Option A",
-    "Option B", 
-    "Option C",
-    "Option D"
-  ],
-  "correct_answer": "Option B",
+  "options": ["A", "B", "C", "D"],
+  "correct_answer": "B",
   "difficulty": "${difficulty}",
-  "red_herring_tag": ["MisconceptionType_SpecificError"],
-  "red_herring_explanation": "Explanation of why students might choose wrong answers",
-  "pedagogical_notes": "Year X: Brief teaching context and methodology.",
-  "year_level": 2,
+  "red_herring_tag": ["MisconceptionType"],
+  "red_herring_explanation": "Why students might choose wrong answers",
+  "pedagogical_notes": "Teaching context",
+  "year_level": 4,
   "age_group": "${age_group || 'year 4-5'}"
-}
+}]
 
 ${examples && examples.length > 0 ? `
-REFERENCE EXAMPLES from your curriculum (FOLLOW THESE PATTERNS EXACTLY):
-${JSON.stringify(examples[0], null, 2)}
-
-${examples.slice(1).map(ex => JSON.stringify(ex, null, 2)).join('\n\n')}
+Example format: ${JSON.stringify(examples[0], null, 2)}
 ` : ''}
 
-CRITICAL REQUIREMENTS:
-1. Generate questions for BOTH year levels: ${yearGuidance.yearLevels.join(' and ')}
-2. Start question_id with correct prefixes: ${yearGuidance.yearLevels.map(year => getTopicPrefix(topic, age_group).replace(/Y\d/, year.replace('Year ', 'Y'))).join(' and ')}
-3. Make ${Math.ceil(count/2)} questions at ${yearGuidance.yearLevels[0]} level and ${Math.floor(count/2)} at ${yearGuidance.yearLevels[1] || yearGuidance.yearLevels[0]} level
-4. Use appropriate mathematical complexity for each year
-5. Include realistic misconceptions specific to each year level
-6. pedagogical_notes must start with "Year X:" matching the complexity level
-
-MATHEMATICAL PROGRESSION EXAMPLES:
-${age_group === 'year 2-3' ? `
-Year 2: "Count on in steps of 2 from 14. What is the next number: 14, 16, 18, __?" (Numbers to 100)
-Year 3: "Count on in 50s from 200. What comes next: 200, 250, 300, __?" (Numbers to 1000)
-` : age_group === 'year 4-5' ? `
-Year 4: "What is 2,345 + 1,234?" (4-digit addition, written methods)
-Year 5: "Calculate 4.56 + 2.78" (Decimal addition, real-world context)
-` : `
-Year 6: Complex problem solving, 11+ preparation level questions
-`}
-
-topic: EXACTLY "${topic}"
-subtopic: EXACTLY "${subtopic}"
-question_type: EXACTLY "Multiple Choice" 
-difficulty: EXACTLY "${difficulty}"
-
-Generate ${count} questions as a JSON array. Ensure mathematical accuracy and year-appropriate progression.
-
-RESPOND WITH ONLY THE JSON ARRAY, NO OTHER TEXT.`;
+Requirements:
+- Generate exactly ${count} questions
+- Use appropriate mathematical complexity for ${age_group}
+- Include realistic wrong answer choices (distractors)
+- Ensure correct_answer matches one of the options exactly
+- Return only valid JSON array, no other text`;
 
           let apiResponse;
           let apiUsed = '';
@@ -197,7 +162,7 @@ RESPOND WITH ONLY THE JSON ARRAY, NO OTHER TEXT.`;
               'Content-Type': 'application/json',
             },
             body: JSON.stringify({
-              model: 'deepseek-reasoner',
+              model: 'deepseek-chat', // Faster model
               messages: [
                 {
                   role: 'system',
@@ -425,8 +390,7 @@ RESPOND WITH ONLY THE JSON ARRAY, NO OTHER TEXT.`;
               }
             }
 
-            // Add small delay between questions for better UX
-            await new Promise(resolve => setTimeout(resolve, 100));
+            // Remove artificial delay for faster processing
           }
 
           // Send completion message

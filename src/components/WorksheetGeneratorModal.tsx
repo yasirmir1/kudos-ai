@@ -145,7 +145,10 @@ export const WorksheetGeneratorModal = () => {
         
         console.log('Making authenticated request to generate-questions...');
         
-        // Use Supabase client to call the edge function with streaming response
+        // Use Supabase client to call the edge function with timeout
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 60000); // 60 second timeout
+        
         const response = await fetch(`https://gqkfbxhuijpfcnjimlfj.functions.supabase.co/generate-questions`, {
           method: 'POST',
           headers: {
@@ -153,6 +156,7 @@ export const WorksheetGeneratorModal = () => {
             'Authorization': `Bearer ${(await supabase.auth.getSession()).data.session?.access_token}`,
             'apikey': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imdxa2ZieGh1aWpwZmNuamltbGZqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTI5MTQxMTcsImV4cCI6MjA2ODQ5MDExN30.n-sE8DxhfmuZmNju-L3zy6hWshTGzr_cpFEeBB0JZIo',
           },
+          signal: controller.signal,
           body: JSON.stringify({
             topic: selectedTopic,
             subtopic: subtopic,
@@ -162,6 +166,8 @@ export const WorksheetGeneratorModal = () => {
             saveToDatabase: true
           }),
         });
+        
+        clearTimeout(timeoutId);
 
         if (!response.ok) {
           const errorText = await response.text();
@@ -218,11 +224,19 @@ export const WorksheetGeneratorModal = () => {
         title: "Worksheet Generated!",
         description: `Created ${questionCount} questions for ${selectedTopic}.`,
       });
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error generating worksheet:', error);
+      let errorMessage = "Failed to generate worksheet. Please try again.";
+      
+      if (error.name === 'AbortError') {
+        errorMessage = "Request timed out after 60 seconds. Try generating fewer questions or select a different topic.";
+      } else if (error.message?.includes('Failed to fetch')) {
+        errorMessage = "Network error. Please check your connection and try again.";
+      }
+      
       toast({
         title: "Generation Failed",
-        description: "Failed to generate worksheet. Please try again.",
+        description: errorMessage,
         variant: "destructive",
       });
     } finally {
