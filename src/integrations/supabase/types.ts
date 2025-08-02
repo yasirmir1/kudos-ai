@@ -202,6 +202,20 @@ export type Database = {
             foreignKeyName: "bootcamp_enhanced_achievements_student_id_fkey"
             columns: ["student_id"]
             isOneToOne: false
+            referencedRelation: "bootcamp_student_performance_summary"
+            referencedColumns: ["student_id"]
+          },
+          {
+            foreignKeyName: "bootcamp_enhanced_achievements_student_id_fkey"
+            columns: ["student_id"]
+            isOneToOne: false
+            referencedRelation: "bootcamp_student_skills_proficiency"
+            referencedColumns: ["student_id"]
+          },
+          {
+            foreignKeyName: "bootcamp_enhanced_achievements_student_id_fkey"
+            columns: ["student_id"]
+            isOneToOne: false
             referencedRelation: "bootcamp_students"
             referencedColumns: ["student_id"]
           },
@@ -239,6 +253,20 @@ export type Database = {
           student_id?: string | null
         }
         Relationships: [
+          {
+            foreignKeyName: "bootcamp_enhanced_adaptive_recommendations_student_id_fkey"
+            columns: ["student_id"]
+            isOneToOne: false
+            referencedRelation: "bootcamp_student_performance_summary"
+            referencedColumns: ["student_id"]
+          },
+          {
+            foreignKeyName: "bootcamp_enhanced_adaptive_recommendations_student_id_fkey"
+            columns: ["student_id"]
+            isOneToOne: false
+            referencedRelation: "bootcamp_student_skills_proficiency"
+            referencedColumns: ["student_id"]
+          },
           {
             foreignKeyName: "bootcamp_enhanced_adaptive_recommendations_student_id_fkey"
             columns: ["student_id"]
@@ -330,6 +358,20 @@ export type Database = {
           topics_covered?: string[] | null
         }
         Relationships: [
+          {
+            foreignKeyName: "bootcamp_enhanced_learning_sessions_student_id_fkey"
+            columns: ["student_id"]
+            isOneToOne: false
+            referencedRelation: "bootcamp_student_performance_summary"
+            referencedColumns: ["student_id"]
+          },
+          {
+            foreignKeyName: "bootcamp_enhanced_learning_sessions_student_id_fkey"
+            columns: ["student_id"]
+            isOneToOne: false
+            referencedRelation: "bootcamp_student_skills_proficiency"
+            referencedColumns: ["student_id"]
+          },
           {
             foreignKeyName: "bootcamp_enhanced_learning_sessions_student_id_fkey"
             columns: ["student_id"]
@@ -467,6 +509,13 @@ export type Database = {
             referencedRelation: "bootcamp_enhanced_topics"
             referencedColumns: ["topic_id"]
           },
+          {
+            foreignKeyName: "bootcamp_enhanced_questions_topic_id_fkey"
+            columns: ["topic_id"]
+            isOneToOne: false
+            referencedRelation: "bootcamp_topic_difficulty_analysis"
+            referencedColumns: ["topic_id"]
+          },
         ]
       }
       bootcamp_enhanced_remediation_pathways: {
@@ -500,6 +549,13 @@ export type Database = {
             columns: ["misconception_code"]
             isOneToOne: false
             referencedRelation: "bootcamp_enhanced_misconceptions"
+            referencedColumns: ["misconception_code"]
+          },
+          {
+            foreignKeyName: "bootcamp_enhanced_remediation_pathways_misconception_code_fkey"
+            columns: ["misconception_code"]
+            isOneToOne: false
+            referencedRelation: "bootcamp_misconception_frequency"
             referencedColumns: ["misconception_code"]
           },
         ]
@@ -550,6 +606,20 @@ export type Database = {
             foreignKeyName: "bootcamp_enhanced_student_progress_student_id_fkey"
             columns: ["student_id"]
             isOneToOne: false
+            referencedRelation: "bootcamp_student_performance_summary"
+            referencedColumns: ["student_id"]
+          },
+          {
+            foreignKeyName: "bootcamp_enhanced_student_progress_student_id_fkey"
+            columns: ["student_id"]
+            isOneToOne: false
+            referencedRelation: "bootcamp_student_skills_proficiency"
+            referencedColumns: ["student_id"]
+          },
+          {
+            foreignKeyName: "bootcamp_enhanced_student_progress_student_id_fkey"
+            columns: ["student_id"]
+            isOneToOne: false
             referencedRelation: "bootcamp_students"
             referencedColumns: ["student_id"]
           },
@@ -558,6 +628,13 @@ export type Database = {
             columns: ["topic_id"]
             isOneToOne: false
             referencedRelation: "bootcamp_enhanced_topics"
+            referencedColumns: ["topic_id"]
+          },
+          {
+            foreignKeyName: "bootcamp_enhanced_student_progress_topic_id_fkey"
+            columns: ["topic_id"]
+            isOneToOne: false
+            referencedRelation: "bootcamp_topic_difficulty_analysis"
             referencedColumns: ["topic_id"]
           },
         ]
@@ -617,6 +694,20 @@ export type Database = {
             foreignKeyName: "bootcamp_enhanced_student_responses_student_id_fkey"
             columns: ["student_id"]
             isOneToOne: false
+            referencedRelation: "bootcamp_student_performance_summary"
+            referencedColumns: ["student_id"]
+          },
+          {
+            foreignKeyName: "bootcamp_enhanced_student_responses_student_id_fkey"
+            columns: ["student_id"]
+            isOneToOne: false
+            referencedRelation: "bootcamp_student_skills_proficiency"
+            referencedColumns: ["student_id"]
+          },
+          {
+            foreignKeyName: "bootcamp_enhanced_student_responses_student_id_fkey"
+            columns: ["student_id"]
+            isOneToOne: false
             referencedRelation: "bootcamp_students"
             referencedColumns: ["student_id"]
           },
@@ -667,6 +758,20 @@ export type Database = {
             foreignKeyName: "bootcamp_enhanced_student_skills_student_id_fkey"
             columns: ["student_id"]
             isOneToOne: false
+            referencedRelation: "bootcamp_student_performance_summary"
+            referencedColumns: ["student_id"]
+          },
+          {
+            foreignKeyName: "bootcamp_enhanced_student_skills_student_id_fkey"
+            columns: ["student_id"]
+            isOneToOne: false
+            referencedRelation: "bootcamp_student_skills_proficiency"
+            referencedColumns: ["student_id"]
+          },
+          {
+            foreignKeyName: "bootcamp_enhanced_student_skills_student_id_fkey"
+            columns: ["student_id"]
+            isOneToOne: false
             referencedRelation: "bootcamp_students"
             referencedColumns: ["student_id"]
           },
@@ -700,6 +805,13 @@ export type Database = {
             columns: ["topic_id"]
             isOneToOne: false
             referencedRelation: "bootcamp_enhanced_topics"
+            referencedColumns: ["topic_id"]
+          },
+          {
+            foreignKeyName: "bootcamp_enhanced_subtopics_topic_id_fkey"
+            columns: ["topic_id"]
+            isOneToOne: false
+            referencedRelation: "bootcamp_topic_difficulty_analysis"
             referencedColumns: ["topic_id"]
           },
         ]
@@ -1310,6 +1422,72 @@ export type Database = {
       }
     }
     Views: {
+      bootcamp_daily_activity_summary: {
+        Row: {
+          active_students: number | null
+          activity_date: string | null
+          avg_response_time: number | null
+          correct_responses: number | null
+          daily_accuracy: number | null
+          total_responses: number | null
+          unique_questions_attempted: number | null
+        }
+        Relationships: []
+      }
+      bootcamp_misconception_frequency: {
+        Row: {
+          affected_students: number | null
+          description: string | null
+          misconception_code: string | null
+          misconception_type: string | null
+          remediation_success_rate: number | null
+          total_occurrences: number | null
+        }
+        Relationships: []
+      }
+      bootcamp_student_performance_summary: {
+        Row: {
+          active_days: number | null
+          avg_response_time: number | null
+          email: string | null
+          last_active: string | null
+          overall_accuracy: number | null
+          student_id: string | null
+          total_correct: number | null
+          total_questions_attempted: number | null
+          unique_misconceptions: number | null
+          username: string | null
+        }
+        Relationships: []
+      }
+      bootcamp_student_skills_proficiency: {
+        Row: {
+          accuracy_percentage: number | null
+          active_misconception_count: number | null
+          average_time_seconds: number | null
+          last_assessed: string | null
+          proficiency_level: number | null
+          questions_attempted: number | null
+          questions_correct: number | null
+          skill_category: string | null
+          skill_name: string | null
+          student_id: string | null
+          username: string | null
+        }
+        Relationships: []
+      }
+      bootcamp_topic_difficulty_analysis: {
+        Row: {
+          avg_time: number | null
+          difficulty: string | null
+          question_count: number | null
+          students_attempted: number | null
+          success_rate: number | null
+          topic_id: string | null
+          topic_name: string | null
+        }
+        Relationships: []
+      }
       student_performance: {
         Row: {
           accuracy: number | null
