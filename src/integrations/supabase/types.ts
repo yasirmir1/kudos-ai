@@ -1664,7 +1664,14 @@ export type Database = {
     Enums: {
       age_group: "year 2-3" | "year 4-5" | "11+"
       answer_option: "A" | "B" | "C" | "D"
-      cognitive_level: "recall" | "application" | "analysis" | "synthesis"
+      cognitive_level:
+        | "recall"
+        | "application"
+        | "analysis"
+        | "synthesis"
+        | "knowledge"
+        | "comprehension"
+        | "evaluation"
       difficulty_level: "foundation" | "intermediate" | "advanced"
       question_category: "arithmetic" | "reasoning" | "mixed"
       question_type: "multiple_choice" | "numeric_entry" | "multi_step"
@@ -1797,7 +1804,15 @@ export const Constants = {
     Enums: {
       age_group: ["year 2-3", "year 4-5", "11+"],
       answer_option: ["A", "B", "C", "D"],
-      cognitive_level: ["recall", "application", "analysis", "synthesis"],
+      cognitive_level: [
+        "recall",
+        "application",
+        "analysis",
+        "synthesis",
+        "knowledge",
+        "comprehension",
+        "evaluation",
+      ],
       difficulty_level: ["foundation", "intermediate", "advanced"],
       question_category: ["arithmetic", "reasoning", "mixed"],
       question_type: ["multiple_choice", "numeric_entry", "multi_step"],
