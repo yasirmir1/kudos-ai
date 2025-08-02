@@ -5,6 +5,7 @@ import { PracticeSession } from '@/components/bootcamp/PracticeSession';
 import { ProgressView } from '@/components/bootcamp/ProgressView';
 import { TopicsView } from '@/components/bootcamp/TopicsView';
 import { Navigation } from '@/components/bootcamp/Navigation';
+import { BulkQuestionGenerator } from '@/components/BulkQuestionGenerator';
 
 interface User {
   name: string;
@@ -35,6 +36,7 @@ const Bootcamp = () => {
         {currentView === 'practice' && <PracticeSession />}
         {currentView === 'progress' && <ProgressView />}
         {currentView === 'topics' && <TopicsView setCurrentView={setCurrentView} />}
+        {currentView === 'generate' && <BulkQuestionGenerator />}
       </main>
     </div>
   );

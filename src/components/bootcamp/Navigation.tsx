@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Calculator, BarChart3, Brain, BookOpen, TrendingUp, Zap, Star } from 'lucide-react';
+import { Calculator, BarChart3, Brain, BookOpen, TrendingUp, Zap, Star, Plus } from 'lucide-react';
 interface NavItem {
   id: string;
   label: string;
@@ -39,6 +39,10 @@ export const Navigation: React.FC<NavigationProps> = ({
     id: 'progress',
     label: 'Progress',
     icon: TrendingUp
+  }, {
+    id: 'generate',
+    label: 'Generate',
+    icon: Plus
   }];
   return <nav className="bg-card shadow-sm border-b sticky top-0 z-50">
       <div className="container mx-auto px-4">
