@@ -42,6 +42,11 @@ export const PracticeSession: React.FC = () => {
 
   const question = questions[currentQuestion];
 
+  // Prevent crash if question is undefined
+  if (!question) {
+    return <div className="text-center p-8">No questions available</div>;
+  }
+
   useEffect(() => {
     if (!isPaused && timer > 0 && !showFeedback) {
       const interval = setInterval(() => setTimer(t => t - 1), 1000);
