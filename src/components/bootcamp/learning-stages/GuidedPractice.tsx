@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Users, CheckCircle, ArrowRight, ArrowLeft, HelpCircle } from 'lucide-react';
+import { Users, CheckCircle, ArrowRight, ArrowLeft, HelpCircle, Eye, EyeOff } from 'lucide-react';
 import { PlaceValueSorting, FillInBlanks } from '../interactive';
 
 interface GuidedPracticeProps {
@@ -14,22 +14,22 @@ interface GuidedPracticeProps {
 
 export function GuidedPractice({ content, onComplete, onNext, onPrevious }: GuidedPracticeProps) {
   const [currentActivity, setCurrentActivity] = useState(0);
-  const [checkedCheckpoints, setCheckedCheckpoints] = useState<number[]>([]);
+  const [revealedAnswers, setRevealedAnswers] = useState<number[]>([]);
   
   const activities = content?.activities || [];
   const checkpoints = content?.checkpoints || [];
   const introduction = content?.introduction || '';
   const interactiveElements = content?.interactive_elements || [];
 
-  const handleCheckpointToggle = (index: number) => {
-    setCheckedCheckpoints(prev => 
+  const toggleAnswerReveal = (index: number) => {
+    setRevealedAnswers(prev => 
       prev.includes(index) 
         ? prev.filter(i => i !== index)
         : [...prev, index]
     );
   };
 
-  const allCheckpointsComplete = checkpoints.length > 0 && checkedCheckpoints.length === checkpoints.length;
+  const allAnswersRevealed = checkpoints.length > 0 && revealedAnswers.length === checkpoints.length;
 
   return (
     <div className="space-y-6">
@@ -192,20 +192,35 @@ export function GuidedPractice({ content, onComplete, onNext, onPrevious }: Guid
               {checkpoints.map((checkpoint: any, index: number) => (
                 <div key={index} className="border rounded-lg p-4">
                   <div className="flex items-start gap-3">
-                    <Button
-                      variant={checkedCheckpoints.includes(index) ? "default" : "outline"}
-                      size="sm"
-                      onClick={() => handleCheckpointToggle(index)}
-                      className="mt-1"
-                    >
-                      <CheckCircle className="h-4 w-4" />
-                    </Button>
                     <div className="flex-1">
-                      <p className="font-medium">{checkpoint.question}</p>
-                      <div className="mt-2 p-2 bg-muted rounded text-sm">
-                        <strong>Answer:</strong> {checkpoint.answer}
-                      </div>
-                      <p className="text-xs text-muted-foreground mt-1">{checkpoint.explanation}</p>
+                      <p className="font-medium mb-3">{checkpoint.question}</p>
+                      <Button
+                        variant={revealedAnswers.includes(index) ? "secondary" : "default"}
+                        size="sm"
+                        onClick={() => toggleAnswerReveal(index)}
+                        className="mb-3"
+                      >
+                        {revealedAnswers.includes(index) ? (
+                          <>
+                            <EyeOff className="h-4 w-4 mr-2" />
+                            Hide Answer
+                          </>
+                        ) : (
+                          <>
+                            <Eye className="h-4 w-4 mr-2" />
+                            Show Answer
+                          </>
+                        )}
+                      </Button>
+                      {revealedAnswers.includes(index) && (
+                        <div className="mt-2 space-y-2">
+                          <div className="p-3 bg-green-50 dark:bg-green-950 border border-green-200 dark:border-green-800 rounded-lg">
+                            <strong className="text-green-800 dark:text-green-200">Answer:</strong>
+                            <p className="text-green-700 dark:text-green-300 mt-1">{checkpoint.answer}</p>
+                          </div>
+                          <p className="text-xs text-muted-foreground">{checkpoint.explanation}</p>
+                        </div>
+                      )}
                     </div>
                   </div>
                 </div>
@@ -227,7 +242,7 @@ export function GuidedPractice({ content, onComplete, onNext, onPrevious }: Guid
         <Button 
           onClick={onNext} 
           className="flex-1"
-          disabled={checkpoints.length > 0 && !allCheckpointsComplete}
+          disabled={checkpoints.length > 0 && !allAnswersRevealed}
         >
           Continue to Independent Practice
           <ArrowRight className="h-4 w-4 ml-2" />
