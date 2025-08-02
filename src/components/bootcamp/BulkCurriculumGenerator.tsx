@@ -1,0 +1,293 @@
+import React, { useState, useEffect } from 'react';
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Badge } from "@/components/ui/badge";
+import { Progress } from "@/components/ui/progress";
+import { supabase } from '@/integrations/supabase/client';
+import { useToast } from "@/hooks/use-toast";
+
+interface Topic {
+  id: string;
+  topic_name: string;
+  difficulty: string;
+  module_id: string;
+}
+
+interface GenerationResult {
+  topic: string;
+  examBoard: string;
+  questionId: string;
+  success: boolean;
+  error?: string;
+}
+
+export const BulkCurriculumGenerator: React.FC = () => {
+  const [topics, setTopics] = useState<Topic[]>([]);
+  const [selectedTopics, setSelectedTopics] = useState<string[]>([]);
+  const [questionsPerTopic, setQuestionsPerTopic] = useState(5);
+  const [selectedExamBoards, setSelectedExamBoards] = useState<string[]>(['GL', 'CEM']);
+  const [isGenerating, setIsGenerating] = useState(false);
+  const [progress, setProgress] = useState(0);
+  const [results, setResults] = useState<GenerationResult[]>([]);
+  const { toast } = useToast();
+
+  useEffect(() => {
+    fetchTopics();
+  }, []);
+
+  const fetchTopics = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('bootcamp_curriculum_topics')
+        .select('id, topic_name, difficulty, module_id')
+        .order('topic_order');
+
+      if (error) throw error;
+      setTopics(data || []);
+    } catch (error) {
+      console.error('Error fetching topics:', error);
+      toast({
+        title: "Error",
+        description: "Failed to fetch topics",
+        variant: "destructive"
+      });
+    }
+  };
+
+  const handleTopicToggle = (topicId: string) => {
+    setSelectedTopics(prev => 
+      prev.includes(topicId) 
+        ? prev.filter(id => id !== topicId)
+        : [...prev, topicId]
+    );
+  };
+
+  const handleSelectAll = () => {
+    if (selectedTopics.length === topics.length) {
+      setSelectedTopics([]);
+    } else {
+      setSelectedTopics(topics.map(t => t.id));
+    }
+  };
+
+  const handleExamBoardToggle = (board: string) => {
+    setSelectedExamBoards(prev =>
+      prev.includes(board)
+        ? prev.filter(b => b !== board)
+        : [...prev, board]
+    );
+  };
+
+  const startGeneration = async () => {
+    if (selectedTopics.length === 0) {
+      toast({
+        title: "No topics selected",
+        description: "Please select at least one topic to generate questions for.",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    if (selectedExamBoards.length === 0) {
+      toast({
+        title: "No exam boards selected",
+        description: "Please select at least one exam board style.",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    setIsGenerating(true);
+    setProgress(0);
+    setResults([]);
+
+    try {
+      const { data, error } = await supabase.functions.invoke('bulk-generate-curriculum-questions', {
+        body: {
+          topicIds: selectedTopics,
+          questionsPerTopic,
+          examBoards: selectedExamBoards
+        }
+      });
+
+      if (error) throw error;
+
+      setResults(data.results || []);
+      setProgress(100);
+
+      toast({
+        title: "Generation Complete",
+        description: `Successfully generated ${data.results?.length || 0} questions`,
+      });
+    } catch (error) {
+      console.error('Error generating questions:', error);
+      toast({
+        title: "Generation Failed",
+        description: error.message || "An error occurred during generation",
+        variant: "destructive"
+      });
+    } finally {
+      setIsGenerating(false);
+    }
+  };
+
+  const getTopicsByModule = () => {
+    const grouped = topics.reduce((acc, topic) => {
+      if (!acc[topic.module_id]) {
+        acc[topic.module_id] = [];
+      }
+      acc[topic.module_id].push(topic);
+      return acc;
+    }, {} as Record<string, Topic[]>);
+    return grouped;
+  };
+
+  const topicsByModule = getTopicsByModule();
+
+  return (
+    <div className="space-y-6">
+      <Card>
+        <CardHeader>
+          <CardTitle>Bulk 11+ Question Generator</CardTitle>
+          <CardDescription>
+            Generate diagnostic questions for GL Assessment and CEM examination styles using AI.
+            Questions will include misconception-based distractors for enhanced learning analytics.
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-6">
+          {/* Generation Settings */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <Label htmlFor="questionsPerTopic">Questions per Topic</Label>
+              <Input
+                id="questionsPerTopic"
+                type="number"
+                min="1"
+                max="20"
+                value={questionsPerTopic}
+                onChange={(e) => setQuestionsPerTopic(parseInt(e.target.value))}
+                disabled={isGenerating}
+              />
+            </div>
+            <div className="space-y-2">
+              <Label>Exam Board Styles</Label>
+              <div className="flex space-x-4">
+                <label className="flex items-center space-x-2">
+                  <Checkbox
+                    checked={selectedExamBoards.includes('GL')}
+                    onCheckedChange={() => handleExamBoardToggle('GL')}
+                    disabled={isGenerating}
+                  />
+                  <span>GL Assessment</span>
+                </label>
+                <label className="flex items-center space-x-2">
+                  <Checkbox
+                    checked={selectedExamBoards.includes('CEM')}
+                    onCheckedChange={() => handleExamBoardToggle('CEM')}
+                    disabled={isGenerating}
+                  />
+                  <span>CEM</span>
+                </label>
+              </div>
+            </div>
+          </div>
+
+          {/* Topic Selection */}
+          <div className="space-y-4">
+            <div className="flex justify-between items-center">
+              <Label className="text-base font-semibold">Select Topics ({selectedTopics.length}/{topics.length})</Label>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={handleSelectAll}
+                disabled={isGenerating}
+              >
+                {selectedTopics.length === topics.length ? 'Deselect All' : 'Select All'}
+              </Button>
+            </div>
+
+            <div className="space-y-4 max-h-96 overflow-y-auto">
+              {Object.entries(topicsByModule).map(([moduleId, moduleTopics]) => (
+                <div key={moduleId} className="space-y-2">
+                  <h4 className="font-medium text-sm text-muted-foreground">Module: {moduleId}</h4>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+                    {moduleTopics.map((topic) => (
+                      <label key={topic.id} className="flex items-center space-x-2 p-2 border rounded hover:bg-accent cursor-pointer">
+                        <Checkbox
+                          checked={selectedTopics.includes(topic.id)}
+                          onCheckedChange={() => handleTopicToggle(topic.id)}
+                          disabled={isGenerating}
+                        />
+                        <div className="flex-1">
+                          <span className="text-sm">{topic.topic_name}</span>
+                          <Badge variant="secondary" className="ml-2 text-xs">
+                            {topic.difficulty}
+                          </Badge>
+                        </div>
+                      </label>
+                    ))}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Generation Progress */}
+          {isGenerating && (
+            <div className="space-y-2">
+              <div className="flex justify-between items-center">
+                <Label>Generation Progress</Label>
+                <span className="text-sm text-muted-foreground">{progress}%</span>
+              </div>
+              <Progress value={progress} className="w-full" />
+            </div>
+          )}
+
+          {/* Action Button */}
+          <Button
+            onClick={startGeneration}
+            disabled={isGenerating || selectedTopics.length === 0}
+            className="w-full"
+            size="lg"
+          >
+            {isGenerating ? 'Generating Questions...' : `Generate ${selectedTopics.length * questionsPerTopic * selectedExamBoards.length} Questions`}
+          </Button>
+        </CardContent>
+      </Card>
+
+      {/* Results */}
+      {results.length > 0 && (
+        <Card>
+          <CardHeader>
+            <CardTitle>Generation Results</CardTitle>
+            <CardDescription>
+              {results.filter(r => r.success).length} successful, {results.filter(r => !r.success).length} failed
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-2 max-h-60 overflow-y-auto">
+              {results.map((result, index) => (
+                <div key={index} className="flex items-center justify-between p-2 border rounded">
+                  <div className="flex items-center space-x-2">
+                    <Badge variant={result.success ? "default" : "destructive"}>
+                      {result.success ? "✓" : "✗"}
+                    </Badge>
+                    <span className="text-sm">{result.topic} ({result.examBoard})</span>
+                  </div>
+                  {result.success && (
+                    <Badge variant="outline" className="text-xs">
+                      {result.questionId}
+                    </Badge>
+                  )}
+                </div>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+      )}
+    </div>
+  );
+};

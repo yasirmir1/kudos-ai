@@ -12,6 +12,7 @@ export { AnalyticsDashboard } from './AnalyticsDashboard';
 export { StudentAnalytics } from './StudentAnalytics';
 export { QuestionManager } from './QuestionManager';
 export { QuestionBankManager } from './QuestionBankManager';
+export { BulkCurriculumGenerator } from './BulkCurriculumGenerator';
 
 // Progress and Performance Tracking
 export { ComprehensiveProgress } from './ComprehensiveProgress';

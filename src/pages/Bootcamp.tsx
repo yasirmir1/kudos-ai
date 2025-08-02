@@ -15,7 +15,8 @@ import {
   SettingsPage,
   HelpCenter,
   PracticeReport,
-  MockTest
+  MockTest,
+  BulkCurriculumGenerator
 } from '@/components/bootcamp';
 import { useBootcampData } from '@/hooks/useBootcampData';
 import { Alert, AlertDescription } from '@/components/ui/alert';
@@ -85,7 +86,7 @@ const Bootcamp = () => {
         
         {currentView === 'analytics' && <AnalyticsDashboard />}
         {currentView === 'questions' && <QuestionManager />}
-        {currentView === 'generate' && <BulkQuestionGenerator />}
+        {currentView === 'generate' && <BulkCurriculumGenerator />}
         {currentView === 'settings' && <SettingsPage />}
         {currentView === 'help' && <HelpCenter />}
         {currentView === 'report' && <PracticeReport />}
