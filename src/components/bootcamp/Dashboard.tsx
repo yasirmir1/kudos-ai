@@ -3,6 +3,7 @@ import { Brain, Target, Shield, Award, Play, RefreshCw, ChevronRight, TrendingUp
 import { WeeklyProgressChart } from './WeeklyProgressChart';
 import { useAuth } from '../../hooks/useAuth';
 import { BootcampAPI } from '../../lib/bootcamp-api';
+import { supabase } from '@/integrations/supabase/client';
 interface User {
   name: string;
   level: string;
@@ -47,14 +48,41 @@ export const Dashboard: React.FC<DashboardProps> = ({
     try {
       const studentProfile = await BootcampAPI.getStudentProfile(authUser.id);
       if (studentProfile) {
-        const progress = await BootcampAPI.getStudentProgress(studentProfile.student_id);
+        const [progress, topics] = await Promise.all([
+          BootcampAPI.getStudentProgress(studentProfile.student_id),
+          supabase.from('bootcamp_topics').select('id, name').order('topic_order')
+        ]);
+
+        // Create topic name mapping
+        const topicNameMap = new Map();
+        if (topics.data) {
+          topics.data.forEach((topic: any) => {
+            topicNameMap.set(topic.id, topic.name);
+          });
+        }
+
+        // Get actual question counts per topic from responses
+        const { data: responseCounts } = await supabase
+          .from('bootcamp_student_responses')
+          .select(`
+            bootcamp_questions!inner(topic_id)
+          `)
+          .eq('student_id', studentProfile.student_id);
+
+        // Count questions per topic
+        const questionCounts = new Map();
+        responseCounts?.forEach((response: any) => {
+          const topicId = response.bootcamp_questions.topic_id;
+          questionCounts.set(topicId, (questionCounts.get(topicId) || 0) + 1);
+        });
+
         const topicsData: RecentTopic[] = progress.map((p: any) => ({
-          name: p.topic_id,
+          name: topicNameMap.get(p.topic_id) || p.topic_id,
           accuracy: Math.round(p.accuracy_percentage || 0),
-          questions: 0,
-          // This would need additional query
+          questions: questionCounts.get(p.topic_id) || 0,
           status: (p.accuracy_percentage >= 80 ? 'improving' : p.accuracy_percentage >= 70 ? 'stable' : 'needs-work') as 'improving' | 'stable' | 'needs-work'
         })).slice(0, 3);
+        
         setRecentTopics(topicsData);
       }
     } catch (error) {

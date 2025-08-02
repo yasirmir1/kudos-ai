@@ -127,17 +127,49 @@ export class BootcampAPI {
 
   static async getStudentProgress(studentId: string) {
     try {
+      // Get actual calculated progress from responses rather than stored progress
       const { data, error } = await supabase
-        .from('bootcamp_student_progress')
-        .select('*')
+        .from('bootcamp_student_responses')
+        .select(`
+          *,
+          bootcamp_questions!inner(topic_id, question_id)
+        `)
         .eq('student_id', studentId)
-        .order('last_activity', { ascending: false });
+        .order('responded_at', { ascending: false });
 
       if (error) throw error;
-      return data || [];
+
+      // Calculate actual accuracy by topic from responses
+      const topicStats = new Map();
+      
+      data?.forEach(response => {
+        const topicId = response.bootcamp_questions.topic_id;
+        if (!topicStats.has(topicId)) {
+          topicStats.set(topicId, { correct: 0, total: 0 });
+        }
+        const stats = topicStats.get(topicId);
+        stats.total++;
+        if (response.is_correct) stats.correct++;
+      });
+
+      // Convert to array format expected by the UI
+      const progressArray = Array.from(topicStats.entries()).map(([topicId, stats]) => {
+        const accuracy = stats.total > 0 ? stats.correct / stats.total : 0;
+        return {
+          topic_id: topicId,
+          accuracy_percentage: stats.total > 0 ? Math.round(accuracy * 100) : 0,
+          status: stats.total === 0 ? 'not_started' : 
+                  accuracy >= 0.9 ? 'mastered' :
+                  accuracy >= 0.7 ? 'completed' : 'in_progress',
+          last_activity: new Date().toISOString(),
+          mastery_score: accuracy
+        };
+      });
+
+      return progressArray;
     } catch (error) {
       console.error('Error getting student progress:', error);
-      throw error;
+      return [];
     }
   }
 
