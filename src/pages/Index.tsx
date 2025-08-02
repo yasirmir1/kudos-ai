@@ -153,7 +153,7 @@ const Index = () => {
               
               {/* Practice Insights - replacing English tile */}
               <rect x="540" y="90" width="230" height="140" rx="12" fill="#F3F4F6"></rect>
-              <text x="560" y="115" fontFamily="Arial" fontSize="16" fontWeight="600" fill="#1D1D1F">Practice Insights</text>
+              <text x="560" y="110" fontFamily="Arial" fontSize="16" fontWeight="600" fill="#1D1D1F">Practice Insights</text>
               
               {/* Practice stats - improved spacing */}
               <text x="560" y="130" fontFamily="Arial" fontSize="11" fill="#86868B">Questions today:</text>
