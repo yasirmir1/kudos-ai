@@ -41,6 +41,117 @@ export type Database = {
         }
         Relationships: []
       }
+      bootcamp_achievements: {
+        Row: {
+          achievement_id: string
+          achievement_name: string | null
+          achievement_type: string | null
+          badge_url: string | null
+          created_at: string | null
+          earned_at: string | null
+          points_awarded: number | null
+          student_id: string
+        }
+        Insert: {
+          achievement_id?: string
+          achievement_name?: string | null
+          achievement_type?: string | null
+          badge_url?: string | null
+          created_at?: string | null
+          earned_at?: string | null
+          points_awarded?: number | null
+          student_id: string
+        }
+        Update: {
+          achievement_id?: string
+          achievement_name?: string | null
+          achievement_type?: string | null
+          badge_url?: string | null
+          created_at?: string | null
+          earned_at?: string | null
+          points_awarded?: number | null
+          student_id?: string
+        }
+        Relationships: []
+      }
+      bootcamp_adaptive_recommendations: {
+        Row: {
+          completed: boolean | null
+          content: Json | null
+          created_at: string | null
+          expires_at: string | null
+          generated_at: string | null
+          priority: number | null
+          recommendation_id: string
+          recommendation_type: string | null
+          student_id: string
+        }
+        Insert: {
+          completed?: boolean | null
+          content?: Json | null
+          created_at?: string | null
+          expires_at?: string | null
+          generated_at?: string | null
+          priority?: number | null
+          recommendation_id?: string
+          recommendation_type?: string | null
+          student_id: string
+        }
+        Update: {
+          completed?: boolean | null
+          content?: Json | null
+          created_at?: string | null
+          expires_at?: string | null
+          generated_at?: string | null
+          priority?: number | null
+          recommendation_id?: string
+          recommendation_type?: string | null
+          student_id?: string
+        }
+        Relationships: []
+      }
+      bootcamp_answer_options: {
+        Row: {
+          answer_id: string
+          answer_value: string
+          created_at: string | null
+          diagnostic_feedback: string | null
+          error_category: string | null
+          is_correct: boolean | null
+          misconception_code: string | null
+          option_letter: string | null
+          question_id: string
+          remedial_topic: string | null
+          selection_count: number | null
+        }
+        Insert: {
+          answer_id?: string
+          answer_value: string
+          created_at?: string | null
+          diagnostic_feedback?: string | null
+          error_category?: string | null
+          is_correct?: boolean | null
+          misconception_code?: string | null
+          option_letter?: string | null
+          question_id: string
+          remedial_topic?: string | null
+          selection_count?: number | null
+        }
+        Update: {
+          answer_id?: string
+          answer_value?: string
+          created_at?: string | null
+          diagnostic_feedback?: string | null
+          error_category?: string | null
+          is_correct?: boolean | null
+          misconception_code?: string | null
+          option_letter?: string | null
+          question_id?: string
+          remedial_topic?: string | null
+          selection_count?: number | null
+        }
+        Relationships: []
+      }
       bootcamp_answers: {
         Row: {
           answer_id: string
@@ -169,688 +280,6 @@ export type Database = {
         }
         Relationships: []
       }
-      bootcamp_enhanced_achievements: {
-        Row: {
-          achievement_id: string
-          achievement_name: string | null
-          achievement_type: string | null
-          badge_url: string | null
-          earned_at: string | null
-          points_awarded: number | null
-          student_id: string | null
-        }
-        Insert: {
-          achievement_id?: string
-          achievement_name?: string | null
-          achievement_type?: string | null
-          badge_url?: string | null
-          earned_at?: string | null
-          points_awarded?: number | null
-          student_id?: string | null
-        }
-        Update: {
-          achievement_id?: string
-          achievement_name?: string | null
-          achievement_type?: string | null
-          badge_url?: string | null
-          earned_at?: string | null
-          points_awarded?: number | null
-          student_id?: string | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "bootcamp_enhanced_achievements_student_id_fkey"
-            columns: ["student_id"]
-            isOneToOne: false
-            referencedRelation: "bootcamp_student_performance_summary"
-            referencedColumns: ["student_id"]
-          },
-          {
-            foreignKeyName: "bootcamp_enhanced_achievements_student_id_fkey"
-            columns: ["student_id"]
-            isOneToOne: false
-            referencedRelation: "bootcamp_student_skills_proficiency"
-            referencedColumns: ["student_id"]
-          },
-          {
-            foreignKeyName: "bootcamp_enhanced_achievements_student_id_fkey"
-            columns: ["student_id"]
-            isOneToOne: false
-            referencedRelation: "bootcamp_students"
-            referencedColumns: ["student_id"]
-          },
-        ]
-      }
-      bootcamp_enhanced_adaptive_recommendations: {
-        Row: {
-          completed: boolean | null
-          content: Json | null
-          expires_at: string | null
-          generated_at: string | null
-          priority: number | null
-          recommendation_id: string
-          recommendation_type: string | null
-          student_id: string | null
-        }
-        Insert: {
-          completed?: boolean | null
-          content?: Json | null
-          expires_at?: string | null
-          generated_at?: string | null
-          priority?: number | null
-          recommendation_id?: string
-          recommendation_type?: string | null
-          student_id?: string | null
-        }
-        Update: {
-          completed?: boolean | null
-          content?: Json | null
-          expires_at?: string | null
-          generated_at?: string | null
-          priority?: number | null
-          recommendation_id?: string
-          recommendation_type?: string | null
-          student_id?: string | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "bootcamp_enhanced_adaptive_recommendations_student_id_fkey"
-            columns: ["student_id"]
-            isOneToOne: false
-            referencedRelation: "bootcamp_student_performance_summary"
-            referencedColumns: ["student_id"]
-          },
-          {
-            foreignKeyName: "bootcamp_enhanced_adaptive_recommendations_student_id_fkey"
-            columns: ["student_id"]
-            isOneToOne: false
-            referencedRelation: "bootcamp_student_skills_proficiency"
-            referencedColumns: ["student_id"]
-          },
-          {
-            foreignKeyName: "bootcamp_enhanced_adaptive_recommendations_student_id_fkey"
-            columns: ["student_id"]
-            isOneToOne: false
-            referencedRelation: "bootcamp_students"
-            referencedColumns: ["student_id"]
-          },
-        ]
-      }
-      bootcamp_enhanced_answer_options: {
-        Row: {
-          answer_id: string
-          answer_value: string
-          diagnostic_feedback: string | null
-          error_category: string | null
-          is_correct: boolean | null
-          misconception_code: string | null
-          option_letter: string | null
-          question_id: string | null
-          remedial_topic: string | null
-          selection_count: number | null
-        }
-        Insert: {
-          answer_id?: string
-          answer_value: string
-          diagnostic_feedback?: string | null
-          error_category?: string | null
-          is_correct?: boolean | null
-          misconception_code?: string | null
-          option_letter?: string | null
-          question_id?: string | null
-          remedial_topic?: string | null
-          selection_count?: number | null
-        }
-        Update: {
-          answer_id?: string
-          answer_value?: string
-          diagnostic_feedback?: string | null
-          error_category?: string | null
-          is_correct?: boolean | null
-          misconception_code?: string | null
-          option_letter?: string | null
-          question_id?: string | null
-          remedial_topic?: string | null
-          selection_count?: number | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "bootcamp_enhanced_answer_options_question_id_fkey"
-            columns: ["question_id"]
-            isOneToOne: false
-            referencedRelation: "bootcamp_enhanced_questions"
-            referencedColumns: ["question_id"]
-          },
-        ]
-      }
-      bootcamp_enhanced_learning_sessions: {
-        Row: {
-          performance_score: number | null
-          questions_attempted: number | null
-          questions_correct: number | null
-          session_end: string | null
-          session_id: string
-          session_start: string | null
-          session_type: string | null
-          student_id: string | null
-          topics_covered: string[] | null
-        }
-        Insert: {
-          performance_score?: number | null
-          questions_attempted?: number | null
-          questions_correct?: number | null
-          session_end?: string | null
-          session_id?: string
-          session_start?: string | null
-          session_type?: string | null
-          student_id?: string | null
-          topics_covered?: string[] | null
-        }
-        Update: {
-          performance_score?: number | null
-          questions_attempted?: number | null
-          questions_correct?: number | null
-          session_end?: string | null
-          session_id?: string
-          session_start?: string | null
-          session_type?: string | null
-          student_id?: string | null
-          topics_covered?: string[] | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "bootcamp_enhanced_learning_sessions_student_id_fkey"
-            columns: ["student_id"]
-            isOneToOne: false
-            referencedRelation: "bootcamp_student_performance_summary"
-            referencedColumns: ["student_id"]
-          },
-          {
-            foreignKeyName: "bootcamp_enhanced_learning_sessions_student_id_fkey"
-            columns: ["student_id"]
-            isOneToOne: false
-            referencedRelation: "bootcamp_student_skills_proficiency"
-            referencedColumns: ["student_id"]
-          },
-          {
-            foreignKeyName: "bootcamp_enhanced_learning_sessions_student_id_fkey"
-            columns: ["student_id"]
-            isOneToOne: false
-            referencedRelation: "bootcamp_students"
-            referencedColumns: ["student_id"]
-          },
-        ]
-      }
-      bootcamp_enhanced_misconceptions: {
-        Row: {
-          description: string | null
-          diagnostic_indicators: string[] | null
-          misconception_code: string
-          misconception_type: string | null
-          remediation_pathway_id: string | null
-        }
-        Insert: {
-          description?: string | null
-          diagnostic_indicators?: string[] | null
-          misconception_code: string
-          misconception_type?: string | null
-          remediation_pathway_id?: string | null
-        }
-        Update: {
-          description?: string | null
-          diagnostic_indicators?: string[] | null
-          misconception_code?: string
-          misconception_type?: string | null
-          remediation_pathway_id?: string | null
-        }
-        Relationships: []
-      }
-      bootcamp_enhanced_modules: {
-        Row: {
-          description: string | null
-          module_id: string
-          module_name: string
-          module_order: number | null
-          weeks_allocated: number | null
-        }
-        Insert: {
-          description?: string | null
-          module_id: string
-          module_name: string
-          module_order?: number | null
-          weeks_allocated?: number | null
-        }
-        Update: {
-          description?: string | null
-          module_id?: string
-          module_name?: string
-          module_order?: number | null
-          weeks_allocated?: number | null
-        }
-        Relationships: []
-      }
-      bootcamp_enhanced_questions: {
-        Row: {
-          cognitive_level: string | null
-          created_at: string | null
-          difficulty: string | null
-          exam_boards: string[] | null
-          marks: number | null
-          module_id: string | null
-          prerequisite_skills: string[] | null
-          question_category: string | null
-          question_id: string
-          question_text: string
-          question_type: string | null
-          subtopic_id: string | null
-          success_rate: number | null
-          time_seconds: number | null
-          topic_id: string | null
-          usage_count: number | null
-          visual_aid_url: string | null
-        }
-        Insert: {
-          cognitive_level?: string | null
-          created_at?: string | null
-          difficulty?: string | null
-          exam_boards?: string[] | null
-          marks?: number | null
-          module_id?: string | null
-          prerequisite_skills?: string[] | null
-          question_category?: string | null
-          question_id: string
-          question_text: string
-          question_type?: string | null
-          subtopic_id?: string | null
-          success_rate?: number | null
-          time_seconds?: number | null
-          topic_id?: string | null
-          usage_count?: number | null
-          visual_aid_url?: string | null
-        }
-        Update: {
-          cognitive_level?: string | null
-          created_at?: string | null
-          difficulty?: string | null
-          exam_boards?: string[] | null
-          marks?: number | null
-          module_id?: string | null
-          prerequisite_skills?: string[] | null
-          question_category?: string | null
-          question_id?: string
-          question_text?: string
-          question_type?: string | null
-          subtopic_id?: string | null
-          success_rate?: number | null
-          time_seconds?: number | null
-          topic_id?: string | null
-          usage_count?: number | null
-          visual_aid_url?: string | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "bootcamp_enhanced_questions_module_id_fkey"
-            columns: ["module_id"]
-            isOneToOne: false
-            referencedRelation: "bootcamp_enhanced_modules"
-            referencedColumns: ["module_id"]
-          },
-          {
-            foreignKeyName: "bootcamp_enhanced_questions_subtopic_id_fkey"
-            columns: ["subtopic_id"]
-            isOneToOne: false
-            referencedRelation: "bootcamp_enhanced_subtopics"
-            referencedColumns: ["subtopic_id"]
-          },
-          {
-            foreignKeyName: "bootcamp_enhanced_questions_topic_id_fkey"
-            columns: ["topic_id"]
-            isOneToOne: false
-            referencedRelation: "bootcamp_enhanced_topics"
-            referencedColumns: ["topic_id"]
-          },
-          {
-            foreignKeyName: "bootcamp_enhanced_questions_topic_id_fkey"
-            columns: ["topic_id"]
-            isOneToOne: false
-            referencedRelation: "bootcamp_topic_difficulty_analysis"
-            referencedColumns: ["topic_id"]
-          },
-        ]
-      }
-      bootcamp_enhanced_remediation_pathways: {
-        Row: {
-          estimated_duration_days: number | null
-          misconception_code: string | null
-          pathway_id: string
-          pathway_name: string | null
-          stages: Json | null
-          success_rate: number | null
-        }
-        Insert: {
-          estimated_duration_days?: number | null
-          misconception_code?: string | null
-          pathway_id: string
-          pathway_name?: string | null
-          stages?: Json | null
-          success_rate?: number | null
-        }
-        Update: {
-          estimated_duration_days?: number | null
-          misconception_code?: string | null
-          pathway_id?: string
-          pathway_name?: string | null
-          stages?: Json | null
-          success_rate?: number | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "bootcamp_enhanced_remediation_pathways_misconception_code_fkey"
-            columns: ["misconception_code"]
-            isOneToOne: false
-            referencedRelation: "bootcamp_enhanced_misconceptions"
-            referencedColumns: ["misconception_code"]
-          },
-          {
-            foreignKeyName: "bootcamp_enhanced_remediation_pathways_misconception_code_fkey"
-            columns: ["misconception_code"]
-            isOneToOne: false
-            referencedRelation: "bootcamp_misconception_frequency"
-            referencedColumns: ["misconception_code"]
-          },
-        ]
-      }
-      bootcamp_enhanced_student_progress: {
-        Row: {
-          accuracy_percentage: number | null
-          average_speed_seconds: number | null
-          last_activity: string | null
-          mastery_score: number | null
-          module_id: string | null
-          progress_id: string
-          status: string | null
-          student_id: string | null
-          topic_id: string | null
-        }
-        Insert: {
-          accuracy_percentage?: number | null
-          average_speed_seconds?: number | null
-          last_activity?: string | null
-          mastery_score?: number | null
-          module_id?: string | null
-          progress_id?: string
-          status?: string | null
-          student_id?: string | null
-          topic_id?: string | null
-        }
-        Update: {
-          accuracy_percentage?: number | null
-          average_speed_seconds?: number | null
-          last_activity?: string | null
-          mastery_score?: number | null
-          module_id?: string | null
-          progress_id?: string
-          status?: string | null
-          student_id?: string | null
-          topic_id?: string | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "bootcamp_enhanced_student_progress_module_id_fkey"
-            columns: ["module_id"]
-            isOneToOne: false
-            referencedRelation: "bootcamp_enhanced_modules"
-            referencedColumns: ["module_id"]
-          },
-          {
-            foreignKeyName: "bootcamp_enhanced_student_progress_student_id_fkey"
-            columns: ["student_id"]
-            isOneToOne: false
-            referencedRelation: "bootcamp_student_performance_summary"
-            referencedColumns: ["student_id"]
-          },
-          {
-            foreignKeyName: "bootcamp_enhanced_student_progress_student_id_fkey"
-            columns: ["student_id"]
-            isOneToOne: false
-            referencedRelation: "bootcamp_student_skills_proficiency"
-            referencedColumns: ["student_id"]
-          },
-          {
-            foreignKeyName: "bootcamp_enhanced_student_progress_student_id_fkey"
-            columns: ["student_id"]
-            isOneToOne: false
-            referencedRelation: "bootcamp_students"
-            referencedColumns: ["student_id"]
-          },
-          {
-            foreignKeyName: "bootcamp_enhanced_student_progress_topic_id_fkey"
-            columns: ["topic_id"]
-            isOneToOne: false
-            referencedRelation: "bootcamp_enhanced_topics"
-            referencedColumns: ["topic_id"]
-          },
-          {
-            foreignKeyName: "bootcamp_enhanced_student_progress_topic_id_fkey"
-            columns: ["topic_id"]
-            isOneToOne: false
-            referencedRelation: "bootcamp_topic_difficulty_analysis"
-            referencedColumns: ["topic_id"]
-          },
-        ]
-      }
-      bootcamp_enhanced_student_responses: {
-        Row: {
-          attempt_number: number | null
-          confidence_rating: number | null
-          is_correct: boolean | null
-          misconception_detected: string | null
-          question_id: string | null
-          required_hint: boolean | null
-          responded_at: string | null
-          response_id: string
-          selected_answer: string | null
-          session_id: string | null
-          student_id: string | null
-          time_taken_seconds: number | null
-        }
-        Insert: {
-          attempt_number?: number | null
-          confidence_rating?: number | null
-          is_correct?: boolean | null
-          misconception_detected?: string | null
-          question_id?: string | null
-          required_hint?: boolean | null
-          responded_at?: string | null
-          response_id?: string
-          selected_answer?: string | null
-          session_id?: string | null
-          student_id?: string | null
-          time_taken_seconds?: number | null
-        }
-        Update: {
-          attempt_number?: number | null
-          confidence_rating?: number | null
-          is_correct?: boolean | null
-          misconception_detected?: string | null
-          question_id?: string | null
-          required_hint?: boolean | null
-          responded_at?: string | null
-          response_id?: string
-          selected_answer?: string | null
-          session_id?: string | null
-          student_id?: string | null
-          time_taken_seconds?: number | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "bootcamp_enhanced_student_responses_question_id_fkey"
-            columns: ["question_id"]
-            isOneToOne: false
-            referencedRelation: "bootcamp_enhanced_questions"
-            referencedColumns: ["question_id"]
-          },
-          {
-            foreignKeyName: "bootcamp_enhanced_student_responses_student_id_fkey"
-            columns: ["student_id"]
-            isOneToOne: false
-            referencedRelation: "bootcamp_student_performance_summary"
-            referencedColumns: ["student_id"]
-          },
-          {
-            foreignKeyName: "bootcamp_enhanced_student_responses_student_id_fkey"
-            columns: ["student_id"]
-            isOneToOne: false
-            referencedRelation: "bootcamp_student_skills_proficiency"
-            referencedColumns: ["student_id"]
-          },
-          {
-            foreignKeyName: "bootcamp_enhanced_student_responses_student_id_fkey"
-            columns: ["student_id"]
-            isOneToOne: false
-            referencedRelation: "bootcamp_students"
-            referencedColumns: ["student_id"]
-          },
-        ]
-      }
-      bootcamp_enhanced_student_skills: {
-        Row: {
-          active_misconceptions: string[] | null
-          average_time_seconds: number | null
-          last_assessed: string | null
-          misconceptions_cleared: string[] | null
-          proficiency_level: number | null
-          questions_attempted: number | null
-          questions_correct: number | null
-          skill_category: string | null
-          skill_id: string
-          skill_name: string | null
-          student_id: string | null
-        }
-        Insert: {
-          active_misconceptions?: string[] | null
-          average_time_seconds?: number | null
-          last_assessed?: string | null
-          misconceptions_cleared?: string[] | null
-          proficiency_level?: number | null
-          questions_attempted?: number | null
-          questions_correct?: number | null
-          skill_category?: string | null
-          skill_id?: string
-          skill_name?: string | null
-          student_id?: string | null
-        }
-        Update: {
-          active_misconceptions?: string[] | null
-          average_time_seconds?: number | null
-          last_assessed?: string | null
-          misconceptions_cleared?: string[] | null
-          proficiency_level?: number | null
-          questions_attempted?: number | null
-          questions_correct?: number | null
-          skill_category?: string | null
-          skill_id?: string
-          skill_name?: string | null
-          student_id?: string | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "bootcamp_enhanced_student_skills_student_id_fkey"
-            columns: ["student_id"]
-            isOneToOne: false
-            referencedRelation: "bootcamp_student_performance_summary"
-            referencedColumns: ["student_id"]
-          },
-          {
-            foreignKeyName: "bootcamp_enhanced_student_skills_student_id_fkey"
-            columns: ["student_id"]
-            isOneToOne: false
-            referencedRelation: "bootcamp_student_skills_proficiency"
-            referencedColumns: ["student_id"]
-          },
-          {
-            foreignKeyName: "bootcamp_enhanced_student_skills_student_id_fkey"
-            columns: ["student_id"]
-            isOneToOne: false
-            referencedRelation: "bootcamp_students"
-            referencedColumns: ["student_id"]
-          },
-        ]
-      }
-      bootcamp_enhanced_subtopics: {
-        Row: {
-          learning_objectives: string[] | null
-          prerequisite_subtopics: string[] | null
-          subtopic_id: string
-          subtopic_name: string
-          topic_id: string | null
-        }
-        Insert: {
-          learning_objectives?: string[] | null
-          prerequisite_subtopics?: string[] | null
-          subtopic_id: string
-          subtopic_name: string
-          topic_id?: string | null
-        }
-        Update: {
-          learning_objectives?: string[] | null
-          prerequisite_subtopics?: string[] | null
-          subtopic_id?: string
-          subtopic_name?: string
-          topic_id?: string | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "bootcamp_enhanced_subtopics_topic_id_fkey"
-            columns: ["topic_id"]
-            isOneToOne: false
-            referencedRelation: "bootcamp_enhanced_topics"
-            referencedColumns: ["topic_id"]
-          },
-          {
-            foreignKeyName: "bootcamp_enhanced_subtopics_topic_id_fkey"
-            columns: ["topic_id"]
-            isOneToOne: false
-            referencedRelation: "bootcamp_topic_difficulty_analysis"
-            referencedColumns: ["topic_id"]
-          },
-        ]
-      }
-      bootcamp_enhanced_topics: {
-        Row: {
-          difficulty_level: string | null
-          estimated_questions: number | null
-          module_id: string | null
-          topic_id: string
-          topic_name: string
-          topic_order: number | null
-        }
-        Insert: {
-          difficulty_level?: string | null
-          estimated_questions?: number | null
-          module_id?: string | null
-          topic_id: string
-          topic_name: string
-          topic_order?: number | null
-        }
-        Update: {
-          difficulty_level?: string | null
-          estimated_questions?: number | null
-          module_id?: string | null
-          topic_id?: string
-          topic_name?: string
-          topic_order?: number | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "bootcamp_enhanced_topics_module_id_fkey"
-            columns: ["module_id"]
-            isOneToOne: false
-            referencedRelation: "bootcamp_enhanced_modules"
-            referencedColumns: ["module_id"]
-          },
-        ]
-      }
       bootcamp_learning_sessions: {
         Row: {
           created_at: string | null
@@ -893,24 +322,37 @@ export type Database = {
             foreignKeyName: "bootcamp_learning_sessions_student_id_fkey"
             columns: ["student_id"]
             isOneToOne: false
-            referencedRelation: "bootcamp_student_performance_summary"
-            referencedColumns: ["student_id"]
-          },
-          {
-            foreignKeyName: "bootcamp_learning_sessions_student_id_fkey"
-            columns: ["student_id"]
-            isOneToOne: false
-            referencedRelation: "bootcamp_student_skills_proficiency"
-            referencedColumns: ["student_id"]
-          },
-          {
-            foreignKeyName: "bootcamp_learning_sessions_student_id_fkey"
-            columns: ["student_id"]
-            isOneToOne: false
             referencedRelation: "bootcamp_students"
             referencedColumns: ["student_id"]
           },
         ]
+      }
+      bootcamp_misconceptions: {
+        Row: {
+          created_at: string | null
+          description: string | null
+          diagnostic_indicators: string[] | null
+          misconception_code: string
+          misconception_type: string | null
+          remediation_pathway_id: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          description?: string | null
+          diagnostic_indicators?: string[] | null
+          misconception_code: string
+          misconception_type?: string | null
+          remediation_pathway_id?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          description?: string | null
+          diagnostic_indicators?: string[] | null
+          misconception_code?: string
+          misconception_type?: string | null
+          remediation_pathway_id?: string | null
+        }
+        Relationships: []
       }
       bootcamp_misconceptions_catalog: {
         Row: {
@@ -1070,6 +512,47 @@ export type Database = {
         }
         Relationships: []
       }
+      bootcamp_remediation_pathways: {
+        Row: {
+          created_at: string | null
+          estimated_duration_days: number | null
+          misconception_code: string | null
+          pathway_id: string
+          pathway_name: string | null
+          stages: Json | null
+          success_rate: number | null
+          updated_at: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          estimated_duration_days?: number | null
+          misconception_code?: string | null
+          pathway_id: string
+          pathway_name?: string | null
+          stages?: Json | null
+          success_rate?: number | null
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          estimated_duration_days?: number | null
+          misconception_code?: string | null
+          pathway_id?: string
+          pathway_name?: string | null
+          stages?: Json | null
+          success_rate?: number | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "fk_remediation_misconception"
+            columns: ["misconception_code"]
+            isOneToOne: false
+            referencedRelation: "bootcamp_misconceptions"
+            referencedColumns: ["misconception_code"]
+          },
+        ]
+      }
       bootcamp_skills: {
         Row: {
           category: string
@@ -1175,20 +658,6 @@ export type Database = {
             foreignKeyName: "bootcamp_student_progress_student_id_fkey"
             columns: ["student_id"]
             isOneToOne: false
-            referencedRelation: "bootcamp_student_performance_summary"
-            referencedColumns: ["student_id"]
-          },
-          {
-            foreignKeyName: "bootcamp_student_progress_student_id_fkey"
-            columns: ["student_id"]
-            isOneToOne: false
-            referencedRelation: "bootcamp_student_skills_proficiency"
-            referencedColumns: ["student_id"]
-          },
-          {
-            foreignKeyName: "bootcamp_student_progress_student_id_fkey"
-            columns: ["student_id"]
-            isOneToOne: false
             referencedRelation: "bootcamp_students"
             referencedColumns: ["student_id"]
           },
@@ -1288,20 +757,6 @@ export type Database = {
           updated_at?: string | null
         }
         Relationships: [
-          {
-            foreignKeyName: "bootcamp_student_skills_student_id_fkey"
-            columns: ["student_id"]
-            isOneToOne: false
-            referencedRelation: "bootcamp_student_performance_summary"
-            referencedColumns: ["student_id"]
-          },
-          {
-            foreignKeyName: "bootcamp_student_skills_student_id_fkey"
-            columns: ["student_id"]
-            isOneToOne: false
-            referencedRelation: "bootcamp_student_skills_proficiency"
-            referencedColumns: ["student_id"]
-          },
           {
             foreignKeyName: "bootcamp_student_skills_student_id_fkey"
             columns: ["student_id"]
@@ -1617,72 +1072,6 @@ export type Database = {
       }
     }
     Views: {
-      bootcamp_daily_activity_summary: {
-        Row: {
-          active_students: number | null
-          activity_date: string | null
-          avg_response_time: number | null
-          correct_responses: number | null
-          daily_accuracy: number | null
-          total_responses: number | null
-          unique_questions_attempted: number | null
-        }
-        Relationships: []
-      }
-      bootcamp_misconception_frequency: {
-        Row: {
-          affected_students: number | null
-          description: string | null
-          misconception_code: string | null
-          misconception_type: string | null
-          remediation_success_rate: number | null
-          total_occurrences: number | null
-        }
-        Relationships: []
-      }
-      bootcamp_student_performance_summary: {
-        Row: {
-          active_days: number | null
-          avg_response_time: number | null
-          email: string | null
-          last_active: string | null
-          overall_accuracy: number | null
-          student_id: string | null
-          total_correct: number | null
-          total_questions_attempted: number | null
-          unique_misconceptions: number | null
-          username: string | null
-        }
-        Relationships: []
-      }
-      bootcamp_student_skills_proficiency: {
-        Row: {
-          accuracy_percentage: number | null
-          active_misconception_count: number | null
-          average_time_seconds: number | null
-          last_assessed: string | null
-          proficiency_level: number | null
-          questions_attempted: number | null
-          questions_correct: number | null
-          skill_category: string | null
-          skill_name: string | null
-          student_id: string | null
-          username: string | null
-        }
-        Relationships: []
-      }
-      bootcamp_topic_difficulty_analysis: {
-        Row: {
-          avg_time: number | null
-          difficulty: string | null
-          question_count: number | null
-          students_attempted: number | null
-          success_rate: number | null
-          topic_id: string | null
-          topic_name: string | null
-        }
-        Relationships: []
-      }
       student_performance: {
         Row: {
           accuracy: number | null
