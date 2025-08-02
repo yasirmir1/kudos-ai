@@ -200,6 +200,87 @@ export function LearningExperience({ onComplete }: LearningExperienceProps) {
 
   return (
     <div className="space-y-6">
+      {/* Currently Learning: Data Representation - First Priority */}
+      <Card className="border-l-4 border-l-primary">
+        <CardHeader>
+          <div className="flex items-center justify-between">
+            <div>
+              <CardTitle className="text-xl">Currently Learning: Data Representation</CardTitle>
+              <p className="text-sm text-muted-foreground mt-1">foundation</p>
+              <p className="text-sm text-muted-foreground">Skills: graphs, interpretation</p>
+            </div>
+            <Badge variant="secondary" className="bg-primary/10 text-primary">
+              In Progress
+            </Badge>
+          </div>
+        </CardHeader>
+        <CardContent>
+          <div className="space-y-4">
+            <div>
+              <h4 className="text-sm font-medium mb-3">Learning Steps</h4>
+              <div className="space-y-2">
+                <div className="flex items-center justify-between p-3 bg-green-50 rounded-lg border border-green-200">
+                  <div className="flex items-center gap-3">
+                    <div className="w-6 h-6 bg-green-500 text-white rounded-full flex items-center justify-center text-xs font-medium">1</div>
+                    <span className="font-medium">Concept Introduction</span>
+                  </div>
+                  <Badge variant="secondary" className="bg-green-100 text-green-800">Complete Step</Badge>
+                </div>
+                <div className="flex items-center justify-between p-3 bg-yellow-50 rounded-lg border border-yellow-200">
+                  <div className="flex items-center gap-3">
+                    <div className="w-6 h-6 bg-primary text-white rounded-full flex items-center justify-center text-xs font-medium">2</div>
+                    <span className="font-medium">Guided Practice</span>
+                  </div>
+                  <Button size="sm" variant="secondary">Complete Step</Button>
+                </div>
+                <div className="flex items-center justify-between p-3 bg-muted/50 rounded-lg border">
+                  <div className="flex items-center gap-3">
+                    <div className="w-6 h-6 bg-muted-foreground text-white rounded-full flex items-center justify-center text-xs font-medium">3</div>
+                    <span className="font-medium">Independent Practice</span>
+                  </div>
+                </div>
+                <div className="flex items-center justify-between p-3 bg-muted/50 rounded-lg border">
+                  <div className="flex items-center gap-3">
+                    <div className="w-6 h-6 bg-muted-foreground text-white rounded-full flex items-center justify-center text-xs font-medium">4</div>
+                    <span className="font-medium">Assessment</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <Button className="w-full">
+              <ArrowRight className="h-4 w-4 mr-2" />
+              Start Learning Session
+            </Button>
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Skill Development - Second Priority */}
+      <Card className="border-l-4 border-l-secondary">
+        <CardHeader>
+          <CardTitle className="text-xl flex items-center gap-2">
+            <Award className="h-5 w-5" />
+            Skill Development
+          </CardTitle>
+          <p className="text-sm text-muted-foreground">Continue building your mathematical foundation</p>
+        </CardHeader>
+        <CardContent>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {['Arithmetic', 'Problem Solving', 'Pattern Recognition', 'Logical Reasoning'].map((skill) => (
+              <div key={skill} className="space-y-2">
+                <div className="flex justify-between text-sm">
+                  <span className="font-medium">{skill}</span>
+                  <span className="text-muted-foreground">
+                    {Math.floor(Math.random() * 40 + 60)}%
+                  </span>
+                </div>
+                <Progress value={Math.floor(Math.random() * 40 + 60)} className="h-2" />
+              </div>
+            ))}
+          </div>
+        </CardContent>
+      </Card>
+
       {/* Learning Path Overview */}
       <Card>
         <CardHeader>
