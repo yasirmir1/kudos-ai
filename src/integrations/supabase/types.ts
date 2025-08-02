@@ -253,6 +253,159 @@ export type Database = {
         }
         Relationships: []
       }
+      bootcamp_curriculum_content: {
+        Row: {
+          content: Json
+          created_at: string | null
+          description: string | null
+          estimated_time_minutes: number | null
+          id: string
+          media_urls: string[] | null
+          stage_order: number
+          stage_type: string
+          title: string | null
+          topic_id: string
+          updated_at: string | null
+        }
+        Insert: {
+          content?: Json
+          created_at?: string | null
+          description?: string | null
+          estimated_time_minutes?: number | null
+          id?: string
+          media_urls?: string[] | null
+          stage_order?: number
+          stage_type: string
+          title?: string | null
+          topic_id: string
+          updated_at?: string | null
+        }
+        Update: {
+          content?: Json
+          created_at?: string | null
+          description?: string | null
+          estimated_time_minutes?: number | null
+          id?: string
+          media_urls?: string[] | null
+          stage_order?: number
+          stage_type?: string
+          title?: string | null
+          topic_id?: string
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "bootcamp_curriculum_content_topic_id_fkey"
+            columns: ["topic_id"]
+            isOneToOne: false
+            referencedRelation: "bootcamp_curriculum_topics"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      bootcamp_curriculum_questions: {
+        Row: {
+          content_id: string
+          correct_answer: string | null
+          created_at: string | null
+          difficulty: string | null
+          explanation: string | null
+          hints: string[] | null
+          id: string
+          options: Json | null
+          points: number | null
+          question_order: number
+          question_text: string
+          question_type: string
+          updated_at: string | null
+        }
+        Insert: {
+          content_id: string
+          correct_answer?: string | null
+          created_at?: string | null
+          difficulty?: string | null
+          explanation?: string | null
+          hints?: string[] | null
+          id?: string
+          options?: Json | null
+          points?: number | null
+          question_order?: number
+          question_text: string
+          question_type: string
+          updated_at?: string | null
+        }
+        Update: {
+          content_id?: string
+          correct_answer?: string | null
+          created_at?: string | null
+          difficulty?: string | null
+          explanation?: string | null
+          hints?: string[] | null
+          id?: string
+          options?: Json | null
+          points?: number | null
+          question_order?: number
+          question_text?: string
+          question_type?: string
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "bootcamp_curriculum_questions_content_id_fkey"
+            columns: ["content_id"]
+            isOneToOne: false
+            referencedRelation: "bootcamp_curriculum_content"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      bootcamp_curriculum_topics: {
+        Row: {
+          created_at: string | null
+          difficulty: string
+          estimated_duration_minutes: number | null
+          id: string
+          learning_objectives: string[] | null
+          module_id: string | null
+          prerequisites: string[] | null
+          topic_name: string
+          topic_order: number
+          updated_at: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          difficulty?: string
+          estimated_duration_minutes?: number | null
+          id: string
+          learning_objectives?: string[] | null
+          module_id?: string | null
+          prerequisites?: string[] | null
+          topic_name: string
+          topic_order?: number
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          difficulty?: string
+          estimated_duration_minutes?: number | null
+          id?: string
+          learning_objectives?: string[] | null
+          module_id?: string | null
+          prerequisites?: string[] | null
+          topic_name?: string
+          topic_order?: number
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "bootcamp_curriculum_topics_module_id_fkey"
+            columns: ["module_id"]
+            isOneToOne: false
+            referencedRelation: "bootcamp_modules"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       bootcamp_difficulty_levels: {
         Row: {
           color: string
