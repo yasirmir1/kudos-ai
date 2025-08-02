@@ -277,7 +277,8 @@ const Index = () => {
             <p className="text-xl md:text-2xl text-muted-foreground">See results from day one</p>
           </div>
           
-          <div className="space-y-32">
+          
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {[{
             step: "1",
             title: "Quick Setup",
@@ -293,15 +294,15 @@ const Index = () => {
             title: "Clear Insights",
             description: "Check progress anytime on your phone. See improvements by topic. Know exactly how to help. Watch their confidence grow.",
             highlight: "📱 Always visible"
-          }].map((item, index) => <div key={index} className={`fade-on-scroll grid grid-cols-1 lg:grid-cols-2 gap-16 items-center ${index % 2 === 1 ? 'lg:grid-flow-col-dense' : ''}`}>
-                <div className={index % 2 === 1 ? 'lg:col-start-2' : ''}>
-                  <h3 className="text-3xl md:text-4xl font-bold mb-6">{item.step}. {item.title}</h3>
-                  <p className="text-lg md:text-xl text-muted-foreground leading-relaxed">{item.description}</p>
-                </div>
-                <div className={`bg-muted rounded-2xl p-12 text-center text-4xl md:text-5xl font-bold h-80 flex items-center justify-center ${index % 2 === 1 ? 'lg:col-start-1' : ''}`}>
-                  {item.highlight}
-                </div>
-              </div>)}
+          }].map((item, index) => 
+            <div key={index} className="fade-on-scroll text-center">
+              <div className="bg-muted rounded-2xl p-8 text-center text-3xl md:text-4xl font-bold h-48 flex items-center justify-center mb-6">
+                {item.highlight}
+              </div>
+              <h3 className="text-2xl md:text-3xl font-bold mb-4">{item.step}. {item.title}</h3>
+              <p className="text-lg text-muted-foreground leading-relaxed">{item.description}</p>
+            </div>
+          )}
           </div>
         </div>
       </section>
