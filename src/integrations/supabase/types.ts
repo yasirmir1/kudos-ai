@@ -1275,6 +1275,84 @@ export type Database = {
         }
         Relationships: []
       }
+      mock_test_questions: {
+        Row: {
+          correct_answer: string
+          created_at: string
+          created_by: string | null
+          difficulty: string
+          exam_board: string | null
+          explanation: string | null
+          id: string
+          is_active: boolean
+          marks: number
+          option_a: string | null
+          option_b: string | null
+          option_c: string | null
+          option_d: string | null
+          question_id: string
+          question_text: string
+          question_type: string
+          subtopic: string | null
+          tags: string[] | null
+          time_seconds: number
+          topic: string
+          updated_at: string
+          visual_aid_url: string | null
+          year_level: number | null
+        }
+        Insert: {
+          correct_answer: string
+          created_at?: string
+          created_by?: string | null
+          difficulty?: string
+          exam_board?: string | null
+          explanation?: string | null
+          id?: string
+          is_active?: boolean
+          marks?: number
+          option_a?: string | null
+          option_b?: string | null
+          option_c?: string | null
+          option_d?: string | null
+          question_id: string
+          question_text: string
+          question_type?: string
+          subtopic?: string | null
+          tags?: string[] | null
+          time_seconds?: number
+          topic: string
+          updated_at?: string
+          visual_aid_url?: string | null
+          year_level?: number | null
+        }
+        Update: {
+          correct_answer?: string
+          created_at?: string
+          created_by?: string | null
+          difficulty?: string
+          exam_board?: string | null
+          explanation?: string | null
+          id?: string
+          is_active?: boolean
+          marks?: number
+          option_a?: string | null
+          option_b?: string | null
+          option_c?: string | null
+          option_d?: string | null
+          question_id?: string
+          question_text?: string
+          question_type?: string
+          subtopic?: string | null
+          tags?: string[] | null
+          time_seconds?: number
+          topic?: string
+          updated_at?: string
+          visual_aid_url?: string | null
+          year_level?: number | null
+        }
+        Relationships: []
+      }
       practice_sessions: {
         Row: {
           accuracy: number | null
