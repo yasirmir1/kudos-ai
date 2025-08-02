@@ -96,10 +96,18 @@ export const useBootcampData = () => {
       const studentId = studentData?.student_id || (await getStudentId());
 
       if (studentId) {
-        // Since bootcamp_student_responses is currently empty, we'll create placeholder data
-        // In a real implementation, this would query actual progress tables
-        const progressData: StudentProgress[] = [];
-        setProgress(progressData);
+        // Fetch actual progress data from bootcamp_student_progress
+        const { data: progressData, error: progressError } = await supabase
+          .from('bootcamp_student_progress')
+          .select('*')
+          .eq('student_id', studentId);
+
+        if (progressError) {
+          console.error('Error fetching progress:', progressError);
+          setProgress([]);
+        } else {
+          setProgress(progressData || []);
+        }
 
         // Fetch responses data for last 30 days
         const thirtyDaysAgo = new Date();
