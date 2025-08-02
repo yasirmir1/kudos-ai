@@ -5,6 +5,7 @@ import { TopicStrengthsCard } from './TopicStrengthsCard';
 import { MisconceptionTracker } from './MisconceptionTracker';
 import { SkillRadarChart } from './SkillRadarChart';
 import { LearningPathRecommendations } from './LearningPathRecommendations';
+import { AchievementBadges } from './AchievementBadges';
 
 interface StudentData {
   overallAccuracy: number;
@@ -95,6 +96,10 @@ export const StudentDashboard: React.FC<StudentDashboardProps> = ({ studentData 
       </div>
 
       <SkillRadarChart />
+      <AchievementBadges userBadges={[
+        { name: 'Sharp Shooter', description: '95% accuracy', earned: false, progress: 87 },
+        { name: '7-Day Streak', description: '7 consecutive days', earned: true, earnedDate: '2 days ago' }
+      ]} />
       <LearningPathRecommendations />
     </div>
   );

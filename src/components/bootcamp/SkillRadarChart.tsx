@@ -1,4 +1,5 @@
 import React from 'react';
+import { skillsHierarchy } from '@/lib/bootcamp-data';
 
 interface Skill {
   name: string;
@@ -7,12 +8,12 @@ interface Skill {
 
 export const SkillRadarChart: React.FC = () => {
   const skills: Skill[] = [
-    { name: 'Arithmetic', score: 85 },
-    { name: 'Problem Solving', score: 72 },
-    { name: 'Pattern Recognition', score: 78 },
-    { name: 'Logical Reasoning', score: 65 },
-    { name: 'Spatial Awareness', score: 70 },
-    { name: 'Data Analysis', score: 82 }
+    { name: 'Number Sense', score: 85 },
+    { name: 'Calculation Fluency', score: 72 },
+    { name: 'Conceptual Understanding', score: 78 },
+    { name: 'Pattern Recognition', score: 65 },
+    { name: 'Problem Decomposition', score: 70 },
+    { name: 'Logical Thinking', score: 82 }
   ];
 
   return (
@@ -49,6 +50,27 @@ export const SkillRadarChart: React.FC = () => {
             <p className="text-sm text-muted-foreground">{skill.name}</p>
           </div>
         ))}
+      </div>
+      <div className="mt-6 p-4 bg-muted/50 rounded-lg">
+        <h4 className="text-sm font-medium text-foreground mb-2">Skills Framework</h4>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-xs">
+          <div>
+            <p className="font-medium text-muted-foreground mb-1">Foundational Skills:</p>
+            <ul className="space-y-1 text-muted-foreground">
+              {Object.keys(skillsHierarchy.foundational_skills).map((skill, i) => (
+                <li key={i} className="capitalize">{skill.replace('_', ' ')}</li>
+              ))}
+            </ul>
+          </div>
+          <div>
+            <p className="font-medium text-muted-foreground mb-1">Topic Skills:</p>
+            <ul className="space-y-1 text-muted-foreground">
+              {Object.keys(skillsHierarchy.topic_specific_skills).map((skill, i) => (
+                <li key={i} className="capitalize">{skill.replace('_', ' ')}</li>
+              ))}
+            </ul>
+          </div>
+        </div>
       </div>
     </div>
   );
