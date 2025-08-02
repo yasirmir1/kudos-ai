@@ -7,6 +7,7 @@ import { BookOpen, Target, Clock, Award, ArrowRight, CheckCircle2 } from 'lucide
 import { BootcampAPI } from '@/lib/bootcamp-api';
 import { useToast } from '@/hooks/use-toast';
 import { useAuth } from '@/hooks/useAuth';
+import { LearningSessionModal } from './LearningSessionModal';
 
 interface LearningExperienceProps {
   onComplete?: () => void;
@@ -38,6 +39,7 @@ export function LearningExperience({ onComplete }: LearningExperienceProps) {
   const [currentSession, setCurrentSession] = useState<LearningSession | null>(null);
   const [topicProgress, setTopicProgress] = useState<{ [key: string]: number }>({});
   const [studentId, setStudentId] = useState<string | null>(null);
+  const [isLearningSessionModalOpen, setIsLearningSessionModalOpen] = useState(false);
   const { toast } = useToast();
   const { user } = useAuth();
 
@@ -247,7 +249,10 @@ export function LearningExperience({ onComplete }: LearningExperienceProps) {
                 </div>
               </div>
             </div>
-            <Button className="w-full">
+            <Button 
+              className="w-full"
+              onClick={() => setIsLearningSessionModalOpen(true)}
+            >
               <ArrowRight className="h-4 w-4 mr-2" />
               Start Learning Session
             </Button>
@@ -396,7 +401,10 @@ export function LearningExperience({ onComplete }: LearningExperienceProps) {
               </div>
 
               {!currentSession && (
-                <Button onClick={startLearningSession} className="w-full">
+                <Button 
+                  onClick={() => setIsLearningSessionModalOpen(true)} 
+                  className="w-full"
+                >
                   <ArrowRight className="h-4 w-4 mr-2" />
                   Start Learning Session
                 </Button>
@@ -430,6 +438,21 @@ export function LearningExperience({ onComplete }: LearningExperienceProps) {
           </div>
         </CardContent>
       </Card>
+
+      {/* Learning Session Modal */}
+      <LearningSessionModal
+        isOpen={isLearningSessionModalOpen}
+        onClose={() => setIsLearningSessionModalOpen(false)}
+        topicName={currentTopic?.name || "Data Representation"}
+        onComplete={() => {
+          toast({
+            title: "Learning Session Completed!",
+            description: "Great job! You've completed the learning session.",
+          });
+          // Optionally update progress here
+          setIsLearningSessionModalOpen(false);
+        }}
+      />
     </div>
   );
 }
