@@ -151,45 +151,48 @@ const Index = () => {
               <rect x="305" y="185" width="84" height="4" rx="2" fill="#0071E3"></rect>
               <text x="435" y="188" fontFamily="Arial" fontSize="10" fill="#86868B">Numbers 70%</text>
               
-              {/* Topic Breakdown - replacing English tile */}
+              {/* Practice Insights - replacing English tile */}
               <rect x="540" y="90" width="230" height="140" rx="12" fill="#F3F4F6"></rect>
-              <text x="560" y="120" fontFamily="Arial" fontSize="16" fontWeight="600" fill="#1D1D1F">Practice Insights</text>
+              <text x="560" y="115" fontFamily="Arial" fontSize="16" fontWeight="600" fill="#1D1D1F">Practice Insights</text>
               
-              {/* Practice stats */}
-              <text x="560" y="145" fontFamily="Arial" fontSize="12" fill="#86868B">Questions today:</text>
-              <text x="560" y="160" fontFamily="Arial" fontSize="16" fontWeight="600" fill="#34C759">24</text>
+              {/* Practice stats - better spacing */}
+              <text x="560" y="135" fontFamily="Arial" fontSize="11" fill="#86868B">Questions today:</text>
+              <text x="650" y="135" fontFamily="Arial" fontSize="14" fontWeight="600" fill="#34C759">24</text>
               
-              <text x="680" y="145" fontFamily="Arial" fontSize="12" fill="#86868B">Accuracy:</text>
-              <text x="680" y="160" fontFamily="Arial" fontSize="16" fontWeight="600" fill="#0071E3">85%</text>
+              <text x="560" y="155" fontFamily="Arial" fontSize="11" fill="#86868B">Accuracy:</text>
+              <text x="650" y="155" fontFamily="Arial" fontSize="14" fontWeight="600" fill="#0071E3">85%</text>
               
-              <text x="560" y="185" fontFamily="Arial" fontSize="12" fill="#86868B">Time spent:</text>
-              <text x="560" y="200" fontFamily="Arial" fontSize="14" fontWeight="600" fill="#0071E3">18 mins</text>
+              <text x="560" y="175" fontFamily="Arial" fontSize="11" fill="#86868B">Time spent:</text>
+              <text x="650" y="175" fontFamily="Arial" fontSize="14" fontWeight="600" fill="#0071E3">18 mins</text>
               
               {/* Weekly Progress - Full Width */}
               <rect x="30" y="260" width="740" height="200" rx="12" fill="#F3F4F6"></rect>
               <text x="50" y="290" fontFamily="Arial" fontSize="18" fontWeight="600" fill="#1D1D1F">Weekly Progress</text>
               
-              {/* Extended line graph across full width but within container */}
-              <polyline points="80,400 150,380 220,370 290,340 360,320 430,300 500,280 570,260 640,240 710,220" stroke="#667EEA" strokeWidth="3" fill="none"></polyline>
-              <circle cx="80" cy="400" r="4" fill="#667EEA"></circle>
-              <circle cx="150" cy="380" r="4" fill="#667EEA"></circle>
-              <circle cx="220" cy="370" r="4" fill="#667EEA"></circle>
-              <circle cx="290" cy="340" r="4" fill="#667EEA"></circle>
-              <circle cx="360" cy="320" r="4" fill="#667EEA"></circle>
-              <circle cx="430" cy="300" r="4" fill="#667EEA"></circle>
-              <circle cx="500" cy="280" r="4" fill="#667EEA"></circle>
-              <circle cx="570" cy="260" r="4" fill="#667EEA"></circle>
-              <circle cx="640" cy="240" r="4" fill="#667EEA"></circle>
-              <circle cx="710" cy="220" r="4" fill="#667EEA"></circle>
+              {/* Extended line graph within container bounds */}
+              <polyline points="80,380 140,360 200,350 260,320 320,300 380,280 440,260 500,240 560,220 620,200" stroke="#667EEA" strokeWidth="3" fill="none"></polyline>
+              <circle cx="80" cy="380" r="3" fill="#667EEA"></circle>
+              <circle cx="140" cy="360" r="3" fill="#667EEA"></circle>
+              <circle cx="200" cy="350" r="3" fill="#667EEA"></circle>
+              <circle cx="260" cy="320" r="3" fill="#667EEA"></circle>
+              <circle cx="320" cy="300" r="3" fill="#667EEA"></circle>
+              <circle cx="380" cy="280" r="3" fill="#667EEA"></circle>
+              <circle cx="440" cy="260" r="3" fill="#667EEA"></circle>
+              <circle cx="500" cy="240" r="3" fill="#667EEA"></circle>
+              <circle cx="560" cy="220" r="3" fill="#667EEA"></circle>
+              <circle cx="620" cy="200" r="3" fill="#667EEA"></circle>
               
               {/* Day labels */}
-              <text x="80" y="430" fontFamily="Arial" fontSize="10" fill="#86868B" textAnchor="middle">Mon</text>
-              <text x="180" y="430" fontFamily="Arial" fontSize="10" fill="#86868B" textAnchor="middle">Tue</text>
-              <text x="280" y="430" fontFamily="Arial" fontSize="10" fill="#86868B" textAnchor="middle">Wed</text>
-              <text x="380" y="430" fontFamily="Arial" fontSize="10" fill="#86868B" textAnchor="middle">Thu</text>
-              <text x="480" y="430" fontFamily="Arial" fontSize="10" fill="#86868B" textAnchor="middle">Fri</text>
-              <text x="580" y="430" fontFamily="Arial" fontSize="10" fill="#86868B" textAnchor="middle">Sat</text>
-              <text x="680" y="430" fontFamily="Arial" fontSize="10" fill="#86868B" textAnchor="middle">Sun</text>
+              <text x="80" y="410" fontFamily="Arial" fontSize="10" fill="#86868B" textAnchor="middle">Mon</text>
+              <text x="140" y="410" fontFamily="Arial" fontSize="10" fill="#86868B" textAnchor="middle">Tue</text>
+              <text x="200" y="410" fontFamily="Arial" fontSize="10" fill="#86868B" textAnchor="middle">Wed</text>
+              <text x="260" y="410" fontFamily="Arial" fontSize="10" fill="#86868B" textAnchor="middle">Thu</text>
+              <text x="320" y="410" fontFamily="Arial" fontSize="10" fill="#86868B" textAnchor="middle">Fri</text>
+              <text x="380" y="410" fontFamily="Arial" fontSize="10" fill="#86868B" textAnchor="middle">Sat</text>
+              <text x="440" y="410" fontFamily="Arial" fontSize="10" fill="#86868B" textAnchor="middle">Sun</text>
+              <text x="500" y="410" fontFamily="Arial" fontSize="10" fill="#86868B" textAnchor="middle">Mon</text>
+              <text x="560" y="410" fontFamily="Arial" fontSize="10" fill="#86868B" textAnchor="middle">Tue</text>
+              <text x="620" y="410" fontFamily="Arial" fontSize="10" fill="#86868B" textAnchor="middle">Wed</text>
             </svg>
           </div>
         </div>
