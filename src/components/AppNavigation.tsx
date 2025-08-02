@@ -85,7 +85,8 @@ export const AppNavigation: React.FC<AppNavigationProps> = ({
                     size="sm"
                     onClick={() => navigate(item.path)}
                     className={cn(
-                      "flex items-center justify-center space-x-1 w-32 text-center",
+                      "flex items-center space-x-1 w-32",
+                      item.path === '/report' ? "justify-start text-left" : "justify-center text-center",
                       isActive && "bg-primary text-primary-foreground"
                     )}
                   >
