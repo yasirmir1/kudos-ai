@@ -223,6 +223,7 @@ Make this helpful and engaging!`;
     // Clean up source citations, references, and unwanted AI prefixes
     const cleanedExplanation = explanation
       .replace(/^Learning Insights.*?Analysis\s*/i, '') // Remove "Learning Insights & Misconception Analysis"
+      .replace(/^Here's your engaging.*?clarity:\s*/i, '') // Remove the specific intro text
       .replace(/^Certainly[.,]?\s*/i, '') // Remove "Certainly" at start
       .replace(/^Here's an encouraging and clear explanation.*?improve\.\s*/i, '') // Remove the specific prefix
       .replace(/^Here's.*?explanation.*?:\s*/i, '') // Remove other similar prefixes
