@@ -46,11 +46,6 @@ export const AppNavigation: React.FC<AppNavigationProps> = ({
 
   const bootcampItems = [
     {
-      path: '/bootcamp',
-      label: 'Bootcamp',
-      icon: Target
-    },
-    {
       path: '/profile',
       label: 'Profile',
       icon: User
