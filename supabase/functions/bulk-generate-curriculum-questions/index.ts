@@ -25,10 +25,34 @@ serve(async (req) => {
     console.log('Starting bulk curriculum question generation...');
     
     if (!deepseekApiKey) {
-      throw new Error('DEEPSEEK_API_KEY not configured');
+      console.error('DEEPSEEK_API_KEY not found in environment');
+      return new Response(
+        JSON.stringify({ 
+          error: 'DEEPSEEK_API_KEY not configured. Please add it to your Supabase Edge Function secrets.' 
+        }),
+        { 
+          status: 500,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+        }
+      );
     }
 
-    const { topicIds, questionsPerSubtopic = 1, examBoards = ['GL', 'CEM'] } = await req.json();
+    const requestBody = await req.json();
+    const { topicIds, questionsPerSubtopic = 1, examBoards = ['GL', 'CEM'] } = requestBody;
+
+    console.log('Request parameters:', { topicIds, questionsPerSubtopic, examBoards });
+
+    if (!topicIds || topicIds.length === 0) {
+      return new Response(
+        JSON.stringify({ 
+          error: 'No topics selected. Please select at least one topic to generate questions for.' 
+        }),
+        { 
+          status: 400,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+        }
+      );
+    }
 
     // Fetch topics and subtopics
     const { data: topics, error: topicsError } = await supabase
