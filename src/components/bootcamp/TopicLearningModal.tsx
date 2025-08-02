@@ -10,6 +10,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { supabase } from '@/integrations/supabase/client';
+import { StructuredLearningModal } from './StructuredLearningModal';
 import { 
   BookOpen, 
   Target, 
@@ -18,7 +19,8 @@ import {
   CheckCircle,
   Lightbulb,
   ClipboardList,
-  Play
+  Play,
+  GraduationCap
 } from 'lucide-react';
 
 interface Topic {
@@ -57,6 +59,7 @@ export function TopicLearningModal({ topic, isOpen, onClose, onStartPractice }: 
   const [subtopics, setSubtopics] = useState<Subtopic[]>([]);
   const [sampleQuestions, setSampleQuestions] = useState<CurriculumItem[]>([]);
   const [loading, setLoading] = useState(false);
+  const [showStructuredLearning, setShowStructuredLearning] = useState(false);
 
   useEffect(() => {
     if (topic && isOpen) {
@@ -160,6 +163,7 @@ export function TopicLearningModal({ topic, isOpen, onClose, onStartPractice }: 
   const learningContent = generateLearningContent(topic.name);
 
   return (
+    <>
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
@@ -330,12 +334,20 @@ export function TopicLearningModal({ topic, isOpen, onClose, onStartPractice }: 
           {/* Action Buttons */}
           <div className="flex gap-3 pt-4 border-t">
             <Button
-              onClick={() => onStartPractice?.(topic.id)}
+              onClick={() => setShowStructuredLearning(true)}
               size="lg"
               className="flex-1"
             >
+              <GraduationCap className="h-4 w-4 mr-2" />
+              Start Learning Journey
+            </Button>
+            <Button
+              onClick={() => onStartPractice?.(topic.id)}
+              variant="outline"
+              size="lg"
+            >
               <Play className="h-4 w-4 mr-2" />
-              Start Practice Session
+              Quick Practice
             </Button>
             <Button
               variant="outline"
@@ -348,5 +360,17 @@ export function TopicLearningModal({ topic, isOpen, onClose, onStartPractice }: 
         </div>
       </DialogContent>
     </Dialog>
+
+    {/* Structured Learning Modal */}
+    <StructuredLearningModal
+      topic={topic}
+      isOpen={showStructuredLearning}
+      onClose={() => setShowStructuredLearning(false)}
+      onComplete={() => {
+        setShowStructuredLearning(false);
+        onStartPractice?.(topic.id);
+      }}
+    />
+    </>
   );
 }
