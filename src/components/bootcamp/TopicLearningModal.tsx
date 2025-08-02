@@ -194,103 +194,138 @@ export function TopicLearningModal({ topic, isOpen, onClose, onStartPractice }: 
             </CardContent>
           </Card>
 
-          <Tabs defaultValue="concept" className="w-full">
+          <Tabs defaultValue="skills" className="w-full">
             <TabsList className="grid w-full grid-cols-4">
-              <TabsTrigger value="concept">1. Concept Introduction</TabsTrigger>
-              <TabsTrigger value="guided">2. Guided Practice</TabsTrigger>
-              <TabsTrigger value="independent">3. Independent Practice</TabsTrigger>
-              <TabsTrigger value="assessment">4. Assessment</TabsTrigger>
+              <TabsTrigger value="skills">Key Skills</TabsTrigger>
+              <TabsTrigger value="objectives">Learning Goals</TabsTrigger>
+              <TabsTrigger value="subtopics">Breakdown</TabsTrigger>
+              <TabsTrigger value="examples">Examples</TabsTrigger>
             </TabsList>
 
-            <TabsContent value="concept" className="space-y-4">
-              <Card>
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <BookOpen className="h-5 w-5" />
-                    Concept Introduction
-                    <Badge className="ml-2 bg-green-100 text-green-800">Complete Step</Badge>
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="text-center py-12 space-y-4">
-                    <div className="text-6xl mb-4">📚</div>
-                    <h3 className="text-xl font-semibold">Getting Your Learning Content Ready!</h3>
-                    <p className="text-lg text-muted-foreground max-w-md mx-auto">
-                      Amazing content for {topic.name} is being prepared just for you!
-                    </p>
-                    <p className="text-muted-foreground max-w-lg mx-auto">
-                      When your teacher adds the lesson content, you'll see fun examples, step-by-step guides, and cool practice problems right here! 🎉
-                    </p>
-                  </div>
-                </CardContent>
-              </Card>
-            </TabsContent>
-
-            <TabsContent value="guided" className="space-y-4">
+            <TabsContent value="skills" className="space-y-4">
               <Card>
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
                     <Brain className="h-5 w-5" />
-                    Guided Practice
+                    Essential Skills You'll Master
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <div className="text-center py-12 space-y-4">
-                    <div className="text-6xl mb-4">📚</div>
-                    <h3 className="text-xl font-semibold">Getting Your Learning Content Ready!</h3>
-                    <p className="text-lg text-muted-foreground max-w-md mx-auto">
-                      Amazing content for {topic.name} is being prepared just for you!
-                    </p>
-                    <p className="text-muted-foreground max-w-lg mx-auto">
-                      When your teacher adds the lesson content, you'll see fun examples, step-by-step guides, and cool practice problems right here! 🎉
-                    </p>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    {learningContent.keySkills.map((skill, index) => (
+                      <div key={index} className="flex items-start gap-3 p-3 bg-muted/50 rounded-lg">
+                        <CheckCircle className="h-5 w-5 text-green-600 mt-0.5 flex-shrink-0" />
+                        <span className="text-sm">{skill}</span>
+                      </div>
+                    ))}
                   </div>
                 </CardContent>
               </Card>
             </TabsContent>
 
-            <TabsContent value="independent" className="space-y-4">
+            <TabsContent value="objectives" className="space-y-4">
               <Card>
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
                     <Target className="h-5 w-5" />
-                    Independent Practice
+                    Learning Objectives
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <div className="text-center py-12 space-y-4">
-                    <div className="text-6xl mb-4">📚</div>
-                    <h3 className="text-xl font-semibold">Getting Your Learning Content Ready!</h3>
-                    <p className="text-lg text-muted-foreground max-w-md mx-auto">
-                      Amazing content for {topic.name} is being prepared just for you!
-                    </p>
-                    <p className="text-muted-foreground max-w-lg mx-auto">
-                      When your teacher adds the lesson content, you'll see fun examples, step-by-step guides, and cool practice problems right here! 🎉
-                    </p>
+                  <div className="space-y-3">
+                    {learningContent.learningObjectives.map((objective, index) => (
+                      <div key={index} className="flex items-start gap-3 p-3 border rounded-lg">
+                        <div className="bg-primary text-primary-foreground rounded-full w-6 h-6 flex items-center justify-center text-sm font-medium">
+                          {index + 1}
+                        </div>
+                        <span className="text-sm">{objective}</span>
+                      </div>
+                    ))}
                   </div>
                 </CardContent>
               </Card>
             </TabsContent>
 
-            <TabsContent value="assessment" className="space-y-4">
+            <TabsContent value="subtopics" className="space-y-4">
               <Card>
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
-                    <CheckCircle className="h-5 w-5" />
-                    Assessment
+                    <ClipboardList className="h-5 w-5" />
+                    Topic Breakdown
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <div className="text-center py-12 space-y-4">
-                    <div className="text-6xl mb-4">📚</div>
-                    <h3 className="text-xl font-semibold">Getting Your Learning Content Ready!</h3>
-                    <p className="text-lg text-muted-foreground max-w-md mx-auto">
-                      Amazing content for {topic.name} is being prepared just for you!
-                    </p>
-                    <p className="text-muted-foreground max-w-lg mx-auto">
-                      When your teacher adds the lesson content, you'll see fun examples, step-by-step guides, and cool practice problems right here! 🎉
-                    </p>
-                  </div>
+                  {subtopics.length > 0 ? (
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                      {subtopics.map((subtopic, index) => (
+                        <div key={subtopic.id} className="flex items-center gap-3 p-3 bg-background border rounded-lg">
+                          <div className="bg-secondary text-secondary-foreground rounded-full w-8 h-8 flex items-center justify-center text-sm font-medium">
+                            {index + 1}
+                          </div>
+                          <span className="font-medium">{subtopic.name}</span>
+                        </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <div className="text-center py-8 text-muted-foreground">
+                      <ClipboardList className="h-12 w-12 mx-auto mb-4 opacity-50" />
+                      <p>Detailed subtopics will be available soon.</p>
+                      <p className="text-sm">Focus on the core skills and objectives for now.</p>
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
+            </TabsContent>
+
+            <TabsContent value="examples" className="space-y-4">
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <Lightbulb className="h-5 w-5" />
+                    Sample Questions & Tips
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  {sampleQuestions.length > 0 ? (
+                    <div className="space-y-4">
+                      {sampleQuestions.slice(0, 3).map((question) => (
+                        <div key={question.question_id} className="border rounded-lg p-4">
+                          <div className="flex items-center gap-2 mb-2">
+                            <Badge variant="outline">{question.subtopic}</Badge>
+                            <Badge className={getDifficultyColor(question.difficulty)}>
+                              {question.difficulty}
+                            </Badge>
+                          </div>
+                          <p className="font-medium mb-2">{question.example_question}</p>
+                          {question.pedagogical_notes && (
+                            <div className="bg-muted p-3 rounded text-sm">
+                              <strong>Teaching Tip:</strong> {question.pedagogical_notes}
+                            </div>
+                          )}
+                        </div>
+                      ))}
+                      
+                      <div className="bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-950 dark:to-indigo-950 rounded-lg p-4">
+                        <h4 className="font-medium mb-3 flex items-center gap-2">
+                          <Lightbulb className="h-4 w-4" />
+                          Study Tips
+                        </h4>
+                        <div className="space-y-2">
+                          {learningContent.tips.map((tip, index) => (
+                            <div key={index} className="flex items-start gap-2 text-sm">
+                              <ArrowRight className="h-4 w-4 text-blue-600 mt-0.5 flex-shrink-0" />
+                              <span>{tip}</span>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="text-center py-8 text-muted-foreground">
+                      <Lightbulb className="h-12 w-12 mx-auto mb-4 opacity-50" />
+                      <p>Sample questions will be generated based on your learning progress.</p>
+                    </div>
+                  )}
                 </CardContent>
               </Card>
             </TabsContent>
