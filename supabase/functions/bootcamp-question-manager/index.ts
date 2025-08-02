@@ -55,6 +55,9 @@ Deno.serve(async (req) => {
       case 'submit_response':
         return await submitResponse(supabaseClient, data)
       
+      case 'generate_questions':
+        return await generateQuestions(supabaseClient, data)
+      
       default:
         return new Response(
           JSON.stringify({ error: 'Invalid action' }),
@@ -174,31 +177,31 @@ async function getAdaptiveQuestions(supabaseClient: any, studentId: string, ques
       console.log('New student detected, providing foundation questions')
       
       const { data: foundationQuestions, error: foundationError } = await supabaseClient
-        .from('mock_test_questions')
+        .from('bootcamp_questions')
         .select(`
-          id,
           question_id,
-          question_text,
+          module_id,
+          topic_id,
+          subtopic_id,
+          question_category,
+          cognitive_level,
+          difficulty,
           question_type,
+          question_text,
           option_a,
           option_b,
           option_c,
           option_d,
           correct_answer,
           explanation,
-          difficulty,
-          topic,
-          subtopic,
           marks,
           time_seconds,
-          visual_aid_url,
-          tags,
-          exam_board,
-          year_level,
+          prerequisite_skills,
+          exam_boards,
           created_at
         `)
-        .eq('is_active', true)
-        .order('created_at')
+        .eq('difficulty', 'foundation')
+        .order('question_id')
         .limit(questionCount)
 
       questions = foundationQuestions
@@ -226,32 +229,32 @@ async function getAdaptiveQuestions(supabaseClient: any, studentId: string, ques
       if (adaptiveError || !adaptiveData || adaptiveData.length === 0) {
         console.error('Adaptive algorithm failed, falling back to foundation questions:', adaptiveError)
         
-        // Fallback to mock test questions if adaptive fails
+        // Fallback to foundation questions if adaptive fails
         const { data: fallbackQuestions, error: fallbackError } = await supabaseClient
-          .from('mock_test_questions')
+          .from('bootcamp_questions')
           .select(`
-            id,
             question_id,
-            question_text,
+            module_id,
+            topic_id,
+            subtopic_id,
+            question_category,
+            cognitive_level,
+            difficulty,
             question_type,
+            question_text,
             option_a,
             option_b,
             option_c,
             option_d,
             correct_answer,
             explanation,
-            difficulty,
-            topic,
-            subtopic,
             marks,
             time_seconds,
-            visual_aid_url,
-            tags,
-            exam_board,
-            year_level,
+            prerequisite_skills,
+            exam_boards,
             created_at
           `)
-          .eq('is_active', true)
+          .in('difficulty', ['foundation', 'intermediate'])
           .order('difficulty')
           .limit(questionCount)
 
@@ -345,7 +348,7 @@ async function submitResponse(supabaseClient: any, responseData: any) {
 
     // Get the question details
     const { data: question, error: questionError } = await supabaseClient
-      .from('mock_test_questions')
+      .from('bootcamp_questions')
       .select('*')
       .eq('question_id', question_id)
       .single()
@@ -427,4 +430,178 @@ function getMisconceptionDescription(code: string): string {
     'PE5': 'Estimation errors'
   }
   return descriptions[code] || `Misconception type: ${code}`
+}
+
+async function generateQuestions(supabaseClient: any, data: any) {
+  try {
+    const { topicId, difficulty, questionCount = 5, skills } = data
+    
+    console.log(`Generating ${questionCount} questions for topic: ${topicId}, difficulty: ${difficulty}`)
+    
+    // Get available skills and question types for context
+    const { data: availableSkills } = await supabaseClient
+      .from('bootcamp_skills')
+      .select('*')
+      .order('skill_order')
+    
+    const { data: questionTypes } = await supabaseClient
+      .from('bootcamp_question_types')
+      .select('*')
+    
+    // Get topic context from existing curriculum
+    const { data: topicContext } = await supabaseClient
+      .from('bootcamp_curriculum_topics')
+      .select('*')
+      .eq('id', topicId)
+      .single()
+    
+    // Get existing questions for this topic to avoid duplication
+    const { data: existingQuestions } = await supabaseClient
+      .from('bootcamp_questions')
+      .select('question_text, topic_id')
+      .eq('topic_id', topicId)
+    
+    // Prepare context for AI generation
+    const skillsContext = availableSkills?.map(s => `${s.skill_name} (${s.category})`).join(', ') || ''
+    const questionTypesContext = questionTypes?.map(qt => `${qt.name}: ${qt.format} (${qt.timing})`).join('; ') || ''
+    const existingQuestionsText = existingQuestions?.map(q => q.question_text).join('\n') || ''
+    
+    const systemPrompt = `You are an expert 11+ mathematics question generator. Generate high-quality practice questions that test specific mathematical skills and concepts.
+
+Context:
+- Topic: ${topicContext?.topic_name || topicId}
+- Difficulty: ${difficulty}
+- Available Skills: ${skillsContext}
+- Question Types: ${questionTypesContext}
+- Learning Objectives: ${topicContext?.learning_objectives?.join(', ') || ''}
+
+Requirements:
+1. Generate exactly ${questionCount} unique multiple-choice questions
+2. Each question should test 2-3 specific skills from the available skills list
+3. Include realistic misconceptions in wrong answer options
+4. Provide detailed explanations for correct answers
+5. Questions should be age-appropriate for 10-11 year olds
+6. Avoid duplicating these existing questions: ${existingQuestionsText}
+
+For each question, provide:
+- question_text (clear, concise mathematical problem)
+- option_a, option_b, option_c, option_d (4 multiple choice options)
+- correct_answer (A, B, C, or D)
+- explanation (detailed explanation of the correct answer)
+- prerequisite_skills (array of 2-3 relevant skills from the available skills)
+- marks (1-3 based on complexity)
+- time_seconds (30-120 seconds based on difficulty)
+
+Return a JSON array of questions in this exact format:
+[
+  {
+    "question_text": "...",
+    "option_a": "...",
+    "option_b": "...", 
+    "option_c": "...",
+    "option_d": "...",
+    "correct_answer": "A",
+    "explanation": "...",
+    "prerequisite_skills": ["skill1", "skill2"],
+    "marks": 2,
+    "time_seconds": 60
+  }
+]`
+
+    // Call OpenAI API
+    const openaiResponse = await fetch('https://api.openai.com/v1/chat/completions', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${Deno.env.get('OPENAI_API_KEY')}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        model: 'gpt-4o-mini',
+        messages: [
+          { role: 'system', content: systemPrompt },
+          { role: 'user', content: `Generate ${questionCount} questions for ${topicId} at ${difficulty} level.` }
+        ],
+        temperature: 0.7,
+        max_tokens: 3000
+      })
+    })
+
+    if (!openaiResponse.ok) {
+      throw new Error(`OpenAI API error: ${openaiResponse.statusText}`)
+    }
+
+    const openaiData = await openaiResponse.json()
+    const generatedContent = openaiData.choices[0].message.content
+
+    // Parse the JSON response
+    let generatedQuestions
+    try {
+      // Extract JSON from the response (might be wrapped in markdown)
+      const jsonMatch = generatedContent.match(/\[[\s\S]*\]/)
+      if (jsonMatch) {
+        generatedQuestions = JSON.parse(jsonMatch[0])
+      } else {
+        generatedQuestions = JSON.parse(generatedContent)
+      }
+    } catch (parseError) {
+      console.error('Failed to parse AI response:', generatedContent)
+      throw new Error('Failed to parse AI-generated questions')
+    }
+
+    // Insert questions into database
+    const insertedQuestions = []
+    for (const [index, question] of generatedQuestions.entries()) {
+      const questionId = `${topicId}_GEN_${Date.now()}_${index + 1}`
+      
+      const { data: insertedQuestion, error: insertError } = await supabaseClient
+        .from('bootcamp_questions')
+        .insert({
+          question_id: questionId,
+          module_id: topicContext?.module_id || 'GEN',
+          topic_id: topicId,
+          subtopic_id: `${topicId}_generated`,
+          question_category: difficulty === 'foundation' ? 'arithmetic' : 'reasoning',
+          cognitive_level: difficulty === 'foundation' ? 'recall' : 'application',
+          difficulty,
+          question_type: 'multiple_choice',
+          question_text: question.question_text,
+          option_a: question.option_a,
+          option_b: question.option_b,
+          option_c: question.option_c,
+          option_d: question.option_d,
+          correct_answer: question.correct_answer,
+          explanation: question.explanation,
+          marks: question.marks || 1,
+          time_seconds: question.time_seconds || 60,
+          prerequisite_skills: question.prerequisite_skills || [],
+          exam_boards: ['general'],
+          usage_count: 0,
+          success_rate: null
+        })
+        .select()
+        .single()
+
+      if (insertError) {
+        console.error('Error inserting question:', insertError)
+        continue
+      }
+
+      insertedQuestions.push(insertedQuestion)
+    }
+
+    console.log(`Successfully generated and inserted ${insertedQuestions.length} questions`)
+
+    return new Response(
+      JSON.stringify({ 
+        success: true, 
+        generated: insertedQuestions.length,
+        questions: insertedQuestions
+      }),
+      { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+    )
+
+  } catch (error) {
+    console.error('Error generating questions:', error)
+    throw new Error(`Failed to generate questions: ${error.message}`)
+  }
 }
