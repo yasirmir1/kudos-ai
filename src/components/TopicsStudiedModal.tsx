@@ -140,7 +140,7 @@ export const TopicsStudiedModal = ({ open, onOpenChange }: TopicsStudiedModalPro
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-6xl max-h-[80vh] overflow-hidden flex flex-col">
+      <DialogContent className="max-w-6xl h-[80vh] overflow-hidden flex flex-col">
         <DialogHeader>
           <div className="flex items-center justify-between">
             <div>
@@ -194,7 +194,7 @@ export const TopicsStudiedModal = ({ open, onOpenChange }: TopicsStudiedModalPro
           <div className="flex-1">
             <h3 className="font-medium mb-4">Performance Overview</h3>
             
-            <ScrollArea className="h-[50vh] pr-4">
+            <ScrollArea className="flex-1 pr-4">
           {loading ? (
             <div className="flex items-center justify-center py-8">
               <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
@@ -272,7 +272,7 @@ export const TopicsStudiedModal = ({ open, onOpenChange }: TopicsStudiedModalPro
                   </div>
                 </div>
               ) : explanation ? (
-                <ScrollArea className="h-[50vh] pr-4">
+                <ScrollArea className="flex-1 pr-4">
                   <InteractiveInsights 
                     explanation={explanation}
                     hideExpandControls={true}
