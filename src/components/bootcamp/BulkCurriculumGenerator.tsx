@@ -14,6 +14,11 @@ interface Topic {
   topic_name: string;
   difficulty: string;
   module_id: string;
+  bootcamp_subtopics?: Array<{
+    id: number;
+    name: string;
+    subtopic_order: number;
+  }>;
 }
 
 interface GenerationResult {
@@ -40,13 +45,37 @@ export const BulkCurriculumGenerator: React.FC = () => {
 
   const fetchTopics = async () => {
     try {
-      const { data, error } = await supabase
-        .from('bootcamp_curriculum_topics')
-        .select('id, topic_name, difficulty, module_id')
-        .order('topic_order');
+      // Fetch topics and subtopics separately due to relationship constraints
+      const [topicsRes, subtopicsRes] = await Promise.all([
+        supabase
+          .from('bootcamp_curriculum_topics')
+          .select('id, topic_name, difficulty, module_id')
+          .order('topic_order'),
+        supabase
+          .from('bootcamp_subtopics')
+          .select('id, name, topic_id, subtopic_order')
+          .order('topic_id, subtopic_order')
+      ]);
 
-      if (error) throw error;
-      setTopics(data || []);
+      if (topicsRes.error) throw topicsRes.error;
+      if (subtopicsRes.error) throw subtopicsRes.error;
+
+      // Group subtopics by topic
+      const subtopicsByTopic = (subtopicsRes.data || []).reduce((acc, subtopic) => {
+        if (!acc[subtopic.topic_id]) {
+          acc[subtopic.topic_id] = [];
+        }
+        acc[subtopic.topic_id].push(subtopic);
+        return acc;
+      }, {} as Record<string, any[]>);
+
+      // Merge topics with their subtopics
+      const topicsWithSubtopics = (topicsRes.data || []).map(topic => ({
+        ...topic,
+        bootcamp_subtopics: subtopicsByTopic[topic.id] || []
+      }));
+
+      setTopics(topicsWithSubtopics);
     } catch (error) {
       console.error('Error fetching topics:', error);
       toast({
@@ -146,15 +175,21 @@ export const BulkCurriculumGenerator: React.FC = () => {
   };
 
   const topicsByModule = getTopicsByModule();
+  
+  // Calculate total subtopics
+  const totalSubtopics = topics.reduce((sum, topic) => sum + (topic.bootcamp_subtopics?.length || 0), 0);
+  const selectedTopicsData = topics.filter(t => selectedTopics.includes(t.id));
+  const selectedSubtopics = selectedTopicsData.reduce((sum, topic) => sum + (topic.bootcamp_subtopics?.length || 0), 0);
 
   return (
     <div className="space-y-6">
       <Card>
         <CardHeader>
-          <CardTitle>Bulk 11+ Question Generator</CardTitle>
+          <CardTitle>Comprehensive 11+ Question Generator</CardTitle>
           <CardDescription>
-            Generate diagnostic questions for GL Assessment and CEM examination styles using AI.
-            Questions will include misconception-based distractors for enhanced learning analytics.
+            Generate diagnostic questions covering ALL {totalSubtopics} subtopics across {topics.length} topics.
+            {selectedSubtopics > 0 && ` Selected: ${selectedSubtopics} subtopics from ${selectedTopics.length} topics.`}
+            AI-powered questions with misconception-based distractors for GL Assessment and CEM examination styles.
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-6">
@@ -214,21 +249,42 @@ export const BulkCurriculumGenerator: React.FC = () => {
                 <div key={moduleId} className="space-y-2">
                   <h4 className="font-medium text-sm text-muted-foreground">Module: {moduleId}</h4>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
-                    {moduleTopics.map((topic) => (
-                      <label key={topic.id} className="flex items-center space-x-2 p-2 border rounded hover:bg-accent cursor-pointer">
-                        <Checkbox
-                          checked={selectedTopics.includes(topic.id)}
-                          onCheckedChange={() => handleTopicToggle(topic.id)}
-                          disabled={isGenerating}
-                        />
-                        <div className="flex-1">
-                          <span className="text-sm">{topic.topic_name}</span>
-                          <Badge variant="secondary" className="ml-2 text-xs">
-                            {topic.difficulty}
-                          </Badge>
-                        </div>
-                      </label>
-                    ))}
+                     {moduleTopics.map((topic) => (
+                       <div key={topic.id} className="border rounded p-3 space-y-2">
+                         <label className="flex items-center space-x-2 cursor-pointer">
+                           <Checkbox
+                             checked={selectedTopics.includes(topic.id)}
+                             onCheckedChange={() => handleTopicToggle(topic.id)}
+                             disabled={isGenerating}
+                           />
+                           <div className="flex-1">
+                             <span className="text-sm font-medium">{topic.topic_name}</span>
+                             <div className="flex items-center space-x-2 mt-1">
+                               <Badge variant="secondary" className="text-xs">
+                                 {topic.difficulty}
+                               </Badge>
+                               <Badge variant="outline" className="text-xs">
+                                 {topic.bootcamp_subtopics?.length || 0} subtopics
+                               </Badge>
+                             </div>
+                           </div>
+                         </label>
+                         
+                         {/* Show subtopics if topic is selected */}
+                         {selectedTopics.includes(topic.id) && topic.bootcamp_subtopics && topic.bootcamp_subtopics.length > 0 && (
+                           <div className="mt-2 ml-6 pl-2 border-l-2 border-muted">
+                             <div className="text-xs text-muted-foreground mb-1">Subtopics to be covered:</div>
+                             <div className="grid grid-cols-1 gap-1">
+                               {topic.bootcamp_subtopics.map((subtopic, idx) => (
+                                 <div key={subtopic.id} className="text-xs text-muted-foreground">
+                                   {subtopic.subtopic_order}. {subtopic.name}
+                                 </div>
+                               ))}
+                             </div>
+                           </div>
+                         )}
+                       </div>
+                     ))}
                   </div>
                 </div>
               ))}

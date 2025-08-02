@@ -62,15 +62,24 @@ serve(async (req) => {
     const results = [];
 
     for (const topic of topics) {
-      console.log(`Processing topic: ${topic.topic_name}`);
+      console.log(`Processing topic: ${topic.topic_name} with ${topic.bootcamp_subtopics?.length || 0} subtopics`);
 
       for (const examBoard of examBoards) {
+        // Generate questions to cover ALL subtopics in this topic
+        const subtopicsInTopic = topic.bootcamp_subtopics || [];
+        const questionsPerSubtopic = Math.max(1, Math.floor(questionsPerTopic / Math.max(1, subtopicsInTopic.length)));
+        const extraQuestions = questionsPerTopic % Math.max(1, subtopicsInTopic.length);
+
+        console.log(`Generating ${questionsPerTopic} questions for ${subtopicsInTopic.length} subtopics (${questionsPerSubtopic} per subtopic + ${extraQuestions} extra)`);
+
         const prompt = createQuestionGenerationPrompt(
           topic, 
           misconceptions, 
           existingQuestions,
           questionsPerTopic,
-          examBoard
+          examBoard,
+          subtopicsInTopic,
+          questionsPerSubtopic
         );
 
         const response = await fetch('https://api.deepseek.com/chat/completions', {
@@ -82,11 +91,11 @@ serve(async (req) => {
           body: JSON.stringify({
             model: 'deepseek-chat',
             messages: [
-              { role: 'system', content: 'You are an expert 11+ mathematics question writer specializing in diagnostic assessment.' },
+              { role: 'system', content: 'You are an expert 11+ mathematics question writer specializing in diagnostic assessment. You create comprehensive question banks that cover ALL subtopics systematically.' },
               { role: 'user', content: prompt }
             ],
             temperature: 0.7,
-            max_tokens: 4000,
+            max_tokens: 6000,
           }),
         });
 
@@ -136,9 +145,9 @@ serve(async (req) => {
   }
 });
 
-function createQuestionGenerationPrompt(topic: any, misconceptions: any[], existingQuestions: any[], questionsPerTopic: number, examBoard: string): string {
-  const subtopicsList = topic.bootcamp_subtopics?.map((s: any) => s.name).join(', ') || 'No subtopics defined';
-  const misconceptionCodes = misconceptions.map(m => `${m.misconception_id}: ${m.description}`).join('\n');
+function createQuestionGenerationPrompt(topic: any, misconceptions: any[], existingQuestions: any[], questionsPerTopic: number, examBoard: string, subtopicsInTopic: any[], questionsPerSubtopic: number): string {
+  const subtopicsList = subtopicsInTopic.map((s: any) => `${s.id}: ${s.name}`).join('\n  ') || 'No subtopics defined';
+  const misconceptionCodes = misconceptions.slice(0, 20).map(m => `${m.misconception_id}: ${m.description}`).join('\n');
   
   const existingExamples = existingQuestions
     .filter((q: any) => q.topic_id === topic.id)
@@ -152,11 +161,15 @@ function createQuestionGenerationPrompt(topic: any, misconceptions: any[], exist
 
   return `Generate ${questionsPerTopic} mathematics questions for 11+ students on the topic "${topic.topic_name}" (${topic.difficulty} level).
 
+CRITICAL REQUIREMENT: You MUST cover ALL ${subtopicsInTopic.length} subtopics listed below. Distribute questions evenly across subtopics (approximately ${questionsPerSubtopic} questions per subtopic).
+
 TOPIC DETAILS:
 - Main Topic: ${topic.topic_name}
 - Difficulty: ${topic.difficulty}
-- Subtopics: ${subtopicsList}
 - Learning Objectives: ${topic.learning_objectives?.join(', ') || 'General understanding'}
+
+ALL SUBTOPICS TO COVER (MANDATORY):
+  ${subtopicsList}
 
 EXAM BOARD STYLE: ${examBoardStyle}
 
@@ -168,12 +181,13 @@ ${misconceptionCodes}
 
 REQUIREMENTS:
 1. Create exactly ${questionsPerTopic} multiple-choice questions suitable for 11+ level
-2. Each question must have 4 answer options (A, B, C, D)
-3. One correct answer and three diagnostic distractors
-4. Each incorrect option MUST map to a specific misconception from the codes above
-5. Include clear diagnostic feedback for each option
-6. Questions should be appropriate for ${examBoard} examination style
-7. Cover different subtopics where possible
+2. ENSURE each of the ${subtopicsInTopic.length} subtopics is represented with at least ${questionsPerSubtopic} question(s)
+3. Each question must have 4 answer options (A, B, C, D)
+4. One correct answer and three diagnostic distractors
+5. Each incorrect option MUST map to a specific misconception from the codes above
+6. Include clear diagnostic feedback for each option
+7. Questions should be appropriate for ${examBoard} examination style
+8. SPECIFY which subtopic each question targets using the subtopic ID from the list above
 
 RESPONSE FORMAT (JSON):
 {
@@ -186,7 +200,8 @@ RESPONSE FORMAT (JSON):
       "marks": 1,
       "time_seconds": 60,
       "exam_board": "${examBoard}",
-      "subtopic": "specific subtopic if applicable",
+      "subtopic_id": "SPECIFIC SUBTOPIC ID FROM LIST ABOVE",
+      "subtopic_name": "SPECIFIC SUBTOPIC NAME FROM LIST ABOVE", 
       "options": [
         {
           "option_letter": "A",
@@ -220,7 +235,7 @@ RESPONSE FORMAT (JSON):
   ]
 }
 
-Generate high-quality, diagnostic questions that will help identify specific student misconceptions.`;
+CRITICAL: Generate questions systematically across ALL subtopics. Do not skip any subtopic. Ensure comprehensive coverage of the entire topic through its constituent subtopics.`;
 }
 
 function parseGeneratedQuestions(content: string, topicId: string, examBoard: string): any[] {
@@ -264,7 +279,7 @@ async function insertQuestionWithOptions(questionData: any): Promise<any> {
         question_id: questionData.question_id,
         module_id: questionData.module_id,
         topic_id: questionData.topic_id,
-        subtopic_id: questionData.subtopic || null,
+        subtopic_id: questionData.subtopic_id || questionData.subtopic || null,
         question_category: questionData.question_category || 'mixed',
         cognitive_level: questionData.cognitive_level || 'application',
         difficulty: questionData.difficulty,
