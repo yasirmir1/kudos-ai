@@ -130,46 +130,69 @@ const Index = () => {
               <text x="50" y="150" fontFamily="Arial" fontSize="28" fontWeight="600" fill="#34C759">87%</text>
               <text x="50" y="180" fontFamily="Arial" fontSize="14" fill="#34C759">↑ 12% this month</text>
               
-              <rect x="285" y="90" width="230" height="140" rx="12" fill="#FF9500" fillOpacity="0.1" className="group-hover:animate-pulse"></rect>
-              <text x="305" y="120" fontFamily="Arial" fontSize="16" fill="#86868B">Geometry</text>
-              <text x="305" y="150" fontFamily="Arial" fontSize="28" fontWeight="600" fill="#FF9500">68%</text>
-              <text x="305" y="180" fontFamily="Arial" fontSize="14" fill="#FF9500">Focus area</text>
+              {/* Topic Breakdown - replacing Geometry tile */}
+              <rect x="285" y="90" width="230" height="140" rx="12" fill="#F3F4F6"></rect>
+              <text x="305" y="120" fontFamily="Arial" fontSize="16" fontWeight="600" fill="#1D1D1F">Topic Breakdown</text>
               
-              <rect x="540" y="90" width="230" height="140" rx="12" fill="#0071E3" fillOpacity="0.1" className="group-hover:animate-pulse"></rect>
-              <text x="560" y="120" fontFamily="Arial" fontSize="16" fill="#86868B">English</text>
-              <text x="560" y="150" fontFamily="Arial" fontSize="28" fontWeight="600" fill="#0071E3">91%</text>
-              <text x="560" y="180" fontFamily="Arial" fontSize="14" fill="#0071E3">↑ 5% this month</text>
+              {/* Mini progress bars */}
+              <rect x="305" y="140" width="120" height="4" rx="2" fill="#E5E5EA"></rect>
+              <rect x="305" y="140" width="96" height="4" rx="2" fill="#34C759"></rect>
+              <text x="435" y="143" fontFamily="Arial" fontSize="10" fill="#86868B">Fractions 80%</text>
               
-              {/* Topic Breakdown */}
-              <rect x="30" y="260" width="350" height="200" rx="12" fill="#F3F4F6"></rect>
-              <text x="50" y="290" fontFamily="Arial" fontSize="18" fontWeight="600" fill="#1D1D1F">Topic Breakdown - Maths</text>
+              <rect x="305" y="155" width="120" height="4" rx="2" fill="#E5E5EA"></rect>
+              <rect x="305" y="155" width="72" height="4" rx="2" fill="#FF9500"></rect>
+              <text x="435" y="158" fontFamily="Arial" fontSize="10" fill="#86868B">Geometry 60%</text>
               
-              {/* Progress bars */}
-              <text x="50" y="325" fontFamily="Arial" fontSize="14" fill="#86868B">Fractions</text>
-              <rect x="50" y="335" width="280" height="8" rx="4" fill="#E5E5EA"></rect>
-              <rect x="50" y="335" width="224" height="8" rx="4" fill="#34C759"></rect>
+              <rect x="305" y="170" width="120" height="4" rx="2" fill="#E5E5EA"></rect>
+              <rect x="305" y="170" width="108" height="4" rx="2" fill="#34C759"></rect>
+              <text x="435" y="173" fontFamily="Arial" fontSize="10" fill="#86868B">Algebra 90%</text>
               
-              <text x="50" y="365" fontFamily="Arial" fontSize="14" fill="#86868B">Algebra</text>
-              <rect x="50" y="375" width="280" height="8" rx="4" fill="#E5E5EA"></rect>
-              <rect x="50" y="375" width="252" height="8" rx="4" fill="#34C759"></rect>
+              <rect x="305" y="185" width="120" height="4" rx="2" fill="#E5E5EA"></rect>
+              <rect x="305" y="185" width="84" height="4" rx="2" fill="#0071E3"></rect>
+              <text x="435" y="188" fontFamily="Arial" fontSize="10" fill="#86868B">Numbers 70%</text>
               
-              <text x="50" y="405" fontFamily="Arial" fontSize="14" fill="#86868B">Geometry</text>
-              <rect x="50" y="415" width="280" height="8" rx="4" fill="#E5E5EA"></rect>
-              <rect x="50" y="415" width="168" height="8" rx="4" fill="#FF9500"></rect>
+              {/* Topic Breakdown - replacing English tile */}
+              <rect x="540" y="90" width="230" height="140" rx="12" fill="#F3F4F6"></rect>
+              <text x="560" y="120" fontFamily="Arial" fontSize="16" fontWeight="600" fill="#1D1D1F">Practice Insights</text>
               
-              {/* Activity Graph */}
-              <rect x="410" y="260" width="360" height="200" rx="12" fill="#F3F4F6"></rect>
-              <text x="430" y="290" fontFamily="Arial" fontSize="18" fontWeight="600" fill="#1D1D1F">Weekly Progress</text>
+              {/* Practice stats */}
+              <text x="560" y="145" fontFamily="Arial" fontSize="12" fill="#86868B">Questions today:</text>
+              <text x="560" y="160" fontFamily="Arial" fontSize="20" fontWeight="600" fill="#34C759">24</text>
               
-              {/* Simple line graph */}
-              <polyline points="450,400 500,380 550,370 600,340 650,320 700,300 750,280" stroke="#667EEA" strokeWidth="3" fill="none"></polyline>
-              <circle cx="450" cy="400" r="4" fill="#667EEA"></circle>
-              <circle cx="500" cy="380" r="4" fill="#667EEA"></circle>
-              <circle cx="550" cy="370" r="4" fill="#667EEA"></circle>
-              <circle cx="600" cy="340" r="4" fill="#667EEA"></circle>
-              <circle cx="650" cy="320" r="4" fill="#667EEA"></circle>
-              <circle cx="700" cy="300" r="4" fill="#667EEA"></circle>
-              <circle cx="750" cy="280" r="4" fill="#667EEA"></circle>
+              <text x="660" y="145" fontFamily="Arial" fontSize="12" fill="#86868B">Accuracy:</text>
+              <text x="660" y="160" fontFamily="Arial" fontSize="20" fontWeight="600" fill="#0071E3">85%</text>
+              
+              <text x="560" y="185" fontFamily="Arial" fontSize="12" fill="#86868B">Focus area:</text>
+              <text x="560" y="200" fontFamily="Arial" fontSize="14" fontWeight="600" fill="#FF9500">Geometry</text>
+              
+              {/* Weekly Progress - Full Width */}
+              <rect x="30" y="260" width="740" height="200" rx="12" fill="#F3F4F6"></rect>
+              <text x="50" y="290" fontFamily="Arial" fontSize="18" fontWeight="600" fill="#1D1D1F">Weekly Progress</text>
+              
+              {/* Extended line graph across full width */}
+              <polyline points="80,400 150,380 220,370 290,340 360,320 430,300 500,280 570,260 640,240 710,220" stroke="#667EEA" strokeWidth="3" fill="none"></polyline>
+              <circle cx="80" cy="400" r="4" fill="#667EEA"></circle>
+              <circle cx="150" cy="380" r="4" fill="#667EEA"></circle>
+              <circle cx="220" cy="370" r="4" fill="#667EEA"></circle>
+              <circle cx="290" cy="340" r="4" fill="#667EEA"></circle>
+              <circle cx="360" cy="320" r="4" fill="#667EEA"></circle>
+              <circle cx="430" cy="300" r="4" fill="#667EEA"></circle>
+              <circle cx="500" cy="280" r="4" fill="#667EEA"></circle>
+              <circle cx="570" cy="260" r="4" fill="#667EEA"></circle>
+              <circle cx="640" cy="240" r="4" fill="#667EEA"></circle>
+              <circle cx="710" cy="220" r="4" fill="#667EEA"></circle>
+              
+              {/* Day labels */}
+              <text x="80" y="430" fontFamily="Arial" fontSize="10" fill="#86868B" textAnchor="middle">Mon</text>
+              <text x="150" y="430" fontFamily="Arial" fontSize="10" fill="#86868B" textAnchor="middle">Tue</text>
+              <text x="220" y="430" fontFamily="Arial" fontSize="10" fill="#86868B" textAnchor="middle">Wed</text>
+              <text x="290" y="430" fontFamily="Arial" fontSize="10" fill="#86868B" textAnchor="middle">Thu</text>
+              <text x="360" y="430" fontFamily="Arial" fontSize="10" fill="#86868B" textAnchor="middle">Fri</text>
+              <text x="430" y="430" fontFamily="Arial" fontSize="10" fill="#86868B" textAnchor="middle">Sat</text>
+              <text x="500" y="430" fontFamily="Arial" fontSize="10" fill="#86868B" textAnchor="middle">Sun</text>
+              <text x="570" y="430" fontFamily="Arial" fontSize="10" fill="#86868B" textAnchor="middle">Mon</text>
+              <text x="640" y="430" fontFamily="Arial" fontSize="10" fill="#86868B" textAnchor="middle">Tue</text>
+              <text x="710" y="430" fontFamily="Arial" fontSize="10" fill="#86868B" textAnchor="middle">Wed</text>
             </svg>
           </div>
         </div>
