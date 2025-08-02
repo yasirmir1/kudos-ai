@@ -283,22 +283,18 @@ const Index = () => {
             {[{
             step: "1",
             title: "Quick Setup",
-            description: "Sign up in 30 seconds. Your child takes a fun 15-minute assessment. Their personalized learning profile is created instantly.",
-            highlight: "⚡ 30 seconds"
+            description: "Sign up in 30 seconds. Your child takes a fun 15-minute assessment. Their personalized learning profile is created instantly."
           }, {
             step: "2",
             title: "Smart Practice",
-            description: "AI selects perfect questions for their level. Real-time feedback shows exactly where they went wrong. Just 15-20 minutes daily.",
-            highlight: "🎯 Personalized"
+            description: "AI selects perfect questions for their level. Real-time feedback shows exactly where they went wrong. Just 15-20 minutes daily."
           }, {
             step: "3",
             title: "Clear Insights",
-            description: "Check progress anytime on your phone. See improvements by topic. Know exactly how to help. Watch their confidence grow.",
-            highlight: "📱 Always visible"
+            description: "Check progress anytime on your phone. See improvements by topic. Know exactly how to help. Watch their confidence grow."
           }].map((item, index) => 
             <div key={index} className="fade-on-scroll text-center">
               <div className="bg-muted rounded-2xl p-8 text-center text-3xl md:text-4xl font-bold h-48 flex items-center justify-center mb-6">
-                {item.highlight}
               </div>
               <h3 className="text-2xl md:text-3xl font-bold mb-4">{item.step}. {item.title}</h3>
               <p className="text-lg text-muted-foreground leading-relaxed">{item.description}</p>
