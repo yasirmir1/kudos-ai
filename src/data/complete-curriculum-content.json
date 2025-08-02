@@ -1,0 +1,1405 @@
+{
+  "curriculum_metadata": {
+    "version": "1.0",
+    "total_topics": 56,
+    "total_subtopics": 220,
+    "created_date": "2024-01-15",
+    "curriculum_name": "11+ Mathematics Complete Course"
+  },
+  "curriculum_topics": [
+    {
+      "id": "npv1",
+      "topic_name": "Reading and Writing Large Numbers",
+      "topic_order": 1,
+      "module_id": "mod1",
+      "difficulty": "foundation",
+      "estimated_duration_minutes": 75,
+      "prerequisites": ["place_value", "counting"],
+      "learning_objectives": [
+        "Read numbers up to 10 million",
+        "Write numbers up to 10 million in digits and words",
+        "Understand place value in large numbers",
+        "Compare and order large numbers"
+      ]
+    },
+    {
+      "id": "npv2",
+      "topic_name": "Rounding Numbers",
+      "topic_order": 2,
+      "module_id": "mod1",
+      "difficulty": "foundation",
+      "estimated_duration_minutes": 60,
+      "prerequisites": ["place_value", "number_line"],
+      "learning_objectives": [
+        "Round numbers to nearest 10, 100, 1000, 10000",
+        "Understand when to round up or down",
+        "Apply rounding in real-world contexts",
+        "Estimate using rounding"
+      ]
+    },
+    {
+      "id": "npv3",
+      "topic_name": "Comparing and Ordering",
+      "topic_order": 3,
+      "module_id": "mod1",
+      "difficulty": "foundation",
+      "estimated_duration_minutes": 55,
+      "prerequisites": ["place_value", "number_recognition"],
+      "learning_objectives": [
+        "Use comparison symbols <, >, =",
+        "Order large numbers from smallest to largest",
+        "Position numbers on a number line",
+        "Compare numbers with different digits"
+      ]
+    },
+    {
+      "id": "npv4",
+      "topic_name": "Roman Numerals",
+      "topic_order": 4,
+      "module_id": "mod1",
+      "difficulty": "intermediate",
+      "estimated_duration_minutes": 70,
+      "prerequisites": ["number_recognition"],
+      "learning_objectives": [
+        "Read Roman numerals up to 1000 (M)",
+        "Convert between Roman and Arabic numerals",
+        "Understand the rules of Roman numeral formation",
+        "Apply Roman numerals in real contexts"
+      ]
+    },
+    {
+      "id": "npv5",
+      "topic_name": "Negative Numbers",
+      "topic_order": 5,
+      "module_id": "mod1",
+      "difficulty": "intermediate",
+      "estimated_duration_minutes": 80,
+      "prerequisites": ["number_line", "ordering"],
+      "learning_objectives": [
+        "Understand negative numbers on a number line",
+        "Order positive and negative numbers",
+        "Apply negative numbers to temperature",
+        "Calculate with negative numbers"
+      ]
+    },
+    {
+      "id": "ao1",
+      "topic_name": "Mental Addition and Subtraction",
+      "topic_order": 1,
+      "module_id": "mod2",
+      "difficulty": "foundation",
+      "estimated_duration_minutes": 65,
+      "prerequisites": ["number_bonds", "place_value"],
+      "learning_objectives": [
+        "Add and subtract multiples of 10, 100, 1000",
+        "Use compensation strategies",
+        "Apply near doubles",
+        "Develop mental calculation speed"
+      ]
+    },
+    {
+      "id": "ao2",
+      "topic_name": "Column Addition",
+      "topic_order": 2,
+      "module_id": "mod2",
+      "difficulty": "foundation",
+      "estimated_duration_minutes": 70,
+      "prerequisites": ["place_value", "carrying"],
+      "learning_objectives": [
+        "Add numbers with up to 5 digits",
+        "Carry correctly between columns",
+        "Add decimal numbers",
+        "Check answers using estimation"
+      ]
+    },
+    {
+      "id": "fdp1",
+      "topic_name": "Understanding Fractions",
+      "topic_order": 1,
+      "module_id": "mod3",
+      "difficulty": "foundation",
+      "estimated_duration_minutes": 85,
+      "prerequisites": ["division", "parts_of_whole"],
+      "learning_objectives": [
+        "Identify parts of a whole",
+        "Understand fraction notation",
+        "Recognize unit fractions",
+        "Create and interpret fraction diagrams"
+      ]
+    },
+    {
+      "id": "fdp2",
+      "topic_name": "Equivalent Fractions",
+      "topic_order": 2,
+      "module_id": "mod3",
+      "difficulty": "foundation",
+      "estimated_duration_minutes": 75,
+      "prerequisites": ["fractions_basics", "multiplication"],
+      "learning_objectives": [
+        "Find equivalent fractions",
+        "Simplify fractions to lowest terms",
+        "Find common denominators",
+        "Use fraction walls effectively"
+      ]
+    },
+    {
+      "id": "alg1",
+      "topic_name": "Introduction to Algebra",
+      "topic_order": 1,
+      "module_id": "mod5",
+      "difficulty": "intermediate",
+      "estimated_duration_minutes": 90,
+      "prerequisites": ["arithmetic", "patterns"],
+      "learning_objectives": [
+        "Use letters to represent numbers",
+        "Understand algebraic notation",
+        "Identify terms and expressions",
+        "Perform basic substitution"
+      ]
+    },
+    {
+      "id": "geo1",
+      "topic_name": "2D Shape Properties",
+      "topic_order": 1,
+      "module_id": "mod6",
+      "difficulty": "foundation",
+      "estimated_duration_minutes": 70,
+      "prerequisites": ["shape_recognition"],
+      "learning_objectives": [
+        "Identify properties of triangles",
+        "Classify quadrilaterals",
+        "Understand regular polygons",
+        "Name parts of circles"
+      ]
+    }
+  ],
+  "curriculum_content": [
+    {
+      "topic_id": "npv1",
+      "stage_type": "concept_introduction",
+      "stage_order": 1,
+      "title": "Understanding Large Numbers",
+      "description": "Learn the fundamentals of reading and writing numbers up to 10 million",
+      "estimated_time_minutes": 20,
+      "content": {
+        "learning_objective": "Understand how large numbers work and why they're important in everyday life",
+        "introduction": "Let's explore how to read and write really big numbers! Numbers can get huge - up to 10 million and beyond. Once you understand the pattern, it becomes much easier.",
+        "concepts": [
+          "Every digit has a place value - units, tens, hundreds, thousands, etc.",
+          "Numbers are read from left to right in groups of three digits",
+          "Commas help us separate groups of thousands to make reading easier",
+          "The position of each digit tells us its value"
+        ],
+        "key_example": "234,567 reads as 'two hundred thirty-four thousand, five hundred sixty-seven'",
+        "visual_aids": [
+          "Place value chart showing millions, thousands, and units",
+          "Number line with large numbers marked",
+          "Real-world examples like population signs"
+        ],
+        "real_world_connections": [
+          "Population of cities and countries",
+          "Distances in kilometers",
+          "Money values in large businesses",
+          "YouTube video views and subscribers"
+        ]
+      },
+      "media_urls": [
+        "/images/place-value-chart.png",
+        "/videos/large-numbers-intro.mp4"
+      ]
+    },
+    {
+      "topic_id": "npv1",
+      "stage_type": "guided_practice",
+      "stage_order": 2,
+      "title": "Working Through Examples Together",
+      "description": "Step-by-step practice with reading and writing large numbers",
+      "estimated_time_minutes": 25,
+      "content": {
+        "introduction": "Let's practice reading and writing large numbers together, step by step.",
+        "activities": [
+          {
+            "title": "Reading 1,234,567",
+            "type": "step_by_step",
+            "example": "1,234,567",
+            "steps": [
+              "Start from the left: 1 million",
+              "Next group: 234 thousand",
+              "Last group: 567 units",
+              "Put together: One million, two hundred thirty-four thousand, five hundred sixty-seven"
+            ],
+            "description": "Break large numbers into manageable groups"
+          },
+          {
+            "title": "Writing Numbers from Words",
+            "type": "conversion",
+            "example": "Three million, five hundred thousand, twenty-one",
+            "steps": [
+              "Identify millions: 3,000,000",
+              "Identify thousands: 500,000",
+              "Identify units: 21",
+              "Combine: 3,500,021"
+            ],
+            "description": "Convert word form to standard form"
+          }
+        ],
+        "interactive_elements": [
+          {
+            "type": "drag_and_drop",
+            "title": "Place Value Sorting",
+            "description": "Drag digits to correct place value positions"
+          },
+          {
+            "type": "fill_in_blanks",
+            "title": "Complete the Number",
+            "description": "Fill in missing digits in large numbers"
+          }
+        ],
+        "checkpoints": [
+          {
+            "question": "In 5,426,789, what does the 4 represent?",
+            "answer": "4 hundred thousand (400,000)",
+            "explanation": "The 4 is in the hundred thousands place"
+          }
+        ]
+      }
+    },
+    {
+      "topic_id": "npv1",
+      "stage_type": "independent_practice",
+      "stage_order": 3,
+      "title": "Practice on Your Own",
+      "description": "Independent practice problems to build confidence",
+      "estimated_time_minutes": 20,
+      "content": {
+        "introduction": "Now it's your turn! Practice reading and writing large numbers independently.",
+        "exercises": [
+          {
+            "title": "Number Recognition",
+            "instruction": "Write these numbers in words",
+            "problems": [
+              "1,234,567",
+              "5,000,042",
+              "9,876,543",
+              "2,500,000"
+            ]
+          },
+          {
+            "title": "Word to Number Conversion",
+            "instruction": "Write these word numbers as digits",
+            "problems": [
+              "Four million, three hundred thousand, fifty-six",
+              "Seven million, eight hundred ninety thousand, one hundred twenty-three",
+              "One million, five hundred thousand",
+              "Six million, forty-seven"
+            ]
+          },
+          {
+            "title": "Place Value Questions",
+            "instruction": "Answer these place value questions",
+            "problems": [
+              "What is the value of 7 in 3,724,891?",
+              "What digit is in the ten thousands place in 8,639,254?",
+              "How many millions are in 4,567,890?"
+            ]
+          }
+        ],
+        "self_check": [
+          "Can you read any 7-digit number confidently?",
+          "Do you understand what each digit position represents?",
+          "Can you write numbers from words without help?"
+        ],
+        "extensions": [
+          "Find large numbers in newspapers and practice reading them",
+          "Look up population numbers of different countries",
+          "Practice with calculator display numbers"
+        ]
+      }
+    },
+    {
+      "topic_id": "npv1",
+      "stage_type": "assessment",
+      "stage_order": 4,
+      "title": "Show What You Know",
+      "description": "Assessment to demonstrate mastery of large numbers",
+      "estimated_time_minutes": 10,
+      "content": {
+        "introduction": "Time to show what you've learned about reading and writing large numbers!",
+        "assessment_questions": [
+          {
+            "id": "q1",
+            "question": "Write 3,456,789 in words",
+            "type": "text_entry",
+            "correct_answer": "Three million, four hundred fifty-six thousand, seven hundred eighty-nine",
+            "points": 2,
+            "explanation": "Break into groups: 3 million + 456 thousand + 789"
+          },
+          {
+            "id": "q2",
+            "question": "What is the value of the digit 5 in 8,521,347?",
+            "type": "multiple_choice",
+            "options": ["5", "50", "500", "500,000"],
+            "correct_answer": "500,000",
+            "points": 1,
+            "explanation": "The 5 is in the hundred thousands place"
+          },
+          {
+            "id": "q3",
+            "question": "Write 'Two million, seven hundred thousand, forty-three' in digits",
+            "type": "text_entry",
+            "correct_answer": "2,700,043",
+            "points": 2,
+            "explanation": "2 million + 700 thousand + 43 = 2,700,043"
+          }
+        ],
+        "success_criteria": {
+          "passing_score": 80,
+          "total_points": 5,
+          "minimum_correct": 4
+        },
+        "feedback": {
+          "excellent": "Outstanding! You've mastered large numbers! 🎉",
+          "good": "Great work! You understand large numbers well! 👍",
+          "needs_work": "Good try! Let's practice a bit more. 💪"
+        }
+      }
+    },
+    {
+      "topic_id": "npv2",
+      "stage_type": "concept_introduction",
+      "stage_order": 1,
+      "title": "The Art of Rounding",
+      "description": "Master the skill of rounding numbers to different place values",
+      "estimated_time_minutes": 15,
+      "content": {
+        "learning_objective": "Understand when and how to round numbers for estimation and practical use",
+        "introduction": "Rounding helps us work with simpler numbers. It's like saying 'about' instead of being exact - super useful for quick calculations!",
+        "concepts": [
+          "Look at the digit to the right of your rounding place",
+          "If it's 5 or more, round up",
+          "If it's less than 5, round down",
+          "All digits to the right become zeros"
+        ],
+        "key_example": "Rounding 3,456 to nearest hundred: Look at 5 (tens place), it's 5 or more, so round up to 3,500",
+        "visual_aids": [
+          "Number line showing rounding decisions",
+          "Rounding rules chart",
+          "Real-world rounding examples"
+        ],
+        "real_world_connections": [
+          "Estimating shopping totals",
+          "Rounding times for schedules",
+          "Population statistics",
+          "Sports scores and statistics"
+        ]
+      },
+      "media_urls": [
+        "/images/rounding-number-line.png",
+        "/videos/rounding-explained.mp4"
+      ]
+    },
+    {
+      "topic_id": "npv2",
+      "stage_type": "guided_practice",
+      "stage_order": 2,
+      "title": "Rounding Step by Step",
+      "description": "Practice rounding with guided examples",
+      "estimated_time_minutes": 20,
+      "content": {
+        "introduction": "Let's round numbers together, starting simple and building up!",
+        "activities": [
+          {
+            "title": "Round to Nearest 10",
+            "type": "step_by_step",
+            "example": "Round 47 to nearest 10",
+            "steps": [
+              "Identify the tens place: 4",
+              "Look at the ones place: 7",
+              "Is 7 ≥ 5? Yes!",
+              "Round up: 47 → 50"
+            ],
+            "description": "Master rounding to tens first"
+          },
+          {
+            "title": "Round to Nearest 1000",
+            "type": "step_by_step",
+            "example": "Round 3,456 to nearest 1000",
+            "steps": [
+              "Identify the thousands place: 3",
+              "Look at the hundreds place: 4",
+              "Is 4 ≥ 5? No",
+              "Round down: 3,456 → 3,000"
+            ],
+            "description": "Apply same rules to larger places"
+          }
+        ],
+        "interactive_elements": [
+          {
+            "type": "slider",
+            "title": "Rounding Explorer",
+            "description": "Move the slider to see how numbers round"
+          },
+          {
+            "type": "sorting_game",
+            "title": "Round and Sort",
+            "description": "Sort numbers by their rounded values"
+          }
+        ],
+        "checkpoints": [
+          {
+            "question": "Round 6,789 to the nearest hundred",
+            "answer": "6,800",
+            "explanation": "Look at tens digit (8), which is ≥ 5, so round up"
+          }
+        ]
+      }
+    },
+    {
+      "topic_id": "npv2",
+      "stage_type": "independent_practice",
+      "stage_order": 3,
+      "title": "Rounding Challenge",
+      "description": "Practice rounding independently",
+      "estimated_time_minutes": 15,
+      "content": {
+        "introduction": "Show your rounding skills! Work through these problems at your own pace.",
+        "exercises": [
+          {
+            "title": "Round to Nearest 10",
+            "instruction": "Round these numbers to the nearest 10",
+            "problems": [
+              "34",
+              "67",
+              "85",
+              "92"
+            ]
+          },
+          {
+            "title": "Round to Nearest 100",
+            "instruction": "Round these numbers to the nearest 100",
+            "problems": [
+              "456",
+              "234",
+              "789",
+              "550"
+            ]
+          },
+          {
+            "title": "Mixed Rounding",
+            "instruction": "Round as instructed",
+            "problems": [
+              "Round 4,567 to nearest 1000",
+              "Round 23,456 to nearest 10",
+              "Round 789,234 to nearest 10000",
+              "Round 45.67 to nearest whole number"
+            ]
+          }
+        ],
+        "self_check": [
+          "Do you check the correct digit for rounding?",
+          "Can you round to any place value?",
+          "Do you remember when to round up vs down?"
+        ],
+        "extensions": [
+          "Create a rounding game with dice",
+          "Estimate your weekly spending using rounding",
+          "Round sports statistics in the newspaper"
+        ]
+      }
+    },
+    {
+      "topic_id": "npv2",
+      "stage_type": "assessment",
+      "stage_order": 4,
+      "title": "Rounding Assessment",
+      "description": "Test your rounding skills",
+      "estimated_time_minutes": 10,
+      "content": {
+        "introduction": "Let's check your rounding expertise!",
+        "assessment_questions": [
+          {
+            "id": "q1",
+            "question": "Round 3,456 to the nearest hundred",
+            "type": "multiple_choice",
+            "options": ["3,400", "3,500", "3,450", "3,460"],
+            "correct_answer": "3,500",
+            "points": 1,
+            "explanation": "The tens digit is 5, so round up"
+          },
+          {
+            "id": "q2",
+            "question": "Round 67,892 to the nearest thousand",
+            "type": "text_entry",
+            "correct_answer": "68,000",
+            "points": 2,
+            "explanation": "Hundreds digit is 8 (≥5), so round up"
+          },
+          {
+            "id": "q3",
+            "question": "Which number rounds to 500 when rounded to the nearest hundred?",
+            "type": "multiple_choice",
+            "options": ["445", "455", "545", "555"],
+            "correct_answer": "455",
+            "points": 2,
+            "explanation": "Numbers from 450-549 round to 500"
+          }
+        ],
+        "success_criteria": {
+          "passing_score": 80,
+          "total_points": 5,
+          "minimum_correct": 4
+        },
+        "feedback": {
+          "excellent": "Rounding master! You've got this! 🎯",
+          "good": "Nice rounding skills! Well done! ✨",
+          "needs_work": "Keep practicing - you're getting there! 📈"
+        }
+      }
+    },
+    {
+      "topic_id": "npv3",
+      "stage_type": "concept_introduction",
+      "stage_order": 1,
+      "title": "Comparing and Ordering Numbers",
+      "description": "Learn to compare numbers and put them in order",
+      "estimated_time_minutes": 15,
+      "content": {
+        "learning_objective": "Master comparison symbols and ordering techniques for any size numbers",
+        "introduction": "Comparing numbers is like being a judge - you decide which is bigger, smaller, or if they're equal!",
+        "concepts": [
+          "< means 'less than' (smaller number first)",
+          "> means 'greater than' (bigger number first)",
+          "= means 'equal to' (same value)",
+          "Compare digits from left to right"
+        ],
+        "key_example": "345 < 354 because when we compare left to right, 4 < 5 in the tens place",
+        "visual_aids": [
+          "Comparison symbol memory tricks",
+          "Number line comparisons",
+          "Place value comparison chart"
+        ],
+        "real_world_connections": [
+          "Comparing prices when shopping",
+          "Ordering race times",
+          "Ranking game scores",
+          "Comparing heights or weights"
+        ]
+      },
+      "media_urls": [
+        "/images/comparison-symbols.png",
+        "/animations/number-comparison.gif"
+      ]
+    },
+    {
+      "topic_id": "npv3",
+      "stage_type": "guided_practice",
+      "stage_order": 2,
+      "title": "Compare and Order Together",
+      "description": "Practice comparing and ordering with guidance",
+      "estimated_time_minutes": 20,
+      "content": {
+        "introduction": "Let's practice comparing numbers step by step!",
+        "activities": [
+          {
+            "title": "Comparing Large Numbers",
+            "type": "step_by_step",
+            "example": "Compare 3,456 and 3,465",
+            "steps": [
+              "Line up by place value",
+              "Compare thousands: 3 = 3",
+              "Compare hundreds: 4 = 4",
+              "Compare tens: 5 < 6",
+              "Therefore: 3,456 < 3,465"
+            ],
+            "description": "Compare digit by digit from left to right"
+          },
+          {
+            "title": "Ordering Multiple Numbers",
+            "type": "step_by_step",
+            "example": "Order: 234, 342, 243",
+            "steps": [
+              "Compare hundreds first",
+              "234 and 243 both start with 2",
+              "342 starts with 3 (biggest)",
+              "Compare 234 and 243: 3 < 4",
+              "Order: 234, 243, 342"
+            ],
+            "description": "Use systematic comparison"
+          }
+        ],
+        "interactive_elements": [
+          {
+            "type": "drag_to_order",
+            "title": "Number Line Ordering",
+            "description": "Drag numbers to correct positions"
+          },
+          {
+            "type": "comparison_game",
+            "title": "Greater or Less?",
+            "description": "Quick-fire comparison practice"
+          }
+        ],
+        "checkpoints": [
+          {
+            "question": "Which symbol makes this true: 4,567 ___ 4,576?",
+            "answer": "<",
+            "explanation": "Compare tens: 6 < 7"
+          }
+        ]
+      }
+    },
+    {
+      "topic_id": "npv4",
+      "stage_type": "concept_introduction",
+      "stage_order": 1,
+      "title": "Roman Numerals - Ancient Numbers",
+      "description": "Discover the Roman numeral system still used today",
+      "estimated_time_minutes": 20,
+      "content": {
+        "learning_objective": "Read and write Roman numerals up to 1000 (M)",
+        "introduction": "Romans didn't use our number system - they had their own! You still see Roman numerals on clocks, in movie credits, and on important buildings.",
+        "concepts": [
+          "Basic symbols: I=1, V=5, X=10, L=50, C=100, D=500, M=1000",
+          "Add symbols when smaller comes after larger: VI = 6",
+          "Subtract when smaller comes before larger: IV = 4",
+          "Never use more than 3 of the same symbol in a row"
+        ],
+        "key_example": "MCMXCIV = 1994 (M=1000, CM=900, XC=90, IV=4)",
+        "visual_aids": [
+          "Roman numeral conversion chart",
+          "Clock face with Roman numerals",
+          "Historical examples"
+        ],
+        "real_world_connections": [
+          "Clock faces",
+          "Movie copyright dates",
+          "Chapter numbers in books",
+          "Names of monarchs (Queen Elizabeth II)"
+        ]
+      },
+      "media_urls": [
+        "/images/roman-numeral-chart.png",
+        "/videos/roman-numerals-history.mp4"
+      ]
+    },
+    {
+      "topic_id": "npv5",
+      "stage_type": "concept_introduction",
+      "stage_order": 1,
+      "title": "Below Zero - Negative Numbers",
+      "description": "Explore numbers less than zero",
+      "estimated_time_minutes": 20,
+      "content": {
+        "learning_objective": "Understand and work with negative numbers",
+        "introduction": "What happens when you go below zero? Negative numbers help us describe temperatures below freezing, depths below sea level, and debts!",
+        "concepts": [
+          "Negative numbers have a minus sign (-)",
+          "Zero separates positive and negative numbers",
+          "The further from zero, the 'more negative'",
+          "-5 is less than -2 (think temperature!)"
+        ],
+        "key_example": "On a cold day: 5°C → 0°C → -5°C (getting colder!)",
+        "visual_aids": [
+          "Vertical number line/thermometer",
+          "Temperature examples",
+          "Bank account showing overdraft"
+        ],
+        "real_world_connections": [
+          "Temperature and weather",
+          "Bank accounts and debt",
+          "Elevations below sea level",
+          "Golf scores"
+        ]
+      },
+      "media_urls": [
+        "/images/negative-number-line.png",
+        "/animations/temperature-change.gif"
+      ]
+    },
+    {
+      "topic_id": "ao1",
+      "stage_type": "concept_introduction",
+      "stage_order": 1,
+      "title": "Mental Math Magic",
+      "description": "Develop lightning-fast mental calculation skills",
+      "estimated_time_minutes": 18,
+      "content": {
+        "learning_objective": "Master mental strategies for quick addition and subtraction",
+        "introduction": "Your brain is an amazing calculator! Let's unlock mental math strategies that make you faster than a calculator for many problems.",
+        "concepts": [
+          "Break numbers into friendly parts",
+          "Use number bonds and facts you know",
+          "Compensation: add too much, then adjust",
+          "Near doubles: use doubles you know"
+        ],
+        "key_example": "47 + 38 = 47 + 40 - 2 = 87 - 2 = 85",
+        "visual_aids": [
+          "Number bond diagrams",
+          "Mental strategy flowcharts",
+          "Compensation examples"
+        ],
+        "real_world_connections": [
+          "Quick change calculations",
+          "Mental scorekeeping in games",
+          "Estimating journey times",
+          "Rapid price comparisons"
+        ]
+      },
+      "media_urls": [
+        "/images/mental-strategies.png",
+        "/videos/mental-math-tricks.mp4"
+      ]
+    },
+    {
+      "topic_id": "ao2",
+      "stage_type": "concept_introduction",
+      "stage_order": 1,
+      "title": "Column Addition Mastery",
+      "description": "Perfect the traditional method for accurate addition",
+      "estimated_time_minutes": 18,
+      "content": {
+        "learning_objective": "Add multi-digit numbers accurately using column method",
+        "introduction": "Column addition is like stacking blocks - line everything up perfectly and build from right to left!",
+        "concepts": [
+          "Align digits by place value",
+          "Start from the ones column",
+          "Carry when a column totals 10 or more",
+          "The carried digit goes to the next column"
+        ],
+        "key_example": "  456\n+ 378\n-----\n  834",
+        "visual_aids": [
+          "Place value columns",
+          "Carrying demonstration",
+          "Common mistake examples"
+        ],
+        "real_world_connections": [
+          "Adding up receipts",
+          "Calculating total distances",
+          "Combining measurements",
+          "Budget calculations"
+        ]
+      },
+      "media_urls": [
+        "/images/column-addition.png",
+        "/animations/carrying-demo.gif"
+      ]
+    },
+    {
+      "topic_id": "fdp1",
+      "stage_type": "concept_introduction",
+      "stage_order": 1,
+      "title": "Fractions - Parts of a Whole",
+      "description": "Understanding what fractions are and how they work",
+      "estimated_time_minutes": 20,
+      "content": {
+        "learning_objective": "Understand fractions as parts of a whole or a set",
+        "introduction": "Fractions are everywhere! When you share a pizza, break a chocolate bar, or measure ingredients, you're using fractions.",
+        "concepts": [
+          "Numerator (top) = parts we have",
+          "Denominator (bottom) = total equal parts",
+          "The line means 'divided by'",
+          "Fractions show parts of one whole"
+        ],
+        "key_example": "3/4 means 3 parts out of 4 equal parts",
+        "visual_aids": [
+          "Pizza and cake diagrams",
+          "Fraction bars",
+          "Real object divisions"
+        ],
+        "real_world_connections": [
+          "Sharing food equally",
+          "Measuring in recipes",
+          "Time (half hour, quarter past)",
+          "Money (quarters, half dollars)"
+        ]
+      },
+      "media_urls": [
+        "/images/fraction-basics.png",
+        "/videos/fractions-intro.mp4"
+      ]
+    },
+    {
+      "topic_id": "fdp1",
+      "stage_type": "guided_practice",
+      "stage_order": 2,
+      "title": "Exploring Fractions Together",
+      "description": "Hands-on practice with fraction concepts",
+      "estimated_time_minutes": 25,
+      "content": {
+        "introduction": "Let's work with fractions using visual models and real examples!",
+        "activities": [
+          {
+            "title": "Identifying Fractions",
+            "type": "visual_identification",
+            "example": "What fraction is shaded?",
+            "steps": [
+              "Count total equal parts (denominator)",
+              "Count shaded parts (numerator)",
+              "Write as fraction: shaded/total",
+              "Say it aloud: 'three-fourths'"
+            ],
+            "description": "Practice reading fraction diagrams"
+          },
+          {
+            "title": "Creating Fraction Models",
+            "type": "hands_on",
+            "example": "Show 2/3 using a rectangle",
+            "steps": [
+              "Draw a rectangle",
+              "Divide into 3 equal parts",
+              "Shade 2 parts",
+              "Label as 2/3"
+            ],
+            "description": "Draw your own fraction models"
+          }
+        ],
+        "interactive_elements": [
+          {
+            "type": "fraction_builder",
+            "title": "Build a Fraction",
+            "description": "Create fractions by shading parts"
+          },
+          {
+            "type": "matching_game",
+            "title": "Match Fractions to Pictures",
+            "description": "Connect fraction notation to visual models"
+          }
+        ],
+        "checkpoints": [
+          {
+            "question": "If a pizza has 8 slices and you eat 3, what fraction did you eat?",
+            "answer": "3/8",
+            "explanation": "3 slices eaten out of 8 total slices"
+          }
+        ]
+      }
+    },
+    {
+      "topic_id": "fdp1",
+      "stage_type": "independent_practice",
+      "stage_order": 3,
+      "title": "Fraction Practice Time",
+      "description": "Work independently with fraction problems",
+      "estimated_time_minutes": 25,
+      "content": {
+        "introduction": "Practice identifying, writing, and creating fractions on your own!",
+        "exercises": [
+          {
+            "title": "Name the Fraction",
+            "instruction": "Write the fraction shown in each diagram",
+            "problems": [
+              "Circle divided into 4 parts, 3 shaded",
+              "Rectangle divided into 6 parts, 5 shaded",
+              "10 stars, 7 are colored",
+              "Pizza with 8 slices, 2 remaining"
+            ]
+          },
+          {
+            "title": "Draw Fractions",
+            "instruction": "Draw diagrams to show these fractions",
+            "problems": [
+              "1/2",
+              "3/4",
+              "2/5",
+              "5/6"
+            ]
+          },
+          {
+            "title": "Real-World Fractions",
+            "instruction": "Write fractions for these situations",
+            "problems": [
+              "5 red marbles out of 12 total marbles",
+              "45 minutes of a 60-minute lesson",
+              "3 completed pages of a 10-page assignment",
+              "7 sunny days out of 14 days"
+            ]
+          }
+        ],
+        "self_check": [
+          "Can you identify the numerator and denominator?",
+          "Do your drawings show equal parts?",
+          "Can you explain what the fraction means?"
+        ],
+        "extensions": [
+          "Find fractions in recipe books",
+          "Create a fraction scavenger hunt at home",
+          "Make fraction flashcards"
+        ]
+      }
+    },
+    {
+      "topic_id": "fdp1",
+      "stage_type": "assessment",
+      "stage_order": 4,
+      "title": "Fraction Fundamentals Check",
+      "description": "Assess understanding of basic fractions",
+      "estimated_time_minutes": 15,
+      "content": {
+        "introduction": "Show what you know about fractions!",
+        "assessment_questions": [
+          {
+            "id": "q1",
+            "question": "What fraction of this shape is shaded? [Shows circle with 3 of 4 parts shaded]",
+            "type": "multiple_choice",
+            "options": ["1/4", "3/4", "4/3", "3/1"],
+            "correct_answer": "3/4",
+            "points": 2,
+            "explanation": "3 parts shaded out of 4 total parts = 3/4"
+          },
+          {
+            "id": "q2",
+            "question": "In the fraction 5/8, what does the 8 represent?",
+            "type": "multiple_choice",
+            "options": [
+              "The parts we have",
+              "The total number of equal parts",
+              "The whole number",
+              "The amount left over"
+            ],
+            "correct_answer": "The total number of equal parts",
+            "points": 2,
+            "explanation": "The denominator (bottom number) shows total equal parts"
+          },
+          {
+            "id": "q3",
+            "question": "Draw a diagram to show 2/3",
+            "type": "drawing",
+            "correct_answer": "Any shape divided into 3 equal parts with 2 shaded",
+            "points": 3,
+            "explanation": "Should show 3 equal parts with exactly 2 shaded"
+          },
+          {
+            "id": "q4",
+            "question": "Sarah ate 4 slices of a pizza that had 10 slices. What fraction did she eat?",
+            "type": "text_entry",
+            "correct_answer": "4/10",
+            "points": 3,
+            "explanation": "4 slices eaten out of 10 total slices = 4/10"
+          }
+        ],
+        "success_criteria": {
+          "passing_score": 80,
+          "total_points": 10,
+          "minimum_correct": 3
+        },
+        "feedback": {
+          "excellent": "Fantastic fraction work! You really understand parts and wholes! 🍕",
+          "good": "Good job with fractions! You're getting the hang of it! 👏",
+          "needs_work": "Keep practicing with fractions - you're making progress! 💪"
+        }
+      }
+    },
+    {
+      "topic_id": "fdp2",
+      "stage_type": "concept_introduction",
+      "stage_order": 1,
+      "title": "Equivalent Fractions - Same Value, Different Look",
+      "description": "Discover how different fractions can represent the same amount",
+      "estimated_time_minutes": 20,
+      "content": {
+        "learning_objective": "Understand and find equivalent fractions",
+        "introduction": "Did you know that 1/2, 2/4, and 3/6 are all the same amount? They're equivalent fractions - different ways to write the same value!",
+        "concepts": [
+          "Equivalent fractions represent the same part of a whole",
+          "Multiply or divide both numerator and denominator by the same number",
+          "The fraction's value doesn't change",
+          "Simplifying means finding the simplest equivalent fraction"
+        ],
+        "key_example": "1/2 = 2/4 = 3/6 = 4/8 (multiply top and bottom by 2, 3, 4...)",
+        "visual_aids": [
+          "Fraction wall showing equivalents",
+          "Pizza diagrams with different cuts",
+          "Fraction bars lined up"
+        ],
+        "real_world_connections": [
+          "Different recipe measurements",
+          "Money equivalents (50¢ = 1/2 dollar)",
+          "Time equivalents (30 min = 1/2 hour)",
+          "Different ways to share equally"
+        ]
+      },
+      "media_urls": [
+        "/images/equivalent-fractions-wall.png",
+        "/videos/equivalent-fractions-demo.mp4"
+      ]
+    },
+    {
+      "topic_id": "alg1",
+      "stage_type": "concept_introduction",
+      "stage_order": 1,
+      "title": "Letters and Numbers - Introduction to Algebra",
+      "description": "Begin your journey into algebraic thinking",
+      "estimated_time_minutes": 25,
+      "content": {
+        "learning_objective": "Understand how letters can represent unknown numbers",
+        "introduction": "Algebra is like being a detective with numbers! We use letters to stand for numbers we don't know yet, then solve the mystery!",
+        "concepts": [
+          "Letters (like x, y, n) can represent unknown numbers",
+          "An expression combines numbers and letters with operations",
+          "We can substitute numbers for letters",
+          "Algebra helps us solve problems with unknowns"
+        ],
+        "key_example": "If x = 5, then 2x + 3 = 2(5) + 3 = 10 + 3 = 13",
+        "visual_aids": [
+          "Mystery box representing unknowns",
+          "Balance scales for equations",
+          "Expression building blocks"
+        ],
+        "real_world_connections": [
+          "Finding missing measurements",
+          "Working out ages in puzzles",
+          "Calculating costs with unknown quantities",
+          "Pattern predictions"
+        ]
+      },
+      "media_urls": [
+        "/images/algebra-intro.png",
+        "/videos/algebra-basics.mp4"
+      ]
+    },
+    {
+      "topic_id": "alg1",
+      "stage_type": "guided_practice",
+      "stage_order": 2,
+      "title": "Working with Algebraic Expressions",
+      "description": "Practice using letters in mathematical expressions",
+      "estimated_time_minutes": 25,
+      "content": {
+        "introduction": "Let's practice working with algebraic expressions step by step!",
+        "activities": [
+          {
+            "title": "Substitution Practice",
+            "type": "step_by_step",
+            "example": "Find the value of 3a + 2 when a = 4",
+            "steps": [
+              "Replace 'a' with 4",
+              "3a becomes 3 × 4",
+              "Calculate: 3 × 4 = 12",
+              "Add 2: 12 + 2 = 14"
+            ],
+            "description": "Substitute values for letters"
+          },
+          {
+            "title": "Writing Expressions",
+            "type": "translation",
+            "example": "Write: 'Five more than a number'",
+            "steps": [
+              "Choose a letter for 'a number' (use n)",
+              "'More than' means add",
+              "'Five more' means + 5",
+              "Expression: n + 5"
+            ],
+            "description": "Convert words to algebra"
+          }
+        ],
+        "interactive_elements": [
+          {
+            "type": "expression_builder",
+            "title": "Build Expressions",
+            "description": "Drag and drop to create algebraic expressions"
+          },
+          {
+            "type": "substitution_calculator",
+            "title": "Substitution Machine",
+            "description": "Input values and see results"
+          }
+        ],
+        "checkpoints": [
+          {
+            "question": "If x = 3, what is 2x + 1?",
+            "answer": "7",
+            "explanation": "2x + 1 = 2(3) + 1 = 6 + 1 = 7"
+          }
+        ]
+      }
+    },
+    {
+      "topic_id": "geo1",
+      "stage_type": "concept_introduction",
+      "stage_order": 1,
+      "title": "2D Shapes - Properties and Classification",
+      "description": "Explore the properties of flat shapes",
+      "estimated_time_minutes": 20,
+      "content": {
+        "learning_objective": "Identify and classify 2D shapes by their properties",
+        "introduction": "Shapes are all around us! Every 2D shape has special properties that make it unique. Let's become shape detectives!",
+        "concepts": [
+          "Triangles have 3 sides and 3 angles",
+          "Quadrilaterals have 4 sides and 4 angles",
+          "Regular shapes have all sides and angles equal",
+          "Circles have no straight sides or corners"
+        ],
+        "key_example": "A square is a special rectangle where all 4 sides are equal",
+        "visual_aids": [
+          "Shape property chart",
+          "Real-world shape examples",
+          "Shape family tree"
+        ],
+        "real_world_connections": [
+          "Road signs and their shapes",
+          "Architecture and building design",
+          "Art and pattern making",
+          "Sports fields and courts"
+        ]
+      },
+      "media_urls": [
+        "/images/2d-shapes-chart.png",
+        "/videos/shape-properties.mp4"
+      ]
+    },
+    {
+      "topic_id": "geo1",
+      "stage_type": "guided_practice",
+      "stage_order": 2,
+      "title": "Shape Investigation Lab",
+      "description": "Hands-on exploration of shape properties",
+      "estimated_time_minutes": 25,
+      "content": {
+        "introduction": "Let's investigate shapes like scientists, discovering their properties!",
+        "activities": [
+          {
+            "title": "Triangle Types",
+            "type": "classification",
+            "example": "Classify triangles by sides and angles",
+            "steps": [
+              "Equilateral: 3 equal sides, 3 equal angles",
+              "Isosceles: 2 equal sides, 2 equal angles",
+              "Scalene: No equal sides or angles",
+              "Right-angled: Has one 90° angle"
+            ],
+            "description": "Learn triangle classifications"
+          },
+          {
+            "title": "Quadrilateral Family",
+            "type": "comparison",
+            "example": "Compare properties of quadrilaterals",
+            "steps": [
+              "Square: 4 equal sides, 4 right angles",
+              "Rectangle: Opposite sides equal, 4 right angles",
+              "Rhombus: 4 equal sides, opposite angles equal",
+              "Parallelogram: Opposite sides parallel and equal"
+            ],
+            "description": "Understand quadrilateral relationships"
+          }
+        ],
+        "interactive_elements": [
+          {
+            "type": "shape_sorter",
+            "title": "Shape Property Sorter",
+            "description": "Sort shapes by their properties"
+          },
+          {
+            "type": "shape_builder",
+            "title": "Create and Classify",
+            "description": "Build shapes with given properties"
+          }
+        ],
+        "checkpoints": [
+          {
+            "question": "What makes a square special compared to other rectangles?",
+            "answer": "All four sides are equal in length",
+            "explanation": "A square is a rectangle with the additional property of equal sides"
+          }
+        ]
+      }
+    },
+    {
+      "topic_id": "geo1",
+      "stage_type": "independent_practice",
+      "stage_order": 3,
+      "title": "Shape Detective Challenge",
+      "description": "Apply shape knowledge independently",
+      "estimated_time_minutes": 20,
+      "content": {
+        "introduction": "Use your shape knowledge to solve these challenges!",
+        "exercises": [
+          {
+            "title": "Name That Shape",
+            "instruction": "Identify shapes from their properties",
+            "problems": [
+              "I have 4 equal sides and 4 right angles. What am I?",
+              "I have 3 sides, 2 are equal length. What am I?",
+              "I have 4 sides, opposite sides are parallel. What am I?",
+              "I have no corners and no straight sides. What am I?"
+            ]
+          },
+          {
+            "title": "Property Match",
+            "instruction": "List all properties of these shapes",
+            "problems": [
+              "Rectangle",
+              "Equilateral triangle",
+              "Pentagon",
+              "Rhombus"
+            ]
+          },
+          {
+            "title": "Real World Shapes",
+            "instruction": "Find examples of these shapes in everyday objects",
+            "problems": [
+              "Find 3 rectangular objects",
+              "Find 2 circular objects",
+              "Find 1 triangular object",
+              "Find 1 hexagonal object"
+            ]
+          }
+        ],
+        "self_check": [
+          "Can you name all basic 2D shapes?",
+          "Do you know the properties of each shape?",
+          "Can you spot shapes in the world around you?"
+        ],
+        "extensions": [
+          "Create a shape scavenger hunt",
+          "Design a pattern using different shapes",
+          "Research shapes in different cultures' art"
+        ]
+      }
+    },
+    {
+      "topic_id": "geo1",
+      "stage_type": "assessment",
+      "stage_order": 4,
+      "title": "2D Shapes Assessment",
+      "description": "Test your knowledge of 2D shapes",
+      "estimated_time_minutes": 15,
+      "content": {
+        "introduction": "Show your expertise with 2D shapes!",
+        "assessment_questions": [
+          {
+            "id": "q1",
+            "question": "Which shape has exactly 5 sides?",
+            "type": "multiple_choice",
+            "options": ["Pentagon", "Hexagon", "Octagon", "Quadrilateral"],
+            "correct_answer": "Pentagon",
+            "points": 1,
+            "explanation": "Penta- means five, so pentagon has 5 sides"
+          },
+          {
+            "id": "q2",
+            "question": "What properties do ALL rectangles have? (Select all that apply)",
+            "type": "multiple_select",
+            "options": [
+              "4 right angles",
+              "4 equal sides",
+              "Opposite sides equal",
+              "Opposite sides parallel"
+            ],
+            "correct_answer": ["4 right angles", "Opposite sides equal", "Opposite sides parallel"],
+            "points": 3,
+            "explanation": "All rectangles have these properties, but only squares have 4 equal sides"
+          },
+          {
+            "id": "q3",
+            "question": "Draw and label an isosceles triangle",
+            "type": "drawing",
+            "correct_answer": "Triangle with 2 equal sides marked",
+            "points": 3,
+            "explanation": "Should show a triangle with 2 sides clearly marked as equal"
+          },
+          {
+            "id": "q4",
+            "question": "A shape has 4 equal sides but no right angles. What is it?",
+            "type": "text_entry",
+            "correct_answer": "Rhombus",
+            "points": 3,
+            "explanation": "A rhombus has 4 equal sides but angles are not 90°"
+          }
+        ],
+        "success_criteria": {
+          "passing_score": 80,
+          "total_points": 10,
+          "minimum_correct": 3
+        },
+        "feedback": {
+          "excellent": "Shape expert! You know your 2D shapes inside out! 🔷",
+          "good": "Great shape knowledge! Well done! 🔶",
+          "needs_work": "Keep exploring shapes - you're learning! 📐"
+        }
+      }
+    }
+  ],
+  "content_progression": {
+    "module_sequences": {
+      "mod1": {
+        "module_name": "Number & Place Value",
+        "learning_path": [
+          "npv1 → npv2 → npv3 → npv4 → npv5 → npv6 → npv7 → npv8"
+        ],
+        "prerequisites": ["basic_counting", "number_recognition"],
+        "outcomes": [
+          "Read and write numbers to 10 million",
+          "Round numbers accurately",
+          "Compare and order any numbers",
+          "Work with negative numbers"
+        ]
+      },
+      "mod2": {
+        "module_name": "Arithmetic Operations",
+        "learning_path": [
+          "ao1 → ao2 → ao3 → ao4 → ao5 → ao6 → ao7 → ao8"
+        ],
+        "prerequisites": ["place_value", "number_bonds"],
+        "outcomes": [
+          "Perform mental calculations quickly",
+          "Use written methods accurately",
+          "Understand order of operations",
+          "Check calculations effectively"
+        ]
+      },
+      "mod3": {
+        "module_name": "Fractions, Decimals & Percentages",
+        "learning_path": [
+          "fdp1 → fdp2 → fdp3 → fdp4 → fdp5 → fdp6 → fdp7 → fdp8"
+        ],
+        "prerequisites": ["division", "place_value"],
+        "outcomes": [
+          "Work confidently with fractions",
+          "Convert between FDP",
+          "Calculate with decimals",
+          "Solve percentage problems"
+        ]
+      }
+    },
+    "skill_development": {
+      "foundational_skills": [
+        "number_sense",
+        "place_value",
+        "basic_operations",
+        "mental_math"
+      ],
+      "intermediate_skills": [
+        "fractions",
+        "decimals",
+        "algebraic_thinking",
+        "geometric_reasoning"
+      ],
+      "advanced_skills": [
+        "problem_solving",
+        "pattern_recognition",
+        "logical_reasoning",
+        "exam_technique"
+      ]
+    }
+  },
+  "implementation_notes": {
+    "content_delivery": {
+      "slide_format": "Each stage represents 4-6 slides in the app",
+      "interactivity": "Every concept should have interactive elements",
+      "assessment": "Continuous assessment with immediate feedback",
+      "differentiation": "Content adapts based on student performance"
+    },
+    "media_requirements": {
+      "images": "High-quality diagrams and real-world photos",
+      "videos": "2-3 minute explanatory videos per topic",
+      "animations": "Interactive animations for key concepts",
+      "audio": "Optional audio narration for accessibility"
+    },
+    "best_practices": {
+      "engagement": "Start with real-world connections",
+      "scaffolding": "Build complexity gradually",
+      "practice": "Provide varied practice opportunities",
+      "feedback": "Immediate, specific, and encouraging"
+    }
+  }
+}
