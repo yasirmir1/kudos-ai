@@ -35,9 +35,198 @@ export class LearningContentLoader {
   }
 
   private static async loadFromAPI(topicId: string): Promise<TopicLearningContent | null> {
-    // This will later make API calls to load JSON content
-    // For now, return null to use placeholder content
-    return null;
+    try {
+      // Import supabase client
+      const { supabase } = await import('@/integrations/supabase/client');
+      
+      // Fetch topic information
+      const { data: topicData, error: topicError } = await supabase
+        .from('bootcamp_curriculum_topics')
+        .select('*')
+        .eq('id', topicId)
+        .single();
+      
+      if (topicError || !topicData) {
+        console.error('Error fetching topic:', topicError);
+        return null;
+      }
+      
+      // Fetch curriculum content for this topic
+      const { data: contentData, error: contentError } = await supabase
+        .from('bootcamp_curriculum_content')
+        .select('*')
+        .eq('topic_id', topicId)
+        .order('stage_order');
+      
+      if (contentError) {
+        console.error('Error fetching content:', contentError);
+        return null;
+      }
+      
+      // Transform database content to our format
+      const subtopics = this.transformDatabaseContent(topicData, contentData || []);
+      
+      return {
+        topicId: topicData.id,
+        topicName: topicData.topic_name,
+        subtopics
+      };
+    } catch (error) {
+      console.error('Error in loadFromAPI:', error);
+      return null;
+    }
+  }
+
+  private static transformDatabaseContent(topicData: any, contentData: any[]): SubtopicLearningContent[] {
+    // Create a default subtopic based on the topic
+    const defaultSubtopic: SubtopicLearningContent = {
+      subtopicId: topicData.id,
+      subtopicName: topicData.topic_name,
+      estimatedDuration: topicData.estimated_duration_minutes || 45,
+      prerequisites: topicData.prerequisites || [],
+      learningObjectives: topicData.learning_objectives || [],
+      stages: {
+        concept: this.createConceptStage(contentData),
+        guided: this.createGuidedStage(contentData),
+        independent: this.createIndependentStage(contentData),
+        assessment: this.createAssessmentStage(contentData)
+      }
+    };
+    
+    return [defaultSubtopic];
+  }
+  
+  private static createConceptStage(contentData: any[]) {
+    const conceptContent = contentData.find(c => c.stage_type === 'concept_introduction');
+    const content = conceptContent?.content || {};
+    
+    return {
+      introduction: content.learning_objective || "Let's learn about this important mathematical concept!",
+      keyPoints: content.concepts || [
+        "Understanding the fundamental principles",
+        "Learning the key terminology",
+        "Seeing how it applies in real situations"
+      ],
+      examples: content.visual_aids ? content.visual_aids.map((aid: string, index: number) => ({
+        title: `Example ${index + 1}`,
+        description: aid,
+        explanation: content.key_example || "This example demonstrates the concept clearly."
+      })) : [
+        {
+          title: "Basic Example",
+          description: "A fundamental example to illustrate the concept",
+          explanation: content.key_example || "This shows how the concept works in practice."
+        }
+      ],
+      realWorldApplications: [
+        "Practical applications in everyday life",
+        "Mathematical problem solving",
+        "Building foundation for advanced topics"
+      ]
+    };
+  }
+  
+  private static createGuidedStage(contentData: any[]) {
+    const guidedContent = contentData.find(c => c.stage_type === 'guided_practice');
+    const content = guidedContent?.content || {};
+    
+    return {
+      introduction: "Let's work through examples together step by step.",
+      stepByStepExamples: content.activities ? content.activities.map((activity: any, index: number) => ({
+        title: activity.title || `Example ${index + 1}`,
+        problem: activity.example || "Practice problem",
+        steps: activity.steps ? activity.steps.map((step: string, stepIndex: number) => ({
+          stepNumber: stepIndex + 1,
+          instruction: step,
+          working: activity.example || "",
+          explanation: `Step ${stepIndex + 1} explanation`
+        })) : [
+          {
+            stepNumber: 1,
+            instruction: "Follow the first step",
+            working: "",
+            explanation: "This step introduces the approach"
+          }
+        ],
+        finalAnswer: "Solution",
+        explanation: activity.description || "This guided example helps build understanding."
+      })) : [
+        {
+          title: "Guided Example",
+          problem: "Let's solve this together",
+          steps: [
+            {
+              stepNumber: 1,
+              instruction: "Start with the first step",
+              working: "Work through the problem systematically",
+              explanation: "This approach helps you understand the process"
+            }
+          ],
+          finalAnswer: "Final solution",
+          explanation: "Working together helps build confidence."
+        }
+      ],
+      checkpoints: []
+    };
+  }
+  
+  private static createIndependentStage(contentData: any[]) {
+    const independentContent = contentData.find(c => c.stage_type === 'independent_practice');
+    const content = independentContent?.content || {};
+    
+    return {
+      introduction: "Now it's your turn to practice independently!",
+      practiceProblems: content.exercises ? content.exercises.map((exercise: any, index: number) => ({
+        id: `practice-${index + 1}`,
+        question: exercise.instruction || "Practice question",
+        type: "multiple-choice" as const,
+        options: exercise.problems?.slice(0, 4) || ["Option A", "Option B", "Option C", "Option D"],
+        correctAnswer: exercise.problems?.[0] || "Option A",
+        explanation: exercise.title || "This problem tests your understanding.",
+        difficulty: "medium" as const
+      })) : [
+        {
+          id: "practice-1",
+          question: "Practice what you've learned",
+          type: "multiple-choice" as const,
+          options: ["Answer A", "Answer B", "Answer C", "Answer D"],
+          correctAnswer: "Answer A",
+          explanation: "This helps reinforce your learning.",
+          difficulty: "medium" as const
+        }
+      ],
+      selfCheckQuestions: [
+        "Do you feel confident with this concept?",
+        "Can you solve similar problems on your own?",
+        "Are you ready to move to the next stage?"
+      ]
+    };
+  }
+  
+  private static createAssessmentStage(contentData: any[]) {
+    return {
+      introduction: "Time to show what you've learned!",
+      questions: [
+        {
+          id: "assess-1",
+          question: "Assessment question to test your understanding",
+          type: "multiple-choice" as const,
+          options: ["Option A", "Option B", "Option C", "Option D"],
+          correctAnswer: "Option A",
+          explanation: "This tests your mastery of the concept.",
+          points: 1
+        }
+      ],
+      passingCriteria: {
+        minimumScore: 80,
+        totalQuestions: 3
+      },
+      feedbackMessages: {
+        excellent: "Excellent work! You've mastered this concept! 🎉",
+        good: "Great job! You understand this well! 👍",
+        needsImprovement: "Keep practicing - you're making progress! 💪"
+      }
+    };
   }
 
   private static generatePlaceholderContent(topicId: string): TopicLearningContent {
@@ -187,213 +376,6 @@ export class LearningContentLoader {
                 excellent: "Amazing! You're a master of large numbers! 🎉",
                 good: "Great work! You understand large numbers well! 👍",
                 needsImprovement: "Keep practicing - you'll get there! 💪"
-              }
-            }
-          }
-        },
-        {
-          subtopicId: "2",
-          subtopicName: "Place value understanding",
-          estimatedDuration: 25,
-          prerequisites: [],
-          learningObjectives: [
-            "Understand the value of digits in different positions",
-            "Identify place values up to millions",
-            "Use place value to compare numbers"
-          ],
-          stages: {
-            concept: {
-              introduction: "Place value is like a number's address system - each digit lives in a specific 'house' that tells us its value!",
-              keyPoints: [
-                "Each position in a number has a different value",
-                "Moving left makes each position 10 times bigger",
-                "The same digit can have different values in different positions",
-                "Place value helps us understand what numbers really mean"
-              ],
-              examples: [
-                {
-                  title: "The digit 5 in different places",
-                  description: "See how the same digit can mean different amounts",
-                  explanation: "In 5,432 the 5 means 5,000. In 1,542 the 5 means 500. In 1,325 the 5 means 5."
-                }
-              ],
-              realWorldApplications: [
-                "Understanding money amounts",
-                "Reading measurements and distances",
-                "Comparing statistics and data"
-              ]
-            },
-            guided: {
-              introduction: "Let's explore place value together with hands-on examples.",
-              stepByStepExamples: [
-                {
-                  title: "Finding the place value of 7 in 3,765,429",
-                  problem: "What is the place value of the digit 7?",
-                  steps: [
-                    {
-                      stepNumber: 1,
-                      instruction: "Locate the digit 7 in the number",
-                      working: "3,765,429 - The 7 is the second digit from the left",
-                      explanation: "We need to count positions to find where the 7 sits"
-                    },
-                    {
-                      stepNumber: 2,
-                      instruction: "Count the position from right to left",
-                      working: "Starting from right: 9(units), 2(tens), 4(hundreds), 5(thousands), 6(ten thousands), 7(hundred thousands)",
-                      explanation: "The 7 is in the hundred thousands place"
-                    }
-                  ],
-                  finalAnswer: "The 7 represents 700,000 (seven hundred thousand)",
-                  explanation: "Place value tells us not just which digit, but what that digit is worth"
-                }
-              ],
-              checkpoints: []
-            },
-            independent: {
-              introduction: "Practice identifying place values in different numbers.",
-              practiceProblems: [
-                {
-                  id: "practice-1",
-                  question: "In 8,194,673, what place value is the digit 9?",
-                  type: "multiple-choice",
-                  options: ["Thousands", "Ten thousands", "Hundred thousands", "Millions"],
-                  correctAnswer: "Ten thousands",
-                  explanation: "Counting from right: 3(units), 7(tens), 6(hundreds), 4(thousands), 9(ten thousands)",
-                  difficulty: "easy"
-                }
-              ],
-              selfCheckQuestions: [
-                "Can you identify any digit's place value quickly?",
-                "Do you understand how place value affects a number's size?"
-              ]
-            },
-            assessment: {
-              introduction: "Show your place value mastery!",
-              questions: [
-                {
-                  id: "assess-1",
-                  question: "What is the place value of 6 in 2,631,485?",
-                  type: "multiple-choice",
-                  options: ["Thousands", "Ten thousands", "Hundred thousands", "Millions"],
-                  correctAnswer: "Hundred thousands",
-                  explanation: "The 6 is in the hundred thousands position",
-                  points: 1
-                }
-              ],
-              passingCriteria: {
-                minimumScore: 80,
-                totalQuestions: 3
-              },
-              feedbackMessages: {
-                excellent: "Perfect! You understand place value completely! 🌟",
-                good: "Well done! Place value makes sense to you! ✅",
-                needsImprovement: "Keep practicing place value - you're getting there! 📚"
-              }
-            }
-          }
-        },
-        {
-          subtopicId: "3",
-          subtopicName: "Standard and word form",
-          estimatedDuration: 20,
-          prerequisites: [],
-          learningObjectives: [
-            "Convert between standard form and word form",
-            "Write numbers in both formats correctly",
-            "Understand the relationship between the two forms"
-          ],
-          stages: {
-            concept: {
-              introduction: "Numbers can be written in different ways - with digits (standard form) or with words (word form). Both tell us the same amount!",
-              keyPoints: [
-                "Standard form uses digits: 1,234,567",
-                "Word form uses words: one million, two hundred thirty-four thousand, five hundred sixty-seven",
-                "Both forms represent exactly the same quantity",
-                "Converting between them helps us understand numbers better"
-              ],
-              examples: [
-                {
-                  title: "Same number, different forms",
-                  description: "5,280,000 and 'five million, two hundred eighty thousand'",
-                  explanation: "These both represent the exact same amount - just written differently"
-                }
-              ],
-              realWorldApplications: [
-                "Writing checks and legal documents",
-                "Reading news articles about large numbers",
-                "Understanding scientific measurements"
-              ]
-            },
-            guided: {
-              introduction: "Practice converting between standard and word forms together.",
-              stepByStepExamples: [
-                {
-                  title: "Converting 4,065,200 to word form",
-                  problem: "Write 4,065,200 in words",
-                  steps: [
-                    {
-                      stepNumber: 1,
-                      instruction: "Break the number into groups of three",
-                      working: "4,065,200 becomes 4 | 065 | 200",
-                      explanation: "This helps us see millions, thousands, and units clearly"
-                    },
-                    {
-                      stepNumber: 2,
-                      instruction: "Read each group and add the place value word",
-                      working: "4 = four (million), 065 = sixty-five (thousand), 200 = two hundred",
-                      explanation: "Each group gets its own place value word"
-                    }
-                  ],
-                  finalAnswer: "Four million, sixty-five thousand, two hundred",
-                  explanation: "Always read from left to right, adding place value words"
-                }
-              ],
-              checkpoints: []
-            },
-            independent: {
-              introduction: "Practice converting between standard and word forms on your own.",
-              practiceProblems: [
-                {
-                  id: "practice-1",
-                  question: "Write 'six million, forty thousand, three hundred' in standard form",
-                  type: "multiple-choice",
-                  options: ["6,040,300", "6,400,300", "6,043,000", "60,040,300"],
-                  correctAnswer: "6,040,300",
-                  explanation: "6 million + 40 thousand + 300 = 6,000,000 + 40,000 + 300 = 6,040,300",
-                  difficulty: "medium"
-                }
-              ],
-              selfCheckQuestions: [
-                "Can you convert any number to word form?",
-                "Can you write word form numbers as digits?"
-              ]
-            },
-            assessment: {
-              introduction: "Demonstrate your skills with standard and word forms!",
-              questions: [
-                {
-                  id: "assess-1",
-                  question: "What is 7,506,008 in word form?",
-                  type: "multiple-choice",
-                  options: [
-                    "Seven million, five hundred six thousand, eight",
-                    "Seven million, fifty-six thousand, eight",
-                    "Seven thousand, five hundred six, eight",
-                    "Seventy-five million, six thousand, eight"
-                  ],
-                  correctAnswer: "Seven million, five hundred six thousand, eight",
-                  explanation: "Break it down: 7 million + 506 thousand + 8",
-                  points: 1
-                }
-              ],
-              passingCriteria: {
-                minimumScore: 80,
-                totalQuestions: 3
-              },
-              feedbackMessages: {
-                excellent: "Excellent! You can switch between number forms like a pro! 🎯",
-                good: "Great job! You understand both forms well! 👏",
-                needsImprovement: "Keep practicing - you're making good progress! 💫"
               }
             }
           }
