@@ -1224,6 +1224,34 @@ export type Database = {
             foreignKeyName: "bootcamp_subtopics_topic_id_fkey"
             columns: ["topic_id"]
             isOneToOne: false
+            referencedRelation: "bootcamp_topics_with_subtopics"
+            referencedColumns: ["topic_id"]
+          },
+          {
+            foreignKeyName: "bootcamp_subtopics_topic_id_fkey"
+            columns: ["topic_id"]
+            isOneToOne: false
+            referencedRelation: "topic_difficulty_analysis"
+            referencedColumns: ["topic_id"]
+          },
+          {
+            foreignKeyName: "fk_subtopics_topic_id"
+            columns: ["topic_id"]
+            isOneToOne: false
+            referencedRelation: "bootcamp_topics"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "fk_subtopics_topic_id"
+            columns: ["topic_id"]
+            isOneToOne: false
+            referencedRelation: "bootcamp_topics_with_subtopics"
+            referencedColumns: ["topic_id"]
+          },
+          {
+            foreignKeyName: "fk_subtopics_topic_id"
+            columns: ["topic_id"]
+            isOneToOne: false
             referencedRelation: "topic_difficulty_analysis"
             referencedColumns: ["topic_id"]
           },
@@ -1596,6 +1624,27 @@ export type Database = {
       }
     }
     Views: {
+      bootcamp_topics_with_subtopics: {
+        Row: {
+          difficulty: string | null
+          estimated_questions: number | null
+          module_id: string | null
+          subtopics: Json | null
+          topic_id: string | null
+          topic_name: string | null
+          topic_order: number | null
+          topic_skills: string[] | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "bootcamp_topics_module_id_fkey"
+            columns: ["module_id"]
+            isOneToOne: false
+            referencedRelation: "bootcamp_modules"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       misconception_frequency: {
         Row: {
           affected_students: number | null
