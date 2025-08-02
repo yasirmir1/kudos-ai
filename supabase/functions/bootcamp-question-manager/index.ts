@@ -368,8 +368,8 @@ async function submitResponse(supabaseClient: any, responseData: any) {
         is_correct: isCorrect,
         time_taken: time_taken_seconds,
         misconception_detected: null, // Will be determined later
-        created_at: new Date().toISOString(),
-        timestamp: new Date().toISOString()
+        responded_at: new Date().toISOString(),
+        session_id: session_id
       })
       .select()
       .single()
