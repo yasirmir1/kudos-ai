@@ -155,15 +155,15 @@ const Index = () => {
               <rect x="540" y="90" width="230" height="140" rx="12" fill="#F3F4F6"></rect>
               <text x="560" y="115" fontFamily="Arial" fontSize="16" fontWeight="600" fill="#1D1D1F">Practice Insights</text>
               
-              {/* Practice stats - better spacing */}
-              <text x="560" y="135" fontFamily="Arial" fontSize="11" fill="#86868B">Questions today:</text>
-              <text x="650" y="135" fontFamily="Arial" fontSize="14" fontWeight="600" fill="#34C759">24</text>
+              {/* Practice stats - improved spacing */}
+              <text x="560" y="130" fontFamily="Arial" fontSize="11" fill="#86868B">Questions today:</text>
+              <text x="660" y="130" fontFamily="Arial" fontSize="14" fontWeight="600" fill="#34C759">24</text>
               
               <text x="560" y="155" fontFamily="Arial" fontSize="11" fill="#86868B">Accuracy:</text>
-              <text x="650" y="155" fontFamily="Arial" fontSize="14" fontWeight="600" fill="#0071E3">85%</text>
+              <text x="660" y="155" fontFamily="Arial" fontSize="14" fontWeight="600" fill="#0071E3">85%</text>
               
-              <text x="560" y="175" fontFamily="Arial" fontSize="11" fill="#86868B">Time spent:</text>
-              <text x="650" y="175" fontFamily="Arial" fontSize="14" fontWeight="600" fill="#0071E3">18 mins</text>
+              <text x="560" y="180" fontFamily="Arial" fontSize="11" fill="#86868B">Time spent:</text>
+              <text x="660" y="180" fontFamily="Arial" fontSize="14" fontWeight="600" fill="#0071E3">18 mins</text>
               
               {/* Weekly Progress - Full Width */}
               <rect x="30" y="260" width="740" height="200" rx="12" fill="#F3F4F6"></rect>
