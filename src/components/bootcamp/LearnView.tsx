@@ -260,6 +260,78 @@ export const LearnView: React.FC = () => {
         <p className="text-muted-foreground">Navigate through your curriculum and master each concept step by step</p>
       </div>
 
+      {/* Currently Learning Section */}
+      <div className="space-y-4">
+        {/* Data Representation Container */}
+        <Card className="border-l-4 border-l-primary">
+          <CardHeader>
+            <div className="flex items-center justify-between">
+              <div>
+                <CardTitle className="text-lg">Currently Learning: Data Representation</CardTitle>
+                <p className="text-sm text-muted-foreground">Master charts, graphs, and statistical analysis</p>
+              </div>
+              <Badge variant="secondary" className="bg-primary/10 text-primary">
+                In Progress
+              </Badge>
+            </div>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-3">
+              <Progress value={65} className="h-2" />
+              <div className="flex justify-between text-sm">
+                <span className="text-muted-foreground">Progress: 65%</span>
+                <span className="text-muted-foreground">3 of 5 topics completed</span>
+              </div>
+              <Button size="sm" className="w-full">
+                <Play className="h-4 w-4 mr-2" />
+                Continue Learning
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Metric Units Container */}
+        <Card className="border-l-4 border-l-secondary">
+          <CardHeader>
+            <div className="flex items-center justify-between">
+              <div>
+                <CardTitle className="text-lg">Next Up: Metric Units</CardTitle>
+                <p className="text-sm text-muted-foreground">Learn conversions, measurements, and practical applications</p>
+              </div>
+              <Badge variant="outline">
+                Ready to Start
+              </Badge>
+            </div>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-3">
+              <div className="grid grid-cols-2 gap-2 text-sm">
+                <div className="flex items-center gap-2">
+                  <div className="w-2 h-2 bg-secondary rounded-full"></div>
+                  <span>Concept Introduction</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <div className="w-2 h-2 bg-muted-foreground rounded-full"></div>
+                  <span>Guided Practice</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <div className="w-2 h-2 bg-muted-foreground rounded-full"></div>
+                  <span>Independent Practice</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <div className="w-2 h-2 bg-muted-foreground rounded-full"></div>
+                  <span>Assessment</span>
+                </div>
+              </div>
+              <Button variant="secondary" size="sm" className="w-full">
+                <BookOpen className="h-4 w-4 mr-2" />
+                Start Metric Units
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+
       <Tabs defaultValue="plan" className="w-full">
         <TabsList className="grid w-full grid-cols-4">
           <TabsTrigger value="plan">52-Week Plan</TabsTrigger>
