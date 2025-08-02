@@ -53,7 +53,7 @@ interface StudentResponse {
   is_correct: boolean;
   time_taken: number;
   misconception_detected: string;
-  timestamp: string;
+  responded_at: string;
 }
 
 interface QuestionType {
@@ -127,7 +127,7 @@ export const QuestionManager: React.FC = () => {
       const { data: responsesData, error: responsesError } = await supabase
         .from('bootcamp_student_responses')
         .select('*')
-        .order('timestamp', { ascending: false })
+        .order('responded_at', { ascending: false })
         .limit(100);
 
       if (responsesError && responsesError.code !== 'PGRST116') {
@@ -347,7 +347,7 @@ export const QuestionManager: React.FC = () => {
                       <span className="font-medium">Time:</span> {response.time_taken}s
                     </div>
                     <div>
-                      <span className="font-medium">Date:</span> {new Date(response.timestamp).toLocaleDateString()}
+                      <span className="font-medium">Date:</span> {new Date(response.responded_at).toLocaleDateString()}
                     </div>
                     {response.misconception_detected && (
                       <div>

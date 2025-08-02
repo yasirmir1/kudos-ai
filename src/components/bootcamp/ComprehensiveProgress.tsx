@@ -117,7 +117,7 @@ export const ComprehensiveProgress: React.FC = () => {
     oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
 
     const thisWeekResponses = responses.filter(r => 
-      new Date(r.timestamp) > oneWeekAgo
+      new Date(r.responded_at) > oneWeekAgo
     );
 
     const thisWeekSessions = sessions.filter(s => 
@@ -139,7 +139,7 @@ export const ComprehensiveProgress: React.FC = () => {
 
     // Calculate streak days
     const uniqueDays = [...new Set(responses.map(r => 
-      new Date(r.timestamp).toDateString()
+      new Date(r.responded_at).toDateString()
     ))].sort((a, b) => new Date(b).getTime() - new Date(a).getTime());
 
     let streakDays = 0;
