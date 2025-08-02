@@ -4,6 +4,7 @@ import { Badge } from '@/components/ui/badge';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Button } from '@/components/ui/button';
 import { BookOpen, Clock, Calendar, Brain, Lightbulb } from 'lucide-react';
+import { InteractiveInsights } from './InteractiveInsights';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
 import { useToast } from '@/hooks/use-toast';
@@ -247,11 +248,11 @@ export const TopicsStudiedModal = ({ open, onOpenChange }: TopicsStudiedModalPro
                 </div>
               ) : explanation ? (
                 <ScrollArea className="h-[50vh] pr-4">
-                  <div className="prose prose-sm max-w-none">
-                    <div className="whitespace-pre-wrap text-sm leading-relaxed">
-                      {explanation}
-                    </div>
-                  </div>
+                  <InteractiveInsights 
+                    explanation={explanation}
+                    onRefresh={handleRefreshInsights}
+                    isRefreshing={isLoadingExplanation}
+                  />
                 </ScrollArea>
               ) : null}
             </div>
