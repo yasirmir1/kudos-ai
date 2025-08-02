@@ -1510,6 +1510,26 @@ export type Database = {
       }
     }
     Functions: {
+      bootcamp_generate_adaptive_practice_set: {
+        Args: { p_student_id: string; p_question_count?: number }
+        Returns: {
+          question_id: string
+          reason: string
+          priority: number
+        }[]
+      }
+      bootcamp_update_student_misconceptions: {
+        Args: { p_student_id: string; p_response_id: string }
+        Returns: undefined
+      }
+      bootcamp_update_student_progress: {
+        Args: { p_student_id: string; p_topic_id: string }
+        Returns: undefined
+      }
+      bootcamp_update_student_skill_proficiency: {
+        Args: { p_student_id: string; p_skill_name: string }
+        Returns: undefined
+      }
       generate_standardized_question_ids: {
         Args: Record<PropertyKey, never>
         Returns: {
