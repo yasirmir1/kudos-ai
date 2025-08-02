@@ -73,7 +73,7 @@ export const AppNavigation: React.FC<AppNavigationProps> = ({
           {/* Right section - Navigation and Age Group Selector */}
           <div className="flex items-center space-x-4">
             {/* Navigation Links */}
-            <nav className="hidden md:flex items-center space-x-4">
+            <nav className="hidden md:flex items-center justify-between flex-1 max-w-2xl">
               {navigationItems.map((item) => {
                 const Icon = item.icon;
                 const isActive = isActivePath(item.path);
@@ -85,8 +85,7 @@ export const AppNavigation: React.FC<AppNavigationProps> = ({
                     size="sm"
                     onClick={() => navigate(item.path)}
                     className={cn(
-                      "flex items-center space-x-1 w-32",
-                      item.path === '/report' ? "justify-start text-left" : "justify-center text-center",
+                      "flex items-center justify-start space-x-1 flex-1 max-w-32",
                       isActive && "bg-primary text-primary-foreground"
                     )}
                   >
