@@ -317,58 +317,7 @@ export const LearnView: React.FC = () => {
   }
   return <div className="space-y-6">
       {/* Currently Learning Section - First Priority */}
-      <Card className="border-l-4 border-l-primary">
-        <CardHeader>
-          <div className="flex items-center justify-between">
-            <div>
-              <CardTitle className="text-xl">Currently Learning: Data Representation</CardTitle>
-              <p className="text-sm text-muted-foreground mt-1">Foundation</p>
-              <p className="text-sm text-muted-foreground">Skills: graphs, interpretation</p>
-            </div>
-            <Badge variant="secondary" className="bg-primary/10 text-primary">
-              In Progress
-            </Badge>
-          </div>
-        </CardHeader>
-        <CardContent>
-          <div className="space-y-4">
-            <div>
-              <h4 className="text-sm font-medium mb-3">Learning Steps</h4>
-              <div className="space-y-2">
-                <div className="flex items-center justify-between p-3 bg-green-50 rounded-lg border border-green-200">
-                  <div className="flex items-center gap-3">
-                    <div className="w-6 h-6 bg-green-500 text-white rounded-full flex items-center justify-center text-xs font-medium">1</div>
-                    <span className="font-medium">Concept Introduction</span>
-                  </div>
-                  <Badge variant="secondary" className="bg-green-100 text-green-800">Complete Step</Badge>
-                </div>
-                <div className="flex items-center justify-between p-3 bg-muted/50 rounded-lg border">
-                  <div className="flex items-center gap-3">
-                    <div className="w-6 h-6 bg-muted-foreground text-white rounded-full flex items-center justify-center text-xs font-medium">2</div>
-                    <span className="font-medium">Guided Practice</span>
-                  </div>
-                </div>
-                <div className="flex items-center justify-between p-3 bg-muted/50 rounded-lg border">
-                  <div className="flex items-center gap-3">
-                    <div className="w-6 h-6 bg-muted-foreground text-white rounded-full flex items-center justify-center text-xs font-medium">3</div>
-                    <span className="font-medium">Independent Practice</span>
-                  </div>
-                </div>
-                <div className="flex items-center justify-between p-3 bg-muted/50 rounded-lg border">
-                  <div className="flex items-center gap-3">
-                    <div className="w-6 h-6 bg-muted-foreground text-white rounded-full flex items-center justify-center text-xs font-medium">4</div>
-                    <span className="font-medium">Assessment</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <Button className="w-full">
-              <Play className="h-4 w-4 mr-2" />
-              Start Learning Session
-            </Button>
-          </div>
-        </CardContent>
-      </Card>
+      
 
       {/* Skill Development Section - Second Priority */}
       
