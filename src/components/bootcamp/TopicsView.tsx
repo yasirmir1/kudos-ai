@@ -65,33 +65,39 @@ export const TopicsView: React.FC<TopicsViewProps> = ({ setCurrentView }) => {
     try {
       setLoading(true);
       
-      // Fetch all data in parallel including the new curriculum content
-      const [modulesRes, topicsRes, subtopicsRes, curriculumRes, curriculumContentRes] = await Promise.all([
+      // Fetch all data in parallel using the unified views
+      const [modulesRes, topicsRes, curriculumRes, curriculumContentRes] = await Promise.all([
         supabase.from('bootcamp_modules').select('*').order('module_order'),
-        supabase.from('bootcamp_curriculum_topics').select('*').order('topic_order'),
-        supabase.from('bootcamp_subtopics').select('*').order('subtopic_order'),
+        supabase.from('bootcamp_topics_with_subtopics').select('*').order('topic_order'),
         supabase.from('curriculum').select('question_id, topic, subtopic, example_question, difficulty, pedagogical_notes').limit(50),
         supabase.from('bootcamp_curriculum_content').select('*').order('stage_order')
       ]);
 
       if (modulesRes.error) throw modulesRes.error;
       if (topicsRes.error) throw topicsRes.error;
-      if (subtopicsRes.error) throw subtopicsRes.error;
       if (curriculumRes.error) throw curriculumRes.error;
       if (curriculumContentRes.error) throw curriculumContentRes.error;
 
       setModules(modulesRes.data || []);
-      // Convert bootcamp_curriculum_topics to match the Topic interface
+      // Convert unified view data to match the Topic interface
       const convertedTopics = (topicsRes.data || []).map((topic: any) => ({
-        id: topic.id,
+        id: topic.topic_id,
         name: topic.topic_name,
         module_id: topic.module_id,
         difficulty: topic.difficulty,
-        skills: topic.learning_objectives || [],
-        topic_order: topic.topic_order
+        skills: topic.topic_skills || [],
+        topic_order: topic.topic_order,
+        subtopics: topic.subtopics || []
       }));
       setTopics(convertedTopics);
-      setSubtopics(subtopicsRes.data || []);
+      // Subtopics are now included in the topics data, extract them for compatibility
+      const allSubtopics = convertedTopics.flatMap(topic => 
+        (topic.subtopics || []).map((subtopic: any) => ({
+          ...subtopic,
+          topic_id: topic.id
+        }))
+      );
+      setSubtopics(allSubtopics);
       setCurriculum(curriculumRes.data || []);
       setCurriculumContent(curriculumContentRes.data || []);
     } catch (err) {

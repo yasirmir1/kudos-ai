@@ -45,47 +45,30 @@ export const BulkCurriculumGenerator: React.FC = () => {
 
   const fetchTopics = async () => {
     try {
-      // Fetch topics and subtopics separately
-      const [topicsRes, subtopicsRes] = await Promise.all([
-        supabase
-          .from('bootcamp_curriculum_topics')
-          .select('id, topic_name, difficulty, module_id')
-          .order('topic_order'),
-        supabase
-          .from('bootcamp_subtopics')
-          .select('id, name, topic_id, subtopic_order')
-          .order('topic_id, subtopic_order')
-      ]);
+      // Use the unified bootcamp_topics_with_subtopics view
+      const topicsRes = await supabase
+        .from('bootcamp_topics_with_subtopics')
+        .select('*')
+        .order('topic_order');
 
       if (topicsRes.error) {
         console.error('Topics error:', topicsRes.error);
         throw topicsRes.error;
       }
-      if (subtopicsRes.error) {
-        console.error('Subtopics error:', subtopicsRes.error);
-        throw subtopicsRes.error;
-      }
 
       console.log('Fetched topics:', topicsRes.data);
-      console.log('Fetched subtopics:', subtopicsRes.data);
 
-      // Group subtopics by topic
-      const subtopicsByTopic = (subtopicsRes.data || []).reduce((acc, subtopic) => {
-        if (!acc[subtopic.topic_id]) {
-          acc[subtopic.topic_id] = [];
-        }
-        acc[subtopic.topic_id].push(subtopic);
-        return acc;
-      }, {} as Record<string, any[]>);
-
-      // Merge topics with their subtopics
-      const topicsWithSubtopics = (topicsRes.data || []).map(topic => ({
-        ...topic,
-        bootcamp_subtopics: subtopicsByTopic[topic.id] || []
+      // Transform the data to match expected structure - subtopics are already included in the view
+      const transformedTopics = (topicsRes.data || []).map((topic: any) => ({
+        id: topic.topic_id,
+        topic_name: topic.topic_name,
+        difficulty: topic.difficulty,
+        module_id: topic.module_id,
+        bootcamp_subtopics: topic.subtopics || []
       }));
 
-      console.log('Topics with subtopics:', topicsWithSubtopics);
-      setTopics(topicsWithSubtopics);
+      console.log('Transformed topics:', transformedTopics);
+      setTopics(transformedTopics);
     } catch (error) {
       console.error('Error fetching topics:', error);
       toast({

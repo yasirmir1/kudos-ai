@@ -54,14 +54,11 @@ serve(async (req) => {
       );
     }
 
-    // Fetch topics and subtopics
+    // Fetch topics and subtopics using the unified view
     const { data: topics, error: topicsError } = await supabase
-      .from('bootcamp_curriculum_topics')
-      .select(`
-        *,
-        bootcamp_subtopics(*)
-      `)
-      .in('id', topicIds || [])
+      .from('bootcamp_topics_with_subtopics')
+      .select('*')
+      .in('topic_id', topicIds || [])
       .order('topic_order');
 
     if (topicsError) throw topicsError;
@@ -86,11 +83,11 @@ serve(async (req) => {
     const results = [];
 
     for (const topic of topics) {
-      console.log(`Processing topic: ${topic.topic_name} with ${topic.bootcamp_subtopics?.length || 0} subtopics`);
+      console.log(`Processing topic: ${topic.topic_name} with ${topic.subtopics?.length || 0} subtopics`);
 
       for (const examBoard of examBoards) {
         // Generate questions to cover ALL subtopics in this topic
-        const subtopicsInTopic = topic.bootcamp_subtopics || [];
+        const subtopicsInTopic = topic.subtopics || [];
         const totalQuestionsForTopic = subtopicsInTopic.length * questionsPerSubtopic;
 
         console.log(`Generating ${totalQuestionsForTopic} questions for ${subtopicsInTopic.length} subtopics (${questionsPerSubtopic} per subtopic)`);
@@ -130,7 +127,7 @@ serve(async (req) => {
         const generatedContent = data.choices[0].message.content;
 
         // Parse the generated questions
-        const questions = parseGeneratedQuestions(generatedContent, topic.id, examBoard);
+        const questions = parseGeneratedQuestions(generatedContent, topic.topic_id, examBoard);
 
         // Insert questions into database
         for (const question of questions) {
@@ -173,7 +170,7 @@ function createQuestionGenerationPrompt(topic: any, misconceptions: any[], exist
   const misconceptionCodes = misconceptions.slice(0, 20).map(m => `${m.misconception_id}: ${m.description}`).join('\n');
   
   const existingExamples = existingQuestions
-    .filter((q: any) => q.topic_id === topic.id)
+    .filter((q: any) => q.topic_id === topic.topic_id)
     .slice(0, 3)
     .map((q: any) => `"${q.question_text}" (${q.difficulty})`)
     .join('\n');
@@ -189,7 +186,7 @@ CRITICAL REQUIREMENT: You MUST cover ALL ${subtopicsInTopic.length} subtopics li
 TOPIC DETAILS:
 - Main Topic: ${topic.topic_name}
 - Difficulty: ${topic.difficulty}
-- Learning Objectives: ${topic.learning_objectives?.join(', ') || 'General understanding'}
+- Learning Objectives: ${topic.topic_skills?.join(', ') || 'General understanding'}
 
 ALL SUBTOPICS TO COVER (MANDATORY):
   ${subtopicsList}

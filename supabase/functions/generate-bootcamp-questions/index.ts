@@ -24,7 +24,7 @@ serve(async (req) => {
 
     // Get comprehensive context for question generation
     const [topicResult, existingQuestions, misconceptions, curriculumContext] = await Promise.all([
-      supabase.from('bootcamp_curriculum_topics').select('*').eq('id', topicId).single(),
+      supabase.from('bootcamp_topics').select('*').eq('id', topicId).single(),
       supabase.from('bootcamp_questions').select('question_text, topic_id').eq('topic_id', topicId).limit(10),
       supabase.from('bootcamp_misconceptions_catalog').select('*'),
       supabase.from('curriculum').select('*').contains('topic', topicId).limit(5)
@@ -39,10 +39,10 @@ serve(async (req) => {
     const systemPrompt = `You are an expert 11+ assessment question generator specializing in UK mathematics curriculum for GL Assessments and CEM exams.
 
 COMPREHENSIVE CONTEXT:
-Topic: ${topicData?.topic_name || topicId}
+Topic: ${topicData?.name || topicId}
 Difficulty: ${difficulty}
-Learning Objectives: ${topicData?.learning_objectives?.join(', ') || 'Standard curriculum objectives'}
-Prerequisites: ${topicData?.prerequisites?.join(', ') || 'Basic arithmetic'}
+Learning Objectives: ${topicData?.skills?.join(', ') || 'Standard curriculum objectives'}
+Prerequisites: Basic arithmetic
 
 EXISTING CURRICULUM SAMPLES:
 ${curriculumSamples?.map(c => `- ${c.subtopic}: ${c.example_question.substring(0, 100)}...`).join('\n') || 'No samples available'}
@@ -103,7 +103,7 @@ Generate exactly ${questionCount} unique, high-quality questions. Return ONLY a 
           { role: 'system', content: systemPrompt },
           { 
             role: 'user', 
-            content: `Generate ${questionCount} mathematics questions for "${topicData?.topic_name || topicId}" at ${difficulty} level. Focus on:
+            content: `Generate ${questionCount} mathematics questions for "${topicData?.name || topicId}" at ${difficulty} level. Focus on:
             1. 11+ exam authenticity 
             2. Robust misconception tracking for performance analysis
             3. Age-appropriate contexts and language

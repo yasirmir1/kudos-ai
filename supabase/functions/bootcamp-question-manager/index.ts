@@ -471,7 +471,7 @@ async function generateQuestions(supabaseClient: any, data: any) {
     
     // Get topic context from existing curriculum
     const { data: topicContext } = await supabaseClient
-      .from('bootcamp_curriculum_topics')
+      .from('bootcamp_topics')
       .select('*')
       .eq('id', topicId)
       .single()
@@ -490,11 +490,11 @@ async function generateQuestions(supabaseClient: any, data: any) {
     const systemPrompt = `You are an expert 11+ mathematics question generator. Generate high-quality practice questions that test specific mathematical skills and concepts.
 
 Context:
-- Topic: ${topicContext?.topic_name || topicId}
+- Topic: ${topicContext?.name || topicId}
 - Difficulty: ${difficulty}
 - Available Skills: ${skillsContext}
 - Question Types: ${questionTypesContext}
-- Learning Objectives: ${topicContext?.learning_objectives?.join(', ') || ''}
+- Learning Objectives: ${topicContext?.skills?.join(', ') || ''}
 
 Requirements:
 1. Generate exactly ${questionCount} unique multiple-choice questions
