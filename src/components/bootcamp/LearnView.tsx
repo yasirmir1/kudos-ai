@@ -33,6 +33,15 @@ interface Subtopic {
   subtopic_order: number;
 }
 
+interface WeeklyPlan {
+  week: number;
+  title: string;
+  topics: string[];
+  module: string;
+  difficulty: string;
+  focus: string;
+}
+
 interface CurriculumItem {
   question_id: string;
   topic: string;
@@ -47,6 +56,7 @@ export const LearnView: React.FC = () => {
   const [topics, setTopics] = useState<Topic[]>([]);
   const [subtopics, setSubtopics] = useState<Subtopic[]>([]);
   const [curriculum, setCurriculum] = useState<CurriculumItem[]>([]);
+  const [weeklyPlan, setWeeklyPlan] = useState<WeeklyPlan[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [selectedModule, setSelectedModule] = useState<string | null>(null);
@@ -96,6 +106,12 @@ export const LearnView: React.FC = () => {
       setSubtopics(subtopicsData || []);
       setCurriculum(curriculumData || []);
       
+      // Generate 52-week plan
+      if (modulesData && topicsData) {
+        const plan = generateWeeklyPlan(modulesData, topicsData);
+        setWeeklyPlan(plan);
+      }
+      
       if (modulesData && modulesData.length > 0) {
         setSelectedModule(modulesData[0].id);
       }
@@ -105,6 +121,59 @@ export const LearnView: React.FC = () => {
     } finally {
       setLoading(false);
     }
+  };
+
+  const generateWeeklyPlan = (modules: Module[], topics: Topic[]): WeeklyPlan[] => {
+    const plan: WeeklyPlan[] = [];
+    
+    // Core curriculum weeks (1-36)
+    modules.forEach((module) => {
+      const moduleTopics = topics.filter(t => t.module_id === module.id);
+      const weeksInModule = module.weeks.length;
+      const topicsPerWeek = Math.ceil(moduleTopics.length / weeksInModule);
+      
+      module.weeks.forEach((weekNumber, weekIndex) => {
+        const startTopicIndex = weekIndex * topicsPerWeek;
+        const endTopicIndex = Math.min(startTopicIndex + topicsPerWeek, moduleTopics.length);
+        const weekTopics = moduleTopics.slice(startTopicIndex, endTopicIndex);
+        
+        if (weekTopics.length > 0) {
+          plan.push({
+            week: weekNumber,
+            title: `${module.name} - Week ${weekIndex + 1}`,
+            topics: weekTopics.map(t => t.name),
+            module: module.name,
+            difficulty: weekTopics[0]?.difficulty || 'foundation',
+            focus: weekTopics.length === 1 ? 'Deep Dive' : 'Multi-Topic'
+          });
+        }
+      });
+    });
+    
+    // Review and practice weeks (37-52)
+    const reviewWeeks = [
+      { week: 37, title: "Number & Arithmetic Review", topics: ["Mental calculations", "Number properties", "Basic operations"], module: "Review", difficulty: "foundation", focus: "Consolidation" },
+      { week: 38, title: "Fractions & Decimals Practice", topics: ["FDP conversions", "Fraction operations", "Decimal calculations"], module: "Review", difficulty: "intermediate", focus: "Application" },
+      { week: 39, title: "Geometry Foundations", topics: ["Shape properties", "Area & perimeter", "Angle work"], module: "Review", difficulty: "intermediate", focus: "Spatial Skills" },
+      { week: 40, title: "Problem Solving Workshop", topics: ["Multi-step problems", "Working backwards", "Logic puzzles"], module: "Practice", difficulty: "advanced", focus: "Strategy" },
+      { week: 41, title: "Algebra & Patterns", topics: ["Simple equations", "Sequences", "Pattern recognition"], module: "Review", difficulty: "intermediate", focus: "Abstract Thinking" },
+      { week: 42, title: "Data & Statistics", topics: ["Charts & graphs", "Averages", "Probability"], module: "Review", difficulty: "intermediate", focus: "Data Analysis" },
+      { week: 43, title: "Mixed Practice 1", topics: ["Cross-topic problems", "Exam-style questions", "Time management"], module: "Practice", difficulty: "advanced", focus: "Integration" },
+      { week: 44, title: "Measurement & Units", topics: ["Metric conversions", "Time problems", "Speed calculations"], module: "Review", difficulty: "foundation", focus: "Real-world Maths" },
+      { week: 45, title: "Advanced Problem Solving", topics: ["Complex word problems", "Multi-step reasoning", "Strategy selection"], module: "Practice", difficulty: "advanced", focus: "Challenge" },
+      { week: 46, title: "Mixed Practice 2", topics: ["Timed practice", "Weak area focus", "Mistake analysis"], module: "Practice", difficulty: "advanced", focus: "Exam Prep" },
+      { week: 47, title: "Final Review - Foundations", topics: ["Core number skills", "Basic geometry", "Essential facts"], module: "Final Review", difficulty: "foundation", focus: "Confidence Building" },
+      { week: 48, title: "Final Review - Applications", topics: ["Problem solving", "Real-world contexts", "Method selection"], module: "Final Review", difficulty: "intermediate", focus: "Application" },
+      { week: 49, title: "Mock Exam Week 1", topics: ["Full practice papers", "Time management", "Exam technique"], module: "Assessment", difficulty: "advanced", focus: "Exam Simulation" },
+      { week: 50, title: "Targeted Improvement", topics: ["Individual weak areas", "Personalized practice", "Confidence building"], module: "Personalized", difficulty: "mixed", focus: "Individual Needs" },
+      { week: 51, title: "Mock Exam Week 2", topics: ["Final practice papers", "Performance review", "Last-minute tips"], module: "Assessment", difficulty: "advanced", focus: "Final Preparation" },
+      { week: 52, title: "Ready for Success!", topics: ["Light review", "Confidence building", "Exam day preparation"], module: "Confidence", difficulty: "mixed", focus: "Readiness" }
+    ];
+    
+    plan.push(...reviewWeeks);
+    plan.sort((a, b) => a.week - b.week);
+    
+    return plan;
   };
 
   const getTopicsForModule = (moduleId: string) => {
@@ -157,12 +226,88 @@ export const LearnView: React.FC = () => {
         <p className="text-muted-foreground">Navigate through your curriculum and master each concept step by step</p>
       </div>
 
-      <Tabs defaultValue="modules" className="w-full">
-        <TabsList className="grid w-full grid-cols-3">
+      <Tabs defaultValue="plan" className="w-full">
+        <TabsList className="grid w-full grid-cols-4">
+          <TabsTrigger value="plan">52-Week Plan</TabsTrigger>
           <TabsTrigger value="modules">Learning Modules</TabsTrigger>
           <TabsTrigger value="topics">All Topics</TabsTrigger>
           <TabsTrigger value="curriculum">Sample Questions</TabsTrigger>
         </TabsList>
+
+        <TabsContent value="plan" className="space-y-6">
+          <div className="space-y-6">
+            <div className="bg-gradient-to-r from-primary/10 to-secondary/10 rounded-xl p-6">
+              <h2 className="text-2xl font-bold mb-2">52-Week Complete Learning Journey</h2>
+              <p className="text-muted-foreground mb-4">
+                A comprehensive year-long plan covering all mathematical concepts from foundations to advanced problem-solving,
+                culminating in complete exam readiness.
+              </p>
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
+                <div className="bg-background/50 rounded-lg p-3">
+                  <div className="font-semibold text-primary">Weeks 1-36</div>
+                  <div className="text-muted-foreground">Core Curriculum</div>
+                </div>
+                <div className="bg-background/50 rounded-lg p-3">
+                  <div className="font-semibold text-secondary">Weeks 37-46</div>
+                  <div className="text-muted-foreground">Review & Practice</div>
+                </div>
+                <div className="bg-background/50 rounded-lg p-3">
+                  <div className="font-semibold text-accent">Weeks 47-50</div>
+                  <div className="text-muted-foreground">Final Review</div>
+                </div>
+                <div className="bg-background/50 rounded-lg p-3">
+                  <div className="font-semibold text-warning">Weeks 51-52</div>
+                  <div className="text-muted-foreground">Exam Ready</div>
+                </div>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              {weeklyPlan.map((week) => (
+                <Card key={week.week} className="hover:shadow-md transition-shadow">
+                  <CardHeader className="pb-3">
+                    <div className="flex items-center justify-between">
+                      <Badge variant="outline" className="text-xs">
+                        Week {week.week}
+                      </Badge>
+                      <Badge className={getDifficultyColor(week.difficulty)} variant="secondary">
+                        {week.difficulty}
+                      </Badge>
+                    </div>
+                    <CardTitle className="text-lg leading-tight">{week.title}</CardTitle>
+                    <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                      <span>{week.module}</span>
+                      <span>•</span>
+                      <span>{week.focus}</span>
+                    </div>
+                  </CardHeader>
+                  <CardContent className="pt-0">
+                    <div className="space-y-2">
+                      <h6 className="text-sm font-medium text-muted-foreground">This week covers:</h6>
+                      <div className="space-y-1">
+                        {week.topics.map((topic, idx) => (
+                          <div key={idx} className="flex items-center gap-2 text-sm">
+                            <CheckCircle className="h-3 w-3 text-muted-foreground" />
+                            <span>{topic}</span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                    <Button 
+                      variant="outline" 
+                      size="sm" 
+                      className="w-full mt-4"
+                      disabled={false} // Placeholder for week unlocking logic
+                    >
+                      <Play className="h-3 w-3 mr-2" />
+                      {week.week <= 36 ? 'Start Learning' : week.week <= 46 ? 'Practice' : week.week <= 50 ? 'Review' : 'Final Prep'}
+                    </Button>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          </div>
+        </TabsContent>
 
         <TabsContent value="modules" className="space-y-6">
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
