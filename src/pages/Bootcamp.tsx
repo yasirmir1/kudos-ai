@@ -5,6 +5,9 @@ import { PracticeSession } from '@/components/bootcamp/PracticeSession';
 import { ProgressView } from '@/components/bootcamp/ProgressView';
 import { TopicsView } from '@/components/bootcamp/TopicsView';
 import { LearnView } from '@/components/bootcamp/LearnView';
+import { StudentAnalytics } from '@/components/bootcamp/StudentAnalytics';
+import { QuestionManager } from '@/components/bootcamp/QuestionManager';
+import { AnalyticsDashboard } from '@/components/bootcamp/AnalyticsDashboard';
 import { Navigation } from '@/components/bootcamp/Navigation';
 import { BulkQuestionGenerator } from '@/components/BulkQuestionGenerator';
 import { useBootcampData } from '@/hooks/useBootcampData';
@@ -95,6 +98,8 @@ const Bootcamp = () => {
         {currentView === 'learn' && <LearnView />}
         {currentView === 'progress' && <ProgressView />}
         {currentView === 'topics' && <TopicsView setCurrentView={setCurrentView} />}
+        {currentView === 'analytics' && <AnalyticsDashboard />}
+        {currentView === 'questions' && <QuestionManager />}
         {currentView === 'generate' && <BulkQuestionGenerator />}
       </main>
     </div>
