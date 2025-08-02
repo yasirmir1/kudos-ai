@@ -4,6 +4,7 @@ import { PerformanceChart } from './PerformanceChart';
 import { useAuth } from '../../hooks/useAuth';
 import { useBootcampData } from '../../hooks/useBootcampData';
 import { BootcampAPI } from '../../lib/bootcamp-api';
+import { supabase } from '@/integrations/supabase/client';
 
 interface Skill {
   name: string;
@@ -37,14 +38,23 @@ export const ProgressView: React.FC = () => {
     try {
       const studentProfile = await BootcampAPI.getStudentProfile(user.id);
       if (studentProfile) {
-        const [progress, summary] = await Promise.all([
+        const [progress, summary, topics] = await Promise.all([
           BootcampAPI.getStudentProgress(studentProfile.student_id),
-          BootcampAPI.getStudentPerformanceSummary(studentProfile.student_id)
+          BootcampAPI.getStudentPerformanceSummary(studentProfile.student_id),
+          supabase.from('bootcamp_topics').select('id, name').order('topic_order')
         ]);
 
-        // Map progress to skills data
+        // Create topic name mapping
+        const topicNameMap = new Map();
+        if (topics.data) {
+          topics.data.forEach((topic: any) => {
+            topicNameMap.set(topic.id, topic.name);
+          });
+        }
+
+        // Map progress to skills data with proper topic names
         const skills: Skill[] = progress.map((p: any) => ({
-          name: p.topic_id,
+          name: topicNameMap.get(p.topic_id) || p.topic_id,
           level: Math.round(p.accuracy_percentage || 0),
           trend: (p.accuracy_percentage >= 80 ? 'up' : 
                  p.accuracy_percentage >= 60 ? 'stable' : 'down') as 'up' | 'down' | 'stable'
