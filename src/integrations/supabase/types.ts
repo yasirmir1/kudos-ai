@@ -303,6 +303,33 @@ export type Database = {
           },
         ]
       }
+      bootcamp_curriculum_metadata: {
+        Row: {
+          category: string
+          created_at: string | null
+          data: Json
+          id: string
+          metadata_type: string
+          updated_at: string | null
+        }
+        Insert: {
+          category: string
+          created_at?: string | null
+          data: Json
+          id?: string
+          metadata_type: string
+          updated_at?: string | null
+        }
+        Update: {
+          category?: string
+          created_at?: string | null
+          data?: Json
+          id?: string
+          metadata_type?: string
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
       bootcamp_curriculum_questions: {
         Row: {
           content_id: string
