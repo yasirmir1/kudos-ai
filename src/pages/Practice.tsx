@@ -48,6 +48,7 @@ const Practice = () => {
   const [aiExplanation, setAiExplanation] = useState<string>('');
   const [generatingExplanation, setGeneratingExplanation] = useState(false);
   const [generatingQuestions, setGeneratingQuestions] = useState(false);
+  const [pendingAutoAdvance, setPendingAutoAdvance] = useState(false);
   const [answeredQuestions, setAnsweredQuestions] = useState<{
     question: Question;
     isCorrect: boolean;
@@ -408,36 +409,66 @@ const Practice = () => {
       });
     } finally {
       setGeneratingQuestions(false);
+      
+      // Auto-advance if user clicked next while generation was in progress
+      if (pendingAutoAdvance) {
+        setPendingAutoAdvance(false);
+        setTimeout(() => {
+          handleNextQuestionAfterGeneration();
+        }, 500); // Brief delay to ensure state updates
+      }
     }
   };
   const handleNextQuestion = async () => {
+    // If questions are being generated, set flag to auto-advance after completion
+    if (generatingQuestions) {
+      setPendingAutoAdvance(true);
+      toast({
+        title: "Please wait...",
+        description: "New questions are being generated. You'll advance automatically when ready."
+      });
+      return;
+    }
+
     // Check if we're running low on questions and generate more if needed
     const remainingQuestions = questions.length - (currentIndex + 1);
     if (remainingQuestions <= 5 && !generatingQuestions) {
       console.log(`Running low on questions (${remainingQuestions} remaining), generating more...`);
+      setPendingAutoAdvance(true); // Set flag to auto-advance after generation
       await generateAdditionalQuestions();
-
-      // Reload questions to include newly generated ones
-      setTimeout(async () => {
-        const {
-          data: answeredQuestions
-        } = await supabase.from('student_answers').select('question_id').eq('student_id', user?.id);
-        const answeredQuestionIds = answeredQuestions?.map(q => q.question_id) || [];
-        const {
-          data: newQuestions
-        } = await supabase.from('curriculum').select('*').not('question_id', 'in', answeredQuestionIds.length > 0 ? `(${answeredQuestionIds.map(id => `'${id}'`).join(',')})` : '()').limit(20);
-        if (newQuestions && newQuestions.length > 0) {
-          const formattedQuestions = newQuestions.map(q => ({
-            ...q,
-            options: Array.isArray(q.options) ? q.options : typeof q.options === 'string' ? JSON.parse(q.options) : Object.values(q.options || {})
-          })).sort(() => Math.random() - 0.5); // Randomize order for variety
-
-          // Replace current questions with fresh randomized set
-          setQuestions(formattedQuestions);
-          console.log(`Refreshed with ${formattedQuestions.length} questions from ${new Set(formattedQuestions.map(q => q.topic)).size} topics`);
-        }
-      }, 2000); // Wait for generation to complete
+      return; // Let the generateAdditionalQuestions function handle the auto-advance
     }
+
+    // Proceed with normal next question logic
+    advanceToNextQuestion();
+  };
+
+  const handleNextQuestionAfterGeneration = async () => {
+    // Reload questions to include newly generated ones
+    const {
+      data: answeredQuestions
+    } = await supabase.from('student_answers').select('question_id').eq('student_id', user?.id);
+    const answeredQuestionIds = answeredQuestions?.map(q => q.question_id) || [];
+    const {
+      data: newQuestions
+    } = await supabase.from('curriculum').select('*').not('question_id', 'in', answeredQuestionIds.length > 0 ? `(${answeredQuestionIds.map(id => `'${id}'`).join(',')})` : '()').limit(20);
+    
+    if (newQuestions && newQuestions.length > 0) {
+      const formattedQuestions = newQuestions.map(q => ({
+        ...q,
+        options: Array.isArray(q.options) ? q.options : typeof q.options === 'string' ? JSON.parse(q.options) : Object.values(q.options || {})
+      })).sort(() => Math.random() - 0.5); // Randomize order for variety
+
+      // Replace current questions with fresh randomized set
+      setQuestions(formattedQuestions);
+      console.log(`Refreshed with ${formattedQuestions.length} questions from ${new Set(formattedQuestions.map(q => q.topic)).size} topics`);
+    }
+
+    // Now advance to next question
+    advanceToNextQuestion();
+  };
+
+  const advanceToNextQuestion = () => {
     if (currentIndex + 1 >= sessionQuestionCount) {
       setSessionComplete(true);
       // Record the session in the database with notification
@@ -557,6 +588,7 @@ const Practice = () => {
     setAnsweredQuestions([]);
     setSessionRecorded(false); // Reset session recorded flag for restart
     setCurrentSessionId(null); // Reset session ID for restart
+    setPendingAutoAdvance(false); // Reset auto-advance flag for restart
     setShowSessionStartModal(true);
   };
 
