@@ -73,7 +73,7 @@ export const AppNavigation: React.FC<AppNavigationProps> = ({
           {/* Right section - Navigation and Age Group Selector */}
           <div className="flex items-center space-x-4">
             {/* Navigation Links */}
-            <nav className="hidden md:flex items-center justify-between flex-1 max-w-2xl">
+            <nav className="hidden md:flex items-center justify-between flex-1 max-w-3xl mr-8 gap-2">
               {navigationItems.map((item) => {
                 const Icon = item.icon;
                 const isActive = isActivePath(item.path);
