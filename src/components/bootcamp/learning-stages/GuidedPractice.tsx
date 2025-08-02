@@ -3,6 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Users, CheckCircle, ArrowRight, ArrowLeft, HelpCircle } from 'lucide-react';
+import { PlaceValueSorting, FillInBlanks } from '../interactive';
 
 interface GuidedPracticeProps {
   content: any;
@@ -132,22 +133,49 @@ export function GuidedPractice({ content, onComplete, onNext, onPrevious }: Guid
 
       {/* Interactive Elements */}
       {interactiveElements.length > 0 && (
-        <Card>
-          <CardHeader>
-            <CardTitle>Interactive Practice</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="grid gap-4">
-              {interactiveElements.map((element: any, index: number) => (
-                <div key={index} className="border rounded-lg p-4 bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-950 dark:to-indigo-950">
-                  <h5 className="font-medium">{element.title}</h5>
-                  <p className="text-sm text-muted-foreground">{element.description}</p>
-                  <Badge variant="secondary" className="mt-2">{element.type}</Badge>
-                </div>
-              ))}
-            </div>
-          </CardContent>
-        </Card>
+        <div className="space-y-4">
+          {interactiveElements.map((element: any, index: number) => {
+            // Render actual interactive components based on type
+            if (element.type === 'drag_and_drop' && element.title.includes('Place Value')) {
+              return (
+                <PlaceValueSorting
+                  key={index}
+                  number="1234567"
+                  onComplete={() => {
+                    // Optional: track completion
+                    console.log('Place Value Sorting completed');
+                  }}
+                />
+              );
+            } else if (element.type === 'fill_in_blanks') {
+              return (
+                <FillInBlanks
+                  key={index}
+                  onComplete={() => {
+                    // Optional: track completion
+                    console.log('Fill in Blanks completed');
+                  }}
+                />
+              );
+            } else {
+              // Fallback for other interactive element types
+              return (
+                <Card key={index}>
+                  <CardHeader>
+                    <CardTitle>{element.title}</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <p className="text-sm text-muted-foreground mb-3">{element.description}</p>
+                    <Badge variant="secondary">{element.type}</Badge>
+                    <p className="text-xs text-muted-foreground mt-2">
+                      Interactive component for "{element.type}" is being developed.
+                    </p>
+                  </CardContent>
+                </Card>
+              );
+            }
+          })}
+        </div>
       )}
 
       {/* Checkpoints */}
