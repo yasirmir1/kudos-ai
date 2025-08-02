@@ -203,20 +203,22 @@ export function StructuredLearningModal({ topic, isOpen, onClose, onComplete }: 
         <div className="space-y-4">
         {/* Stage Header */}
         <div className="text-center space-y-3">
-          <div className="flex items-center justify-center gap-3">
-            <div className={`p-2 rounded-lg ${isCompleted ? 'bg-green-100 text-green-600' : 'bg-primary/10 text-primary'} transition-colors`}>
-              <currentStage.icon className="h-6 w-6" />
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <div className={`p-2 rounded-lg ${isCompleted ? 'bg-green-100 text-green-600' : 'bg-primary/10 text-primary'} transition-colors`}>
+                <currentStage.icon className="h-6 w-6" />
+              </div>
+              <div className="text-left">
+                <h3 className="text-xl font-bold">{currentStage.title}</h3>
+                <p className="text-muted-foreground text-sm">{currentStage.description}</p>
+              </div>
             </div>
-            <div className="text-left">
-              <h3 className="text-xl font-bold">{currentStage.title}</h3>
-              <p className="text-muted-foreground text-sm">{currentStage.description}</p>
+            
+            {/* Topic Badge */}
+            <div className="flex items-center gap-2 bg-muted rounded-full px-4 py-2 border">
+              <span className="text-lg">🎯</span>
+              <span className="font-medium">{currentSubtopic.name}</span>
             </div>
-          </div>
-          
-          {/* Topic Badge */}
-          <div className="inline-flex items-center gap-2 bg-muted rounded-full px-4 py-2 border">
-            <span className="text-lg">🎯</span>
-            <span className="font-medium">{currentSubtopic.name}</span>
           </div>
           
           {/* Progress Celebration */}
