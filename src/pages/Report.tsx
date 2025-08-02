@@ -207,7 +207,7 @@ export default function Report() {
             <CardHeader>
               <div className="flex items-center justify-between">
                 <div>
-                  <CardTitle className="flex items-center gap-2">
+                  <CardTitle className="flex items-center gap-2 mb-2">
                     <Brain className="h-5 w-5" />
                     Performance Overview
                   </CardTitle>
