@@ -119,7 +119,7 @@ export const Dashboard: React.FC<DashboardProps> = ({
               </span>
               <stat.icon className={`h-8 w-8 ${getColorClasses(stat.color)}`} />
             </div>
-            <p className="text-2xl font-bold text-foreground text-right">{stat.value}</p>
+            <p className="text-2xl font-bold text-foreground">{stat.value}</p>
           </div>)}
       </div>
 
