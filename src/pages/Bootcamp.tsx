@@ -11,10 +11,11 @@ import { AnalyticsDashboard } from '@/components/bootcamp/AnalyticsDashboard';
 import { Navigation } from '@/components/bootcamp/Navigation';
 import { BulkQuestionGenerator } from '@/components/BulkQuestionGenerator';
 import AchievementCenter from '@/components/bootcamp/AchievementCenter';
-import Leaderboard from '@/components/bootcamp/Leaderboard';
+
 import SettingsPage from '@/components/bootcamp/SettingsPage';
 import HelpCenter from '@/components/bootcamp/HelpCenter';
 import PracticeReport from '@/components/bootcamp/PracticeReport';
+import { MockTest } from '@/components/bootcamp/MockTest';
 import { useBootcampData } from '@/hooks/useBootcampData';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
@@ -75,11 +76,12 @@ const Bootcamp = () => {
 
         {currentView === 'dashboard' && <Dashboard user={user} setCurrentView={setCurrentView} />}
         {currentView === 'practice' && <EnhancedPracticeSession />}
+        {currentView === 'mocktest' && <MockTest />}
         {currentView === 'learn' && <LearnView />}
         {currentView === 'progress' && <ProgressView />}
         {currentView === 'topics' && <TopicsView setCurrentView={setCurrentView} />}
         {currentView === 'achievements' && <AchievementCenter />}
-        {currentView === 'leaderboard' && <Leaderboard />}
+        
         {currentView === 'analytics' && <AnalyticsDashboard />}
         {currentView === 'questions' && <QuestionManager />}
         {currentView === 'generate' && <BulkQuestionGenerator />}

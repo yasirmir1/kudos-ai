@@ -59,11 +59,6 @@ export const Navigation: React.FC<NavigationProps> = ({
       icon: Trophy
     },
     {
-      id: 'leaderboard',
-      label: 'Leaderboard',
-      icon: Medal
-    },
-    {
       id: 'questions',
       label: 'Questions',
       icon: Settings

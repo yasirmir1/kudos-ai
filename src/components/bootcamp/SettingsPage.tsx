@@ -38,7 +38,6 @@ interface SettingsState {
   };
   privacy: {
     shareProgress: string;
-    showOnLeaderboard: boolean;
     allowChallenges: boolean;
   };
 }
@@ -72,7 +71,6 @@ const SettingsPage: React.FC = () => {
     },
     privacy: {
       shareProgress: 'parents',
-      showOnLeaderboard: true,
       allowChallenges: true
     }
   });
@@ -422,17 +420,6 @@ const PrivacySettings: React.FC<{ settings: any; updateSetting: any }> = ({ sett
         </div>
 
         <div className="space-y-4">
-          <div className="flex items-center justify-between">
-            <div className="space-y-0.5">
-              <Label>Show on Leaderboard</Label>
-              <p className="text-sm text-muted-foreground">Allow others to see your ranking</p>
-            </div>
-            <Switch
-              checked={settings.showOnLeaderboard}
-              onCheckedChange={(checked) => updateSetting('privacy', 'showOnLeaderboard', checked)}
-            />
-          </div>
-
           <div className="flex items-center justify-between">
             <div className="space-y-0.5">
               <Label>Allow Challenges</Label>

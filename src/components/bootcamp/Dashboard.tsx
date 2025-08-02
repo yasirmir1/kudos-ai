@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Brain, Target, Shield, Award, Play, RefreshCw, ChevronRight, TrendingUp, AlertCircle, Loader2 } from 'lucide-react';
+import { Brain, Target, Shield, Award, Play, RefreshCw, ChevronRight, TrendingUp, AlertCircle, Loader2, Clock } from 'lucide-react';
 import { WeeklyProgressChart } from './WeeklyProgressChart';
 import { useAuth } from '../../hooks/useAuth';
 import { BootcampAPI } from '../../lib/bootcamp-api';
@@ -128,6 +128,16 @@ export const Dashboard: React.FC<DashboardProps> = ({ user, setCurrentView }) =>
                 <span className="font-medium">Start Daily Challenge</span>
               </div>
               <ChevronRight className="h-5 w-5" />
+            </button>
+            <button
+              onClick={() => setCurrentView('mocktest')}
+              className="w-full bg-gradient-to-r from-orange-500 to-orange-600 text-white rounded-lg p-4 flex items-center justify-between hover:from-orange-600 hover:to-orange-700 transition-colors"
+            >
+              <div className="flex items-center space-x-3">
+                <Clock className="h-5 w-5" />
+                <span className="font-medium">11+ Mock Test</span>
+              </div>
+              <span className="text-sm bg-white/20 px-2 py-1 rounded text-xs">60 min</span>
             </button>
             <button className="w-full bg-muted text-muted-foreground rounded-lg p-4 flex items-center justify-between hover:bg-muted/80 transition-colors">
               <div className="flex items-center space-x-3">

@@ -1,44 +1,56 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { Clock, Flag, ArrowLeft, ArrowRight, CheckCircle, AlertCircle } from 'lucide-react';
+import { Clock, Flag, ArrowLeft, ArrowRight, CheckCircle, AlertCircle, LogOut } from 'lucide-react';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
 import { Alert, AlertDescription } from '@/components/ui/alert';
+import { supabase } from '@/integrations/supabase/client';
+import { useBootcampDatabase } from '@/hooks/useBootcampDatabase';
+import { toast } from 'sonner';
 
-// Placeholder questions for demo
-const PLACEHOLDER_QUESTIONS = Array.from({ length: 50 }, (_, i) => ({
-  question_id: `Q${i + 1}`,
-  question_text: `Question ${i + 1}: What is ${Math.floor(Math.random() * 20) + 5} × ${Math.floor(Math.random() * 20) + 5}?`,
-  option_a: `${Math.floor(Math.random() * 100) + 50}`,
-  option_b: `${Math.floor(Math.random() * 100) + 150}`,
-  option_c: `${Math.floor(Math.random() * 100) + 250}`,
-  option_d: `${Math.floor(Math.random() * 100) + 350}`,
-  correct_answer: 'A',
-  topic_id: ['Arithmetic', 'Algebra', 'Geometry', 'Statistics'][Math.floor(Math.random() * 4)],
-  difficulty: ['Easy', 'Medium', 'Hard'][Math.floor(Math.random() * 3)],
-  question_type: 'multiple_choice'
-}));
+interface MockTestQuestion {
+  question_id: string;
+  question_text: string;
+  option_a: string;
+  option_b: string;
+  option_c: string;
+  option_d: string;
+  correct_answer: string;
+  topic_id: string;
+  difficulty: string;
+  question_type: string;
+  marks: number;
+  time_seconds: number;
+}
 
 interface MockTestState {
-  status: 'instructions' | 'active' | 'completed';
+  status: 'instructions' | 'active' | 'completed' | 'paused';
   currentQuestion: number;
   timeRemaining: number; // in seconds
   answers: Record<number, string>;
-  questions: any[];
+  questions: MockTestQuestion[];
   startTime: Date | null;
   sessionId: string | null;
+  timeSpent: number; // total time spent (for pause/resume)
 }
 
 interface MockTestResults {
+  sessionId: string;
   totalQuestions: number;
   answeredQuestions: number;
   correctAnswers: number;
   accuracy: number;
   timeSpent: number;
-  topicBreakdown: Record<string, { correct: number; total: number }>;
+  topicBreakdown: Record<string, { correct: number; total: number; accuracy: number }>;
+  misconceptionsSummary: Array<{
+    misconception_code: string;
+    frequency: number;
+    questions: string[];
+  }>;
 }
 
 export const MockTest: React.FC = () => {
+  const { student, isLoading: dbLoading } = useBootcampDatabase();
   const [testState, setTestState] = useState<MockTestState>({
     status: 'instructions',
     currentQuestion: 0,
@@ -46,61 +58,191 @@ export const MockTest: React.FC = () => {
     answers: {},
     questions: [],
     startTime: null,
-    sessionId: null
+    sessionId: null,
+    timeSpent: 0
   });
   const [results, setResults] = useState<MockTestResults | null>(null);
   const [isLoading, setIsLoading] = useState(false);
 
-  const handleSubmitTest = useCallback(async () => {
-    const answeredCount = Object.keys(testState.answers).length;
-    const timeSpent = testState.startTime ? Math.floor((Date.now() - testState.startTime.getTime()) / 1000) : 0;
-    
-    // Calculate results (this would typically come from backend)
-    const topicBreakdown: Record<string, { correct: number; total: number }> = {};
-    let correctAnswers = 0;
+  // Load existing session on component mount
+  useEffect(() => {
+    if (student) {
+      loadExistingSession();
+    }
+  }, [student]);
 
-    testState.questions.forEach((question, index) => {
-      const topic = question.topic_id || 'Unknown';
-      if (!topicBreakdown[topic]) {
-        topicBreakdown[topic] = { correct: 0, total: 0 };
+  const loadExistingSession = async () => {
+    if (!student) return;
+
+    try {
+      // Check for existing active mock test session
+      const { data: existingSession } = await supabase
+        .from('bootcamp_mock_test_sessions')
+        .select('*')
+        .eq('student_id', student.student_id)
+        .eq('status', 'in_progress')
+        .order('started_at', { ascending: false })
+        .limit(1)
+        .maybeSingle();
+
+      if (existingSession) {
+        // Load session data and continue where left off
+        const sessionData = existingSession.session_data as any || {};
+        const startTime = new Date(existingSession.started_at);
+        const timeElapsed = Math.floor((Date.now() - startTime.getTime()) / 1000);
+        
+        // Load questions for this session
+        const { data: sessionQuestions } = await supabase
+          .from('bootcamp_mock_test_questions')
+          .select(`
+            question_id,
+            question_order,
+            student_answer
+          `)
+          .eq('session_id', existingSession.session_id)
+          .order('question_order');
+
+        if (sessionQuestions && sessionQuestions.length > 0) {
+          // Get the questions from the bootcamp_questions table
+          const questionIds = sessionQuestions.map(q => q.question_id);
+          const { data: questions } = await supabase
+            .from('bootcamp_questions')
+            .select('*')
+            .in('question_id', questionIds);
+
+          if (questions) {
+            const answers: Record<number, string> = {};
+            
+            sessionQuestions.forEach((q, index) => {
+              if (q.student_answer) {
+                answers[index] = q.student_answer;
+              }
+            });
+
+            setTestState({
+              status: 'active',
+              currentQuestion: (sessionData.currentQuestion as number) || 0,
+              timeRemaining: Math.max(0, existingSession.time_limit_seconds - timeElapsed),
+              answers,
+              questions: questions as MockTestQuestion[],
+              startTime,
+              sessionId: existingSession.session_id,
+              timeSpent: timeElapsed
+            });
+
+            toast.info('Continuing your mock test session');
+          }
+        }
       }
-      topicBreakdown[topic].total++;
-      
-      // This is simplified - in real implementation, you'd check against correct answers
-      if (testState.answers[index]) {
-        // For demo purposes, assume 70% accuracy
-        if (Math.random() > 0.3) {
+    } catch (error) {
+      console.error('Failed to load existing session:', error);
+    }
+  };
+
+  const handleSubmitTest = useCallback(async () => {
+    if (!testState.sessionId || !student) return;
+
+    setIsLoading(true);
+    try {
+      // Submit all responses to backend
+      const responses = Object.entries(testState.answers).map(([questionIndex, answer]) => ({
+        session_id: testState.sessionId,
+        question_id: testState.questions[parseInt(questionIndex)].question_id,
+        question_order: parseInt(questionIndex),
+        student_answer: answer,
+        answered_at: new Date().toISOString()
+      }));
+
+      // Update responses in the database
+      for (const response of responses) {
+        await supabase
+          .from('bootcamp_mock_test_questions')
+          .update({
+            student_answer: response.student_answer,
+            answered_at: response.answered_at
+          })
+          .eq('session_id', response.session_id)
+          .eq('question_order', response.question_order);
+      }
+
+      // Complete the session
+      const timeSpent = testState.startTime ? Math.floor((Date.now() - testState.startTime.getTime()) / 1000) : testState.timeSpent;
+      await supabase
+        .from('bootcamp_mock_test_sessions')
+        .update({
+          status: 'completed',
+          completed_at: new Date().toISOString(),
+          time_spent_seconds: timeSpent,
+          questions_attempted: Object.keys(testState.answers).length
+        })
+        .eq('session_id', testState.sessionId);
+
+      // Calculate results
+      const topicBreakdown: Record<string, { correct: number; total: number; accuracy: number }> = {};
+      let correctAnswers = 0;
+
+      testState.questions.forEach((question, index) => {
+        const topic = question.topic_id || 'Unknown';
+        if (!topicBreakdown[topic]) {
+          topicBreakdown[topic] = { correct: 0, total: 0, accuracy: 0 };
+        }
+        topicBreakdown[topic].total++;
+        
+        if (testState.answers[index] === question.correct_answer) {
           correctAnswers++;
           topicBreakdown[topic].correct++;
         }
-      }
-    });
+      });
 
-    const results: MockTestResults = {
-      totalQuestions: testState.questions.length,
-      answeredQuestions: answeredCount,
-      correctAnswers,
-      accuracy: (correctAnswers / testState.questions.length) * 100,
-      timeSpent,
-      topicBreakdown
-    };
+      // Calculate accuracy for each topic
+      Object.keys(topicBreakdown).forEach(topic => {
+        topicBreakdown[topic].accuracy = (topicBreakdown[topic].correct / topicBreakdown[topic].total) * 100;
+      });
 
-    setResults(results);
-    setTestState(prev => ({ ...prev, status: 'completed' }));
-  }, [testState.answers, testState.questions, testState.startTime]);
+      const results: MockTestResults = {
+        sessionId: testState.sessionId,
+        totalQuestions: testState.questions.length,
+        answeredQuestions: Object.keys(testState.answers).length,
+        correctAnswers,
+        accuracy: (correctAnswers / testState.questions.length) * 100,
+        timeSpent,
+        topicBreakdown,
+        misconceptionsSummary: [] // Will be populated in post-session analysis
+      };
 
-  // Timer effect
+      setResults(results);
+      setTestState(prev => ({ ...prev, status: 'completed' }));
+      toast.success('Mock test completed!');
+    } catch (error) {
+      console.error('Failed to submit test:', error);
+      toast.error('Failed to submit test. Please try again.');
+    } finally {
+      setIsLoading(false);
+    }
+  }, [testState, student]);
+
+  // Timer effect with pause/resume and persistence
   useEffect(() => {
     let interval: NodeJS.Timeout | null = null;
     
     if (testState.status === 'active' && testState.timeRemaining > 0) {
       interval = setInterval(() => {
-        setTestState(prev => ({
-          ...prev,
-          timeRemaining: prev.timeRemaining - 1
-        }));
+        setTestState(prev => {
+          const newState = {
+            ...prev,
+            timeRemaining: prev.timeRemaining - 1
+          };
+          
+          // Auto-save progress every 10 seconds
+          if (prev.timeRemaining % 10 === 0 && prev.sessionId) {
+            saveProgress(newState);
+          }
+          
+          return newState;
+        });
       }, 1000);
     } else if (testState.timeRemaining === 0 && testState.status === 'active') {
+      toast.warning('Time is up! Submitting your test automatically.');
       handleSubmitTest();
     }
 
@@ -108,6 +250,36 @@ export const MockTest: React.FC = () => {
       if (interval) clearInterval(interval);
     };
   }, [testState.status, testState.timeRemaining, handleSubmitTest]);
+
+  const saveProgress = async (currentState: MockTestState) => {
+    if (!currentState.sessionId || !student) return;
+
+    try {
+      // Update session progress
+      await supabase
+        .from('bootcamp_mock_test_sessions')
+        .update({
+          session_data: {
+            currentQuestion: currentState.currentQuestion,
+            answers: currentState.answers
+          }
+        })
+        .eq('session_id', currentState.sessionId);
+
+      // Update individual question responses
+      Object.entries(currentState.answers).forEach(async ([questionIndex, answer]) => {
+        await supabase
+          .from('bootcamp_mock_test_questions')
+          .update({
+            student_answer: answer
+          })
+          .eq('session_id', currentState.sessionId)
+          .eq('question_order', parseInt(questionIndex));
+      });
+    } catch (error) {
+      console.error('Failed to save progress:', error);
+    }
+  };
 
   const formatTime = (seconds: number) => {
     const hours = Math.floor(seconds / 3600);
@@ -117,25 +289,92 @@ export const MockTest: React.FC = () => {
   };
 
   const startTest = async () => {
+    if (!student) {
+      toast.error('Please log in to start the mock test');
+      return;
+    }
+
     setIsLoading(true);
     try {
-      // Use placeholder questions for demo
-      setTestState(prev => ({
-        ...prev,
-        status: 'active',
-        questions: PLACEHOLDER_QUESTIONS,
-        startTime: new Date(),
-        sessionId: 'demo-session'
+      // Create new mock test session
+      const { data: newSession, error: sessionError } = await supabase
+        .from('bootcamp_mock_test_sessions')
+        .insert({
+          student_id: student.student_id,
+          session_type: 'mock_test',
+          status: 'in_progress',
+          total_questions: 50,
+          time_limit_seconds: 3600,
+          started_at: new Date().toISOString()
+        })
+        .select()
+        .single();
+
+      if (sessionError) throw sessionError;
+
+      // Get questions from database (real 11+ style questions)
+      const { data: questions, error: questionsError } = await supabase
+        .from('bootcamp_questions')
+        .select('*')
+        .limit(50)
+        .order('question_id');
+
+      if (questionsError) throw questionsError;
+
+      if (!questions || questions.length === 0) {
+        throw new Error('No questions available');
+      }
+
+      // Create question assignments for this session
+      const questionAssignments = questions.map((question, index) => ({
+        session_id: newSession.session_id,
+        question_id: question.question_id,
+        question_order: index
       }));
+
+      const { error: assignmentError } = await supabase
+        .from('bootcamp_mock_test_questions')
+        .insert(questionAssignments);
+
+      if (assignmentError) throw assignmentError;
+
+      setTestState({
+        status: 'active',
+        currentQuestion: 0,
+        timeRemaining: 3600,
+        answers: {},
+        questions: questions as MockTestQuestion[],
+        startTime: new Date(),
+        sessionId: newSession.session_id,
+        timeSpent: 0
+      });
+
+      toast.success('Mock test started! Good luck!');
     } catch (error) {
       console.error('Failed to start test:', error);
+      toast.error('Failed to start test. Please try again.');
     } finally {
       setIsLoading(false);
     }
   };
 
+  const exitTest = async () => {
+    if (!testState.sessionId) return;
+
+    try {
+      // Save current progress before exiting
+      await saveProgress(testState);
+      
+      toast.info('Progress saved. You can resume this test later.');
+      setTestState(prev => ({ ...prev, status: 'instructions' }));
+    } catch (error) {
+      console.error('Failed to save progress:', error);
+      toast.error('Failed to save progress');
+    }
+  };
+
   const handleAnswer = useCallback((selectedAnswer: string) => {
-    // Update local state
+    // Update local state (no immediate feedback in mock test)
     setTestState(prev => ({
       ...prev,
       answers: {
@@ -143,7 +382,7 @@ export const MockTest: React.FC = () => {
         [prev.currentQuestion]: selectedAnswer
       }
     }));
-  }, [testState.currentQuestion]);
+  }, []);
 
   const navigateToQuestion = (questionIndex: number) => {
     setTestState(prev => ({
@@ -220,17 +459,20 @@ export const MockTest: React.FC = () => {
           <Alert className="mb-6">
             <AlertCircle className="h-4 w-4" />
             <AlertDescription>
-              Once you start, the timer cannot be paused. Ensure you have a quiet environment and stable internet connection.
+              Once started, the timer continues even if you exit. You can resume your test anytime before the 60 minutes expire. Progress is automatically saved.
             </AlertDescription>
           </Alert>
 
           <div className="text-center">
             <Button 
               onClick={startTest} 
-              disabled={isLoading}
+              disabled={isLoading || dbLoading || !student}
               className="px-8 py-3 text-lg"
             >
-              {isLoading ? 'Loading Questions...' : 'Start Mock Test'}
+              {isLoading ? 'Loading Questions...' : 
+               dbLoading ? 'Preparing...' :
+               !student ? 'Please log in to start' :
+               'Start Mock Test'}
             </Button>
           </div>
         </Card>
@@ -290,11 +532,33 @@ export const MockTest: React.FC = () => {
             </div>
           </div>
 
+          <div className="mb-8">
+            <h3 className="text-lg font-semibold mb-4">Detailed Analysis</h3>
+            <div className="bg-muted rounded-lg p-4">
+              <p className="text-sm text-muted-foreground mb-2">
+                Your performance analysis and misconception patterns will be available in your detailed report.
+              </p>
+              <p className="text-sm text-muted-foreground">
+                This mock test simulates real 11+ exam conditions with no immediate feedback during the test.
+              </p>
+            </div>
+          </div>
+
           <div className="text-center space-x-4">
-            <Button variant="outline" onClick={() => window.location.reload()}>
+            <Button variant="outline" onClick={() => setTestState(prev => ({ 
+              ...prev, 
+              status: 'instructions',
+              currentQuestion: 0,
+              timeRemaining: 3600,
+              answers: {},
+              questions: [],
+              startTime: null,
+              sessionId: null,
+              timeSpent: 0
+            }))}>
               Take Another Test
             </Button>
-            <Button onClick={() => setTestState(prev => ({ ...prev, status: 'instructions' }))}>
+            <Button onClick={() => window.location.href = '/bootcamp'}>
               Back to Dashboard
             </Button>
           </div>
@@ -329,8 +593,12 @@ export const MockTest: React.FC = () => {
                 {formatTime(testState.timeRemaining)}
               </span>
             </div>
-            <Button variant="destructive" onClick={handleSubmitTest}>
-              Submit Test
+            <Button variant="outline" onClick={exitTest} className="flex items-center gap-2">
+              <LogOut className="h-4 w-4" />
+              Exit Test
+            </Button>
+            <Button variant="destructive" onClick={handleSubmitTest} disabled={isLoading}>
+              {isLoading ? 'Submitting...' : 'Submit Test'}
             </Button>
           </div>
         </div>
