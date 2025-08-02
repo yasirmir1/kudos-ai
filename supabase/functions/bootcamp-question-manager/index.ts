@@ -38,9 +38,15 @@ Deno.serve(async (req) => {
   }
 
   try {
+    const authHeader = req.headers.get('Authorization')
     const supabaseClient = createClient(
       Deno.env.get('SUPABASE_URL') ?? '',
       Deno.env.get('SUPABASE_ANON_KEY') ?? '',
+      {
+        global: {
+          headers: { Authorization: authHeader },
+        },
+      }
     )
 
     const { action, data, studentId, questionCount } = await req.json()
@@ -347,6 +353,13 @@ async function submitResponse(supabaseClient: any, responseData: any) {
     } = responseData
 
     console.log('Submitting response:', { student_id, question_id, selected_answer, session_id });
+    
+    // Verify user authentication
+    const { data: { user }, error: authError } = await supabaseClient.auth.getUser();
+    if (authError || !user) {
+      throw new Error('User not authenticated');
+    }
+    console.log('Authenticated user:', user.id);
 
     // Get the question details
     const { data: question, error: questionError } = await supabaseClient
