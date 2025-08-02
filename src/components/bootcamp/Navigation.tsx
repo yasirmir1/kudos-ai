@@ -36,6 +36,10 @@ export const Navigation: React.FC<NavigationProps> = ({
     label: 'Learn',
     icon: GraduationCap
   }, {
+    id: 'tools',
+    label: 'Tools',
+    icon: Calculator
+  }, {
     id: 'topics',
     label: 'Topics',
     icon: BookOpen
