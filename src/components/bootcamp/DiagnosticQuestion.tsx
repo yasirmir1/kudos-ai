@@ -75,11 +75,11 @@ export const DiagnosticQuestion: React.FC<DiagnosticQuestionProps> = ({
   const getDiagnosticStyles = (option: any) => {
     if (!showDiagnostic) return 'border-border hover:border-border/60 hover:bg-muted/50';
     if (option.is_correct) return 'border-success bg-success/10';
-    if (option.option_letter === selectedAnswer) return 'border-destructive bg-destructive/10';
+    if (option.answer_option === selectedAnswer) return 'border-destructive bg-destructive/10';
     return 'border-border';
   };
 
-  const selectedOption = question.bootcamp_enhanced_answer_options?.find(opt => opt.option_letter === selectedAnswer);
+  const selectedOption = question.bootcamp_answers?.find(opt => opt.answer_option === selectedAnswer);
 
   return (
     <div className="bg-card rounded-xl shadow-sm border p-8 max-w-4xl mx-auto">
@@ -123,9 +123,9 @@ export const DiagnosticQuestion: React.FC<DiagnosticQuestionProps> = ({
           {question.question_text}
         </h3>
         
-        {question.visual_aid_url && (
+        {question.visual_aid && (
           <div className="mb-4 p-4 bg-muted rounded-lg">
-            <img src={question.visual_aid_url} alt="Question visual" className="max-w-full h-auto" />
+            <img src={question.visual_aid} alt="Question visual" className="max-w-full h-auto" />
           </div>
         )}
 
@@ -152,13 +152,13 @@ export const DiagnosticQuestion: React.FC<DiagnosticQuestionProps> = ({
       </div>
 
       <div className="space-y-3 mb-6">
-        {question.bootcamp_enhanced_answer_options?.map(option => {
-          const isSelected = selectedAnswer === option.option_letter;
+        {question.bootcamp_answers?.map(option => {
+          const isSelected = selectedAnswer === option.answer_option;
           
           return (
             <button
-              key={option.option_letter}
-              onClick={() => handleAnswerSelect(option.option_letter)}
+              key={option.answer_option}
+              onClick={() => handleAnswerSelect(option.answer_option)}
               disabled={showDiagnostic || isSubmitting}
               className={`w-full text-left p-4 rounded-lg border-2 transition-all ${
                 getDiagnosticStyles(option)
@@ -167,7 +167,7 @@ export const DiagnosticQuestion: React.FC<DiagnosticQuestionProps> = ({
               }`}
             >
               <div className="flex items-start space-x-3">
-                <span className="font-medium text-muted-foreground mt-0.5">{option.option_letter}.</span>
+                <span className="font-medium text-muted-foreground mt-0.5">{option.answer_option}.</span>
                 <div className="flex-1">
                   <span className="text-foreground">{option.answer_value}</span>
                   
@@ -186,12 +186,12 @@ export const DiagnosticQuestion: React.FC<DiagnosticQuestionProps> = ({
                         </p>
                       </div>
                       
-                      {!option.is_correct && option.misconception_code && (
+                      {!option.is_correct && option.misconception_type && (
                         <div className="flex items-start space-x-2 p-3 bg-warning/10 rounded-lg">
                           <Lightbulb className="h-5 w-5 text-warning mt-0.5 flex-shrink-0" />
                           <div>
                             <p className="text-sm font-medium text-warning mb-1">
-                              Misconception Detected: {option.misconception_code}
+                              Misconception Detected: {option.misconception_type}
                             </p>
                             <p className="text-sm text-warning/80">
                               This error pattern has been identified for targeted practice.
@@ -219,10 +219,10 @@ export const DiagnosticQuestion: React.FC<DiagnosticQuestionProps> = ({
         })}
       </div>
 
-      {showDiagnostic && selectedOption && !selectedOption.is_correct && selectedOption.misconception_code && (
+      {showDiagnostic && selectedOption && !selectedOption.is_correct && selectedOption.misconception_type && (
         <RemediationSuggestion 
           misconception={{
-            code: selectedOption.misconception_code,
+            code: selectedOption.misconception_type,
             description: 'This misconception needs targeted practice'
           }}
           topic={question.topic_id}

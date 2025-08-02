@@ -9,19 +9,19 @@ export interface BootcampQuestion {
   cognitive_level: 'recall' | 'application' | 'analysis' | 'synthesis';
   difficulty: 'foundation' | 'intermediate' | 'advanced';
   question_text: string;
-  visual_aid_url?: string;
+  visual_aid?: string;
   marks: number;
   time_seconds: number;
-  bootcamp_enhanced_answer_options: AnswerOption[];
+  bootcamp_answers: AnswerOption[];
   selection_reason?: string;
   priority?: number;
 }
 
 export interface AnswerOption {
-  option_letter: string;
+  answer_option: string;
   answer_value: string;
   is_correct: boolean;
-  misconception_code?: string;
+  misconception_type?: string;
   diagnostic_feedback: string;
 }
 
@@ -124,16 +124,9 @@ export class BootcampAPI {
 
   static async getStudentProgress(studentId: string) {
     try {
-      const { data, error } = await supabase
-        .from('bootcamp_enhanced_student_progress')
-        .select(`
-          *,
-          bootcamp_enhanced_topics (*)
-        `)
-        .eq('student_id', studentId);
-
-      if (error) throw error;
-      return data;
+      // For now, return mock data since bootcamp_ tables don't have student progress yet
+      // This would need a proper student progress table in the bootcamp_ schema
+      return [];
     } catch (error) {
       console.error('Error getting student progress:', error);
       throw error;
@@ -159,15 +152,15 @@ export class BootcampAPI {
   static async getStudentMisconceptions(studentId: string) {
     try {
       const { data, error } = await supabase
-        .from('bootcamp_enhanced_student_responses')
+        .from('bootcamp_student_responses')
         .select(`
           misconception_detected,
-          responded_at,
-          bootcamp_enhanced_questions (topic_id)
+          timestamp,
+          question_id
         `)
         .eq('student_id', studentId)
         .not('misconception_detected', 'is', null)
-        .order('responded_at', { ascending: false });
+        .order('timestamp', { ascending: false });
 
       if (error) throw error;
       
@@ -191,18 +184,14 @@ export class BootcampAPI {
 
   static async startLearningSession(studentId: string, sessionType: string = 'practice') {
     try {
-      const { data, error } = await supabase
-        .from('bootcamp_enhanced_learning_sessions')
-        .insert({
-          student_id: studentId,
-          session_type: sessionType,
-          session_start: new Date().toISOString()
-        })
-        .select()
-        .single();
-
-      if (error) throw error;
-      return data;
+      // For now, return mock session data since bootcamp_ tables don't have learning sessions yet
+      // This would need a proper learning sessions table in the bootcamp_ schema
+      return {
+        session_id: `session_${Date.now()}`,
+        student_id: studentId,
+        session_type: sessionType,
+        session_start: new Date().toISOString()
+      };
     } catch (error) {
       console.error('Error starting learning session:', error);
       throw error;
@@ -214,20 +203,15 @@ export class BootcampAPI {
       const performanceScore = questionsAttempted > 0 ? 
         Math.round((questionsCorrect / questionsAttempted) * 100) : 0;
 
-      const { data, error } = await supabase
-        .from('bootcamp_enhanced_learning_sessions')
-        .update({
-          session_end: new Date().toISOString(),
-          questions_attempted: questionsAttempted,
-          questions_correct: questionsCorrect,
-          performance_score: performanceScore
-        })
-        .eq('session_id', sessionId)
-        .select()
-        .single();
-
-      if (error) throw error;
-      return data;
+      // For now, return mock data since bootcamp_ tables don't have learning sessions yet
+      // This would need a proper learning sessions table in the bootcamp_ schema
+      return {
+        session_id: sessionId,
+        session_end: new Date().toISOString(),
+        questions_attempted: questionsAttempted,
+        questions_correct: questionsCorrect,
+        performance_score: performanceScore
+      };
     } catch (error) {
       console.error('Error ending learning session:', error);
       throw error;

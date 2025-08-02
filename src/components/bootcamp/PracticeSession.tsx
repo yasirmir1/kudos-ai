@@ -83,13 +83,13 @@ export const PracticeSession: React.FC = () => {
       const adaptedQuestions: AdaptedQuestion[] = rawQuestions.map((q: BootcampQuestion) => ({
         id: q.question_id,
         text: q.question_text,
-        options: q.bootcamp_enhanced_answer_options.map(opt => ({
-          id: opt.option_letter,
+        options: q.bootcamp_answers.map(opt => ({
+          id: opt.answer_option,
           value: opt.answer_value,
           feedback: opt.diagnostic_feedback,
           isCorrect: opt.is_correct
         })),
-        correct: q.bootcamp_enhanced_answer_options.find(opt => opt.is_correct)?.option_letter || 'A',
+        correct: q.bootcamp_answers.find(opt => opt.is_correct)?.answer_option || 'A',
         topic: q.topic_id,
         difficulty: q.difficulty,
         timeAllowed: q.time_seconds
