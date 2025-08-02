@@ -114,7 +114,7 @@ const Practice = () => {
       if (adaptiveQuestions && adaptiveQuestions.length > 0) {
         // Extract questions from the returned format
         const questions: Question[] = adaptiveQuestions.map((item: any) => {
-          const q = item.question;
+          const q = item.question_data; // Updated to match new function return column name
           return {
             ...q,
             options: Array.isArray(q.options) ? q.options : typeof q.options === 'string' ? JSON.parse(q.options) : Object.values(q.options || {})

@@ -273,7 +273,7 @@ export type Database = {
       get_adaptive_questions_enhanced: {
         Args: { p_student_id: string; p_count?: number }
         Returns: {
-          question: Json
+          question_data: Json
         }[]
       }
       get_student_misconceptions: {
