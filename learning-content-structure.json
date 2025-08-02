@@ -1,0 +1,343 @@
+{
+  "topicId": "npv1",
+  "topicName": "Reading and Writing Large Numbers",
+  "subtopics": [
+    {
+      "subtopicId": "npv1-1",
+      "subtopicName": "Numbers to 1 Million",
+      "estimatedDuration": 30,
+      "prerequisites": ["place_value", "counting"],
+      "learningObjectives": [
+        "Read numbers up to 1 million",
+        "Write numbers up to 1 million in digits and words",
+        "Understand place value in large numbers"
+      ],
+      "stages": {
+        "concept": {
+          "introduction": "Let's explore how to read and write really big numbers! Numbers can get huge - up to 1 million and beyond. Once you understand the pattern, it becomes much easier.",
+          "keyPoints": [
+            "Every digit has a place value - units, tens, hundreds, thousands, etc.",
+            "Numbers are read from left to right in groups of three digits",
+            "Commas help us separate groups of thousands to make reading easier",
+            "The position of each digit tells us its value"
+          ],
+          "examples": [
+            {
+              "title": "Reading 234,567",
+              "description": "Let's break down this 6-digit number step by step",
+              "explanation": "This reads as 'two hundred thirty-four thousand, five hundred sixty-seven'"
+            },
+            {
+              "title": "Writing 'Five hundred thousand'",
+              "description": "Converting words to numbers",
+              "explanation": "This would be written as 500,000"
+            }
+          ],
+          "visualAids": [
+            {
+              "type": "place_value_chart",
+              "title": "Place Value Chart for Large Numbers",
+              "description": "A chart showing millions, thousands, and units columns",
+              "imageUrl": "/images/place-value-chart.png"
+            }
+          ],
+          "realWorldApplications": [
+            "Population of cities and countries",
+            "Distances in kilometers",
+            "Money values in large businesses",
+            "Number of items in warehouses"
+          ]
+        },
+        "guided": {
+          "introduction": "Let's practice reading and writing large numbers together, step by step.",
+          "stepByStepExamples": [
+            {
+              "title": "Reading the number 456,789",
+              "problem": "How do we read the number 456,789?",
+              "steps": [
+                {
+                  "stepNumber": 1,
+                  "instruction": "Start from the left and identify the thousands",
+                  "working": "456,789 - The '456' represents 456 thousand",
+                  "explanation": "The first three digits represent thousands"
+                },
+                {
+                  "stepNumber": 2,
+                  "instruction": "Next, identify the hundreds, tens, and units",
+                  "working": "456,789 - The '789' represents 789 units",
+                  "explanation": "The last three digits are just like a regular 3-digit number"
+                },
+                {
+                  "stepNumber": 3,
+                  "instruction": "Put it all together",
+                  "working": "456 thousand + 789 = Four hundred fifty-six thousand, seven hundred eighty-nine",
+                  "explanation": "We combine the thousands and units parts with proper language"
+                }
+              ],
+              "finalAnswer": "Four hundred fifty-six thousand, seven hundred eighty-nine",
+              "explanation": "We read large numbers by breaking them into groups of three digits from right to left"
+            }
+          ],
+          "interactiveElements": [
+            {
+              "type": "drag_and_drop",
+              "title": "Place Value Practice",
+              "description": "Drag digits to their correct place value positions",
+              "activity": "Students drag digits into a place value chart"
+            }
+          ],
+          "checkpoints": [
+            {
+              "question": "What does the digit 5 represent in the number 152,847?",
+              "correctAnswer": "5 ten thousand (50,000)",
+              "explanation": "The 5 is in the ten thousands place, so it represents 50,000",
+              "hints": ["Look at the position of the digit", "Count from right to left"]
+            }
+          ]
+        },
+        "independent": {
+          "introduction": "Now it's your turn! Practice reading and writing large numbers on your own.",
+          "practiceProblems": [
+            {
+              "id": "practice-1",
+              "question": "What is 468,291 written in words?",
+              "type": "multiple-choice",
+              "options": [
+                "Four hundred sixty-eight thousand, two hundred ninety-one",
+                "Four thousand, six hundred eighty-two, ninety-one",
+                "Forty-six million, eight hundred twenty-nine thousand, one",
+                "Four hundred sixty-eight, two hundred ninety-one"
+              ],
+              "correctAnswer": "Four hundred sixty-eight thousand, two hundred ninety-one",
+              "explanation": "Break it into groups: 468 thousand + 291",
+              "difficulty": "medium",
+              "points": 2,
+              "timeLimit": 60,
+              "hints": [
+                "Break the number into thousands and units",
+                "The comma separates thousands from units"
+              ]
+            },
+            {
+              "id": "practice-2",
+              "question": "Write 'Three hundred thousand, forty-five' as a number.",
+              "type": "numeric-entry",
+              "correctAnswer": "300,045",
+              "explanation": "3 hundred thousand = 300,000, plus 45 = 45",
+              "difficulty": "medium",
+              "points": 2,
+              "timeLimit": 45,
+              "acceptableAnswers": ["300045", "300,045"],
+              "hints": [
+                "Remember to include zeros for missing place values",
+                "Use commas to separate thousands"
+              ]
+            }
+          ],
+          "selfCheckQuestions": [
+            "Can you read any 6-digit number confidently?",
+            "Do you understand what each digit position represents?",
+            "Can you write numbers from words without help?"
+          ],
+          "extensions": [
+            {
+              "title": "Number Detective",
+              "description": "Find large numbers in newspapers or online and practice reading them",
+              "activity": "Real-world number hunting exercise"
+            }
+          ]
+        },
+        "assessment": {
+          "introduction": "Time to show what you know about large numbers!",
+          "questions": [
+            {
+              "id": "assess-1",
+              "question": "In the number 924,681, what is the value of the digit 4?",
+              "type": "multiple-choice",
+              "options": ["4", "40", "4,000", "40,000"],
+              "correctAnswer": "4,000",
+              "explanation": "The 4 is in the thousands place, so its value is 4,000",
+              "points": 1,
+              "difficulty": "foundation",
+              "timeLimit": 30
+            },
+            {
+              "id": "assess-2",
+              "question": "Which number is largest?",
+              "type": "multiple-choice",
+              "options": ["999,999", "1,000,000", "900,000", "99,999"],
+              "correctAnswer": "1,000,000",
+              "explanation": "1 million is larger than any 6-digit number",
+              "points": 1,
+              "difficulty": "foundation",
+              "timeLimit": 30
+            },
+            {
+              "id": "assess-3",
+              "question": "Write the number seven hundred thousand, two hundred in digits.",
+              "type": "numeric-entry",
+              "correctAnswer": "700,200",
+              "explanation": "700 thousand + 200 = 700,200",
+              "points": 2,
+              "difficulty": "intermediate",
+              "timeLimit": 45,
+              "acceptableAnswers": ["700200", "700,200"]
+            }
+          ],
+          "passingCriteria": {
+            "minimumScore": 80,
+            "totalQuestions": 5,
+            "requiredCorrect": 4
+          },
+          "feedbackMessages": {
+            "excellent": "Amazing! You're a master of large numbers! 🎉",
+            "good": "Great work! You understand large numbers well! 👍",
+            "needsImprovement": "Keep practicing - you'll get there! 💪",
+            "retry": "Let's try some more practice questions to build your confidence!"
+          },
+          "remediation": {
+            "belowThreshold": {
+              "message": "Let's review the key concepts before trying again",
+              "suggestedActivities": [
+                "Review place value concepts",
+                "Practice with smaller numbers first",
+                "Use visual aids like place value charts"
+              ]
+            }
+          }
+        }
+      }
+    },
+    {
+      "subtopicId": "npv1-2", 
+      "subtopicName": "Numbers to 10 Million",
+      "estimatedDuration": 45,
+      "prerequisites": ["npv1-1"],
+      "learningObjectives": [
+        "Read and write numbers up to 10 million",
+        "Compare and order large numbers",
+        "Round large numbers to appropriate places"
+      ],
+      "stages": {
+        "concept": {
+          "introduction": "Now that you've mastered numbers to 1 million, let's explore even bigger numbers - up to 10 million!",
+          "keyPoints": [
+            "The millions place comes before thousands",
+            "We still group digits in threes for easier reading",
+            "Place value pattern continues: millions, thousands, units",
+            "Commas separate each group of three digits"
+          ],
+          "examples": [
+            {
+              "title": "Reading 5,234,567",
+              "description": "Breaking down a 7-digit number",
+              "explanation": "This reads as 'five million, two hundred thirty-four thousand, five hundred sixty-seven'"
+            }
+          ],
+          "realWorldApplications": [
+            "Population of large countries",
+            "Government budgets", 
+            "Company revenues",
+            "YouTube video views"
+          ]
+        },
+        "guided": {
+          "introduction": "Let's practice with even larger numbers, building on what you already know.",
+          "stepByStepExamples": [
+            {
+              "title": "Reading 7,825,943",
+              "problem": "How do we read this 7-digit number?",
+              "steps": [
+                {
+                  "stepNumber": 1,
+                  "instruction": "Identify the millions",
+                  "working": "7,825,943 - The '7' represents 7 million",
+                  "explanation": "The leftmost digit is in the millions place"
+                },
+                {
+                  "stepNumber": 2,
+                  "instruction": "Identify the thousands",
+                  "working": "7,825,943 - The '825' represents 825 thousand", 
+                  "explanation": "The middle group represents thousands"
+                },
+                {
+                  "stepNumber": 3,
+                  "instruction": "Identify the units",
+                  "working": "7,825,943 - The '943' represents 943 units",
+                  "explanation": "The rightmost group represents units"
+                }
+              ],
+              "finalAnswer": "Seven million, eight hundred twenty-five thousand, nine hundred forty-three",
+              "explanation": "We read each group separately, adding the appropriate place value words"
+            }
+          ],
+          "checkpoints": [
+            {
+              "question": "In 3,456,789, what does the 3 represent?",
+              "correctAnswer": "3 million",
+              "explanation": "The 3 is in the millions place"
+            }
+          ]
+        },
+        "independent": {
+          "introduction": "Practice with larger numbers to build your confidence!",
+          "practiceProblems": [
+            {
+              "id": "practice-large-1",
+              "question": "What is 8,472,156 in words?",
+              "type": "multiple-choice",
+              "options": [
+                "Eight million, four hundred seventy-two thousand, one hundred fifty-six",
+                "Eight thousand, four hundred seventy-two million, one hundred fifty-six",
+                "Eighty-four million, seventy-two thousand, one hundred fifty-six",
+                "Eight million, four hundred seventy-two, one hundred fifty-six"
+              ],
+              "correctAnswer": "Eight million, four hundred seventy-two thousand, one hundred fifty-six",
+              "explanation": "Break into groups: 8 million + 472 thousand + 156",
+              "difficulty": "intermediate"
+            }
+          ],
+          "selfCheckQuestions": [
+            "Can you confidently read 7-digit numbers?",
+            "Do you understand the millions place value?",
+            "Can you write large numbers from dictation?"
+          ]
+        },
+        "assessment": {
+          "introduction": "Show your mastery of reading and writing numbers up to 10 million!",
+          "questions": [
+            {
+              "id": "assess-large-1",
+              "question": "In 9,487,321, what is the value of the digit 8?",
+              "type": "multiple-choice",
+              "options": ["8", "80", "80,000", "800,000"],
+              "correctAnswer": "80,000",
+              "explanation": "The 8 is in the ten thousands place",
+              "points": 1
+            }
+          ],
+          "passingCriteria": {
+            "minimumScore": 75,
+            "totalQuestions": 6,
+            "requiredCorrect": 5
+          },
+          "feedbackMessages": {
+            "excellent": "Fantastic! You've conquered large numbers! 🏆",
+            "good": "Well done! You're getting really good at this! ⭐",
+            "needsImprovement": "Good effort! A bit more practice will help! 💪"
+          }
+        }
+      }
+    }
+  ],
+  "metadata": {
+    "version": "1.0",
+    "lastUpdated": "2025-01-01",
+    "difficulty": "foundation",
+    "estimatedTotalTime": 75,
+    "curriculum": "UK Key Stage 2",
+    "ageRange": "8-11 years",
+    "prerequisites": ["basic_counting", "place_value_to_1000"],
+    "tags": ["place_value", "large_numbers", "reading_numbers", "writing_numbers"]
+  }
+}
