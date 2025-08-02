@@ -4,6 +4,7 @@ import { Dashboard } from './Dashboard';
 import { PracticeSession } from './PracticeSession';
 import { ProgressView } from './ProgressView';
 import { TopicsView } from './TopicsView';
+import { MockTest } from './MockTest';
 import { useAuth } from '../../hooks/useAuth';
 import { useBootcampData } from '../../hooks/useBootcampData';
 import { BootcampAPI } from '../../lib/bootcamp-api';
@@ -66,6 +67,7 @@ export const MathApp: React.FC = () => {
       <main className="container mx-auto px-4 py-6">
         {currentView === 'dashboard' && <Dashboard user={user} setCurrentView={setCurrentView} />}
         {currentView === 'practice' && <PracticeSession />}
+        {currentView === 'mocktest' && <MockTest />}
         {currentView === 'progress' && <ProgressView />}
         {currentView === 'topics' && <TopicsView setCurrentView={setCurrentView} />}
       </main>

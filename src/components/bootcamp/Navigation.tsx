@@ -39,6 +39,11 @@ export const Navigation: React.FC<NavigationProps> = ({
       icon: Brain
     },
     {
+      id: 'mocktest',
+      label: 'Mock Test',
+      icon: Star
+    },
+    {
       id: 'learn',
       label: 'Learn',
       icon: GraduationCap
