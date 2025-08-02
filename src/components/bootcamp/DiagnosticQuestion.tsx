@@ -1,85 +1,85 @@
 import React, { useState, useEffect } from 'react';
-import { AlertCircle, CheckCircle, Clock, Lightbulb, XCircle } from 'lucide-react';
+import { CheckCircle, XCircle, Clock, Info, Lightbulb } from 'lucide-react';
 import { RemediationSuggestion } from './RemediationSuggestion';
-
-interface QuestionOption {
-  id: string;
-  value: string;
-  feedback: string;
-  misconception?: {
-    name: string;
-    description: string;
-    remediationVideo?: string;
-    practiceSet?: string;
-  };
-}
-
-interface Question {
-  id: string;
-  questionText: string;
-  category: 'arithmetic' | 'reasoning';
-  difficulty: 'foundation' | 'intermediate' | 'advanced';
-  topic: string;
-  visualAid?: string;
-  options: QuestionOption[];
-  correctAnswer: string;
-}
+import { BootcampAPI, type BootcampQuestion } from '@/lib/bootcamp-api';
 
 interface DiagnosticQuestionProps {
-  question: Question;
+  question: BootcampQuestion;
   onAnswer: (response: {
     questionId: string;
     selectedAnswer: string;
     isCorrect: boolean;
     timeSpent: number;
     confidence: number | null;
-    misconception?: any;
+    misconception?: string;
+    feedback: string;
   }) => void;
   questionNumber: number;
   totalQuestions: number;
+  studentId: string;
+  sessionId?: string;
 }
 
-export const DiagnosticQuestion: React.FC<DiagnosticQuestionProps> = ({
-  question,
-  onAnswer,
-  questionNumber,
-  totalQuestions
+export const DiagnosticQuestion: React.FC<DiagnosticQuestionProps> = ({ 
+  question, 
+  onAnswer, 
+  questionNumber, 
+  totalQuestions, 
+  studentId,
+  sessionId 
 }) => {
   const [selectedAnswer, setSelectedAnswer] = useState<string | null>(null);
   const [showDiagnostic, setShowDiagnostic] = useState(false);
   const [timeSpent, setTimeSpent] = useState(0);
   const [confidence, setConfidence] = useState<number | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   useEffect(() => {
     const timer = setInterval(() => setTimeSpent(t => t + 1), 1000);
     return () => clearInterval(timer);
   }, []);
 
-  const handleAnswerSelect = (optionId: string) => {
-    if (!selectedAnswer) {
-      setSelectedAnswer(optionId);
+  const handleAnswerSelect = async (optionLetter: string) => {
+    if (!selectedAnswer && !isSubmitting) {
+      setIsSubmitting(true);
+      setSelectedAnswer(optionLetter);
       setShowDiagnostic(true);
       
-      const isCorrect = optionId === question.correctAnswer;
-      const misconception = !isCorrect ? question.options.find(o => o.id === optionId)?.misconception : null;
-      
-      onAnswer({
-        questionId: question.id,
-        selectedAnswer: optionId,
-        isCorrect,
-        timeSpent,
-        confidence,
-        misconception
-      });
+      try {
+        const response = await BootcampAPI.submitResponse({
+          student_id: studentId,
+          question_id: question.question_id,
+          selected_answer: optionLetter,
+          time_taken_seconds: timeSpent,
+          confidence_rating: confidence,
+          session_id: sessionId
+        });
+
+        onAnswer({
+          questionId: question.question_id,
+          selectedAnswer: optionLetter,
+          isCorrect: response.is_correct,
+          timeSpent,
+          confidence,
+          misconception: response.misconception,
+          feedback: response.feedback
+        });
+      } catch (error) {
+        console.error('Error submitting answer:', error);
+      } finally {
+        setIsSubmitting(false);
+      }
     }
   };
 
-  const getDiagnosticStyles = (optionId: string) => {
+  const getDiagnosticStyles = (option: any) => {
     if (!showDiagnostic) return 'border-border hover:border-border/60 hover:bg-muted/50';
-    if (optionId === question.correctAnswer) return 'border-success bg-success/10';
-    if (optionId === selectedAnswer) return 'border-destructive bg-destructive/10';
+    if (option.is_correct) return 'border-success bg-success/10';
+    if (option.option_letter === selectedAnswer) return 'border-destructive bg-destructive/10';
     return 'border-border';
   };
+
+  const selectedOption = question.bootcamp_enhanced_answer_options?.find(opt => opt.option_letter === selectedAnswer);
 
   return (
     <div className="bg-card rounded-xl shadow-sm border p-8 max-w-4xl mx-auto">
@@ -90,11 +90,11 @@ export const DiagnosticQuestion: React.FC<DiagnosticQuestionProps> = ({
               Question {questionNumber} of {totalQuestions}
             </span>
             <span className={`px-3 py-1 rounded-full text-xs font-medium ${
-              question.category === 'arithmetic' 
+              question.question_category === 'arithmetic' 
                 ? 'bg-primary/10 text-primary' 
                 : 'bg-secondary/80 text-secondary-foreground'
             }`}>
-              {question.category === 'arithmetic' ? 'Arithmetic' : 'Reasoning'}
+              {question.question_category}
             </span>
             <span className={`px-3 py-1 rounded-full text-xs font-medium ${
               question.difficulty === 'foundation' 
@@ -105,6 +105,11 @@ export const DiagnosticQuestion: React.FC<DiagnosticQuestionProps> = ({
             }`}>
               {question.difficulty}
             </span>
+            {question.selection_reason && (
+              <span className="text-xs text-muted-foreground bg-muted px-2 py-1 rounded">
+                {question.selection_reason}
+              </span>
+            )}
           </div>
           <div className="flex items-center space-x-2 text-muted-foreground">
             <Clock className="h-4 w-4" />
@@ -115,12 +120,12 @@ export const DiagnosticQuestion: React.FC<DiagnosticQuestionProps> = ({
         </div>
 
         <h3 className="text-xl font-semibold text-foreground mb-2">
-          {question.questionText}
+          {question.question_text}
         </h3>
         
-        {question.visualAid && (
+        {question.visual_aid_url && (
           <div className="mb-4 p-4 bg-muted rounded-lg">
-            <img src={question.visualAid} alt="Question visual" className="max-w-full h-auto" />
+            <img src={question.visual_aid_url} alt="Question visual" className="max-w-full h-auto" />
           </div>
         )}
 
@@ -147,50 +152,49 @@ export const DiagnosticQuestion: React.FC<DiagnosticQuestionProps> = ({
       </div>
 
       <div className="space-y-3 mb-6">
-        {question.options.map(option => {
-          const isSelected = selectedAnswer === option.id;
-          const isCorrect = option.id === question.correctAnswer;
+        {question.bootcamp_enhanced_answer_options?.map(option => {
+          const isSelected = selectedAnswer === option.option_letter;
           
           return (
             <button
-              key={option.id}
-              onClick={() => handleAnswerSelect(option.id)}
-              disabled={showDiagnostic}
+              key={option.option_letter}
+              onClick={() => handleAnswerSelect(option.option_letter)}
+              disabled={showDiagnostic || isSubmitting}
               className={`w-full text-left p-4 rounded-lg border-2 transition-all ${
-                getDiagnosticStyles(option.id)
+                getDiagnosticStyles(option)
               } ${showDiagnostic ? 'cursor-not-allowed' : 'cursor-pointer'} ${
                 !showDiagnostic && isSelected ? 'border-primary bg-primary/10' : ''
               }`}
             >
               <div className="flex items-start space-x-3">
-                <span className="font-medium text-muted-foreground mt-0.5">{option.id}.</span>
+                <span className="font-medium text-muted-foreground mt-0.5">{option.option_letter}.</span>
                 <div className="flex-1">
-                  <span className="text-foreground">{option.value}</span>
+                  <span className="text-foreground">{option.answer_value}</span>
                   
                   {showDiagnostic && isSelected && (
                     <div className="mt-3 space-y-2">
                       <div className={`flex items-start space-x-2 p-3 rounded-lg ${
-                        isCorrect ? 'bg-success/10' : 'bg-destructive/10'
+                        option.is_correct ? 'bg-success/10' : 'bg-destructive/10'
                       }`}>
-                        {isCorrect ? (
+                        {option.is_correct ? (
                           <CheckCircle className="h-5 w-5 text-success mt-0.5 flex-shrink-0" />
                         ) : (
                           <XCircle className="h-5 w-5 text-destructive mt-0.5 flex-shrink-0" />
                         )}
-                        <p className={`text-sm ${isCorrect ? 'text-success' : 'text-destructive'}`}>
-                          {option.feedback}
+                        <p className={`text-sm ${option.is_correct ? 'text-success' : 'text-destructive'}`}>
+                          {option.diagnostic_feedback}
                         </p>
                       </div>
                       
-                      {!isCorrect && option.misconception && (
+                      {!option.is_correct && option.misconception_code && (
                         <div className="flex items-start space-x-2 p-3 bg-warning/10 rounded-lg">
                           <Lightbulb className="h-5 w-5 text-warning mt-0.5 flex-shrink-0" />
                           <div>
                             <p className="text-sm font-medium text-warning mb-1">
-                              Common Misconception Detected: {option.misconception.name}
+                              Misconception Detected: {option.misconception_code}
                             </p>
                             <p className="text-sm text-warning/80">
-                              {option.misconception.description}
+                              This error pattern has been identified for targeted practice.
                             </p>
                           </div>
                         </div>
@@ -199,11 +203,14 @@ export const DiagnosticQuestion: React.FC<DiagnosticQuestionProps> = ({
                   )}
                 </div>
                 <div className="flex-shrink-0">
-                  {showDiagnostic && isCorrect && (
+                  {showDiagnostic && option.is_correct && (
                     <CheckCircle className="h-5 w-5 text-success" />
                   )}
-                  {showDiagnostic && isSelected && !isCorrect && (
+                  {showDiagnostic && isSelected && !option.is_correct && (
                     <XCircle className="h-5 w-5 text-destructive" />
+                  )}
+                  {isSubmitting && isSelected && (
+                    <div className="animate-spin w-5 h-5 border-2 border-primary border-t-transparent rounded-full" />
                   )}
                 </div>
               </div>
@@ -212,10 +219,13 @@ export const DiagnosticQuestion: React.FC<DiagnosticQuestionProps> = ({
         })}
       </div>
 
-      {showDiagnostic && selectedAnswer !== question.correctAnswer && (
+      {showDiagnostic && selectedOption && !selectedOption.is_correct && selectedOption.misconception_code && (
         <RemediationSuggestion 
-          misconception={question.options.find(o => o.id === selectedAnswer)?.misconception}
-          topic={question.topic}
+          misconception={{
+            code: selectedOption.misconception_code,
+            description: 'This misconception needs targeted practice'
+          }}
+          topic={question.topic_id}
         />
       )}
     </div>

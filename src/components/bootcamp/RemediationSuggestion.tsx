@@ -3,8 +3,9 @@ import { Info, FileText, Brain } from 'lucide-react';
 
 interface RemediationSuggestionProps {
   misconception?: {
-    name: string;
-    description: string;
+    code?: string;
+    name?: string;
+    description?: string;
     remediationVideo?: string;
     practiceSet?: string;
   };
