@@ -28,35 +28,66 @@ export const AppNavigation: React.FC<AppNavigationProps> = ({
   const {
     user
   } = useAuth();
-  const navigationItems = [{
-    path: '/dashboard',
-    label: 'Dashboard',
-    icon: GraduationCap
-  }, {
-    path: '/practice',
-    label: 'Practice',
-    icon: Play
-  }, {
-    path: '/bootcamp',
-    label: 'Bootcamp',
-    icon: Target
-  }, {
-    path: '/curriculum',
-    label: 'Curriculum',
-    icon: BookOpen
-  }, {
-    path: '/analytics',
-    label: 'Analytics',
-    icon: BarChart3
-  }, {
-    path: '/report',
-    label: 'Report',
-    icon: FileText
-  }, {
-    path: '/profile',
-    label: 'Profile',
-    icon: User
-  }];
+  // Determine which navigation items to show based on current route
+  const isBootcampRoute = location.pathname.startsWith('/bootcamp');
+  
+  const mainAppItems = [
+    {
+      path: '/dashboard',
+      label: 'Dashboard',
+      icon: GraduationCap
+    },
+    {
+      path: '/practice',
+      label: 'Practice',
+      icon: Play
+    },
+    {
+      path: '/curriculum',
+      label: 'Curriculum',
+      icon: BookOpen
+    },
+    {
+      path: '/analytics',
+      label: 'Analytics',
+      icon: BarChart3
+    },
+    {
+      path: '/report',
+      label: 'Report',
+      icon: FileText
+    },
+    {
+      path: '/profile',
+      label: 'Profile',
+      icon: User
+    }
+  ];
+
+  const bootcampItems = [
+    {
+      path: '/bootcamp',
+      label: 'Bootcamp',
+      icon: Target
+    },
+    {
+      path: '/profile',
+      label: 'Profile',
+      icon: User
+    }
+  ];
+
+  // Show bootcamp items when in bootcamp, main app items otherwise
+  const navigationItems = isBootcampRoute ? bootcampItems : mainAppItems;
+  
+  // Add a system switcher button
+  const switchToOtherSystem = () => {
+    if (isBootcampRoute) {
+      navigate('/dashboard');
+    } else {
+      navigate('/bootcamp');
+    }
+  };
   const isActivePath = (path: string) => location.pathname === path;
   return <header className="border-b bg-card/50 backdrop-blur-sm">
       <div className="container mx-auto px-0 py-[15px]">
@@ -80,6 +111,21 @@ export const AppNavigation: React.FC<AppNavigationProps> = ({
 
           {/* Right section - Navigation and Age Group Selector */}
           <div className="flex items-center space-x-4 mx-0">
+            {/* System Indicator */}
+            <div className="hidden md:flex items-center space-x-2">
+              <span className="text-xs text-muted-foreground">
+                {isBootcampRoute ? 'Bootcamp System' : 'Main System'}
+              </span>
+              <Button 
+                variant="outline" 
+                size="sm" 
+                onClick={switchToOtherSystem}
+                className="text-xs"
+              >
+                Switch to {isBootcampRoute ? 'Main' : 'Bootcamp'}
+              </Button>
+            </div>
+            
             {/* Navigation Links */}
             <nav className="hidden md:flex items-center justify-between flex-1 max-w-5xl mr-4 gap-8">
               {navigationItems.map(item => {
@@ -101,8 +147,8 @@ export const AppNavigation: React.FC<AppNavigationProps> = ({
               </select>
             </div>
 
-            {/* Age Group Selector */}
-            <AgeGroupSelector />
+            {/* Age Group Selector - only show for main app */}
+            {!isBootcampRoute && <AgeGroupSelector />}
           </div>
         </div>
       </div>
