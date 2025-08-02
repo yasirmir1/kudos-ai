@@ -28,7 +28,7 @@ serve(async (req) => {
       throw new Error('DEEPSEEK_API_KEY not configured');
     }
 
-    const { topicIds, questionsPerTopic = 5, examBoards = ['GL', 'CEM'] } = await req.json();
+    const { topicIds, questionsPerSubtopic = 1, examBoards = ['GL', 'CEM'] } = await req.json();
 
     // Fetch topics and subtopics
     const { data: topics, error: topicsError } = await supabase
@@ -67,16 +67,15 @@ serve(async (req) => {
       for (const examBoard of examBoards) {
         // Generate questions to cover ALL subtopics in this topic
         const subtopicsInTopic = topic.bootcamp_subtopics || [];
-        const questionsPerSubtopic = Math.max(1, Math.floor(questionsPerTopic / Math.max(1, subtopicsInTopic.length)));
-        const extraQuestions = questionsPerTopic % Math.max(1, subtopicsInTopic.length);
+        const totalQuestionsForTopic = subtopicsInTopic.length * questionsPerSubtopic;
 
-        console.log(`Generating ${questionsPerTopic} questions for ${subtopicsInTopic.length} subtopics (${questionsPerSubtopic} per subtopic + ${extraQuestions} extra)`);
+        console.log(`Generating ${totalQuestionsForTopic} questions for ${subtopicsInTopic.length} subtopics (${questionsPerSubtopic} per subtopic)`);
 
         const prompt = createQuestionGenerationPrompt(
           topic, 
           misconceptions, 
           existingQuestions,
-          questionsPerTopic,
+          totalQuestionsForTopic,
           examBoard,
           subtopicsInTopic,
           questionsPerSubtopic
@@ -145,7 +144,7 @@ serve(async (req) => {
   }
 });
 
-function createQuestionGenerationPrompt(topic: any, misconceptions: any[], existingQuestions: any[], questionsPerTopic: number, examBoard: string, subtopicsInTopic: any[], questionsPerSubtopic: number): string {
+function createQuestionGenerationPrompt(topic: any, misconceptions: any[], existingQuestions: any[], totalQuestionsForTopic: number, examBoard: string, subtopicsInTopic: any[], questionsPerSubtopic: number): string {
   const subtopicsList = subtopicsInTopic.map((s: any) => `${s.id}: ${s.name}`).join('\n  ') || 'No subtopics defined';
   const misconceptionCodes = misconceptions.slice(0, 20).map(m => `${m.misconception_id}: ${m.description}`).join('\n');
   
@@ -159,9 +158,9 @@ function createQuestionGenerationPrompt(topic: any, misconceptions: any[], exist
     ? 'GL Assessment style (more structured, clear mathematical language, step-by-step reasoning)'
     : 'CEM style (more abstract reasoning, problem-solving focus, less structured approach)';
 
-  return `Generate ${questionsPerTopic} mathematics questions for 11+ students on the topic "${topic.topic_name}" (${topic.difficulty} level).
+  return `Generate ${totalQuestionsForTopic} mathematics questions for 11+ students on the topic "${topic.topic_name}" (${topic.difficulty} level).
 
-CRITICAL REQUIREMENT: You MUST cover ALL ${subtopicsInTopic.length} subtopics listed below. Distribute questions evenly across subtopics (approximately ${questionsPerSubtopic} questions per subtopic).
+CRITICAL REQUIREMENT: You MUST cover ALL ${subtopicsInTopic.length} subtopics listed below. Distribute questions evenly across subtopics (exactly ${questionsPerSubtopic} questions per subtopic).
 
 TOPIC DETAILS:
 - Main Topic: ${topic.topic_name}
@@ -180,8 +179,8 @@ MISCONCEPTION CODES TO USE:
 ${misconceptionCodes}
 
 REQUIREMENTS:
-1. Create exactly ${questionsPerTopic} multiple-choice questions suitable for 11+ level
-2. ENSURE each of the ${subtopicsInTopic.length} subtopics is represented with at least ${questionsPerSubtopic} question(s)
+1. Create exactly ${totalQuestionsForTopic} multiple-choice questions suitable for 11+ level
+2. ENSURE each of the ${subtopicsInTopic.length} subtopics is represented with exactly ${questionsPerSubtopic} question(s)
 3. Each question must have 4 answer options (A, B, C, D)
 4. One correct answer and three diagnostic distractors
 5. Each incorrect option MUST map to a specific misconception from the codes above

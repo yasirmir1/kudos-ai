@@ -32,8 +32,8 @@ interface GenerationResult {
 export const BulkCurriculumGenerator: React.FC = () => {
   const [topics, setTopics] = useState<Topic[]>([]);
   const [selectedTopics, setSelectedTopics] = useState<string[]>([]);
-  const [questionsPerTopic, setQuestionsPerTopic] = useState(5);
-  const [selectedExamBoards, setSelectedExamBoards] = useState<string[]>(['GL', 'CEM']);
+  const [questionsPerSubtopic, setQuestionsPerSubtopic] = useState(1);
+  const [selectedExamBoards, setSelectedExamBoards] = useState<string[]>(['GL']);
   const [isGenerating, setIsGenerating] = useState(false);
   const [progress, setProgress] = useState(0);
   const [results, setResults] = useState<GenerationResult[]>([]);
@@ -137,7 +137,7 @@ export const BulkCurriculumGenerator: React.FC = () => {
       const { data, error } = await supabase.functions.invoke('bulk-generate-curriculum-questions', {
         body: {
           topicIds: selectedTopics,
-          questionsPerTopic,
+          questionsPerSubtopic,
           examBoards: selectedExamBoards
         }
       });
@@ -188,7 +188,11 @@ export const BulkCurriculumGenerator: React.FC = () => {
           <CardTitle>Comprehensive 11+ Question Generator</CardTitle>
           <CardDescription>
             Generate diagnostic questions covering ALL {totalSubtopics} subtopics across {topics.length} topics.
-            {selectedSubtopics > 0 && ` Selected: ${selectedSubtopics} subtopics from ${selectedTopics.length} topics.`}
+            {selectedSubtopics > 0 && (
+              <span className="block mt-1 font-medium text-primary">
+                Selected: {selectedSubtopics} subtopics from {selectedTopics.length} topics = {selectedSubtopics * selectedExamBoards.length} total questions
+              </span>
+            )}
             AI-powered questions with misconception-based distractors for GL Assessment and CEM examination styles.
           </CardDescription>
         </CardHeader>
@@ -196,14 +200,14 @@ export const BulkCurriculumGenerator: React.FC = () => {
           {/* Generation Settings */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label htmlFor="questionsPerTopic">Questions per Topic</Label>
+              <Label htmlFor="questionsPerSubtopic">Questions per Subtopic</Label>
               <Input
-                id="questionsPerTopic"
+                id="questionsPerSubtopic"
                 type="number"
                 min="1"
-                max="20"
-                value={questionsPerTopic}
-                onChange={(e) => setQuestionsPerTopic(parseInt(e.target.value))}
+                max="5"
+                value={questionsPerSubtopic}
+                onChange={(e) => setQuestionsPerSubtopic(parseInt(e.target.value))}
                 disabled={isGenerating}
               />
             </div>
@@ -309,7 +313,7 @@ export const BulkCurriculumGenerator: React.FC = () => {
             className="w-full"
             size="lg"
           >
-            {isGenerating ? 'Generating Questions...' : `Generate ${selectedTopics.length * questionsPerTopic * selectedExamBoards.length} Questions`}
+            {isGenerating ? 'Generating Questions...' : `Generate ${selectedSubtopics * selectedExamBoards.length} Questions (${selectedSubtopics} subtopics × ${selectedExamBoards.length} exam boards)`}
           </Button>
         </CardContent>
       </Card>
