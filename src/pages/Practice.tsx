@@ -657,11 +657,12 @@ const Practice = () => {
   // Don't render the practice interface if no questions are available yet
   if (questions.length === 0) {
     return <div className="min-h-screen bg-gradient-to-br from-background via-background to-secondary/10">
+      <AppNavigation />
       <SessionStartModal 
         isOpen={showSessionStartModal}
         onClose={() => {
           setShowSessionStartModal(false);
-          navigate('/dashboard');
+          // Stay on practice page instead of redirecting to dashboard
         }}
         onStart={handleSessionStart}
       />
@@ -676,7 +677,7 @@ const Practice = () => {
         isOpen={showSessionStartModal}
         onClose={() => {
           setShowSessionStartModal(false);
-          navigate('/dashboard');
+          // Stay on practice page instead of redirecting to dashboard
         }}
         onStart={handleSessionStart}
       />
