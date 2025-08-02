@@ -165,7 +165,7 @@ export class BootcampAPI {
         .from('bootcamp_student_responses')
         .select(`
           misconception_detected,
-          timestamp,
+          responded_at,
           question_id
         `)
         .eq('student_id', studentId)
