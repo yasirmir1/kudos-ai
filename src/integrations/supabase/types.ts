@@ -553,6 +553,104 @@ export type Database = {
         }
         Relationships: []
       }
+      bootcamp_mock_test_questions: {
+        Row: {
+          answered_at: string | null
+          assignment_id: string
+          created_at: string | null
+          is_correct: boolean | null
+          misconception_detected: string | null
+          question_id: string
+          question_order: number
+          session_id: string
+          student_answer: string | null
+          time_taken_seconds: number | null
+        }
+        Insert: {
+          answered_at?: string | null
+          assignment_id?: string
+          created_at?: string | null
+          is_correct?: boolean | null
+          misconception_detected?: string | null
+          question_id: string
+          question_order: number
+          session_id: string
+          student_answer?: string | null
+          time_taken_seconds?: number | null
+        }
+        Update: {
+          answered_at?: string | null
+          assignment_id?: string
+          created_at?: string | null
+          is_correct?: boolean | null
+          misconception_detected?: string | null
+          question_id?: string
+          question_order?: number
+          session_id?: string
+          student_answer?: string | null
+          time_taken_seconds?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "bootcamp_mock_test_questions_session_id_fkey"
+            columns: ["session_id"]
+            isOneToOne: false
+            referencedRelation: "bootcamp_mock_test_sessions"
+            referencedColumns: ["session_id"]
+          },
+        ]
+      }
+      bootcamp_mock_test_sessions: {
+        Row: {
+          completed_at: string | null
+          created_at: string | null
+          questions_attempted: number | null
+          questions_correct: number | null
+          session_data: Json | null
+          session_id: string
+          session_type: string | null
+          started_at: string | null
+          status: string | null
+          student_id: string
+          time_limit_seconds: number | null
+          time_spent_seconds: number | null
+          total_questions: number | null
+          updated_at: string | null
+        }
+        Insert: {
+          completed_at?: string | null
+          created_at?: string | null
+          questions_attempted?: number | null
+          questions_correct?: number | null
+          session_data?: Json | null
+          session_id?: string
+          session_type?: string | null
+          started_at?: string | null
+          status?: string | null
+          student_id: string
+          time_limit_seconds?: number | null
+          time_spent_seconds?: number | null
+          total_questions?: number | null
+          updated_at?: string | null
+        }
+        Update: {
+          completed_at?: string | null
+          created_at?: string | null
+          questions_attempted?: number | null
+          questions_correct?: number | null
+          session_data?: Json | null
+          session_id?: string
+          session_type?: string | null
+          started_at?: string | null
+          status?: string | null
+          student_id?: string
+          time_limit_seconds?: number | null
+          time_spent_seconds?: number | null
+          total_questions?: number | null
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
       bootcamp_modules: {
         Row: {
           created_at: string | null
