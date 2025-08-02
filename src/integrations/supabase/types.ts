@@ -72,7 +72,22 @@ export type Database = {
           points_awarded?: number | null
           student_id?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "bootcamp_achievements_student_id_fkey"
+            columns: ["student_id"]
+            isOneToOne: false
+            referencedRelation: "bootcamp_students"
+            referencedColumns: ["student_id"]
+          },
+          {
+            foreignKeyName: "bootcamp_achievements_student_id_fkey"
+            columns: ["student_id"]
+            isOneToOne: false
+            referencedRelation: "student_performance_summary"
+            referencedColumns: ["student_id"]
+          },
+        ]
       }
       bootcamp_adaptive_recommendations: {
         Row: {
@@ -108,7 +123,22 @@ export type Database = {
           recommendation_type?: string | null
           student_id?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "bootcamp_adaptive_recommendations_student_id_fkey"
+            columns: ["student_id"]
+            isOneToOne: false
+            referencedRelation: "bootcamp_students"
+            referencedColumns: ["student_id"]
+          },
+          {
+            foreignKeyName: "bootcamp_adaptive_recommendations_student_id_fkey"
+            columns: ["student_id"]
+            isOneToOne: false
+            referencedRelation: "student_performance_summary"
+            referencedColumns: ["student_id"]
+          },
+        ]
       }
       bootcamp_answer_options: {
         Row: {
@@ -676,7 +706,22 @@ export type Database = {
           total_questions?: number | null
           updated_at?: string | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "bootcamp_mock_test_sessions_student_id_fkey"
+            columns: ["student_id"]
+            isOneToOne: false
+            referencedRelation: "bootcamp_students"
+            referencedColumns: ["student_id"]
+          },
+          {
+            foreignKeyName: "bootcamp_mock_test_sessions_student_id_fkey"
+            columns: ["student_id"]
+            isOneToOne: false
+            referencedRelation: "student_performance_summary"
+            referencedColumns: ["student_id"]
+          },
+        ]
       }
       bootcamp_modules: {
         Row: {
@@ -936,7 +981,22 @@ export type Database = {
           student_id?: string
           updated_at?: string | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "bootcamp_student_profiles_student_id_fkey"
+            columns: ["student_id"]
+            isOneToOne: true
+            referencedRelation: "bootcamp_students"
+            referencedColumns: ["student_id"]
+          },
+          {
+            foreignKeyName: "bootcamp_student_profiles_student_id_fkey"
+            columns: ["student_id"]
+            isOneToOne: true
+            referencedRelation: "student_performance_summary"
+            referencedColumns: ["student_id"]
+          },
+        ]
       }
       bootcamp_student_progress: {
         Row: {
@@ -1051,6 +1111,20 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "bootcamp_questions"
             referencedColumns: ["question_id"]
+          },
+          {
+            foreignKeyName: "bootcamp_student_responses_student_id_fkey"
+            columns: ["student_id"]
+            isOneToOne: false
+            referencedRelation: "bootcamp_students"
+            referencedColumns: ["student_id"]
+          },
+          {
+            foreignKeyName: "bootcamp_student_responses_student_id_fkey"
+            columns: ["student_id"]
+            isOneToOne: false
+            referencedRelation: "student_performance_summary"
+            referencedColumns: ["student_id"]
           },
         ]
       }
@@ -1339,7 +1413,22 @@ export type Database = {
           time_taken_seconds?: number | null
           topic_id?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "learning_results_student_id_fkey"
+            columns: ["student_id"]
+            isOneToOne: false
+            referencedRelation: "bootcamp_students"
+            referencedColumns: ["student_id"]
+          },
+          {
+            foreignKeyName: "learning_results_student_id_fkey"
+            columns: ["student_id"]
+            isOneToOne: false
+            referencedRelation: "student_performance_summary"
+            referencedColumns: ["student_id"]
+          },
+        ]
       }
       mock_test_questions: {
         Row: {
