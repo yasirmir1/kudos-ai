@@ -154,68 +154,201 @@ async function importQuestions(supabaseClient: any, questions: QuestionImportDat
 
 async function getAdaptiveQuestions(supabaseClient: any, studentId: string, questionCount: number = 10) {
   try {
-    // Call the adaptive question generation function
-    const { data, error } = await supabaseClient
-      .rpc('bootcamp_generate_adaptive_practice_set', {
-        p_student_id: studentId,
-        p_question_count: questionCount
-      })
+    // First check if student has enough history for adaptive questions
+    const { data: responseHistory, error: historyError } = await supabaseClient
+      .from('bootcamp_enhanced_student_responses')
+      .select('response_id')
+      .eq('student_id', studentId)
 
-    if (error) throw error
+    if (historyError) {
+      console.error('Error checking history:', historyError)
+    }
 
-    // Get full question details
-    const questionIds = data.map((item: any) => item.question_id)
-    
-    const { data: questions, error: questionsError } = await supabaseClient
-      .from('bootcamp_enhanced_questions')
-      .select(`
-        question_id,
-        module_id,
-        topic_id,
-        subtopic_id,
-        question_category,
-        cognitive_level,
-        difficulty,
-        question_type,
-        question_text,
-        marks,
-        time_seconds,
-        prerequisite_skills,
-        exam_boards,
-        usage_count,
-        success_rate,
-        created_at,
-        bootcamp_enhanced_answer_options (
-          answer_id,
-          option_letter,
-          answer_value,
-          is_correct,
-          misconception_code,
-          diagnostic_feedback,
-          selection_count,
-          error_category,
-          remedial_topic
-        )
-      `)
-      .in('question_id', questionIds)
+    const hasEnoughHistory = responseHistory && responseHistory.length >= 10
 
-    if (questionsError) throw questionsError
+    let questions;
+    let questionsError;
 
-    // Combine with reasoning
-    const questionsWithReasoning = questions.map((q: any) => {
-      const reasoning = data.find((item: any) => item.question_id === q.question_id)
-      return {
-        ...q,
-        selection_reason: reasoning?.reason,
-        priority: reasoning?.priority
+    if (!hasEnoughHistory) {
+      // For new students: get foundation/easy questions
+      console.log('New student detected, providing foundation questions')
+      
+      const { data: foundationQuestions, error: foundationError } = await supabaseClient
+        .from('bootcamp_enhanced_questions')
+        .select(`
+          question_id,
+          module_id,
+          topic_id,
+          subtopic_id,
+          question_category,
+          cognitive_level,
+          difficulty,
+          question_type,
+          question_text,
+          marks,
+          time_seconds,
+          prerequisite_skills,
+          exam_boards,
+          usage_count,
+          success_rate,
+          created_at,
+          bootcamp_enhanced_answer_options (
+            answer_id,
+            option_letter,
+            answer_value,
+            is_correct,
+            misconception_code,
+            diagnostic_feedback,
+            selection_count,
+            error_category,
+            remedial_topic
+          )
+        `)
+        .eq('difficulty', 'foundation')
+        .order('question_id')
+        .limit(questionCount)
+
+      questions = foundationQuestions
+      questionsError = foundationError
+
+      // Add selection reason for foundation questions
+      if (questions) {
+        questions = questions.map((q: any) => ({
+          ...q,
+          selection_reason: 'Foundation question for new student',
+          priority: 1
+        }))
       }
-    })
+
+    } else {
+      // For experienced students: use adaptive algorithm
+      console.log('Experienced student detected, using adaptive algorithm')
+      
+      const { data: adaptiveData, error: adaptiveError } = await supabaseClient
+        .rpc('bootcamp_generate_adaptive_practice_set', {
+          p_student_id: studentId,
+          p_question_count: questionCount
+        })
+
+      if (adaptiveError || !adaptiveData || adaptiveData.length === 0) {
+        console.error('Adaptive algorithm failed, falling back to foundation questions:', adaptiveError)
+        
+        // Fallback to foundation questions if adaptive fails
+        const { data: fallbackQuestions, error: fallbackError } = await supabaseClient
+          .from('bootcamp_enhanced_questions')
+          .select(`
+            question_id,
+            module_id,
+            topic_id,
+            subtopic_id,
+            question_category,
+            cognitive_level,
+            difficulty,
+            question_type,
+            question_text,
+            marks,
+            time_seconds,
+            prerequisite_skills,
+            exam_boards,
+            usage_count,
+            success_rate,
+            created_at,
+            bootcamp_enhanced_answer_options (
+              answer_id,
+              option_letter,
+              answer_value,
+              is_correct,
+              misconception_code,
+              diagnostic_feedback,
+              selection_count,
+              error_category,
+              remedial_topic
+            )
+          `)
+          .in('difficulty', ['foundation', 'intermediate'])
+          .order('difficulty')
+          .limit(questionCount)
+
+        questions = fallbackQuestions?.map((q: any) => ({
+          ...q,
+          selection_reason: 'Fallback question',
+          priority: 2
+        }))
+        questionsError = fallbackError
+      } else {
+        // Get full question details for adaptive selection
+        const questionIds = adaptiveData.map((item: any) => item.question_id)
+        
+        const { data: adaptiveQuestions, error: adaptiveQuestionsError } = await supabaseClient
+          .from('bootcamp_enhanced_questions')
+          .select(`
+            question_id,
+            module_id,
+            topic_id,
+            subtopic_id,
+            question_category,
+            cognitive_level,
+            difficulty,
+            question_type,
+            question_text,
+            marks,
+            time_seconds,
+            prerequisite_skills,
+            exam_boards,
+            usage_count,
+            success_rate,
+            created_at,
+            bootcamp_enhanced_answer_options (
+              answer_id,
+              option_letter,
+              answer_value,
+              is_correct,
+              misconception_code,
+              diagnostic_feedback,
+              selection_count,
+              error_category,
+              remedial_topic
+            )
+          `)
+          .in('question_id', questionIds)
+
+        if (adaptiveQuestionsError) {
+          throw adaptiveQuestionsError
+        }
+
+        // Combine with reasoning from adaptive algorithm
+        questions = adaptiveQuestions?.map((q: any) => {
+          const reasoning = adaptiveData.find((item: any) => item.question_id === q.question_id)
+          return {
+            ...q,
+            selection_reason: reasoning?.reason || 'Adaptive selection',
+            priority: reasoning?.priority || 3
+          }
+        })
+        questionsError = null
+      }
+    }
+
+    if (questionsError) {
+      throw questionsError
+    }
+
+    if (!questions || questions.length === 0) {
+      throw new Error('No questions available')
+    }
+
+    console.log(`Returning ${questions.length} questions for student ${studentId}`)
 
     return new Response(
-      JSON.stringify({ questions: questionsWithReasoning }),
+      JSON.stringify({ 
+        questions: questions,
+        strategy: hasEnoughHistory ? 'adaptive' : 'foundation',
+        student_response_count: responseHistory?.length || 0
+      }),
       { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     )
   } catch (error) {
+    console.error('Error in getAdaptiveQuestions:', error)
     throw new Error(`Failed to get adaptive questions: ${error.message}`)
   }
 }
