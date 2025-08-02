@@ -1652,6 +1652,10 @@ export type Database = {
           attempts: number
         }[]
       }
+      import_complete_curriculum_content: {
+        Args: { content_json: Json }
+        Returns: string
+      }
       import_curriculum_json: {
         Args: { json_data: Json }
         Returns: undefined
