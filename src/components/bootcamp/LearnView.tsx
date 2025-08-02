@@ -403,84 +403,91 @@ export const LearnView: React.FC = () => {
         </TabsContent>
 
         <TabsContent value="modules" className="space-y-6">
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            {/* Module List */}
-            <div className="space-y-4">
-              <h3 className="text-lg font-semibold">Choose a Module</h3>
-              {modules.map(module => <Card key={module.id} className={`cursor-pointer transition-colors ${selectedModule === module.id ? 'ring-2 ring-primary' : ''}`} onClick={() => setSelectedModule(module.id)}>
-                  <CardContent className="p-4">
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <h4 className="font-medium">{module.name}</h4>
-                        <p className="text-sm text-muted-foreground">
-                          {module.weeks.length} weeks
-                        </p>
-                      </div>
-                      <ChevronRight className="h-4 w-4" />
-                    </div>
-                  </CardContent>
-                </Card>)}
-            </div>
-
-            {/* Module Details */}
-            <div className="lg:col-span-2">
-              {selectedModule && <div className="space-y-4">
-                  {(() => {
-                const module = modules.find(m => m.id === selectedModule);
-                const moduleTopics = getTopicsForModule(selectedModule);
-                return <>
-                        <Card>
-                          <CardHeader>
-                            <CardTitle>{module?.name}</CardTitle>
-                          </CardHeader>
-                          <CardContent>
-                            <p className="text-muted-foreground mb-4">Curriculum: {module?.curriculum_id}</p>
-                            <div className="flex items-center gap-4 text-sm">
-                              <div className="flex items-center gap-1">
-                                <Clock className="h-4 w-4" />
-                                <span>{module?.weeks.length} weeks</span>
-                              </div>
-                              <div className="flex items-center gap-1">
-                                <BookOpen className="h-4 w-4" />
-                                <span>{moduleTopics.length} topics</span>
-                              </div>
-                            </div>
-                          </CardContent>
-                        </Card>
-
-                        <div className="space-y-3">
-                          <h4 className="font-medium">Topics in this Module</h4>
-                          {moduleTopics.map(topic => {
-                      const topicSubtopics = getSubtopicsForTopic(topic.id);
-                      return <Card key={topic.id}>
-                                <CardContent className="p-4">
-                                  <div className="flex items-center justify-between mb-2">
-                                    <h5 className="font-medium">{topic.name}</h5>
-                                    <Badge className={getDifficultyColor(topic.difficulty)}>
-                                      {topic.difficulty}
-                                    </Badge>
-                                  </div>
-                                  <div className="flex items-center gap-4 text-sm text-muted-foreground">
-                                    <span>{topic.skills?.length || 0} skills</span>
-                                    <span>{topicSubtopics.length} subtopics</span>
-                                  </div>
-                                  {topicSubtopics.length > 0 && <div className="mt-3 space-y-1">
-                                      {topicSubtopics.slice(0, 3).map(subtopic => <div key={subtopic.id} className="text-xs bg-muted rounded px-2 py-1 inline-block mr-2">
-                                          {subtopic.name}
-                                        </div>)}
-                                      {topicSubtopics.length > 3 && <span className="text-xs text-muted-foreground">
-                                          +{topicSubtopics.length - 3} more
-                                        </span>}
-                                    </div>}
-                                </CardContent>
-                              </Card>;
-                    })}
-                        </div>
-                      </>;
-              })()}
-                </div>}
-            </div>
+          {/* All Learning Topics Section - Moved from TopicsView */}
+          <div className="bg-card rounded-xl shadow-sm border p-6">
+            <h2 className="text-2xl font-bold text-foreground mb-2">All Learning Topics</h2>
+            <p className="text-muted-foreground">
+              Explore {topics.length} topics across {modules.length} modules. Click any topic to see detailed content, subtopics, and sample questions.
+            </p>
           </div>
+
+          {modules.map((module) => {
+            const moduleTopics = getTopicsForModule(module.id);
+            if (moduleTopics.length === 0) return null;
+
+            return (
+              <div key={module.id} className="space-y-4">
+                <div className="bg-gradient-to-r from-primary/5 to-secondary/5 rounded-xl p-4 border">
+                  <h3 className="text-xl font-bold mb-2">{module.name}</h3>
+                  <div className="flex items-center gap-4 text-sm text-muted-foreground">
+                    <div className="flex items-center gap-1">
+                      <Clock className="h-4 w-4" />
+                      <span>{module.weeks.length} weeks</span>
+                    </div>
+                    <div className="flex items-center gap-1">
+                      <BookOpen className="h-4 w-4" />
+                      <span>{moduleTopics.length} topics</span>
+                    </div>
+                    <div className="flex items-center gap-1">
+                      <span>Module {module.module_order}</span>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                  {moduleTopics.map((topic) => {
+                    const topicSubtopics = getSubtopicsForTopic(topic.id);
+                    const sampleQuestionsCount = getCurriculumForTopic(topic.name).length;
+
+                    return (
+                      <Card 
+                        key={topic.id} 
+                        className="cursor-pointer hover:shadow-md transition-all duration-200 hover:scale-[1.02] group"
+                        onClick={() => handleTopicClick(topic)}
+                      >
+                        <CardHeader className="pb-3">
+                          <div className="flex items-center justify-between">
+                            <Badge className={getDifficultyColor(topic.difficulty)} variant="outline">
+                              {topic.difficulty}
+                            </Badge>
+                            <ChevronRight className="h-4 w-4 text-muted-foreground group-hover:text-primary transition-colors" />
+                          </div>
+                          <CardTitle className="text-lg leading-tight group-hover:text-primary transition-colors">
+                            {topic.name}
+                          </CardTitle>
+                        </CardHeader>
+                        <CardContent className="pt-0">
+                          <div className="space-y-3 text-sm text-muted-foreground">
+                            <div className="flex items-center justify-between">
+                              <span>{topic.skills?.length || 0} skills</span>
+                              <span>{topicSubtopics.length} subtopics</span>
+                            </div>
+                            {sampleQuestionsCount > 0 && (
+                              <div className="flex items-center gap-1 text-xs">
+                                <Play className="h-3 w-3" />
+                                <span>{sampleQuestionsCount} sample questions</span>
+                              </div>
+                            )}
+                            <Button 
+                              className="w-full" 
+                              size="sm" 
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                handleTopicClick(topic);
+                              }}
+                            >
+                              <Play className="h-4 w-4 mr-2" />
+                              Start Learning
+                            </Button>
+                          </div>
+                        </CardContent>
+                      </Card>
+                    );
+                  })}
+                </div>
+              </div>
+            );
+          })}
         </TabsContent>
 
         <TabsContent value="topics" className="space-y-4">
