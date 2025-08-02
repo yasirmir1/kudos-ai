@@ -41,7 +41,7 @@ export class LearningContentLoader {
       
       // Fetch topic information - use maybeSingle() to handle missing topics gracefully
       const { data: topicData, error: topicError } = await supabase
-        .from('bootcamp_curriculum_topics')
+        .from('bootcamp_topics')
         .select('*')
         .eq('id', topicId)
         .maybeSingle();
@@ -74,7 +74,7 @@ export class LearningContentLoader {
       
       return {
         topicId: topicData.id,
-        topicName: topicData.topic_name,
+        topicName: topicData.name,
         subtopics
       };
     } catch (error) {
@@ -87,10 +87,10 @@ export class LearningContentLoader {
     // Create a default subtopic based on the topic
     const defaultSubtopic: SubtopicLearningContent = {
       subtopicId: topicData.id,
-      subtopicName: topicData.topic_name,
-      estimatedDuration: topicData.estimated_duration_minutes || 45,
-      prerequisites: topicData.prerequisites || [],
-      learningObjectives: topicData.learning_objectives || [],
+      subtopicName: topicData.name,
+      estimatedDuration: 45,
+      prerequisites: [],
+      learningObjectives: [],
       stages: {
         concept: this.createConceptStage(contentData),
         guided: this.createGuidedStage(contentData),
