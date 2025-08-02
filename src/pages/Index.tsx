@@ -297,7 +297,7 @@ const Index = () => {
             icon: Smartphone
           }].map((item, index) => 
             <div key={index} className="fade-on-scroll text-center">
-              <div className="bg-muted rounded-2xl p-4 text-center h-32 w-32 mx-auto flex items-center justify-center mb-6">
+              <div className="bg-muted rounded-2xl p-2 text-center h-32 w-32 mx-auto flex items-center justify-center mb-6">
                 <item.icon className="h-12 w-12 text-primary" />
               </div>
               <h3 className="text-2xl md:text-3xl font-bold mb-4">{item.step}. {item.title}</h3>
