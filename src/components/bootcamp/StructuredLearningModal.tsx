@@ -574,11 +574,11 @@ export function StructuredLearningModal({ topic, isOpen, onClose, onComplete }: 
         <DialogHeader className="pb-3">
           <DialogTitle className="flex items-center gap-3 text-2xl">
             <div className="p-2 bg-primary rounded-lg text-primary-foreground">
-              <BookOpen className="h-6 w-6" />
+              <currentStage.icon className="h-6 w-6" />
             </div>
             <div className="text-left">
-              <div className="text-xl font-bold">Learning: {topic.name}</div>
-              <div className="text-sm text-muted-foreground font-normal">Your journey to mastery starts here! 🚀</div>
+              <div className="text-xl font-bold">{currentStage.title}</div>
+              <div className="text-sm text-muted-foreground font-normal">{currentStage.description}</div>
             </div>
           </DialogTitle>
         </DialogHeader>
