@@ -153,13 +153,21 @@ export const MockTest: React.FC = () => {
         answered_at: new Date().toISOString()
       }));
 
-      // Update responses in the database
+      // Update responses in the database with correctness calculation
+      let correctCount = 0;
       for (const response of responses) {
+        const question = testState.questions[response.question_order];
+        const isCorrect = response.student_answer === question.correct_answer;
+        if (isCorrect) correctCount++;
+
         await supabase
           .from('bootcamp_mock_test_questions')
           .update({
             student_answer: response.student_answer,
-            answered_at: response.answered_at
+            answered_at: response.answered_at,
+            is_correct: isCorrect,
+            time_taken_seconds: testState.startTime ? 
+              Math.floor((Date.now() - testState.startTime.getTime()) / 1000) / Object.keys(testState.answers).length : 60
           })
           .eq('session_id', response.session_id)
           .eq('question_order', response.question_order);
@@ -173,7 +181,8 @@ export const MockTest: React.FC = () => {
           status: 'completed',
           completed_at: new Date().toISOString(),
           time_spent_seconds: timeSpent,
-          questions_attempted: Object.keys(testState.answers).length
+          questions_attempted: Object.keys(testState.answers).length,
+          questions_correct: correctCount
         })
         .eq('session_id', testState.sessionId);
 
