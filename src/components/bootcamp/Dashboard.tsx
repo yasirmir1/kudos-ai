@@ -114,12 +114,12 @@ export const Dashboard: React.FC<DashboardProps> = ({
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         {quickStats.map((stat, index) => <div key={index} className="bg-card rounded-lg shadow-sm border p-6 hover:shadow-md transition-shadow">
             <div className="flex items-center justify-between mb-4">
-              <stat.icon className={`h-8 w-8 ${getColorClasses(stat.color)}`} />
               <span className={`text-xs font-medium px-2 py-1 rounded-full bg-${stat.color}/10 ${getColorClasses(stat.color)}`}>
                 {stat.label}
               </span>
+              <stat.icon className={`h-8 w-8 ${getColorClasses(stat.color)}`} />
             </div>
-            <p className="text-2xl font-bold text-foreground">{stat.value}</p>
+            <p className="text-2xl font-bold text-foreground text-right">{stat.value}</p>
           </div>)}
       </div>
 
