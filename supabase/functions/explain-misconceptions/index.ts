@@ -220,8 +220,11 @@ Make this helpful and engaging!`;
       throw new Error('No explanation generated from either API');
     }
 
-    // Clean up source citations and references
+    // Clean up source citations, references, and unwanted AI prefixes
     const cleanedExplanation = explanation
+      .replace(/^Certainly[.,]?\s*/i, '') // Remove "Certainly" at start
+      .replace(/^Here's an encouraging and clear explanation.*?--\s*/i, '') // Remove the specific prefix you mentioned
+      .replace(/^Here's.*?explanation.*?:\s*/i, '') // Remove other similar prefixes
       .replace(/\[\d+\]/g, '') // Remove [1], [2], etc.
       .replace(/\[.*?\]/g, '') // Remove any other bracketed references
       .replace(/Source:.*$/gm, '') // Remove source lines
