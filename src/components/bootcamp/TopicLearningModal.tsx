@@ -193,6 +193,17 @@ export function TopicLearningModal({ topic, isOpen, onClose, onStartPractice }: 
               <p className="text-muted-foreground leading-relaxed">
                 {learningContent.overview}
               </p>
+              {/* Debug info - remove in production */}
+              {process.env.NODE_ENV === 'development' && (
+                <div className="mt-4 p-3 bg-gray-100 rounded text-xs">
+                  <strong>Debug:</strong> Found {curriculumContent.length} curriculum stages
+                  {curriculumContent.length > 0 && (
+                    <pre className="mt-2 text-xs overflow-auto max-h-20">
+                      {JSON.stringify(curriculumContent.map(c => ({ stage: c.stage_type, title: c.title })), null, 2)}
+                    </pre>
+                  )}
+                </div>
+              )}
             </CardContent>
           </Card>
 
@@ -213,14 +224,21 @@ export function TopicLearningModal({ topic, isOpen, onClose, onStartPractice }: 
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    {learningContent.keySkills.map((skill, index) => (
-                      <div key={index} className="flex items-start gap-3 p-3 bg-muted/50 rounded-lg">
-                        <CheckCircle className="h-5 w-5 text-green-600 mt-0.5 flex-shrink-0" />
-                        <span className="text-sm">{skill}</span>
-                      </div>
-                    ))}
-                  </div>
+                  {learningContent.hasContent && learningContent.keySkills.length > 0 ? (
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      {learningContent.keySkills.map((skill, index) => (
+                        <div key={index} className="flex items-start gap-3 p-3 bg-muted/50 rounded-lg">
+                          <CheckCircle className="h-5 w-5 text-green-600 mt-0.5 flex-shrink-0" />
+                          <span className="text-sm">{skill}</span>
+                        </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <div className="text-center py-8 text-muted-foreground">
+                      <Brain className="h-12 w-12 mx-auto mb-4 opacity-50" />
+                      <p>Detailed skills breakdown will be available once curriculum content is loaded.</p>
+                    </div>
+                  )}
                 </CardContent>
               </Card>
             </TabsContent>
