@@ -155,7 +155,7 @@ Make this helpful and engaging!`;
             content: prompt
           }
         ],
-        max_tokens: 1000,
+        max_tokens: 2000,
         temperature: 0.8,
         top_p: 0.9
       }),
@@ -195,7 +195,7 @@ Make this helpful and engaging!`;
                 content: prompt
               }
             ],
-            max_tokens: 1000,
+            max_tokens: 2000,
             temperature: 0.7
           }),
         });
@@ -222,8 +222,9 @@ Make this helpful and engaging!`;
 
     // Clean up source citations, references, and unwanted AI prefixes
     const cleanedExplanation = explanation
+      .replace(/^.*?Here's your engaging.*?clarity:\s*/is, '') // Remove intro with multiline support
+      .replace(/^.*?Here's.*?guide.*?:\s*/is, '') // Remove guide intros
       .replace(/^Learning Insights.*?Analysis\s*/i, '') // Remove "Learning Insights & Misconception Analysis"
-      .replace(/^Here's your engaging.*?clarity:\s*/i, '') // Remove the specific intro text
       .replace(/^Certainly[.,]?\s*/i, '') // Remove "Certainly" at start
       .replace(/^Here's an encouraging and clear explanation.*?improve\.\s*/i, '') // Remove the specific prefix
       .replace(/^Here's.*?explanation.*?:\s*/i, '') // Remove other similar prefixes

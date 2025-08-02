@@ -15,8 +15,13 @@ export interface InsightSection {
 export function parseInsights(text: string): ParsedInsight[] {
   if (!text) return [];
 
-  // Split by insight headers (### **number. Title**)
-  const insightBlocks = text.split(/###\s*\*\*\d+\.\s*/).filter(block => block.trim());
+  // Remove any remaining intro text that might have been missed
+  const cleanText = text
+    .replace(/^.*?Here's your engaging.*?clarity:\s*/is, '')
+    .replace(/^.*?guide.*?:\s*/is, '')
+    .trim();
+
+  const insightBlocks = cleanText.split(/###\s*\*\*\d+\.\s*/).filter(block => block.trim());
   
   return insightBlocks.map((block, index) => {
     const lines = block.split('\n').filter(line => line.trim());
