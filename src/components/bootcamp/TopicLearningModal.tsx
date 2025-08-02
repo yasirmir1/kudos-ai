@@ -10,7 +10,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { supabase } from '@/integrations/supabase/client';
-import { StructuredLearningModal } from './StructuredLearningModal';
+import { LearningJourney } from './LearningJourney';
 import { 
   BookOpen, 
   Target, 
@@ -381,8 +381,8 @@ export function TopicLearningModal({ topic, isOpen, onClose, onStartPractice }: 
       </DialogContent>
     </Dialog>
 
-    {/* Structured Learning Modal */}
-    <StructuredLearningModal
+    {/* Learning Journey Modal */}
+    <LearningJourney
       topic={topic}
       isOpen={showStructuredLearning}
       onClose={() => setShowStructuredLearning(false)}
