@@ -33,11 +33,6 @@ export const AppNavigation: React.FC<AppNavigationProps> = ({
   
   const mainAppItems = [
     {
-      path: '/dashboard',
-      label: 'Dashboard',
-      icon: GraduationCap
-    },
-    {
       path: '/report',
       label: 'Report',
       icon: FileText
