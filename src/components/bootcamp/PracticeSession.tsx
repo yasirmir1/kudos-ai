@@ -44,7 +44,16 @@ export const PracticeSession: React.FC = () => {
     if (!user) return;
     
     try {
-      const studentProfile = await BootcampAPI.getStudentProfile(user.id);
+      let studentProfile = await BootcampAPI.getStudentProfile(user.id);
+      if (!studentProfile) {
+        // Auto-create profile if it doesn't exist
+        studentProfile = await BootcampAPI.createStudentProfile(user.id, {
+          email: user.email,
+          username: user.email?.split('@')[0] || 'Student',
+          school_year: 7
+        });
+      }
+      
       if (studentProfile) {
         const session = await BootcampAPI.startLearningSession(studentProfile.student_id);
         setSessionId(session.session_id);
@@ -59,10 +68,14 @@ export const PracticeSession: React.FC = () => {
     
     setLoading(true);
     try {
-      const studentProfile = await BootcampAPI.getStudentProfile(user.id);
+      let studentProfile = await BootcampAPI.getStudentProfile(user.id);
       if (!studentProfile) {
-        toast.error('Student profile not found. Please complete your profile setup.');
-        return;
+        // Auto-create profile if it doesn't exist
+        studentProfile = await BootcampAPI.createStudentProfile(user.id, {
+          email: user.email,
+          username: user.email?.split('@')[0] || 'Student',
+          school_year: 7
+        });
       }
 
       const rawQuestions = await BootcampAPI.getAdaptiveQuestions(studentProfile.student_id, 20);
