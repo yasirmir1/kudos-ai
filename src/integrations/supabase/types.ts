@@ -478,6 +478,13 @@ export type Database = {
             referencedRelation: "bootcamp_students"
             referencedColumns: ["student_id"]
           },
+          {
+            foreignKeyName: "bootcamp_learning_sessions_student_id_fkey"
+            columns: ["student_id"]
+            isOneToOne: false
+            referencedRelation: "student_performance_summary"
+            referencedColumns: ["student_id"]
+          },
         ]
       }
       bootcamp_misconceptions: {
@@ -550,26 +557,32 @@ export type Database = {
         Row: {
           created_at: string | null
           curriculum_id: string
+          description: string | null
           id: string
           module_order: number
           name: string
           weeks: number[]
+          weeks_allocated: number | null
         }
         Insert: {
           created_at?: string | null
           curriculum_id: string
+          description?: string | null
           id: string
           module_order: number
           name: string
           weeks: number[]
+          weeks_allocated?: number | null
         }
         Update: {
           created_at?: string | null
           curriculum_id?: string
+          description?: string | null
           id?: string
           module_order?: number
           name?: string
           weeks?: number[]
+          weeks_allocated?: number | null
         }
         Relationships: [
           {
@@ -626,10 +639,13 @@ export type Database = {
           question_text: string
           question_type: Database["public"]["Enums"]["question_type"]
           subtopic_id: string | null
+          success_rate: number | null
           time_seconds: number
           topic_id: string
           updated_at: string | null
+          usage_count: number | null
           visual_aid: string | null
+          visual_aid_url: string | null
         }
         Insert: {
           cognitive_level: Database["public"]["Enums"]["cognitive_level"]
@@ -651,10 +667,13 @@ export type Database = {
           question_text: string
           question_type: Database["public"]["Enums"]["question_type"]
           subtopic_id?: string | null
+          success_rate?: number | null
           time_seconds?: number
           topic_id: string
           updated_at?: string | null
+          usage_count?: number | null
           visual_aid?: string | null
+          visual_aid_url?: string | null
         }
         Update: {
           cognitive_level?: Database["public"]["Enums"]["cognitive_level"]
@@ -676,10 +695,13 @@ export type Database = {
           question_text?: string
           question_type?: Database["public"]["Enums"]["question_type"]
           subtopic_id?: string | null
+          success_rate?: number | null
           time_seconds?: number
           topic_id?: string
           updated_at?: string | null
+          usage_count?: number | null
           visual_aid?: string | null
+          visual_aid_url?: string | null
         }
         Relationships: []
       }
@@ -720,6 +742,13 @@ export type Database = {
             columns: ["misconception_code"]
             isOneToOne: false
             referencedRelation: "bootcamp_misconceptions"
+            referencedColumns: ["misconception_code"]
+          },
+          {
+            foreignKeyName: "fk_remediation_misconception"
+            columns: ["misconception_code"]
+            isOneToOne: false
+            referencedRelation: "misconception_frequency"
             referencedColumns: ["misconception_code"]
           },
         ]
@@ -832,44 +861,63 @@ export type Database = {
             referencedRelation: "bootcamp_students"
             referencedColumns: ["student_id"]
           },
+          {
+            foreignKeyName: "bootcamp_student_progress_student_id_fkey"
+            columns: ["student_id"]
+            isOneToOne: false
+            referencedRelation: "student_performance_summary"
+            referencedColumns: ["student_id"]
+          },
         ]
       }
       bootcamp_student_responses: {
         Row: {
+          attempt_number: number | null
+          confidence_rating: number | null
           created_at: string | null
           id: number
           is_correct: boolean
           misconception_detected: string | null
           question_id: string
+          required_hint: boolean | null
+          responded_at: string | null
           response_id: string
           selected_answer: string
+          session_id: string | null
           student_id: string
           time_taken: number
-          timestamp: string | null
         }
         Insert: {
+          attempt_number?: number | null
+          confidence_rating?: number | null
           created_at?: string | null
           id?: number
           is_correct: boolean
           misconception_detected?: string | null
           question_id: string
+          required_hint?: boolean | null
+          responded_at?: string | null
           response_id?: string
           selected_answer: string
+          session_id?: string | null
           student_id: string
           time_taken: number
-          timestamp?: string | null
         }
         Update: {
+          attempt_number?: number | null
+          confidence_rating?: number | null
           created_at?: string | null
           id?: number
           is_correct?: boolean
           misconception_detected?: string | null
           question_id?: string
+          required_hint?: boolean | null
+          responded_at?: string | null
           response_id?: string
           selected_answer?: string
+          session_id?: string | null
           student_id?: string
           time_taken?: number
-          timestamp?: string | null
         }
         Relationships: [
           {
@@ -935,6 +983,13 @@ export type Database = {
             referencedRelation: "bootcamp_students"
             referencedColumns: ["student_id"]
           },
+          {
+            foreignKeyName: "bootcamp_student_skills_student_id_fkey"
+            columns: ["student_id"]
+            isOneToOne: false
+            referencedRelation: "student_performance_summary"
+            referencedColumns: ["student_id"]
+          },
         ]
       }
       bootcamp_students: {
@@ -947,7 +1002,9 @@ export type Database = {
           school_year: number | null
           student_id: string
           subscription_tier: string | null
+          success_rate: number | null
           target_exam_date: string | null
+          usage_count: number | null
           user_id: string | null
           username: string | null
         }
@@ -960,7 +1017,9 @@ export type Database = {
           school_year?: number | null
           student_id?: string
           subscription_tier?: string | null
+          success_rate?: number | null
           target_exam_date?: string | null
+          usage_count?: number | null
           user_id?: string | null
           username?: string | null
         }
@@ -973,7 +1032,9 @@ export type Database = {
           school_year?: number | null
           student_id?: string
           subscription_tier?: string | null
+          success_rate?: number | null
           target_exam_date?: string | null
+          usage_count?: number | null
           user_id?: string | null
           username?: string | null
         }
@@ -983,21 +1044,27 @@ export type Database = {
         Row: {
           created_at: string | null
           id: number
+          learning_objectives: string[] | null
           name: string
+          prerequisite_subtopics: string[] | null
           subtopic_order: number
           topic_id: string
         }
         Insert: {
           created_at?: string | null
           id?: number
+          learning_objectives?: string[] | null
           name: string
+          prerequisite_subtopics?: string[] | null
           subtopic_order: number
           topic_id: string
         }
         Update: {
           created_at?: string | null
           id?: number
+          learning_objectives?: string[] | null
           name?: string
+          prerequisite_subtopics?: string[] | null
           subtopic_order?: number
           topic_id?: string
         }
@@ -1009,12 +1076,20 @@ export type Database = {
             referencedRelation: "bootcamp_topics"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "bootcamp_subtopics_topic_id_fkey"
+            columns: ["topic_id"]
+            isOneToOne: false
+            referencedRelation: "topic_difficulty_analysis"
+            referencedColumns: ["topic_id"]
+          },
         ]
       }
       bootcamp_topics: {
         Row: {
           created_at: string | null
           difficulty: string
+          estimated_questions: number | null
           id: string
           module_id: string
           name: string
@@ -1024,6 +1099,7 @@ export type Database = {
         Insert: {
           created_at?: string | null
           difficulty: string
+          estimated_questions?: number | null
           id: string
           module_id: string
           name: string
@@ -1033,6 +1109,7 @@ export type Database = {
         Update: {
           created_at?: string | null
           difficulty?: string
+          estimated_questions?: number | null
           id?: string
           module_id?: string
           name?: string
@@ -1243,6 +1320,17 @@ export type Database = {
       }
     }
     Views: {
+      misconception_frequency: {
+        Row: {
+          affected_students: number | null
+          description: string | null
+          misconception_code: string | null
+          misconception_type: string | null
+          remediation_success_rate: number | null
+          total_occurrences: number | null
+        }
+        Relationships: []
+      }
       student_performance: {
         Row: {
           accuracy: number | null
@@ -1262,6 +1350,31 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      student_performance_summary: {
+        Row: {
+          active_days: number | null
+          avg_response_time: number | null
+          overall_accuracy: number | null
+          student_id: string | null
+          total_correct: number | null
+          total_questions_attempted: number | null
+          unique_misconceptions: number | null
+          username: string | null
+        }
+        Relationships: []
+      }
+      topic_difficulty_analysis: {
+        Row: {
+          avg_time: number | null
+          difficulty: Database["public"]["Enums"]["difficulty_level"] | null
+          question_count: number | null
+          students_attempted: number | null
+          success_rate: number | null
+          topic_id: string | null
+          topic_name: string | null
+        }
+        Relationships: []
       }
     }
     Functions: {
