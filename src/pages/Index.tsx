@@ -297,7 +297,7 @@ const Index = () => {
             highlight: "📱"
           }].map((item, index) => 
             <div key={index} className="fade-on-scroll text-center">
-              <div className="bg-muted rounded-2xl p-8 text-center text-3xl md:text-4xl font-bold h-48 flex items-center justify-center mb-6">
+              <div className="bg-muted rounded-2xl p-6 text-center text-5xl md:text-6xl font-bold h-32 flex items-center justify-center mb-6">
                 {item.highlight}
               </div>
               <h3 className="text-2xl md:text-3xl font-bold mb-4">{item.step}. {item.title}</h3>
