@@ -124,7 +124,7 @@ const Index = () => {
       {/* Dashboard Preview */}
       <section className="py-16 px-6">
         <div className="container mx-auto max-w-5xl">
-          <div className="bg-background p-6 rounded-3xl shadow-card hover:shadow-learning transition-all duration-500 transform perspective-1000 hover:rotate-x-0 rotate-x-1">
+          <div className="fade-on-scroll bg-background p-6 rounded-3xl shadow-card border border-border hover:shadow-learning hover:border-primary/20 transition-all duration-500 transform hover:-translate-y-2 hover:scale-105 group">
             <svg viewBox="0 0 800 500" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-full h-auto">
               {/* Dashboard mockup */}
               <rect width="800" height="500" rx="8" fill="#FBFBFD"></rect>
@@ -134,17 +134,17 @@ const Index = () => {
               <text x="30" y="38" fontFamily="Arial" fontSize="20" fontWeight="600" fill="#667EEA">Emma's Learning Dashboard</text>
               
               {/* Progress Cards */}
-              <rect x="30" y="90" width="230" height="140" rx="12" fill="#34C759" fillOpacity="0.1"></rect>
+              <rect x="30" y="90" width="230" height="140" rx="12" fill="#34C759" fillOpacity="0.1" className="group-hover:animate-pulse"></rect>
               <text x="50" y="120" fontFamily="Arial" fontSize="16" fill="#86868B">Mathematics</text>
               <text x="50" y="150" fontFamily="Arial" fontSize="28" fontWeight="600" fill="#34C759">87%</text>
               <text x="50" y="180" fontFamily="Arial" fontSize="14" fill="#34C759">↑ 12% this month</text>
               
-              <rect x="285" y="90" width="230" height="140" rx="12" fill="#FF9500" fillOpacity="0.1"></rect>
+              <rect x="285" y="90" width="230" height="140" rx="12" fill="#FF9500" fillOpacity="0.1" className="group-hover:animate-pulse"></rect>
               <text x="305" y="120" fontFamily="Arial" fontSize="16" fill="#86868B">Verbal Reasoning</text>
               <text x="305" y="150" fontFamily="Arial" fontSize="28" fontWeight="600" fill="#FF9500">72%</text>
               <text x="305" y="180" fontFamily="Arial" fontSize="14" fill="#FF9500">Focus area</text>
               
-              <rect x="540" y="90" width="230" height="140" rx="12" fill="#0071E3" fillOpacity="0.1"></rect>
+              <rect x="540" y="90" width="230" height="140" rx="12" fill="#0071E3" fillOpacity="0.1" className="group-hover:animate-pulse"></rect>
               <text x="560" y="120" fontFamily="Arial" fontSize="16" fill="#86868B">English</text>
               <text x="560" y="150" fontFamily="Arial" fontSize="28" fontWeight="600" fill="#0071E3">91%</text>
               <text x="560" y="180" fontFamily="Arial" fontSize="14" fill="#0071E3">↑ 5% this month</text>
