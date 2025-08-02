@@ -158,21 +158,6 @@ export function StructuredLearningModal({
     return <div className="space-y-4">
         {/* Stage Header */}
         <div className="text-center space-y-3">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              
-              <div className="text-left">
-                
-                
-              </div>
-            </div>
-            
-            {/* Topic Badge */}
-            <div className="flex items-center gap-2 bg-muted rounded-full px-4 py-2 border">
-              <span className="text-lg">🎯</span>
-              <span className="font-medium">{currentSubtopic.name}</span>
-            </div>
-          </div>
           
           {/* Progress Celebration */}
           {isCompleted && <div className="animate-scale-in">
@@ -451,8 +436,14 @@ export function StructuredLearningModal({
   };
   if (!topic) return null;
   return <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-5xl max-h-[85vh] overflow-y-auto">
-        <DialogHeader className="pb-3">
+      <DialogContent className="max-w-5xl max-h-[85vh] overflow-y-auto relative">
+        {/* Topic Badge - Top Right */}
+        <div className="absolute top-4 right-4 flex items-center gap-2 bg-muted rounded-full px-4 py-2 border">
+          <span className="text-lg">🎯</span>
+          <span className="font-medium">{currentSubtopic?.name}</span>
+        </div>
+        
+        <DialogHeader className="pb-3 pr-40">
           <DialogTitle className="flex items-center gap-3 text-2xl">
             <div className="p-2 bg-primary rounded-lg text-primary-foreground">
               <currentStage.icon className="h-6 w-6" />
