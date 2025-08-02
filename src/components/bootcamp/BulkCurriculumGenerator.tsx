@@ -45,7 +45,7 @@ export const BulkCurriculumGenerator: React.FC = () => {
 
   const fetchTopics = async () => {
     try {
-      // Fetch topics and subtopics separately due to relationship constraints
+      // Fetch topics and subtopics separately
       const [topicsRes, subtopicsRes] = await Promise.all([
         supabase
           .from('bootcamp_curriculum_topics')
@@ -57,8 +57,17 @@ export const BulkCurriculumGenerator: React.FC = () => {
           .order('topic_id, subtopic_order')
       ]);
 
-      if (topicsRes.error) throw topicsRes.error;
-      if (subtopicsRes.error) throw subtopicsRes.error;
+      if (topicsRes.error) {
+        console.error('Topics error:', topicsRes.error);
+        throw topicsRes.error;
+      }
+      if (subtopicsRes.error) {
+        console.error('Subtopics error:', subtopicsRes.error);
+        throw subtopicsRes.error;
+      }
+
+      console.log('Fetched topics:', topicsRes.data);
+      console.log('Fetched subtopics:', subtopicsRes.data);
 
       // Group subtopics by topic
       const subtopicsByTopic = (subtopicsRes.data || []).reduce((acc, subtopic) => {
@@ -75,12 +84,13 @@ export const BulkCurriculumGenerator: React.FC = () => {
         bootcamp_subtopics: subtopicsByTopic[topic.id] || []
       }));
 
+      console.log('Topics with subtopics:', topicsWithSubtopics);
       setTopics(topicsWithSubtopics);
     } catch (error) {
       console.error('Error fetching topics:', error);
       toast({
         title: "Error",
-        description: "Failed to fetch topics",
+        description: "Failed to fetch topics: " + (error?.message || 'Unknown error'),
         variant: "destructive"
       });
     }
@@ -134,6 +144,12 @@ export const BulkCurriculumGenerator: React.FC = () => {
     setResults([]);
 
     try {
+      console.log('Starting generation with params:', {
+        topicIds: selectedTopics,
+        questionsPerSubtopic,
+        examBoards: selectedExamBoards
+      });
+
       const { data, error } = await supabase.functions.invoke('bulk-generate-curriculum-questions', {
         body: {
           topicIds: selectedTopics,
@@ -142,20 +158,35 @@ export const BulkCurriculumGenerator: React.FC = () => {
         }
       });
 
-      if (error) throw error;
+      console.log('Function response:', { data, error });
 
-      setResults(data.results || []);
+      if (error) {
+        console.error('Function error:', error);
+        throw error;
+      }
+
+      setResults(data?.results || []);
       setProgress(100);
 
       toast({
         title: "Generation Complete",
-        description: `Successfully generated ${data.results?.length || 0} questions`,
+        description: `Successfully generated ${data?.results?.length || 0} questions`,
       });
     } catch (error) {
       console.error('Error generating questions:', error);
+      
+      let errorMessage = "An error occurred during generation";
+      if (error?.message) {
+        errorMessage = error.message;
+      } else if (typeof error === 'string') {
+        errorMessage = error;
+      } else if (error?.details) {
+        errorMessage = error.details;
+      }
+
       toast({
         title: "Generation Failed",
-        description: error.message || "An error occurred during generation",
+        description: errorMessage,
         variant: "destructive"
       });
     } finally {
