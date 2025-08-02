@@ -306,15 +306,33 @@ export const BulkCurriculumGenerator: React.FC = () => {
             </div>
           )}
 
-          {/* Action Button */}
-          <Button
-            onClick={startGeneration}
-            disabled={isGenerating || selectedTopics.length === 0}
-            className="w-full"
-            size="lg"
-          >
-            {isGenerating ? 'Generating Questions...' : `Generate ${selectedSubtopics * selectedExamBoards.length} Questions (${selectedSubtopics} subtopics × ${selectedExamBoards.length} exam boards)`}
-          </Button>
+          {/* Quick Actions */}
+          <div className="flex flex-col sm:flex-row gap-3">
+            <Button
+              onClick={() => {
+                setSelectedTopics(topics.map(t => t.id));
+                setQuestionsPerSubtopic(1);
+                setSelectedExamBoards(['GL', 'CEM']);
+              }}
+              variant="outline"
+              disabled={isGenerating}
+              className="flex-1"
+            >
+              Generate All Topics (440 Questions)
+              <Badge variant="secondary" className="ml-2">
+                {topics.length} topics × 2 boards
+              </Badge>
+            </Button>
+            
+            <Button
+              onClick={startGeneration}
+              disabled={isGenerating || selectedTopics.length === 0}
+              className="flex-1"
+              size="lg"
+            >
+              {isGenerating ? 'Generating Questions...' : selectedTopics.length === 0 ? 'Select Topics First' : `Generate ${selectedSubtopics * selectedExamBoards.length} Questions`}
+            </Button>
+          </div>
         </CardContent>
       </Card>
 
