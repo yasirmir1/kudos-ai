@@ -1,71 +1,171 @@
 import React, { useState, useEffect } from 'react';
-import { Timer, Play, Pause, CheckCircle, XCircle, ArrowRight } from 'lucide-react';
+import { Timer, Play, Pause, CheckCircle, XCircle, ArrowRight, Loader2 } from 'lucide-react';
 import { QuestionProgress } from './QuestionProgress';
+import { BootcampAPI, BootcampQuestion } from '../../lib/bootcamp-api';
+import { useAuth } from '../../hooks/useAuth';
+import { toast } from 'sonner';
 
-interface QuestionOption {
-  id: string;
-  value: string;
-  feedback: string;
-}
-
-interface Question {
+interface AdaptedQuestion {
   id: string;
   text: string;
-  options: QuestionOption[];
+  options: Array<{
+    id: string;
+    value: string;
+    feedback: string;
+    isCorrect: boolean;
+  }>;
   correct: string;
   topic: string;
   difficulty: 'foundation' | 'intermediate' | 'advanced';
+  timeAllowed: number;
 }
 
 export const PracticeSession: React.FC = () => {
+  const { user } = useAuth();
+  const [questions, setQuestions] = useState<AdaptedQuestion[]>([]);
+  const [loading, setLoading] = useState(true);
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [selectedAnswer, setSelectedAnswer] = useState<string | null>(null);
   const [showFeedback, setShowFeedback] = useState(false);
   const [timer, setTimer] = useState(90);
   const [isPaused, setIsPaused] = useState(false);
+  const [sessionId, setSessionId] = useState<string | null>(null);
+  const [correctCount, setCorrectCount] = useState(0);
+  const [startTime, setStartTime] = useState<number>(Date.now());
 
-  const questions: Question[] = [
-    {
-      id: 'DQ001',
-      text: 'Round 3,847 to the nearest hundred',
-      options: [
-        { id: 'A', value: '3,800', feedback: 'Correct! You identified the hundreds place correctly.' },
-        { id: 'B', value: '3,850', feedback: 'You rounded to the nearest ten instead of hundred.' },
-        { id: 'C', value: '3,900', feedback: 'Remember: the tens digit (4) is less than 5, so round down.' },
-        { id: 'D', value: '4,000', feedback: 'You rounded to the nearest thousand instead of hundred.' }
-      ],
-      correct: 'A',
-      topic: 'Place Value',
-      difficulty: 'foundation'
+  useEffect(() => {
+    if (user) {
+      loadQuestions();
+      startSession();
     }
-  ];
+  }, [user]);
+
+  const startSession = async () => {
+    if (!user) return;
+    
+    try {
+      const studentProfile = await BootcampAPI.getStudentProfile(user.id);
+      if (studentProfile) {
+        const session = await BootcampAPI.startLearningSession(studentProfile.student_id);
+        setSessionId(session.session_id);
+      }
+    } catch (error) {
+      console.error('Error starting session:', error);
+    }
+  };
+
+  const loadQuestions = async () => {
+    if (!user) return;
+    
+    setLoading(true);
+    try {
+      const studentProfile = await BootcampAPI.getStudentProfile(user.id);
+      if (!studentProfile) {
+        toast.error('Student profile not found. Please complete your profile setup.');
+        return;
+      }
+
+      const rawQuestions = await BootcampAPI.getAdaptiveQuestions(studentProfile.student_id, 20);
+      
+      const adaptedQuestions: AdaptedQuestion[] = rawQuestions.map((q: BootcampQuestion) => ({
+        id: q.question_id,
+        text: q.question_text,
+        options: q.bootcamp_enhanced_answer_options.map(opt => ({
+          id: opt.option_letter,
+          value: opt.answer_value,
+          feedback: opt.diagnostic_feedback,
+          isCorrect: opt.is_correct
+        })),
+        correct: q.bootcamp_enhanced_answer_options.find(opt => opt.is_correct)?.option_letter || 'A',
+        topic: q.topic_id,
+        difficulty: q.difficulty,
+        timeAllowed: q.time_seconds
+      }));
+      
+      setQuestions(adaptedQuestions);
+      if (adaptedQuestions.length > 0) {
+        setTimer(adaptedQuestions[0].timeAllowed);
+      }
+    } catch (error) {
+      console.error('Error loading questions:', error);
+      toast.error('Failed to load questions. Please try again.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const submitResponse = async (questionId: string, selectedOption: string, timeTaken: number) => {
+    if (!user || !sessionId) return;
+    
+    try {
+      const studentProfile = await BootcampAPI.getStudentProfile(user.id);
+      if (studentProfile) {
+        await BootcampAPI.submitResponse({
+          student_id: studentProfile.student_id,
+          question_id: questionId,
+          selected_answer: selectedOption,
+          time_taken_seconds: timeTaken,
+          session_id: sessionId
+        });
+      }
+    } catch (error) {
+      console.error('Error submitting response:', error);
+    }
+  };
 
   const question = questions[currentQuestion];
 
-  // Prevent crash if question is undefined
-  if (!question) {
-    return <div className="text-center p-8">No questions available</div>;
-  }
-
   useEffect(() => {
-    if (!isPaused && timer > 0 && !showFeedback) {
+    if (!isPaused && timer > 0 && !showFeedback && question) {
       const interval = setInterval(() => setTimer(t => t - 1), 1000);
       return () => clearInterval(interval);
     }
-  }, [isPaused, timer, showFeedback]);
+  }, [isPaused, timer, showFeedback, question]);
 
-  const handleAnswerSelect = (optionId: string) => {
+  useEffect(() => {
+    if (question) {
+      setTimer(question.timeAllowed);
+      setStartTime(Date.now());
+    }
+  }, [currentQuestion, question]);
+
+  const handleAnswerSelect = async (optionId: string) => {
+    if (!question) return;
+    
+    const timeTaken = Math.floor((Date.now() - startTime) / 1000);
+    const isCorrect = question.options.find(opt => opt.id === optionId)?.isCorrect || false;
+    
     setSelectedAnswer(optionId);
     setShowFeedback(true);
     setIsPaused(true);
+    
+    if (isCorrect) {
+      setCorrectCount(prev => prev + 1);
+    }
+    
+    await submitResponse(question.id, optionId, timeTaken);
   };
 
   const handleNext = () => {
-    setCurrentQuestion(current => current + 1);
-    setSelectedAnswer(null);
-    setShowFeedback(false);
-    setTimer(90);
-    setIsPaused(false);
+    if (currentQuestion < questions.length - 1) {
+      setCurrentQuestion(current => current + 1);
+      setSelectedAnswer(null);
+      setShowFeedback(false);
+      setIsPaused(false);
+    } else {
+      endSession();
+    }
+  };
+
+  const endSession = async () => {
+    if (!sessionId) return;
+    
+    try {
+      await BootcampAPI.endLearningSession(sessionId, questions.length, correctCount);
+      toast.success('Practice session completed!');
+    } catch (error) {
+      console.error('Error ending session:', error);
+    }
   };
 
   const getDifficultyColor = (difficulty: string) => {
@@ -77,23 +177,57 @@ export const PracticeSession: React.FC = () => {
     }
   };
 
-  const getOptionStyles = (option: QuestionOption) => {
+  const getOptionStyles = (option: { id: string; isCorrect: boolean }) => {
     if (!showFeedback) {
       return selectedAnswer === option.id 
         ? 'border-primary bg-primary/10' 
         : 'border-border hover:border-border/60 hover:bg-muted/50';
     }
-    if (option.id === question.correct) return 'border-success bg-success/10';
-    if (option.id === selectedAnswer && option.id !== question.correct) return 'border-destructive bg-destructive/10';
+    if (option.isCorrect) return 'border-success bg-success/10';
+    if (option.id === selectedAnswer && !option.isCorrect) return 'border-destructive bg-destructive/10';
     return 'border-border';
   };
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center min-h-[400px]">
+        <div className="text-center space-y-4">
+          <Loader2 className="h-8 w-8 animate-spin mx-auto text-primary" />
+          <p className="text-muted-foreground">Loading your personalized questions...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (!questions.length) {
+    return (
+      <div className="text-center p-8 space-y-4">
+        <p className="text-lg font-medium">No questions available</p>
+        <p className="text-muted-foreground">Please try again later or contact support.</p>
+      </div>
+    );
+  }
+
+  if (!question) {
+    return (
+      <div className="text-center p-8 space-y-4">
+        <CheckCircle className="h-16 w-16 text-success mx-auto" />
+        <h2 className="text-2xl font-bold">Practice Complete!</h2>
+        <p className="text-muted-foreground">
+          You scored {correctCount} out of {questions.length} questions
+        </p>
+      </div>
+    );
+  }
 
   return (
     <div className="max-w-4xl mx-auto space-y-6">
       <div className="bg-card rounded-xl shadow-sm border p-6">
         <div className="flex items-center justify-between mb-6">
           <div className="flex items-center space-x-4">
-            <span className="text-sm font-medium text-muted-foreground">Question {currentQuestion + 1} of 20</span>
+            <span className="text-sm font-medium text-muted-foreground">
+              Question {currentQuestion + 1} of {questions.length}
+            </span>
             <span className={`text-xs px-2 py-1 rounded-full ${getDifficultyColor(question.difficulty)}`}>
               {question.difficulty}
             </span>
@@ -132,10 +266,10 @@ export const PracticeSession: React.FC = () => {
                   <span className="font-medium text-muted-foreground">{option.id}.</span>
                   <span className="text-foreground">{option.value}</span>
                 </div>
-                {showFeedback && option.id === question.correct && (
+                {showFeedback && option.isCorrect && (
                   <CheckCircle className="h-5 w-5 text-success" />
                 )}
-                {showFeedback && option.id === selectedAnswer && option.id !== question.correct && (
+                {showFeedback && option.id === selectedAnswer && !option.isCorrect && (
                   <XCircle className="h-5 w-5 text-destructive" />
                 )}
               </div>
@@ -149,7 +283,7 @@ export const PracticeSession: React.FC = () => {
         {showFeedback && (
           <div className="mt-6 flex justify-between items-center">
             <div className="flex items-center space-x-2">
-              {selectedAnswer === question.correct ? (
+              {question.options.find(opt => opt.id === selectedAnswer)?.isCorrect ? (
                 <>
                   <CheckCircle className="h-5 w-5 text-success" />
                   <span className="text-success font-medium">Excellent!</span>
@@ -165,14 +299,18 @@ export const PracticeSession: React.FC = () => {
               onClick={handleNext}
               className="flex items-center space-x-2 bg-primary text-primary-foreground px-4 py-2 rounded-lg hover:bg-primary/90 transition-colors"
             >
-              <span>Next Question</span>
+              <span>{currentQuestion < questions.length - 1 ? 'Next Question' : 'Finish'}</span>
               <ArrowRight className="h-4 w-4" />
             </button>
           </div>
         )}
       </div>
 
-      <QuestionProgress current={currentQuestion + 1} total={20} correct={12} />
+      <QuestionProgress 
+        current={currentQuestion + 1} 
+        total={questions.length} 
+        correct={correctCount} 
+      />
     </div>
   );
 };

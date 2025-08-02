@@ -1,6 +1,8 @@
-import React from 'react';
-import { Brain, Target, Shield, Award, Play, RefreshCw, ChevronRight, TrendingUp, AlertCircle } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { Brain, Target, Shield, Award, Play, RefreshCw, ChevronRight, TrendingUp, AlertCircle, Loader2 } from 'lucide-react';
 import { WeeklyProgressChart } from './WeeklyProgressChart';
+import { useAuth } from '../../hooks/useAuth';
+import { BootcampAPI } from '../../lib/bootcamp-api';
 
 interface User {
   name: string;
@@ -31,17 +33,47 @@ interface RecentTopic {
 }
 
 export const Dashboard: React.FC<DashboardProps> = ({ user, setCurrentView }) => {
+  const { user: authUser } = useAuth();
+  const [recentTopics, setRecentTopics] = useState<RecentTopic[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    if (authUser) {
+      loadProgressData();
+    }
+  }, [authUser]);
+
+  const loadProgressData = async () => {
+    if (!authUser) return;
+    
+    setLoading(true);
+    try {
+      const studentProfile = await BootcampAPI.getStudentProfile(authUser.id);
+      if (studentProfile) {
+        const progress = await BootcampAPI.getStudentProgress(studentProfile.student_id);
+        
+        const topicsData: RecentTopic[] = progress.map((p: any) => ({
+          name: p.bootcamp_enhanced_topics?.topic_name || p.topic_id,
+          accuracy: Math.round(p.accuracy_percentage || 0),
+          questions: 0, // This would need additional query
+          status: (p.accuracy_percentage >= 80 ? 'improving' : 
+                  p.accuracy_percentage >= 70 ? 'stable' : 'needs-work') as 'improving' | 'stable' | 'needs-work'
+        })).slice(0, 3);
+        
+        setRecentTopics(topicsData);
+      }
+    } catch (error) {
+      console.error('Error loading progress data:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const quickStats: QuickStat[] = [
     { label: 'Questions Today', value: user.questionsToday.toString(), icon: Brain, color: 'primary' },
     { label: 'Accuracy', value: `${user.accuracy}%`, icon: Target, color: 'success' },
     { label: 'Current Level', value: user.level, icon: Shield, color: 'secondary' },
     { label: 'Weekly Goal', value: '85%', icon: Award, color: 'warning' }
-  ];
-
-  const recentTopics: RecentTopic[] = [
-    { name: 'Fractions', accuracy: 82, questions: 25, status: 'improving' },
-    { name: 'Algebra', accuracy: 75, questions: 18, status: 'stable' },
-    { name: 'Geometry', accuracy: 68, questions: 12, status: 'needs-work' }
   ];
 
   const getColorClasses = (color: string) => {
