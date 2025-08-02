@@ -153,6 +153,18 @@ export const TopicsStudiedModal = ({ open, onOpenChange }: TopicsStudiedModalPro
               </DialogDescription>
             </div>
             <div className="flex items-center gap-2">
+              {showExplanation && (
+                <Button
+                  onClick={handleRefreshInsights}
+                  disabled={isLoadingExplanation}
+                  size="sm"
+                  variant="outline"
+                  className="gap-2"
+                >
+                  <Lightbulb className="h-4 w-4" />
+                  {isLoadingExplanation ? "Updating..." : "Refresh Insights"}
+                </Button>
+              )}
               {showExplanation && explanation && (
                 <Button
                   onClick={() => setExpandAllMode(expandAllMode === 'compact' ? 'expanded' : 'compact')}
@@ -171,18 +183,6 @@ export const TopicsStudiedModal = ({ open, onOpenChange }: TopicsStudiedModalPro
                       Collapse All
                     </>
                   )}
-                </Button>
-              )}
-              {showExplanation && (
-                <Button
-                  onClick={handleRefreshInsights}
-                  disabled={isLoadingExplanation}
-                  size="sm"
-                  variant="outline"
-                  className="gap-2"
-                >
-                  <Lightbulb className="h-4 w-4" />
-                  {isLoadingExplanation ? "Updating..." : "Refresh Insights"}
                 </Button>
               )}
             </div>
