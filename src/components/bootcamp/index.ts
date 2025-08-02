@@ -21,12 +21,15 @@ export { SkillRadarChart } from './SkillRadarChart';
 export { WeeklyProgressChart } from './WeeklyProgressChart';
 export { WeeklySummary } from './WeeklySummary';
 
-// Question and Learning Interfaces
-export { EnhancedQuestionInterface } from './EnhancedQuestionInterface';
-export { DiagnosticQuestion } from './DiagnosticQuestion';
-export { UniversalQuestion } from './UniversalQuestion';
+// Question and Learning Interfaces (CONSOLIDATED)
+export { ComprehensiveQuestionInterface } from './ComprehensiveQuestionInterface';
 export { LearningSessionModal } from './LearningSessionModal';
 export { TopicLearningModal } from './TopicLearningModal';
+
+// DEPRECATED - Replaced by ComprehensiveQuestionInterface
+// export { EnhancedQuestionInterface } from './EnhancedQuestionInterface';
+// export { DiagnosticQuestion } from './DiagnosticQuestion';
+// export { UniversalQuestion } from './UniversalQuestion';
 
 // Learning Tools and Experiences
 export { LearningExperience } from './LearningExperience';
