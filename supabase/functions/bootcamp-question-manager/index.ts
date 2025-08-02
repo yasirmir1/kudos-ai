@@ -156,7 +156,7 @@ async function getAdaptiveQuestions(supabaseClient: any, studentId: string, ques
   try {
     // First check if student has enough history for adaptive questions
     const { data: responseHistory, error: historyError } = await supabaseClient
-      .from('bootcamp_enhanced_student_responses')
+      .from('bootcamp_student_responses')
       .select('response_id')
       .eq('student_id', studentId)
 
@@ -174,7 +174,7 @@ async function getAdaptiveQuestions(supabaseClient: any, studentId: string, ques
       console.log('New student detected, providing foundation questions')
       
       const { data: foundationQuestions, error: foundationError } = await supabaseClient
-        .from('bootcamp_enhanced_questions')
+        .from('bootcamp_questions')
         .select(`
           question_id,
           module_id,
@@ -185,24 +185,17 @@ async function getAdaptiveQuestions(supabaseClient: any, studentId: string, ques
           difficulty,
           question_type,
           question_text,
+          option_a,
+          option_b,
+          option_c,
+          option_d,
+          correct_answer,
+          explanation,
           marks,
           time_seconds,
           prerequisite_skills,
           exam_boards,
-          usage_count,
-          success_rate,
-          created_at,
-          bootcamp_enhanced_answer_options (
-            answer_id,
-            option_letter,
-            answer_value,
-            is_correct,
-            misconception_code,
-            diagnostic_feedback,
-            selection_count,
-            error_category,
-            remedial_topic
-          )
+          created_at
         `)
         .eq('difficulty', 'foundation')
         .order('question_id')
@@ -235,7 +228,7 @@ async function getAdaptiveQuestions(supabaseClient: any, studentId: string, ques
         
         // Fallback to foundation questions if adaptive fails
         const { data: fallbackQuestions, error: fallbackError } = await supabaseClient
-          .from('bootcamp_enhanced_questions')
+          .from('bootcamp_questions')
           .select(`
             question_id,
             module_id,
@@ -246,24 +239,17 @@ async function getAdaptiveQuestions(supabaseClient: any, studentId: string, ques
             difficulty,
             question_type,
             question_text,
+            option_a,
+            option_b,
+            option_c,
+            option_d,
+            correct_answer,
+            explanation,
             marks,
             time_seconds,
             prerequisite_skills,
             exam_boards,
-            usage_count,
-            success_rate,
-            created_at,
-            bootcamp_enhanced_answer_options (
-              answer_id,
-              option_letter,
-              answer_value,
-              is_correct,
-              misconception_code,
-              diagnostic_feedback,
-              selection_count,
-              error_category,
-              remedial_topic
-            )
+            created_at
           `)
           .in('difficulty', ['foundation', 'intermediate'])
           .order('difficulty')
@@ -280,7 +266,7 @@ async function getAdaptiveQuestions(supabaseClient: any, studentId: string, ques
         const questionIds = adaptiveData.map((item: any) => item.question_id)
         
         const { data: adaptiveQuestions, error: adaptiveQuestionsError } = await supabaseClient
-          .from('bootcamp_enhanced_questions')
+          .from('bootcamp_questions')
           .select(`
             question_id,
             module_id,
@@ -291,24 +277,17 @@ async function getAdaptiveQuestions(supabaseClient: any, studentId: string, ques
             difficulty,
             question_type,
             question_text,
+            option_a,
+            option_b,
+            option_c,
+            option_d,
+            correct_answer,
+            explanation,
             marks,
             time_seconds,
             prerequisite_skills,
             exam_boards,
-            usage_count,
-            success_rate,
-            created_at,
-            bootcamp_enhanced_answer_options (
-              answer_id,
-              option_letter,
-              answer_value,
-              is_correct,
-              misconception_code,
-              diagnostic_feedback,
-              selection_count,
-              error_category,
-              remedial_topic
-            )
+            created_at
           `)
           .in('question_id', questionIds)
 
@@ -364,67 +343,42 @@ async function submitResponse(supabaseClient: any, responseData: any) {
       session_id
     } = responseData
 
-    // Get the question and answer details
+    // Get the question details
     const { data: question, error: questionError } = await supabaseClient
-      .from('bootcamp_enhanced_questions')
-      .select(`
-        *,
-        bootcamp_enhanced_answer_options (*)
-      `)
+      .from('bootcamp_questions')
+      .select('*')
       .eq('question_id', question_id)
       .single()
 
     if (questionError) throw questionError
 
-    // Find the selected option
-    const selectedOption = question.bootcamp_enhanced_answer_options
-      .find((opt: any) => opt.option_letter === selected_answer)
-
-    if (!selectedOption) throw new Error('Invalid answer option')
+    // Determine correctness based on stored answer
+    const isCorrect = selected_answer === question.correct_answer
 
     // Insert the response
     const { data: response, error: responseError } = await supabaseClient
-      .from('bootcamp_enhanced_student_responses')
+      .from('bootcamp_student_responses')
       .insert({
         student_id,
         question_id,
-        session_id,
         selected_answer,
-        is_correct: selectedOption.is_correct,
-        time_taken_seconds,
-        misconception_detected: selectedOption.misconception_code,
-        confidence_rating,
-        attempt_number: 1
+        is_correct: isCorrect,
+        time_taken: time_taken_seconds,
+        misconception_detected: null, // Will be determined later
+        created_at: new Date().toISOString(),
+        timestamp: new Date().toISOString()
       })
       .select()
       .single()
 
     if (responseError) throw responseError
 
-    // Update student progress and skills if needed
-    if (!selectedOption.is_correct && selectedOption.misconception_code) {
-      await supabaseClient
-        .rpc('bootcamp_update_student_misconceptions', {
-          p_student_id: student_id,
-          p_response_id: response.response_id
-        })
-    }
-
-    // Update progress for the topic
-    await supabaseClient
-      .rpc('bootcamp_update_student_progress', {
-        p_student_id: student_id,
-        p_topic_id: question.topic_id
-      })
-
     return new Response(
       JSON.stringify({
         success: true,
-        is_correct: selectedOption.is_correct,
-        feedback: selectedOption.diagnostic_feedback,
-        misconception: selectedOption.misconception_code,
-        correct_answer: question.bootcamp_enhanced_answer_options
-          .find((opt: any) => opt.is_correct)?.option_letter
+        is_correct: isCorrect,
+        feedback: question.explanation,
+        correct_answer: question.correct_answer
       }),
       { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     )

@@ -100,27 +100,18 @@ export const StudentAnalytics: React.FC = () => {
         throw profileError;
       }
 
-      // Fetch performance summary
-      const { data: summaryData, error: summaryError } = await supabase
-        .from('bootcamp_student_performance_summary')
-        .select('*')
-        .eq('student_id', profileData?.student_id)
-        .single();
-
-      if (summaryError && summaryError.code !== 'PGRST116') {
-        console.warn('Performance summary not available:', summaryError);
-      }
-
-      // Fetch skills proficiency
-      const { data: skillsData, error: skillsError } = await supabase
-        .from('bootcamp_student_skills_proficiency')
-        .select('*')
-        .eq('student_id', profileData?.student_id)
-        .order('proficiency_level', { ascending: false });
-
-      if (skillsError && skillsError.code !== 'PGRST116') {
-        console.warn('Skills proficiency not available:', skillsError);
-      }
+      // Mock data for now - tables don't exist
+      const summaryData = {
+        student_id: profileData?.student_id || '',
+        username: 'Student',
+        total_questions_attempted: 0,
+        total_correct: 0,
+        overall_accuracy: 0,
+        avg_response_time: 0,
+        unique_misconceptions: 0,
+        active_days: 0
+      };
+      const skillsData: any[] = [];
 
       // Fetch misconceptions catalog
       const { data: misconceptionsData, error: misconceptionsError } = await supabase

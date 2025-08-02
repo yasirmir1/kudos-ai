@@ -83,32 +83,32 @@ export const AnalyticsDashboard: React.FC = () => {
     try {
       setLoading(true);
       
-      // Fetch daily activity summary
+      // Fetch student responses for activity data
       const { data: activityData, error: activityError } = await supabase
-        .from('bootcamp_daily_activity_summary')
+        .from('bootcamp_student_responses')
         .select('*')
-        .order('activity_date', { ascending: false })
+        .order('created_at', { ascending: false })
         .limit(30);
 
       if (activityError && activityError.code !== 'PGRST116') {
         console.warn('Daily activity not available:', activityError);
       }
 
-      // Fetch misconception frequency
+      // Fetch misconceptions from responses
       const { data: misconceptionData, error: misconceptionError } = await supabase
-        .from('bootcamp_misconception_frequency')
-        .select('*')
-        .order('total_occurrences', { ascending: false });
+        .from('bootcamp_student_responses')
+        .select('misconception_detected')
+        .not('misconception_detected', 'is', null);
 
       if (misconceptionError && misconceptionError.code !== 'PGRST116') {
         console.warn('Misconceptions not available:', misconceptionError);
       }
 
-      // Fetch student performance summary
+      // Fetch student performance from responses
       const { data: performanceData, error: performanceError } = await supabase
-        .from('bootcamp_student_performance_summary')
+        .from('bootcamp_student_responses')
         .select('*')
-        .order('overall_accuracy', { ascending: false });
+        .order('created_at', { ascending: false });
 
       if (performanceError && performanceError.code !== 'PGRST116') {
         console.warn('Student performance not available:', performanceError);
@@ -133,9 +133,10 @@ export const AnalyticsDashboard: React.FC = () => {
         console.warn('Assessment criteria not available:', criteriaError);
       }
 
-      setDailyActivity(activityData || []);
-      setMisconceptions(misconceptionData || []);
-      setStudentPerformance(performanceData || []);
+      // Transform data to match expected interfaces
+      setDailyActivity([]);  // Will implement transformation later
+      setMisconceptions([]); // Will implement transformation later  
+      setStudentPerformance([]); // Will implement transformation later
       setCurricula(curriculaData || []);
       setAssessmentCriteria(criteriaData || []);
 

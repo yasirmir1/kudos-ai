@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { TrendingUp, Zap, Target, Award, Loader2 } from 'lucide-react';
 import { PerformanceChart } from './PerformanceChart';
 import { useAuth } from '../../hooks/useAuth';
+import { useBootcampData } from '../../hooks/useBootcampData';
 import { BootcampAPI } from '../../lib/bootcamp-api';
 
 interface Skill {
@@ -19,21 +20,20 @@ interface Achievement {
 
 export const ProgressView: React.FC = () => {
   const { user } = useAuth();
+  const { student, stats, progress, isLoading } = useBootcampData();
   const [skillsData, setSkillsData] = useState<Skill[]>([]);
   const [recentAchievements, setRecentAchievements] = useState<Achievement[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [performanceSummary, setPerformanceSummary] = useState<any>(null);
 
   useEffect(() => {
-    if (user) {
+    if (user && student) {
       loadProgressData();
     }
-  }, [user]);
+  }, [user, student, stats]);
 
   const loadProgressData = async () => {
     if (!user) return;
     
-    setLoading(true);
+    // Loading handled by useBootcampData hook
     try {
       const studentProfile = await BootcampAPI.getStudentProfile(user.id);
       if (studentProfile) {
@@ -51,11 +51,10 @@ export const ProgressView: React.FC = () => {
         })).slice(0, 5);
 
         setSkillsData(skills);
-        setPerformanceSummary(summary);
 
         // Generate achievements based on performance
         const achievements: Achievement[] = [];
-        if (summary?.overall_accuracy >= 95) {
+        if (stats.accuracy >= 95) {
           achievements.push({ 
             name: 'Accuracy Master', 
             description: 'Achieve 95% overall accuracy', 
@@ -63,7 +62,7 @@ export const ProgressView: React.FC = () => {
             date: 'Recently' 
           });
         }
-        if (summary?.total_questions_attempted >= 100) {
+        if (stats.totalQuestions >= 100) {
           achievements.push({ 
             name: 'Question Master', 
             description: 'Complete 100+ practice questions', 
@@ -71,7 +70,7 @@ export const ProgressView: React.FC = () => {
             date: 'Recently' 
           });
         }
-        if (summary?.active_days >= 7) {
+        if (stats.streakDays >= 7) {
           achievements.push({ 
             name: 'Week Warrior', 
             description: '7+ days of active practice', 
@@ -85,11 +84,11 @@ export const ProgressView: React.FC = () => {
     } catch (error) {
       console.error('Error loading progress data:', error);
     } finally {
-      setLoading(false);
+      // Loading handled by useBootcampData hook
     }
   };
 
-  if (loading) {
+  if (isLoading) {
     return (
       <div className="flex items-center justify-center min-h-[400px]">
         <div className="text-center space-y-4">
@@ -168,7 +167,7 @@ export const ProgressView: React.FC = () => {
         <div className="bg-card rounded-xl shadow-sm border p-6 text-center">
           <h3 className="text-lg font-semibold text-foreground mb-2">Questions Attempted</h3>
           <p className="text-3xl font-bold text-primary">
-            {performanceSummary?.total_questions_attempted || 0}
+            {stats.totalQuestions}
           </p>
           <p className="text-sm text-muted-foreground">total questions</p>
         </div>
@@ -176,7 +175,7 @@ export const ProgressView: React.FC = () => {
         <div className="bg-card rounded-xl shadow-sm border p-6 text-center">
           <h3 className="text-lg font-semibold text-foreground mb-2">Overall Accuracy</h3>
           <p className="text-3xl font-bold text-success">
-            {Math.round(performanceSummary?.overall_accuracy || 0)}%
+            {stats.accuracy}%
           </p>
           <p className="text-sm text-muted-foreground">correct answers</p>
         </div>
@@ -184,7 +183,7 @@ export const ProgressView: React.FC = () => {
         <div className="bg-card rounded-xl shadow-sm border p-6 text-center">
           <h3 className="text-lg font-semibold text-foreground mb-2">Active Days</h3>
           <p className="text-3xl font-bold text-warning">
-            {performanceSummary?.active_days || 0}
+            {stats.streakDays}
           </p>
           <p className="text-sm text-muted-foreground">days practicing</p>
         </div>

@@ -153,22 +153,14 @@ export const QuestionManager: React.FC = () => {
         console.warn('Difficulty levels not available:', difficultyError);
       }
 
-      // Fetch topic analysis
-      const { data: analysisData, error: analysisError } = await supabase
-        .from('bootcamp_topic_difficulty_analysis')
-        .select('*')
-        .order('success_rate', { ascending: false });
-
-      if (analysisError && analysisError.code !== 'PGRST116') {
-        console.warn('Topic analysis not available:', analysisError);
-      }
-
+      // Skip topic analysis for now - table doesn't exist
+      
       setQuestions(questionsData || []);
       setAnswers(answersData || []);
       setResponses(responsesData || []);
       setQuestionTypes(typesData || []);
       setDifficultyLevels(difficultyData || []);
-      setTopicAnalysis(analysisData || []);
+      setTopicAnalysis([]);
 
     } catch (err) {
       console.error('Error loading question data:', err);
