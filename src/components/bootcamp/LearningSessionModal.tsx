@@ -4,13 +4,40 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
+import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
+import { Label } from '@/components/ui/label';
 import { CheckCircle2, BookOpen, Target, PenTool, ClipboardCheck, ArrowRight, ArrowLeft } from 'lucide-react';
+
+interface AssessmentQuestion {
+  question: string;
+  type: 'numeric_entry' | 'multiple_choice' | 'written_answer';
+  options?: string[];
+}
+
+interface TopicContent {
+  concept_introduction: string;
+  complete_step: {
+    example: string;
+  };
+  guided_practice: string[];
+  independent_practice: string[];
+  assessment: AssessmentQuestion[];
+}
+
+interface CurriculumTopic {
+  topic_id: string;
+  topic_name: string;
+  content: TopicContent;
+}
 
 interface LearningSessionModalProps {
   isOpen: boolean;
   onClose: () => void;
   topicName: string;
   onComplete: () => void;
+  curriculumData?: CurriculumTopic;
 }
 
 interface LearningStage {
@@ -18,11 +45,45 @@ interface LearningStage {
   title: string;
   icon: React.ReactNode;
   description: string;
-  content: string;
   completed: boolean;
 }
 
-export function LearningSessionModal({ isOpen, onClose, topicName, onComplete }: LearningSessionModalProps) {
+// Sample curriculum data - you can replace this with dynamic data
+const sampleCurriculumData: CurriculumTopic[] = [
+  {
+    "topic_id": "npv1",
+    "topic_name": "Reading and Writing Large Numbers",
+    "content": {
+      "concept_introduction": "Learn to read and write large numbers up to 10,000,000, understanding place value and how to write numbers in standard and word forms.",
+      "complete_step": {
+        "example": "The number 5,203,014 is read as five million, two hundred three thousand, fourteen."
+      },
+      "guided_practice": [
+        "Write the following numbers in words: 3,405; 48,219; 1,302,058"
+      ],
+      "independent_practice": [
+        "Write these numbers in numerals: Two thousand, six hundred and five; Forty-five thousand and eighty-nine; One million, three hundred twenty-two thousand, seventeen"
+      ],
+      "assessment": [
+        {
+          "question": "What is the value of the 6 in 864,205?",
+          "type": "numeric_entry"
+        },
+        {
+          "question": "Circle the number that is written correctly in words:",
+          "type": "multiple_choice",
+          "options": [
+            "Two hundred forty three thousand, ten",
+            "Two hundred forty-three thousand and ten",
+            "Two hundred and forty three thousand and ten"
+          ]
+        }
+      ]
+    }
+  }
+];
+
+export function LearningSessionModal({ isOpen, onClose, topicName, onComplete, curriculumData }: LearningSessionModalProps) {
   const [currentStage, setCurrentStage] = useState(0);
   const [stages, setStages] = useState<LearningStage[]>([
     {
@@ -30,15 +91,6 @@ export function LearningSessionModal({ isOpen, onClose, topicName, onComplete }:
       title: "Concept Introduction",
       icon: <BookOpen className="h-5 w-5" />,
       description: "Learn the fundamental concepts and theory",
-      content: `Welcome to ${topicName}! Let's start with the basic concepts.
-
-In this section, you'll learn:
-• Core principles and definitions
-• Visual representations and examples
-• Real-world applications
-• Key terminology
-
-Take your time to understand each concept before moving forward. This foundation will help you succeed in the practice sections.`,
       completed: false
     },
     {
@@ -46,15 +98,6 @@ Take your time to understand each concept before moving forward. This foundation
       title: "Guided Practice",
       icon: <Target className="h-5 w-5" />,
       description: "Practice with step-by-step guidance",
-      content: `Now let's practice together! I'll guide you through examples step by step.
-
-In this guided practice, we'll:
-• Work through examples together
-• Break down complex problems into steps
-• Identify common patterns and strategies
-• Address frequent mistakes
-
-Follow along and don't hesitate to review any step that needs clarification.`,
       completed: false
     },
     {
@@ -62,15 +105,6 @@ Follow along and don't hesitate to review any step that needs clarification.`,
       title: "Independent Practice",
       icon: <PenTool className="h-5 w-5" />,
       description: "Apply your knowledge independently",
-      content: `Time to practice on your own! Use what you've learned to solve problems independently.
-
-In this section, you'll:
-• Solve problems without step-by-step guidance
-• Apply strategies you've learned
-• Build confidence in your abilities
-• Identify areas that need more practice
-
-Remember, making mistakes is part of learning. Take your time and think through each problem.`,
       completed: false
     },
     {
@@ -78,18 +112,15 @@ Remember, making mistakes is part of learning. Take your time and think through 
       title: "Assessment",
       icon: <ClipboardCheck className="h-5 w-5" />,
       description: "Demonstrate your mastery",
-      content: `Final assessment time! Show what you've learned in this topic.
-
-This assessment will:
-• Test your understanding of key concepts
-• Evaluate your problem-solving skills
-• Provide feedback on your progress
-• Identify strengths and areas for improvement
-
-Do your best and remember that this helps track your learning progress.`,
       completed: false
     }
   ]);
+
+  const [assessmentAnswers, setAssessmentAnswers] = useState<{[key: number]: string}>({});
+
+  // Use provided curriculum data or fallback to sample data
+  const currentTopic = curriculumData || sampleCurriculumData[0];
+  const content = currentTopic.content;
 
   const currentStageData = stages[currentStage];
   const progress = ((currentStage + 1) / stages.length) * 100;
@@ -121,15 +152,152 @@ Do your best and remember that this helps track your learning progress.`,
     }
   };
 
+  const handleAssessmentAnswer = (questionIndex: number, answer: string) => {
+    setAssessmentAnswers(prev => ({
+      ...prev,
+      [questionIndex]: answer
+    }));
+  };
+
+  const renderStageContent = () => {
+    switch (currentStage) {
+      case 0: // Concept Introduction
+        return (
+          <div className="space-y-4">
+            <div className="bg-blue-50 rounded-lg p-6">
+              <h4 className="font-semibold text-blue-900 mb-3">📚 Learning Objective</h4>
+              <p className="text-blue-800 leading-relaxed">{content.concept_introduction}</p>
+            </div>
+            
+            <div className="bg-green-50 rounded-lg p-6">
+              <h4 className="font-semibold text-green-900 mb-3">💡 Key Example</h4>
+              <p className="text-green-800 leading-relaxed font-mono bg-white p-3 rounded border">
+                {content.complete_step.example}
+              </p>
+            </div>
+          </div>
+        );
+
+      case 1: // Guided Practice
+        return (
+          <div className="space-y-4">
+            <div className="bg-orange-50 rounded-lg p-6">
+              <h4 className="font-semibold text-orange-900 mb-3">👨‍🏫 Let's Practice Together</h4>
+              <p className="text-orange-800 mb-4">Work through these examples step by step:</p>
+              
+              <div className="space-y-3">
+                {content.guided_practice.map((practice, index) => (
+                  <div key={index} className="bg-white p-4 rounded border border-orange-200">
+                    <p className="font-medium text-orange-900">Exercise {index + 1}:</p>
+                    <p className="text-orange-800 mt-2">{practice}</p>
+                    <div className="mt-3">
+                      <Input 
+                        placeholder="Work through this problem..." 
+                        className="bg-orange-50 border-orange-200"
+                      />
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        );
+
+      case 2: // Independent Practice
+        return (
+          <div className="space-y-4">
+            <div className="bg-purple-50 rounded-lg p-6">
+              <h4 className="font-semibold text-purple-900 mb-3">✏️ Your Turn to Practice</h4>
+              <p className="text-purple-800 mb-4">Try these problems on your own:</p>
+              
+              <div className="space-y-3">
+                {content.independent_practice.map((practice, index) => (
+                  <div key={index} className="bg-white p-4 rounded border border-purple-200">
+                    <p className="font-medium text-purple-900">Problem {index + 1}:</p>
+                    <p className="text-purple-800 mt-2">{practice}</p>
+                    <div className="mt-3">
+                      <Textarea 
+                        placeholder="Show your work here..." 
+                        className="bg-purple-50 border-purple-200"
+                        rows={3}
+                      />
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        );
+
+      case 3: // Assessment
+        return (
+          <div className="space-y-4">
+            <div className="bg-red-50 rounded-lg p-6">
+              <h4 className="font-semibold text-red-900 mb-3">📝 Assessment Time</h4>
+              <p className="text-red-800 mb-4">Show what you've learned:</p>
+              
+              <div className="space-y-4">
+                {content.assessment.map((question, index) => (
+                  <div key={index} className="bg-white p-4 rounded border border-red-200">
+                    <p className="font-medium text-red-900 mb-3">Question {index + 1}:</p>
+                    <p className="text-red-800 mb-3">{question.question}</p>
+                    
+                    {question.type === 'multiple_choice' && question.options && (
+                      <RadioGroup 
+                        value={assessmentAnswers[index] || ''} 
+                        onValueChange={(value) => handleAssessmentAnswer(index, value)}
+                      >
+                        {question.options.map((option, optionIndex) => (
+                          <div key={optionIndex} className="flex items-center space-x-2">
+                            <RadioGroupItem value={option} id={`q${index}_o${optionIndex}`} />
+                            <Label htmlFor={`q${index}_o${optionIndex}`} className="text-sm">
+                              {option}
+                            </Label>
+                          </div>
+                        ))}
+                      </RadioGroup>
+                    )}
+                    
+                    {question.type === 'numeric_entry' && (
+                      <Input 
+                        type="number"
+                        placeholder="Enter your answer..." 
+                        value={assessmentAnswers[index] || ''}
+                        onChange={(e) => handleAssessmentAnswer(index, e.target.value)}
+                        className="bg-red-50 border-red-200"
+                      />
+                    )}
+                    
+                    {question.type === 'written_answer' && (
+                      <Textarea 
+                        placeholder="Type your answer..." 
+                        value={assessmentAnswers[index] || ''}
+                        onChange={(e) => handleAssessmentAnswer(index, e.target.value)}
+                        className="bg-red-50 border-red-200"
+                        rows={2}
+                      />
+                    )}
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        );
+
+      default:
+        return null;
+    }
+  };
+
   const isCurrentStageCompleted = stages[currentStage]?.completed;
   const canProceed = isCurrentStageCompleted || currentStage < completedStages;
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
+      <DialogContent className="max-w-5xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle className="text-2xl font-bold">
-            Learning Session: {topicName}
+            Learning Session: {currentTopic.topic_name}
           </DialogTitle>
         </DialogHeader>
 
@@ -211,20 +379,7 @@ Do your best and remember that this helps track your learning progress.`,
               </div>
             </CardHeader>
             <CardContent>
-              <div className="prose prose-sm max-w-none">
-                <div className="bg-muted/50 rounded-lg p-6">
-                  <pre className="whitespace-pre-wrap font-sans text-sm leading-relaxed">
-                    {currentStageData.content}
-                  </pre>
-                </div>
-              </div>
-
-              {/* Interactive Learning Area */}
-              <div className="mt-6 p-4 border-2 border-dashed border-muted-foreground/20 rounded-lg">
-                <p className="text-center text-muted-foreground">
-                  Interactive learning content will be displayed here based on the specific module and stage.
-                </p>
-              </div>
+              {renderStageContent()}
             </CardContent>
           </Card>
 
