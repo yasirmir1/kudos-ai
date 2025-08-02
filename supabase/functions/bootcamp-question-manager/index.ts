@@ -346,6 +346,8 @@ async function submitResponse(supabaseClient: any, responseData: any) {
       session_id
     } = responseData
 
+    console.log('Submitting response:', { student_id, question_id, selected_answer, session_id });
+
     // Get the question details
     const { data: question, error: questionError } = await supabaseClient
       .from('bootcamp_questions')
@@ -367,21 +369,27 @@ async function submitResponse(supabaseClient: any, responseData: any) {
         selected_answer,
         is_correct: isCorrect,
         time_taken: time_taken_seconds,
-        misconception_detected: null, // Will be determined later
+        misconception_detected: null,
         responded_at: new Date().toISOString(),
-        session_id: session_id
+        session_id
       })
       .select()
       .single()
 
-    if (responseError) throw responseError
+    if (responseError) {
+      console.error('Database insert error:', responseError)
+      throw responseError
+    }
+
+    console.log('Response saved successfully:', response)
 
     return new Response(
       JSON.stringify({
         success: true,
         is_correct: isCorrect,
         feedback: question.explanation,
-        correct_answer: question.correct_answer
+        correct_answer: question.correct_answer,
+        response_id: response.response_id
       }),
       { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     )
