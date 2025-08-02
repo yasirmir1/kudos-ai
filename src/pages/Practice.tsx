@@ -57,6 +57,7 @@ const Practice = () => {
   const [sessionQuestionCount, setSessionQuestionCount] = useState(10);
   const [sessionDifficulty, setSessionDifficulty] = useState<string | undefined>(undefined);
   const [sessionRecorded, setSessionRecorded] = useState(false);
+  const [currentSessionId, setCurrentSessionId] = useState<string | null>(null);
   useEffect(() => {
     setSessionStartTime(new Date());
     // Don't automatically load questions - wait for user to start session
@@ -65,7 +66,7 @@ const Practice = () => {
   // Record session when user leaves the practice page
   useEffect(() => {
     const recordSessionOnLeave = () => {
-      if (answeredQuestions.length > 0 && !sessionRecorded) {
+      if (answeredQuestions.length > 0 && !sessionRecorded && currentSessionId) {
         recordSessionResults(false); // Don't show notification when leaving
       }
     };
@@ -74,12 +75,12 @@ const Practice = () => {
     return () => {
       recordSessionOnLeave();
     };
-  }, [answeredQuestions, sessionRecorded]);
+  }, [answeredQuestions, sessionRecorded, currentSessionId]);
 
   // Handle browser tab close/refresh
   useEffect(() => {
     const handleBeforeUnload = () => {
-      if (answeredQuestions.length > 0 && !sessionRecorded) {
+      if (answeredQuestions.length > 0 && !sessionRecorded && currentSessionId) {
         recordSessionResults(false); // Don't show notification when leaving
       }
     };
@@ -87,7 +88,7 @@ const Practice = () => {
     return () => {
       window.removeEventListener('beforeunload', handleBeforeUnload);
     };
-  }, [answeredQuestions, sessionRecorded]);
+  }, [answeredQuestions, sessionRecorded, currentSessionId]);
 
   // Function removed - now using selectedAgeGroup from context
 
@@ -392,9 +393,38 @@ const Practice = () => {
     setGeneratingExplanation(false);
     setStartTime(new Date());
   };
+  const createNewSession = async () => {
+    try {
+      const { data, error } = await supabase.from('practice_sessions').insert({
+        student_id: user?.id,
+        session_start: sessionStartTime.toISOString(),
+        session_end: sessionStartTime.toISOString(), // Will be updated later
+        total_questions: 0, // Will be updated later
+        correct_answers: 0, // Will be updated later
+        accuracy: 0, // Will be updated later
+        average_time_per_question: 0, // Will be updated later
+        topics_covered: [], // Will be updated later
+        difficulty_levels: [], // Will be updated later
+        age_group: selectedAgeGroup
+      }).select().single();
+
+      if (error) {
+        console.error('Error creating session:', error);
+        return null;
+      }
+
+      console.log('New session created:', data);
+      setCurrentSessionId(data.id);
+      return data.id;
+    } catch (error) {
+      console.error('Error creating session:', error);
+      return null;
+    }
+  };
+
   const recordSessionResults = async (showNotification: boolean = false) => {
     // Prevent duplicate session recordings
-    if (sessionRecorded) {
+    if (sessionRecorded || !currentSessionId) {
       return;
     }
 
@@ -402,6 +432,7 @@ const Practice = () => {
       const sessionEndTime = new Date();
       const totalQuestions = answeredQuestions.length;
       const correctAnswers = answeredQuestions.filter(q => q.isCorrect).length;
+      const accuracy = totalQuestions > 0 ? (correctAnswers / totalQuestions) * 100 : 0;
 
       // Calculate average time per question
       const totalTime = answeredQuestions.reduce((sum, q) => sum + q.timeTaken, 0);
@@ -410,23 +441,21 @@ const Practice = () => {
       // Get unique topics and difficulty levels
       const topicsCovered = [...new Set(answeredQuestions.map(q => q.question.topic))];
       const difficultyLevels = [...new Set(answeredQuestions.map(q => q.question.difficulty))];
-      const {
-        data,
-        error
-      } = await supabase.from('practice_sessions').insert({
-        student_id: user?.id,
-        session_start: sessionStartTime.toISOString(),
-        session_end: sessionEndTime.toISOString(),
-        total_questions: totalQuestions,
-        correct_answers: correctAnswers,
-        average_time_per_question: averageTimePerQuestion,
-        topics_covered: topicsCovered,
-        difficulty_levels: difficultyLevels,
-        age_group: selectedAgeGroup
-      });
+      
+      const { data, error } = await supabase.from('practice_sessions')
+        .update({
+          session_end: sessionEndTime.toISOString(),
+          total_questions: totalQuestions,
+          correct_answers: correctAnswers,
+          accuracy: accuracy,
+          average_time_per_question: averageTimePerQuestion,
+          topics_covered: topicsCovered,
+          difficulty_levels: difficultyLevels
+        })
+        .eq('id', currentSessionId);
       
       if (error) {
-        console.error('Error recording session:', error);
+        console.error('Error updating session:', error);
         if (showNotification) {
           toast({
             title: "Session not saved",
@@ -435,7 +464,7 @@ const Practice = () => {
           });
         }
       } else {
-        console.log('Session recorded successfully:', data);
+        console.log('Session updated successfully:', data);
         setSessionRecorded(true); // Mark session as recorded
         if (showNotification) {
           toast({
@@ -468,15 +497,21 @@ const Practice = () => {
     setSessionStartTime(new Date());
     setAnsweredQuestions([]);
     setSessionRecorded(false); // Reset session recorded flag for restart
+    setCurrentSessionId(null); // Reset session ID for restart
     setShowSessionStartModal(true);
   };
 
-  const handleSessionStart = (questionCount: number, difficulty?: string) => {
+  const handleSessionStart = async (questionCount: number, difficulty?: string) => {
     setSessionQuestionCount(questionCount);
     setSessionDifficulty(difficulty);
     setSessionStartTime(new Date());
     setStartTime(new Date());
     setSessionRecorded(false); // Reset session recorded flag for new session
+    setCurrentSessionId(null); // Reset session ID for new session
+    
+    // Create a new session record when starting
+    await createNewSession();
+    
     loadAdaptiveQuestions(selectedAgeGroup, questionCount, difficulty);
   };
   if (loading) {
