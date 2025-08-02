@@ -8,6 +8,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
 import { useToast } from '@/hooks/use-toast';
 import { AppNavigation } from '@/components/AppNavigation';
+import { InteractiveInsights } from '@/components/InteractiveInsights';
 
 interface StudiedTopic {
   topic: string;
@@ -149,51 +150,20 @@ export default function Report() {
           {/* AI Insights Panel - Full Width */}
           <Card>
             <CardHeader>
-              <div className="flex items-center justify-between">
-                <div>
-                  <CardTitle className="flex items-center gap-2">
-                    <Lightbulb className="h-5 w-5 text-primary" />
-                    Learning Insights & Misconception Analysis
-                  </CardTitle>
-                  <CardDescription>
-                    AI-powered analysis of your learning patterns and areas for improvement
-                  </CardDescription>
-                </div>
-                {showExplanation && (
-                  <Button
-                    onClick={handleRefreshInsights}
-                    disabled={isLoadingExplanation}
-                    size="sm"
-                    variant="outline"
-                    className="gap-2"
-                  >
-                    <Lightbulb className="h-4 w-4" />
-                    {isLoadingExplanation ? "Updating..." : "Refresh"}
-                  </Button>
-                )}
-              </div>
+              <CardTitle className="flex items-center gap-2">
+                <Lightbulb className="h-5 w-5 text-primary" />
+                Learning Insights & Misconception Analysis
+              </CardTitle>
+              <CardDescription>
+                AI-powered analysis of your learning patterns and areas for improvement
+              </CardDescription>
             </CardHeader>
             <CardContent>
-              {isLoadingExplanation ? (
-                <div className="flex items-center justify-center h-[400px]">
-                  <div className="text-center space-y-2">
-                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto"></div>
-                    <p className="text-sm text-muted-foreground">Analyzing your learning patterns...</p>
-                  </div>
-                </div>
-              ) : explanation ? (
-                <ScrollArea className="h-[400px] pr-4">
-                  <div className="prose prose-sm max-w-none">
-                    <div className="whitespace-pre-wrap text-sm leading-relaxed">
-                      {explanation}
-                    </div>
-                  </div>
-                </ScrollArea>
-              ) : (
-                <div className="flex items-center justify-center h-[400px] text-muted-foreground">
-                  No insights available yet. Complete some practice sessions to get personalized analysis.
-                </div>
-              )}
+              <InteractiveInsights 
+                explanation={explanation || ''}
+                onRefresh={handleRefreshInsights}
+                isRefreshing={isLoadingExplanation}
+              />
             </CardContent>
           </Card>
           
