@@ -276,7 +276,7 @@ export const TopicsStudiedModal = ({ open, onOpenChange }: TopicsStudiedModalPro
                   <InteractiveInsights 
                     explanation={explanation}
                     hideExpandControls={true}
-                    key={expandAllMode} // Force re-render when mode changes
+                    initialExpandMode={expandAllMode}
                   />
                 </ScrollArea>
               ) : null}

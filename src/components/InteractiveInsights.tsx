@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { parseInsights } from '@/lib/insightParser';
@@ -9,16 +9,29 @@ interface InteractiveInsightsProps {
   onRefresh?: () => void;
   isRefreshing?: boolean;
   hideExpandControls?: boolean;
+  initialExpandMode?: 'compact' | 'expanded';
 }
 export const InteractiveInsights = ({
   explanation,
   onRefresh,
   isRefreshing = false,
-  hideExpandControls = false
+  hideExpandControls = false,
+  initialExpandMode = 'compact'
 }: InteractiveInsightsProps) => {
   const [expandedCards, setExpandedCards] = useState<Set<string>>(new Set());
   const [viewMode, setViewMode] = useState<'compact' | 'expanded'>('compact');
   const insights = useMemo(() => parseInsights(explanation), [explanation]);
+
+  // Handle initial expand mode changes from parent
+  useEffect(() => {
+    if (initialExpandMode === 'expanded') {
+      setExpandedCards(new Set(insights.map(insight => insight.id)));
+      setViewMode('expanded');
+    } else {
+      setExpandedCards(new Set());
+      setViewMode('compact');
+    }
+  }, [initialExpandMode, insights]);
   const toggleCard = (id: string) => {
     const newExpanded = new Set(expandedCards);
     if (newExpanded.has(id)) {
