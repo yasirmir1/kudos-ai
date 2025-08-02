@@ -157,6 +157,12 @@ export default function Report() {
     return activeFilters.has(filter) ? 'default' : 'outline';
   };
 
+  const getFilterButtonClass = (filter: string) => {
+    return activeFilters.has(filter) 
+      ? 'bg-blue-100 text-blue-800 border-blue-200 hover:bg-blue-200' 
+      : '';
+  };
+
   const getFilterCount = (filter: string) => {
     return topics.filter(topic => getAccuracyCategory(topic.accuracy) === filter).length;
   };
@@ -216,27 +222,27 @@ export default function Report() {
                   <div className="flex gap-1">
                     <Button
                       size="sm"
-                      variant={getFilterButtonVariant('mastered')}
+                      variant="outline"
                       onClick={() => toggleFilter('mastered')}
-                      className="gap-1"
+                      className={`gap-1 ${getFilterButtonClass('mastered')}`}
                     >
                       <div className="w-2 h-2 bg-green-500 rounded-full"></div>
                       Mastered ({getFilterCount('mastered')})
                     </Button>
                     <Button
                       size="sm"
-                      variant={getFilterButtonVariant('learning')}
+                      variant="outline"
                       onClick={() => toggleFilter('learning')}
-                      className="gap-1"
+                      className={`gap-1 ${getFilterButtonClass('learning')}`}
                     >
                       <div className="w-2 h-2 bg-blue-400 rounded-full"></div>
                       Learning ({getFilterCount('learning')})
                     </Button>
                     <Button
                       size="sm"
-                      variant={getFilterButtonVariant('needs-work')}
+                      variant="outline"
                       onClick={() => toggleFilter('needs-work')}
-                      className="gap-1"
+                      className={`gap-1 ${getFilterButtonClass('needs-work')}`}
                     >
                       <div className="w-2 h-2 bg-red-500 rounded-full"></div>
                       Needs Work ({getFilterCount('needs-work')})
