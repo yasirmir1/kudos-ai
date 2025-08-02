@@ -477,7 +477,7 @@ export function StructuredLearningModal({
   });
 
   return <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-none w-[90vw] max-h-[85vh] overflow-y-auto relative bg-background border shadow-lg">
+      <DialogContent className="max-w-none w-[90vw] max-h-[90vh] overflow-y-auto relative bg-background border shadow-lg fixed top-[50%] left-[50%] translate-x-[-50%] translate-y-[-50%]">
         {/* Topic Badge - Top Right */}
         <div className="absolute top-4 right-4 flex items-center gap-2 bg-muted rounded-full px-4 py-2 border z-10">
           <span className="text-lg">🎯</span>
