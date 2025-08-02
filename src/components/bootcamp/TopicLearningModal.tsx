@@ -136,35 +136,27 @@ export function TopicLearningModal({ topic, isOpen, onClose, onStartPractice }: 
         overview: `Comprehensive learning materials for ${topic.name} are being prepared. This topic will help you develop essential mathematical skills and understanding.`,
         keySkills: topic.skills || [],
         learningObjectives: [],
-        tips: []
+        tips: [],
+        hasContent: false
       };
     }
 
     // Extract content from curriculum data
-    const overview = curriculumContent.find(c => c.stage_type === 'introduction')?.description || 
-                    curriculumContent.find(c => c.title)?.description ||
+    const introContent = curriculumContent.find(c => c.stage_type === 'concept_introduction');
+    const overview = introContent?.content?.introduction || introContent?.description || 
                     `Learn ${topic.name} with structured lessons, practice exercises, and real-world applications.`;
     
-    const skills = curriculumContent
-      .filter(c => c.stage_type === 'concept' || c.content?.skills)
-      .flatMap(c => c.content?.skills || [])
-      .filter(Boolean);
-
-    const objectives = curriculumContent
-      .filter(c => c.content?.objectives || c.content?.learningObjectives)
-      .flatMap(c => c.content?.objectives || c.content?.learningObjectives || [])
-      .filter(Boolean);
-
-    const tips = curriculumContent
-      .filter(c => c.content?.tips || c.content?.hints)
-      .flatMap(c => c.content?.tips || c.content?.hints || [])
-      .filter(Boolean);
+    const concepts = introContent?.content?.concepts || [];
+    const objectives = introContent?.content?.learning_objective ? [introContent.content.learning_objective] : [];
+    const realWorldConnections = introContent?.content?.real_world_connections || [];
 
     return {
       overview,
-      keySkills: skills.length > 0 ? skills : topic.skills || [],
+      keySkills: concepts.length > 0 ? concepts : topic.skills || [],
       learningObjectives: objectives,
-      tips
+      tips: realWorldConnections,
+      hasContent: true,
+      stages: curriculumContent
     };
   };
 
