@@ -10,6 +10,8 @@ import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Loader2 } from 'lucide-react';
 import { LearningExperience } from './LearningExperience';
 import { TopicLearningModal } from './TopicLearningModal';
+import { useBootcampData } from '@/hooks/useBootcampData';
+import { Target } from 'lucide-react';
 interface Module {
   id: string;
   name: string;
@@ -48,6 +50,7 @@ interface CurriculumItem {
   pedagogical_notes: string;
 }
 export const LearnView: React.FC = () => {
+  const { student, progress } = useBootcampData();
   const [modules, setModules] = useState<Module[]>([]);
   const [topics, setTopics] = useState<Topic[]>([]);
   const [subtopics, setSubtopics] = useState<Subtopic[]>([]);
@@ -410,6 +413,27 @@ export const LearnView: React.FC = () => {
               Explore {topics.length} topics across {modules.length} modules. Click any topic to see detailed content, subtopics, and sample questions.
             </p>
           </div>
+
+          {/* Your Learning Journey Progress */}
+          {progress && progress.length > 0 && (
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Target className="h-5 w-5" />
+                  Your Learning Journey
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-4">
+                  <div className="flex justify-between text-sm text-muted-foreground">
+                    <span>Progress: {progress.filter(p => p.status === 'mastered' || p.status === 'completed').length} of {topics.length} topics</span>
+                    <span>{Math.round((progress.filter(p => p.status === 'mastered' || p.status === 'completed').length / topics.length) * 100)}% Complete</span>
+                  </div>
+                  <Progress value={(progress.filter(p => p.status === 'mastered' || p.status === 'completed').length / topics.length) * 100} className="h-2" />
+                </div>
+              </CardContent>
+            </Card>
+          )}
 
           {modules.map((module) => {
             const moduleTopics = getTopicsForModule(module.id);
