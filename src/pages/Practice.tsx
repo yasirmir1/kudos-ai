@@ -65,7 +65,7 @@ const Practice = () => {
   useEffect(() => {
     const recordSessionOnLeave = () => {
       if (answeredQuestions.length > 0) {
-        recordSessionResults();
+        recordSessionResults(false); // Don't show notification when leaving
       }
     };
 
@@ -79,7 +79,7 @@ const Practice = () => {
   useEffect(() => {
     const handleBeforeUnload = () => {
       if (answeredQuestions.length > 0) {
-        recordSessionResults();
+        recordSessionResults(false); // Don't show notification when leaving
       }
     };
     window.addEventListener('beforeunload', handleBeforeUnload);
@@ -379,8 +379,8 @@ const Practice = () => {
     }
     if (currentIndex + 1 >= sessionQuestionCount) {
       setSessionComplete(true);
-      // Record the session in the database
-      recordSessionResults();
+      // Record the session in the database with notification
+      recordSessionResults(true); // Show notification when completing session
       return;
     }
     setCurrentIndex(currentIndex + 1);
@@ -391,7 +391,7 @@ const Practice = () => {
     setGeneratingExplanation(false);
     setStartTime(new Date());
   };
-  const recordSessionResults = async () => {
+  const recordSessionResults = async (showNotification: boolean = false) => {
     try {
       const sessionEndTime = new Date();
       const totalQuestions = answeredQuestions.length;
@@ -420,25 +420,31 @@ const Practice = () => {
       });
       if (error) {
         console.error('Error recording session:', error);
-        toast({
-          title: "Session not saved",
-          description: "Your practice session results couldn't be saved.",
-          variant: "destructive"
-        });
+        if (showNotification) {
+          toast({
+            title: "Session not saved",
+            description: "Your practice session results couldn't be saved.",
+            variant: "destructive"
+          });
+        }
       } else {
         console.log('Session recorded successfully:', data);
-        toast({
-          title: "Session saved!",
-          description: "Your practice session has been recorded."
-        });
+        if (showNotification) {
+          toast({
+            title: "Session saved!",
+            description: "Your practice session has been recorded."
+          });
+        }
       }
     } catch (error) {
       console.error('Error recording session:', error);
-      toast({
-        title: "Session not saved",
-        description: "There was an error saving your session.",
-        variant: "destructive"
-      });
+      if (showNotification) {
+        toast({
+          title: "Session not saved",
+          description: "There was an error saving your session.",
+          variant: "destructive"
+        });
+      }
     }
   };
   const handleRestart = () => {
