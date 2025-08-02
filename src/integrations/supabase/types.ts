@@ -323,15 +323,7 @@ export type Database = {
           topic_id?: string
           updated_at?: string | null
         }
-        Relationships: [
-          {
-            foreignKeyName: "bootcamp_curriculum_content_topic_id_fkey"
-            columns: ["topic_id"]
-            isOneToOne: false
-            referencedRelation: "bootcamp_curriculum_topics"
-            referencedColumns: ["id"]
-          },
-        ]
+        Relationships: []
       }
       bootcamp_curriculum_metadata: {
         Row: {
@@ -412,53 +404,6 @@ export type Database = {
             columns: ["content_id"]
             isOneToOne: false
             referencedRelation: "bootcamp_curriculum_content"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      bootcamp_curriculum_topics: {
-        Row: {
-          created_at: string | null
-          difficulty: string
-          estimated_duration_minutes: number | null
-          id: string
-          learning_objectives: string[] | null
-          module_id: string | null
-          prerequisites: string[] | null
-          topic_name: string
-          topic_order: number
-          updated_at: string | null
-        }
-        Insert: {
-          created_at?: string | null
-          difficulty?: string
-          estimated_duration_minutes?: number | null
-          id: string
-          learning_objectives?: string[] | null
-          module_id?: string | null
-          prerequisites?: string[] | null
-          topic_name: string
-          topic_order?: number
-          updated_at?: string | null
-        }
-        Update: {
-          created_at?: string | null
-          difficulty?: string
-          estimated_duration_minutes?: number | null
-          id?: string
-          learning_objectives?: string[] | null
-          module_id?: string | null
-          prerequisites?: string[] | null
-          topic_name?: string
-          topic_order?: number
-          updated_at?: string | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "bootcamp_curriculum_topics_module_id_fkey"
-            columns: ["module_id"]
-            isOneToOne: false
-            referencedRelation: "bootcamp_modules"
             referencedColumns: ["id"]
           },
         ]
