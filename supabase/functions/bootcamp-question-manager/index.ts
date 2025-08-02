@@ -169,8 +169,33 @@ async function getAdaptiveQuestions(supabaseClient: any, studentId: string, ques
     const { data: questions, error: questionsError } = await supabaseClient
       .from('bootcamp_enhanced_questions')
       .select(`
-        *,
-        bootcamp_enhanced_answer_options (*)
+        question_id,
+        module_id,
+        topic_id,
+        subtopic_id,
+        question_category,
+        cognitive_level,
+        difficulty,
+        question_type,
+        question_text,
+        marks,
+        time_seconds,
+        prerequisite_skills,
+        exam_boards,
+        usage_count,
+        success_rate,
+        created_at,
+        bootcamp_enhanced_answer_options (
+          answer_id,
+          option_letter,
+          answer_value,
+          is_correct,
+          misconception_code,
+          diagnostic_feedback,
+          selection_count,
+          error_category,
+          remedial_topic
+        )
       `)
       .in('question_id', questionIds)
 
