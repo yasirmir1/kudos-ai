@@ -156,8 +156,8 @@ const Index = () => {
               <text x="560" y="120" fontFamily="Arial" fontSize="16" fontWeight="600" fill="#1D1D1F">Practice Insights</text>
               
               {/* Practice stats - improved spacing */}
-              <text x="560" y="140" fontFamily="Arial" fontSize="11" fill="#86868B">Accuracy:</text>
-              <text x="660" y="140" fontFamily="Arial" fontSize="14" fontWeight="600" fill="#0071E3">85%</text>
+              <text x="560" y="150" fontFamily="Arial" fontSize="11" fill="#86868B">Accuracy:</text>
+              <text x="660" y="150" fontFamily="Arial" fontSize="14" fontWeight="600" fill="#0071E3">85%</text>
               
               <text x="560" y="170" fontFamily="Arial" fontSize="11" fill="#86868B">Time spent:</text>
               <text x="660" y="170" fontFamily="Arial" fontSize="14" fontWeight="600" fill="#0071E3">18 mins</text>
