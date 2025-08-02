@@ -170,17 +170,17 @@ const Index = () => {
               <text x="50" y="290" fontFamily="Arial" fontSize="18" fontWeight="600" fill="#1D1D1F">Weekly Progress</text>
               
               {/* Extended line graph within container bounds */}
-              <polyline points="80,380 140,360 200,350 260,320 320,300 380,280 440,260 500,240 560,220 620,200" stroke="#667EEA" strokeWidth="3" fill="none"></polyline>
-              <circle cx="80" cy="380" r="3" fill="#667EEA"></circle>
-              <circle cx="140" cy="360" r="3" fill="#667EEA"></circle>
-              <circle cx="200" cy="350" r="3" fill="#667EEA"></circle>
-              <circle cx="260" cy="320" r="3" fill="#667EEA"></circle>
-              <circle cx="320" cy="300" r="3" fill="#667EEA"></circle>
-              <circle cx="380" cy="280" r="3" fill="#667EEA"></circle>
-              <circle cx="440" cy="260" r="3" fill="#667EEA"></circle>
-              <circle cx="500" cy="240" r="3" fill="#667EEA"></circle>
-              <circle cx="560" cy="220" r="3" fill="#667EEA"></circle>
-              <circle cx="620" cy="200" r="3" fill="#667EEA"></circle>
+              <polyline points="80,350 140,340 200,335 260,330 320,325 380,320 440,315 500,310 560,305 620,300" stroke="#667EEA" strokeWidth="3" fill="none"></polyline>
+              <circle cx="80" cy="350" r="3" fill="#667EEA"></circle>
+              <circle cx="140" cy="340" r="3" fill="#667EEA"></circle>
+              <circle cx="200" cy="335" r="3" fill="#667EEA"></circle>
+              <circle cx="260" cy="330" r="3" fill="#667EEA"></circle>
+              <circle cx="320" cy="325" r="3" fill="#667EEA"></circle>
+              <circle cx="380" cy="320" r="3" fill="#667EEA"></circle>
+              <circle cx="440" cy="315" r="3" fill="#667EEA"></circle>
+              <circle cx="500" cy="310" r="3" fill="#667EEA"></circle>
+              <circle cx="560" cy="305" r="3" fill="#667EEA"></circle>
+              <circle cx="620" cy="300" r="3" fill="#667EEA"></circle>
               
               {/* Day labels */}
               <text x="80" y="410" fontFamily="Arial" fontSize="10" fill="#86868B" textAnchor="middle">Mon</text>
