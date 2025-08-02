@@ -462,6 +462,14 @@ export const LearnView: React.FC = () => {
                   {moduleTopics.map((topic) => {
                     const topicSubtopics = getSubtopicsForTopic(topic.id);
                     const sampleQuestionsCount = getCurriculumForTopic(topic.name).length;
+                    
+                    // Get progress for this specific topic
+                    const topicProgress = progress.find(p => p.topic_id === topic.id);
+                    const progressPercentage = topicProgress ? (topicProgress.mastery_score || 0) * 100 : 0;
+                    const statusColor = topicProgress?.status === 'mastered' ? 'text-green-600' : 
+                                       topicProgress?.status === 'completed' ? 'text-blue-600' : 
+                                       topicProgress?.status === 'in_progress' ? 'text-yellow-600' : 
+                                       'text-gray-500';
 
                     return (
                       <Card 
@@ -486,6 +494,33 @@ export const LearnView: React.FC = () => {
                               <span>{topic.skills?.length || 0} skills</span>
                               <span>{topicSubtopics.length} subtopics</span>
                             </div>
+                            
+                            {/* Topic Progress Bar */}
+                            {topicProgress && (
+                              <div className="space-y-2">
+                                <div className="flex items-center justify-between text-xs">
+                                  <span className={statusColor}>
+                                    {topicProgress.status.replace('_', ' ')}
+                                  </span>
+                                  <span>{Math.round(progressPercentage)}%</span>
+                                </div>
+                                <Progress value={progressPercentage} className="h-1.5" />
+                              </div>
+                            )}
+                            
+                            {topic.skills && topic.skills.length > 0 && (
+                              <div className="text-xs">
+                                <div className="font-medium mb-1">Skills:</div>
+                                <div className="flex flex-wrap gap-1">
+                                  {topic.skills.map((skill, index) => (
+                                    <Badge key={index} variant="secondary" className="text-xs px-1 py-0">
+                                      {skill}
+                                    </Badge>
+                                  ))}
+                                </div>
+                              </div>
+                            )}
+                            
                             {sampleQuestionsCount > 0 && (
                               <div className="flex items-center gap-1 text-xs">
                                 <Play className="h-3 w-3" />
