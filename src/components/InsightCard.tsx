@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -14,6 +14,11 @@ interface InsightCardProps {
 
 export const InsightCard = ({ insight, isExpanded = false, onToggle }: InsightCardProps) => {
   const [expanded, setExpanded] = useState(isExpanded);
+
+  // Sync with parent's isExpanded prop
+  useEffect(() => {
+    setExpanded(isExpanded);
+  }, [isExpanded]);
 
   const handleToggle = () => {
     setExpanded(!expanded);
