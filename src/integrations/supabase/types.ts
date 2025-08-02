@@ -1275,6 +1275,45 @@ export type Database = {
         }
         Relationships: []
       }
+      learning_results: {
+        Row: {
+          created_at: string | null
+          id: string
+          is_correct: boolean
+          question_id: string
+          responded_at: string | null
+          selected_answer: string | null
+          session_type: string | null
+          student_id: string
+          time_taken_seconds: number | null
+          topic_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          is_correct?: boolean
+          question_id: string
+          responded_at?: string | null
+          selected_answer?: string | null
+          session_type?: string | null
+          student_id: string
+          time_taken_seconds?: number | null
+          topic_id: string
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          is_correct?: boolean
+          question_id?: string
+          responded_at?: string | null
+          selected_answer?: string | null
+          session_type?: string | null
+          student_id?: string
+          time_taken_seconds?: number | null
+          topic_id?: string
+        }
+        Relationships: []
+      }
       mock_test_questions: {
         Row: {
           correct_answer: string

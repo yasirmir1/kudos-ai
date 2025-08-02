@@ -10,6 +10,7 @@ import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Loader2 } from 'lucide-react';
 import { LearningExperience } from './LearningExperience';
 import { TopicLearningModal } from './TopicLearningModal';
+import { QuickPracticeModal } from './QuickPracticeModal';
 import { useBootcampData } from '@/hooks/useBootcampData';
 import { Target } from 'lucide-react';
 interface Module {
@@ -62,6 +63,8 @@ export const LearnView: React.FC = () => {
   const [showLearningExperience, setShowLearningExperience] = useState(false);
   const [selectedTopic, setSelectedTopic] = useState<Topic | null>(null);
   const [isTopicModalOpen, setIsTopicModalOpen] = useState(false);
+  const [showQuickPractice, setShowQuickPractice] = useState(false);
+  const [practiceSelectedTopic, setPracticeSelectedTopic] = useState<Topic | null>(null);
   useEffect(() => {
     loadLearningContent();
   }, []);
@@ -291,8 +294,12 @@ export const LearnView: React.FC = () => {
     setIsTopicModalOpen(true);
   };
   const handleStartPractice = (topicId: string) => {
+    const topic = topics.find(t => t.id === topicId);
+    if (topic) {
+      setPracticeSelectedTopic(topic);
+      setShowQuickPractice(true);
+    }
     setIsTopicModalOpen(false);
-    setShowLearningExperience(true);
   };
   if (loading) {
     return <div className="flex items-center justify-center h-96">
@@ -664,5 +671,14 @@ export const LearnView: React.FC = () => {
       </Tabs>
 
       <TopicLearningModal topic={selectedTopic} isOpen={isTopicModalOpen} onClose={() => setIsTopicModalOpen(false)} onStartPractice={handleStartPractice} />
+      
+      <QuickPracticeModal 
+        topic={practiceSelectedTopic} 
+        isOpen={showQuickPractice} 
+        onClose={() => {
+          setShowQuickPractice(false);
+          setPracticeSelectedTopic(null);
+        }} 
+      />
     </div>;
 };
