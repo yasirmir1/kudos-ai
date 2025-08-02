@@ -113,6 +113,7 @@ export const useBootcampData = () => {
           .order('responded_at', { ascending: false });
 
         if (responsesError) throw responsesError;
+        console.log('Fetched responses:', responsesData);
         setResponses(responsesData || []);
 
         // Calculate stats
@@ -133,9 +134,10 @@ export const useBootcampData = () => {
 
   const calculateStats = (responses: StudentResponse[], progress: StudentProgress[]) => {
     const today = new Date().toDateString();
-    const todayResponses = responses.filter(r => 
-      new Date(r.responded_at).toDateString() === today
-    );
+    const todayResponses = responses.filter(r => {
+      const responseDate = new Date(r.responded_at);
+      return responseDate.toDateString() === today;
+    });
     
     const correctResponses = responses.filter(r => r.is_correct);
     const accuracy = responses.length > 0 ? 
