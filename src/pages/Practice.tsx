@@ -492,7 +492,6 @@ const Practice = () => {
         session_end: sessionStartTime.toISOString(), // Will be updated later
         total_questions: 0, // Will be updated later
         correct_answers: 0, // Will be updated later
-        accuracy: 0, // Will be updated later
         average_time_per_question: 0, // Will be updated later
         topics_covered: [], // Will be updated later
         difficulty_levels: [], // Will be updated later
