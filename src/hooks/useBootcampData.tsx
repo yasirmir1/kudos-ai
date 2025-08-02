@@ -24,8 +24,9 @@ interface StudentResponse {
   response_id: string;
   question_id: string;
   is_correct: boolean;
-  time_taken: number;  // Changed from time_taken_seconds
-  timestamp: string;   // Changed from responded_at
+  time_taken: number;
+  responded_at: string;
+  misconception_detected?: string;
 }
 
 interface BootcampStats {
@@ -108,8 +109,8 @@ export const useBootcampData = () => {
           .from('bootcamp_student_responses')
           .select('*')
           .eq('student_id', studentId)
-          .gte('timestamp', thirtyDaysAgo.toISOString())
-          .order('timestamp', { ascending: false });
+          .gte('responded_at', thirtyDaysAgo.toISOString())
+          .order('responded_at', { ascending: false });
 
         if (responsesError) throw responsesError;
         setResponses(responsesData || []);
@@ -133,7 +134,7 @@ export const useBootcampData = () => {
   const calculateStats = (responses: StudentResponse[], progress: StudentProgress[]) => {
     const today = new Date().toDateString();
     const todayResponses = responses.filter(r => 
-      new Date(r.timestamp).toDateString() === today
+      new Date(r.responded_at).toDateString() === today
     );
     
     const correctResponses = responses.filter(r => r.is_correct);
@@ -142,7 +143,7 @@ export const useBootcampData = () => {
 
     // Calculate streak (simplified - consecutive days with activity)
     const uniqueDays = [...new Set(responses.map(r => 
-      new Date(r.timestamp).toDateString()
+      new Date(r.responded_at).toDateString()
     ))].sort();
     
     let streakDays = 0;

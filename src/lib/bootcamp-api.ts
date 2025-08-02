@@ -170,7 +170,7 @@ export class BootcampAPI {
         `)
         .eq('student_id', studentId)
         .not('misconception_detected', 'is', null)
-        .order('timestamp', { ascending: false });
+        .order('responded_at', { ascending: false });
 
       if (error) throw error;
       

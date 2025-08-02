@@ -1,225 +1,233 @@
 import "https://deno.land/x/xhr@0.1.0/mod.ts";
-import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
+import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
 
-interface GeneratedQuestion {
-  question_id: string;
-  module: string;
-  topic: string;
-  subtopic: string;
-  category: 'arithmetic' | 'reasoning' | 'mixed';
-  cognitive_level: 'recall' | 'application' | 'analysis' | 'synthesis';
-  difficulty: 'foundation' | 'intermediate' | 'advanced';
-  question_text: string;
-  option_a: string;
-  option_b: string;
-  option_c: string;
-  option_d: string;
-  correct_answer: string;
-  a_misconception: string;
-  b_misconception: string;
-  c_misconception: string;
-  d_misconception: string;
-  a_feedback: string;
-  b_feedback: string;
-  c_feedback: string;
-  d_feedback: string;
-  skills_tested: string;
-  marks: number;
-  time_seconds: number;
-}
+const supabase = createClient(
+  Deno.env.get('SUPABASE_URL') ?? '',
+  Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
+);
 
-Deno.serve(async (req) => {
+serve(async (req) => {
   if (req.method === 'OPTIONS') {
-    return new Response('ok', { headers: corsHeaders })
+    return new Response(null, { headers: corsHeaders });
   }
 
   try {
-    const deepseekApiKey = Deno.env.get('DEEPSEEK_API_KEY');
-    if (!deepseekApiKey) {
-      throw new Error('DEEPSEEK_API_KEY is not configured');
-    }
+    const { topicId, difficulty, questionCount = 20, batchId } = await req.json();
+    
+    console.log(`Generating ${questionCount} questions for topic: ${topicId}, difficulty: ${difficulty}`);
 
-    const supabaseClient = createClient(
-      Deno.env.get('SUPABASE_URL') ?? '',
-      Deno.env.get('SUPABASE_ANON_KEY') ?? '',
-    )
+    // Get comprehensive context for question generation
+    const [topicResult, existingQuestions, misconceptions, curriculumContext] = await Promise.all([
+      supabase.from('bootcamp_curriculum_topics').select('*').eq('id', topicId).single(),
+      supabase.from('bootcamp_questions').select('question_text, topic_id').eq('topic_id', topicId).limit(10),
+      supabase.from('bootcamp_misconceptions_catalog').select('*'),
+      supabase.from('curriculum').select('*').contains('topic', topicId).limit(5)
+    ]);
 
-    const { topic, difficulty, count = 5 } = await req.json();
+    const topicData = topicResult.data;
+    const { data: existingQs } = existingQuestions;
+    const { data: miscCatalog } = misconceptions;
+    const { data: curriculumSamples } = curriculumContext;
 
-    // Generate questions using DeepSeek API
-    const prompt = `Generate ${count} mathematics questions for ${topic} at ${difficulty} level. 
+    // Build comprehensive system prompt with database schemas and context
+    const systemPrompt = `You are an expert 11+ assessment question generator specializing in UK mathematics curriculum for GL Assessments and CEM exams.
 
-Return ONLY a valid JSON array with this exact structure:
-[
-  {
-    "question_id": "unique_id_here",
-    "module": "NUMBER",
-    "topic": "${topic}",
-    "subtopic": "relevant_subtopic",
-    "category": "arithmetic",
-    "cognitive_level": "application",
-    "difficulty": "${difficulty}",
-    "question_text": "Question text here",
-    "option_a": "Option A text",
-    "option_b": "Option B text", 
-    "option_c": "Option C text",
-    "option_d": "Option D text",
-    "correct_answer": "A",
-    "a_misconception": "PV1",
-    "b_misconception": "correct",
-    "c_misconception": "CE1", 
-    "d_misconception": "FR3",
-    "a_feedback": "Feedback for option A",
-    "b_feedback": "Correct! Well done.",
-    "c_feedback": "Feedback for option C",
-    "d_feedback": "Feedback for option D",
-    "skills_tested": "Place Value, Addition",
-    "marks": 1,
-    "time_seconds": 60
-  }
-]
+COMPREHENSIVE CONTEXT:
+Topic: ${topicData?.topic_name || topicId}
+Difficulty: ${difficulty}
+Learning Objectives: ${topicData?.learning_objectives?.join(', ') || 'Standard curriculum objectives'}
+Prerequisites: ${topicData?.prerequisites?.join(', ') || 'Basic arithmetic'}
 
-Requirements:
-- Use realistic misconception codes like PV1, FR3, CE1, OP1, CN1, ME3, PA1, RE2, PE5
-- Make questions age-appropriate and curriculum-aligned
-- Include detailed feedback for each option
-- Generate unique question_ids
-- Only the correct answer should have "correct" as misconception
-- Ensure all fields are filled appropriately`;
+EXISTING CURRICULUM SAMPLES:
+${curriculumSamples?.map(c => `- ${c.subtopic}: ${c.example_question.substring(0, 100)}...`).join('\n') || 'No samples available'}
 
-    console.log('Calling DeepSeek API to generate questions...');
+MISCONCEPTION CATALOG TO INCLUDE:
+${miscCatalog?.map(m => `- ${m.misconception_id}: ${m.description} (Category: ${m.category})`).join('\n') || 'Standard misconceptions'}
 
-    const response = await fetch('https://api.deepseek.com/chat/completions', {
+DATABASE SCHEMA REQUIREMENTS:
+Return questions that match this EXACT schema:
+{
+  "question_id": "string (format: ${topicId.substring(0, 3).toUpperCase()}001-999)",
+  "question_text": "string (age-appropriate for 8-11 year olds)",
+  "option_a": "string",
+  "option_b": "string", 
+  "option_c": "string",
+  "option_d": "string",
+  "correct_answer": "string (A, B, C, or D)",
+  "explanation": "string (detailed pedagogical explanation)",
+  "prerequisite_skills": ["array of required skills"],
+  "time_seconds": "number (30-180 based on difficulty)",
+  "misconception_a": "string or null (misconception code if applicable)",
+  "misconception_b": "string or null",
+  "misconception_c": "string or null", 
+  "misconception_d": "string or null"
+}
+
+QUALITY STANDARDS FOR 11+ EXAMS:
+1. Simulate real GL Assessment and CEM exam styles
+2. Include 2-3 red herring options based on common student errors
+3. Ensure one obviously incorrect option and one challenging distractor
+4. Use age-appropriate language and real-world contexts
+5. Include varied question formats (calculations, word problems, visual reasoning)
+6. Link misconceptions to specific wrong answers for performance analysis
+
+MISCONCEPTION INTEGRATION:
+- Use misconception codes from catalog: ${miscCatalog?.map(m => m.misconception_id).join(', ') || 'Common codes'}
+- Only incorrect answers should have misconception codes
+- Correct answer should have misconception: null
+- Each misconception should represent a specific error type for analysis
+
+AVOID DUPLICATION:
+Do not replicate these existing questions:
+${existingQs?.map(q => `- ${q.question_text.substring(0, 50)}...`).join('\n') || 'No existing questions'}
+
+Generate exactly ${questionCount} unique, high-quality questions. Return ONLY a valid JSON array.`;
+
+    // Use OpenAI for comprehensive question generation
+    console.log('Generating questions with OpenAI using comprehensive context...');
+    const openAIResponse = await fetch('https://api.openai.com/v1/chat/completions', {
       method: 'POST',
       headers: {
-        'Authorization': `Bearer ${deepseekApiKey}`,
+        'Authorization': `Bearer ${Deno.env.get('OPENAI_API_KEY')}`,
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        model: 'deepseek-chat',
+        model: 'gpt-4.1-2025-04-14',
         messages: [
-          {
-            role: 'system',
-            content: 'You are an expert mathematics education specialist. Generate high-quality, curriculum-aligned questions with proper misconception analysis. Return only valid JSON.'
-          },
-          {
-            role: 'user',
-            content: prompt
+          { role: 'system', content: systemPrompt },
+          { 
+            role: 'user', 
+            content: `Generate ${questionCount} mathematics questions for "${topicData?.topic_name || topicId}" at ${difficulty} level. Focus on:
+            1. 11+ exam authenticity 
+            2. Robust misconception tracking for performance analysis
+            3. Age-appropriate contexts and language
+            4. Comprehensive coverage of the topic area
+            5. Linking questions to database schema for seamless integration`
           }
         ],
         temperature: 0.7,
-        max_tokens: 4000
+        max_tokens: 8000,
       }),
     });
 
-    if (!response.ok) {
-      throw new Error(`DeepSeek API error: ${response.status} ${response.statusText}`);
+    if (!openAIResponse.ok) {
+      const errorText = await openAIResponse.text();
+      throw new Error(`OpenAI API error: ${openAIResponse.status} - ${errorText}`);
     }
 
-    const data = await response.json();
-    console.log('DeepSeek API response received');
+    const aiResult = await openAIResponse.json();
+    let generatedQuestions;
 
-    let generatedQuestions: GeneratedQuestion[];
     try {
-      const content = data.choices[0].message.content;
-      console.log('Parsing generated content:', content.substring(0, 200));
+      const content = aiResult.choices[0].message.content;
+      console.log('Parsing AI-generated content...');
       
       // Extract JSON from the response
       const jsonMatch = content.match(/\[[\s\S]*\]/);
       if (!jsonMatch) {
-        throw new Error('No JSON array found in response');
+        throw new Error('No JSON array found in AI response');
       }
       
       generatedQuestions = JSON.parse(jsonMatch[0]);
-      console.log(`Successfully parsed ${generatedQuestions.length} questions`);
+      console.log(`Successfully parsed ${generatedQuestions.length} questions from AI`);
     } catch (parseError) {
-      console.error('Error parsing generated questions:', parseError);
-      throw new Error(`Failed to parse generated questions: ${parseError.message}`);
+      console.error('Failed to parse AI response:', parseError);
+      console.error('AI Response content:', aiResult.choices[0].message.content);
+      throw new Error(`Invalid JSON response from AI: ${parseError.message}`);
     }
 
-    // Import questions into database
-    console.log('Importing questions into database...');
+    // Transform and insert questions into database
+    console.log(`Transforming and inserting ${generatedQuestions.length} questions into database...`);
     
-    for (const q of generatedQuestions) {
-      try {
-        // Insert or update question
-        const { error: questionError } = await supabaseClient
-          .from('bootcamp_enhanced_questions')
-          .upsert({
-            question_id: q.question_id,
-            module_id: q.module.toUpperCase(),
-            topic_id: q.topic,
-            subtopic_id: q.subtopic,
-            question_category: q.category,
-            cognitive_level: q.cognitive_level,
-            difficulty: q.difficulty,
-            question_type: 'multiple_choice',
-            question_text: q.question_text,
-            marks: q.marks,
-            time_seconds: q.time_seconds,
-            prerequisite_skills: q.skills_tested.split(',').map(s => s.trim()),
-            exam_boards: ['general'],
-            usage_count: 0,
-            success_rate: null
-          });
+    const questionsToInsert = generatedQuestions.map((q: any, index: number) => ({
+      question_id: q.question_id || `${topicId.substring(0, 3).toUpperCase()}${String(Date.now()).slice(-3)}${String(index).padStart(2, '0')}`,
+      question_text: q.question_text,
+      option_a: q.option_a,
+      option_b: q.option_b,
+      option_c: q.option_c,
+      option_d: q.option_d,
+      correct_answer: q.correct_answer,
+      difficulty: difficulty,
+      topic_id: topicId,
+      explanation: q.explanation,
+      time_seconds: q.time_seconds || (difficulty === 'foundation' ? 60 : difficulty === 'intermediate' ? 90 : 120),
+      prerequisite_skills: q.prerequisite_skills || [],
+      exam_boards: ['GL_Assessment', 'CEM'],
+      question_type: 'multiple_choice',
+      cognitive_level: difficulty === 'foundation' ? 'understand' : difficulty === 'intermediate' ? 'apply' : 'analyze',
+      question_category: 'standard',
+      marks: 1
+    }));
 
-        if (questionError) {
-          console.error('Question insert error for', q.question_id, ':', questionError);
-          continue;
-        }
+    const { data: insertedQuestions, error: insertError } = await supabase
+      .from('bootcamp_questions')
+      .insert(questionsToInsert)
+      .select();
 
-        // Insert answer options
-        const options = [
-          { letter: 'A', value: q.option_a, misconception: q.a_misconception, feedback: q.a_feedback },
-          { letter: 'B', value: q.option_b, misconception: q.b_misconception, feedback: q.b_feedback },
-          { letter: 'C', value: q.option_c, misconception: q.c_misconception, feedback: q.c_feedback },
-          { letter: 'D', value: q.option_d, misconception: q.d_misconception, feedback: q.d_feedback }
-        ];
+    if (insertError) {
+      console.error('Database insertion error:', insertError);
+      throw new Error(`Failed to insert questions: ${insertError.message}`);
+    }
 
-        for (const option of options) {
-          const { error: optionError } = await supabaseClient
-            .from('bootcamp_enhanced_answer_options')
-            .upsert({
-              question_id: q.question_id,
-              option_letter: option.letter,
-              answer_value: option.value,
-              is_correct: option.letter === q.correct_answer,
-              misconception_code: option.misconception === 'correct' ? null : option.misconception,
-              diagnostic_feedback: option.feedback,
-              selection_count: 0
-            });
+    // Generate answer options with misconception tracking
+    const answerOptions = [];
+    for (let i = 0; i < generatedQuestions.length; i++) {
+      const question = generatedQuestions[i];
+      const insertedQuestion = insertedQuestions[i];
+      
+      const options = [
+        { letter: 'A', value: question.option_a, misconception: question.misconception_a },
+        { letter: 'B', value: question.option_b, misconception: question.misconception_b },
+        { letter: 'C', value: question.option_c, misconception: question.misconception_c },
+        { letter: 'D', value: question.option_d, misconception: question.misconception_d }
+      ];
 
-          if (optionError) {
-            console.error('Option insert error for', q.question_id, option.letter, ':', optionError);
-          }
-        }
-
-        // Insert misconceptions if they don't exist
-        const misconceptions = [q.a_misconception, q.b_misconception, q.c_misconception, q.d_misconception]
-          .filter(m => m && m !== 'correct')
-          .map(m => m.split('-')[0]); // Extract misconception code before dash
-
-        for (const miscCode of [...new Set(misconceptions)]) {
-          await supabaseClient
-            .from('bootcamp_enhanced_misconceptions')
-            .upsert({
-              misconception_code: miscCode,
-              misconception_type: getMisconceptionType(miscCode),
-              description: getMisconceptionDescription(miscCode),
-              diagnostic_indicators: [],
-              remediation_pathway_id: null
-            });
-        }
-
-        console.log(`Successfully imported question: ${q.question_id}`);
-      } catch (importError) {
-        console.error(`Failed to import question ${q.question_id}:`, importError);
+      for (const option of options) {
+        answerOptions.push({
+          question_id: insertedQuestion.question_id,
+          option_letter: option.letter,
+          answer_value: option.value,
+          is_correct: option.letter === question.correct_answer,
+          misconception_code: option.letter === question.correct_answer ? null : option.misconception,
+          error_category: option.letter === question.correct_answer ? null : 'conceptual_error',
+          diagnostic_feedback: option.letter === question.correct_answer 
+            ? `Correct! ${question.explanation}`
+            : `This represents a common misconception. ${question.explanation}`
+        });
       }
+    }
+
+    // Insert answer options
+    const { error: answerError } = await supabase
+      .from('bootcamp_answer_options')
+      .insert(answerOptions);
+
+    if (answerError) {
+      console.error('Answer options insertion error:', answerError);
+      // Continue anyway - questions are more important than options
+    }
+
+    console.log(`Successfully generated and stored ${insertedQuestions.length} questions with answer analysis`);
+
+    // Store generation metadata for tracking
+    if (batchId) {
+      await supabase
+        .from('bootcamp_question_batches')
+        .insert({
+          batch_id: batchId,
+          topic_id: topicId,
+          difficulty: difficulty,
+          question_count: insertedQuestions.length,
+          generated_at: new Date().toISOString(),
+          generation_method: 'ai_enhanced'
+        })
+        .single();
     }
 
     console.log(`Import completed. Generated and imported ${generatedQuestions.length} questions.`);
@@ -229,7 +237,7 @@ Requirements:
         success: true,
         generated: generatedQuestions.length,
         questions: generatedQuestions,
-        message: `Successfully generated and imported ${generatedQuestions.length} questions for ${topic} at ${difficulty} level`
+        message: `Successfully generated and imported ${generatedQuestions.length} questions for ${topicId} at ${difficulty} level`
       }),
       { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     );

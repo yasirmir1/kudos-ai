@@ -14,12 +14,12 @@ export const WeeklyProgressChart: React.FC = () => {
     lastWeek.setDate(lastWeek.getDate() - 7);
     
     const weeklyResponses = responses.filter(r => 
-      new Date(r.timestamp) >= lastWeek
+      new Date(r.responded_at) >= lastWeek
     );
 
     // Count responses per day
     weeklyResponses.forEach(response => {
-      const dayOfWeek = new Date(response.timestamp).getDay();
+      const dayOfWeek = new Date(response.responded_at).getDay();
       weeklyData[dayOfWeek]++;
     });
 

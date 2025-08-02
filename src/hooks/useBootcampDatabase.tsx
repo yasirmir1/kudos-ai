@@ -49,7 +49,7 @@ export interface StudentResponse {
   is_correct: boolean;
   time_taken: number;
   misconception_detected: string | null;
-  timestamp: string;
+  responded_at: string;
 }
 
 export interface LearningSession {
@@ -229,7 +229,7 @@ export const useBootcampDatabase = () => {
       .from('bootcamp_student_responses')
       .select('*')
       .eq('student_id', studentId)
-      .order('timestamp', { ascending: false })
+      .order('responded_at', { ascending: false })
       .limit(100);
 
     if (error) throw error;
