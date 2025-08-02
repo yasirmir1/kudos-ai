@@ -541,9 +541,6 @@ const Practice = () => {
           <div className="text-center flex-1 mx-8">
             <p className="text-sm text-muted-foreground mb-2">
               Question {currentIndex + 1} of {sessionQuestionCount}
-              {generatingQuestions && <span className="ml-2 text-blue-600 text-xs">
-                  • Generating more questions...
-                </span>}
             </p>
             <Progress value={progress} className="w-64 h-2 mx-auto" />
           </div>
