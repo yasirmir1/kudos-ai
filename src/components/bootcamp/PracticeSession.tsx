@@ -80,20 +80,30 @@ export const PracticeSession: React.FC = () => {
 
       const rawQuestions = await BootcampAPI.getAdaptiveQuestions(studentProfile.student_id, 20);
       
-      const adaptedQuestions: AdaptedQuestion[] = rawQuestions.map((q: BootcampQuestion) => ({
-        id: q.question_id,
-        text: q.question_text,
-        options: q.bootcamp_answers.map(opt => ({
-          id: opt.answer_option,
-          value: opt.answer_value,
-          feedback: opt.diagnostic_feedback,
-          isCorrect: opt.is_correct
-        })),
-        correct: q.bootcamp_answers.find(opt => opt.is_correct)?.answer_option || 'A',
-        topic: q.topic_id,
-        difficulty: q.difficulty,
-        timeAllowed: q.time_seconds
-      }));
+      const adaptedQuestions: AdaptedQuestion[] = rawQuestions.map((q: any) => {
+        // Convert the database format to the expected format
+        const options = [
+          { id: 'A', value: q.option_a, isCorrect: q.correct_answer === 'A' },
+          { id: 'B', value: q.option_b, isCorrect: q.correct_answer === 'B' },
+          { id: 'C', value: q.option_c, isCorrect: q.correct_answer === 'C' },
+          { id: 'D', value: q.option_d, isCorrect: q.correct_answer === 'D' }
+        ].filter(opt => opt.value); // Remove empty options
+
+        return {
+          id: q.question_id,
+          text: q.question_text,
+          options: options.map(opt => ({
+            id: opt.id,
+            value: opt.value,
+            feedback: opt.isCorrect ? q.explanation || 'Correct!' : 'Not quite right.',
+            isCorrect: opt.isCorrect
+          })),
+          correct: q.correct_answer || 'A',
+          topic: q.topic_id || 'General',
+          difficulty: q.difficulty || 'foundation',
+          timeAllowed: q.time_seconds || 90
+        };
+      });
       
       setQuestions(adaptedQuestions);
       if (adaptedQuestions.length > 0) {

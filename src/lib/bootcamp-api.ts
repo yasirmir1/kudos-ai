@@ -63,7 +63,10 @@ export class BootcampAPI {
       });
 
       if (error) throw error;
-      return data.questions;
+      
+      // The edge function returns questions directly in the response, not wrapped in data.questions
+      const questions = data?.questions || data || [];
+      return questions;
     } catch (error) {
       console.error('Error getting adaptive questions:', error);
       throw error;
