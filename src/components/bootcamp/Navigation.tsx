@@ -44,10 +44,6 @@ export const Navigation: React.FC<NavigationProps> = ({
     label: 'Progress',
     icon: TrendingUp
   }, {
-    id: 'analytics',
-    label: 'Analytics',
-    icon: Users
-  }, {
     id: 'questions',
     label: 'Questions',
     icon: Settings
