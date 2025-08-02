@@ -86,19 +86,51 @@ export function StructuredLearningModal({
     if (!topic) return;
     setLoading(true);
     try {
+      // Load learning content first
+      const content = await LearningContentLoader.loadTopicContent(topic.id);
+      setLearningContent(content);
+
       // Load subtopics from database
       const {
         data: subtopicsData,
         error
       } = await supabase.from('bootcamp_subtopics').select('*').eq('topic_id', topic.id).order('subtopic_order');
-      if (error) throw error;
-      setSubtopics(subtopicsData || []);
+      
+      if (error) {
+        console.error('Error loading subtopics:', error);
+      }
 
-      // Load learning content
-      const content = await LearningContentLoader.loadTopicContent(topic.id);
-      setLearningContent(content);
+      // If no subtopics found in database, create fallback based on content
+      if (!subtopicsData || subtopicsData.length === 0) {
+        if (content && content.subtopics.length > 0) {
+          const fallbackSubtopics: Subtopic[] = content.subtopics.map((subtopic, index) => ({
+            id: parseInt(subtopic.subtopicId) || index + 1,
+            name: subtopic.subtopicName,
+            topic_id: topic.id,
+            subtopic_order: index + 1
+          }));
+          setSubtopics(fallbackSubtopics);
+        } else {
+          // Ultimate fallback
+          setSubtopics([{
+            id: 1,
+            name: `${topic.name} Basics`,
+            topic_id: topic.id,
+            subtopic_order: 1
+          }]);
+        }
+      } else {
+        setSubtopics(subtopicsData);
+      }
     } catch (error) {
       console.error('Error loading content:', error);
+      // Provide fallback even on error
+      setSubtopics([{
+        id: 1,
+        name: `${topic?.name || 'Topic'} Basics`,
+        topic_id: topic?.id || '',
+        subtopic_order: 1
+      }]);
     } finally {
       setLoading(false);
     }

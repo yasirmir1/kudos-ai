@@ -39,16 +39,22 @@ export class LearningContentLoader {
       // Import supabase client
       const { supabase } = await import('@/integrations/supabase/client');
       
-      // Fetch topic information
+      // Fetch topic information - use maybeSingle() to handle missing topics gracefully
       const { data: topicData, error: topicError } = await supabase
         .from('bootcamp_curriculum_topics')
         .select('*')
         .eq('id', topicId)
-        .single();
+        .maybeSingle();
       
-      if (topicError || !topicData) {
+      if (topicError) {
         console.error('Error fetching topic:', topicError);
         return null;
+      }
+      
+      // If no topic found in database, create a fallback topic structure
+      if (!topicData) {
+        console.log(`Topic ${topicId} not found in database, using fallback content`);
+        return this.createFallbackTopicContent(topicId);
       }
       
       // Fetch curriculum content for this topic
@@ -226,6 +232,140 @@ export class LearningContentLoader {
         good: "Great job! You understand this well! 👍",
         needsImprovement: "Keep practicing - you're making progress! 💪"
       }
+    };
+  }
+
+  private static createFallbackTopicContent(topicId: string): TopicLearningContent {
+    // Create fallback content when topic is not found in database
+    const topicNameMap: { [key: string]: string } = {
+      'Metric Units': 'Metric Units',
+      'metric-units': 'Metric Units',
+      'metric_units': 'Metric Units',
+    };
+    
+    const topicName = topicNameMap[topicId] || topicId.replace(/[-_]/g, ' ').replace(/\w\S*/g, (txt) => 
+      txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase()
+    );
+    
+    return {
+      topicId,
+      topicName,
+      subtopics: [
+        {
+          subtopicId: "1",
+          subtopicName: `${topicName} Basics`,
+          estimatedDuration: 30,
+          prerequisites: [],
+          learningObjectives: [
+            `Understand ${topicName} concepts`,
+            `Apply ${topicName} in real situations`,
+            `Solve problems involving ${topicName}`
+          ],
+          stages: {
+            concept: {
+              introduction: `Let's explore ${topicName}! This is an important mathematical concept that you'll use often.`,
+              keyPoints: [
+                `Understanding the fundamental principles of ${topicName}`,
+                "Learning the key terminology and definitions",
+                "Seeing how it applies in real-world situations",
+                "Building a strong foundation for further learning"
+              ],
+              examples: [
+                {
+                  title: "Basic Example",
+                  description: `A fundamental example showing how ${topicName} works`,
+                  explanation: "This example helps you understand the core concept"
+                },
+                {
+                  title: "Real-World Application",
+                  description: `How ${topicName} is used in everyday life`,
+                  explanation: "This shows the practical importance of what you're learning"
+                }
+              ],
+              realWorldApplications: [
+                "Practical problem solving",
+                "Mathematical reasoning",
+                "Building analytical skills",
+                "Preparing for advanced topics"
+              ]
+            },
+            guided: {
+              introduction: "Let's work through examples together, step by step.",
+              stepByStepExamples: [
+                {
+                  title: "Guided Practice Example",
+                  problem: `Let's solve a ${topicName} problem together`,
+                  steps: [
+                    {
+                      stepNumber: 1,
+                      instruction: "Start by understanding what we need to find",
+                      working: "Identify the key information given",
+                      explanation: "This helps us know what approach to take"
+                    },
+                    {
+                      stepNumber: 2,
+                      instruction: "Apply the method we learned",
+                      working: "Use the correct technique or formula",
+                      explanation: "This is where we put our knowledge into practice"
+                    },
+                    {
+                      stepNumber: 3,
+                      instruction: "Check our answer makes sense",
+                      working: "Verify the solution is reasonable",
+                      explanation: "Always check your work to catch any mistakes"
+                    }
+                  ],
+                  finalAnswer: "Solution found successfully",
+                  explanation: "Working together helps build confidence and understanding"
+                }
+              ],
+              checkpoints: []
+            },
+            independent: {
+              introduction: "Now it's your turn to practice what you've learned!",
+              practiceProblems: [
+                {
+                  id: "practice-1",
+                  question: `Practice applying ${topicName} concepts`,
+                  type: "multiple-choice",
+                  options: ["Option A", "Option B", "Option C", "Option D"],
+                  correctAnswer: "Option A",
+                  explanation: "This problem helps reinforce your understanding",
+                  difficulty: "medium"
+                }
+              ],
+              selfCheckQuestions: [
+                "Do you understand the main concept?",
+                "Can you solve similar problems independently?",
+                "Are you ready for the assessment?"
+              ]
+            },
+            assessment: {
+              introduction: "Time to show what you've learned!",
+              questions: [
+                {
+                  id: "assess-1",
+                  question: `Assessment question for ${topicName}`,
+                  type: "multiple-choice",
+                  options: ["Option A", "Option B", "Option C", "Option D"],
+                  correctAnswer: "Option A",
+                  explanation: "This tests your mastery of the concept",
+                  points: 1
+                }
+              ],
+              passingCriteria: {
+                minimumScore: 80,
+                totalQuestions: 3
+              },
+              feedbackMessages: {
+                excellent: "Excellent work! You've mastered this concept! 🎉",
+                good: "Great job! You understand this well! 👍",
+                needsImprovement: "Keep practicing - you're making great progress! 💪"
+              }
+            }
+          }
+        }
+      ]
     };
   }
 
