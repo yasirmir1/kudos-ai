@@ -554,6 +554,15 @@ export const LearnView: React.FC = () => {
             {topics.map(topic => {
             const topicSubtopics = getSubtopicsForTopic(topic.id);
             const module = modules.find(m => m.id === topic.module_id);
+            
+            // Get progress for this specific topic
+            const topicProgress = progress.find(p => p.topic_id === topic.id);
+            const progressPercentage = topicProgress ? (topicProgress.mastery_score || 0) * 100 : 0;
+            const statusColor = topicProgress?.status === 'mastered' ? 'text-green-600' : 
+                               topicProgress?.status === 'completed' ? 'text-blue-600' : 
+                               topicProgress?.status === 'in_progress' ? 'text-yellow-600' : 
+                               'text-gray-500';
+            
             return <Card key={topic.id} className="cursor-pointer hover:shadow-md transition-all" onClick={() => handleTopicClick(topic)}>
                   <CardHeader>
                     <div className="flex items-center justify-between">
@@ -576,6 +585,19 @@ export const LearnView: React.FC = () => {
                           <span>{topicSubtopics.length} subtopics</span>
                         </div>
                       </div>
+                      
+                      {/* Topic Progress Bar */}
+                      {topicProgress && (
+                        <div className="space-y-2">
+                          <div className="flex items-center justify-between text-xs">
+                            <span className={statusColor}>
+                              {topicProgress.status.replace('_', ' ')}
+                            </span>
+                            <span>{Math.round(progressPercentage)}%</span>
+                          </div>
+                          <Progress value={progressPercentage} className="h-1.5" />
+                        </div>
+                      )}
                       
                       {topicSubtopics.length > 0 && <div>
                           <h6 className="text-sm font-medium mb-2">Subtopics:</h6>
