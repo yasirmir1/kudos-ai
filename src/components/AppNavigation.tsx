@@ -111,18 +111,15 @@ export const AppNavigation: React.FC<AppNavigationProps> = ({
 
           {/* Right section - Navigation and Age Group Selector */}
           <div className="flex items-center space-x-4 mx-0">
-            {/* System Indicator */}
-            <div className="hidden md:flex items-center space-x-2">
-              <span className="text-xs text-muted-foreground">
-                {isBootcampRoute ? 'Bootcamp System' : 'Main System'}
-              </span>
+            {/* Compact System Toggle */}
+            <div className="hidden md:flex items-center">
               <Button 
                 variant="outline" 
                 size="sm" 
                 onClick={switchToOtherSystem}
-                className="text-xs"
+                className="text-xs px-3 py-1 h-7"
               >
-                Switch to {isBootcampRoute ? 'Main' : 'Bootcamp'}
+                {isBootcampRoute ? '📚 Daily Mode' : '🎯 Bootcamp'}
               </Button>
             </div>
             
