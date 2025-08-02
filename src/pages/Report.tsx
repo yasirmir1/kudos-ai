@@ -121,7 +121,7 @@ export default function Report() {
 
   const getAccuracyBadge = (accuracy: number) => {
     if (accuracy >= 0.8) return <Badge className="bg-green-100 text-green-800">Mastered</Badge>;
-    if (accuracy >= 0.6) return <Badge className="bg-yellow-100 text-yellow-800">Learning</Badge>;
+    if (accuracy >= 0.6) return <Badge className="bg-blue-100 text-blue-800">Learning</Badge>;
     return <Badge className="bg-red-100 text-red-800">Needs Work</Badge>;
   };
 
@@ -229,7 +229,7 @@ export default function Report() {
                       onClick={() => toggleFilter('learning')}
                       className="gap-1"
                     >
-                      <div className="w-2 h-2 bg-yellow-500 rounded-full"></div>
+                      <div className="w-2 h-2 bg-blue-400 rounded-full"></div>
                       Learning ({getFilterCount('learning')})
                     </Button>
                     <Button
