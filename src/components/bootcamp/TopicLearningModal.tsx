@@ -48,6 +48,17 @@ interface CurriculumItem {
   pedagogical_notes: string;
 }
 
+interface CurriculumContent {
+  id: string;
+  topic_id: string;
+  stage_type: string;
+  title: string;
+  description: string;
+  content: any;
+  stage_order: number;
+  estimated_time_minutes: number;
+}
+
 interface TopicLearningModalProps {
   topic: Topic | null;
   isOpen: boolean;
@@ -58,6 +69,7 @@ interface TopicLearningModalProps {
 export function TopicLearningModal({ topic, isOpen, onClose, onStartPractice }: TopicLearningModalProps) {
   const [subtopics, setSubtopics] = useState<Subtopic[]>([]);
   const [sampleQuestions, setSampleQuestions] = useState<CurriculumItem[]>([]);
+  const [curriculumContent, setCurriculumContent] = useState<CurriculumContent[]>([]);
   const [loading, setLoading] = useState(false);
   const [showStructuredLearning, setShowStructuredLearning] = useState(false);
 
@@ -72,6 +84,15 @@ export function TopicLearningModal({ topic, isOpen, onClose, onStartPractice }: 
     
     setLoading(true);
     try {
+      // Fetch curriculum content for this topic
+      const { data: contentData, error: contentError } = await supabase
+        .from('bootcamp_curriculum_content')
+        .select('*')
+        .eq('topic_id', topic.id)
+        .order('stage_order');
+
+      if (contentError) throw contentError;
+
       // Fetch subtopics for this topic
       const { data: subtopicsData, error: subtopicsError } = await supabase
         .from('bootcamp_subtopics')
@@ -90,6 +111,7 @@ export function TopicLearningModal({ topic, isOpen, onClose, onStartPractice }: 
 
       if (curriculumError) throw curriculumError;
 
+      setCurriculumContent(contentData || []);
       setSubtopics(subtopicsData || []);
       setSampleQuestions(curriculumData || []);
     } catch (error) {
@@ -108,59 +130,47 @@ export function TopicLearningModal({ topic, isOpen, onClose, onStartPractice }: 
     }
   };
 
-  const generateLearningContent = (topicName: string) => {
-    // Generate dynamic learning content based on topic name
-    if (topicName.toLowerCase().includes('metric')) {
+  const getLearningContent = () => {
+    if (curriculumContent.length === 0) {
       return {
-        overview: "Metric units form the foundation of scientific measurement. This system uses base-10 relationships, making conversions straightforward through multiplication and division by powers of 10.",
-        keySkills: [
-          "Understanding metric prefixes (kilo-, centi-, milli-)",
-          "Converting between metric units",
-          "Applying metric measurements in real-world contexts",
-          "Comparing metric and imperial units"
-        ],
-        learningObjectives: [
-          "Master the metric system hierarchy",
-          "Perform accurate unit conversions",
-          "Solve practical measurement problems",
-          "Recognize appropriate units for different contexts"
-        ],
-        tips: [
-          "Remember: King Henry Died By Drinking Chocolate Milk (km, hm, dam, m, dm, cm, mm)",
-          "Moving right in the metric ladder means multiplying by 10",
-          "Moving left means dividing by 10",
-          "Always check if your answer makes sense in context"
-        ]
+        overview: `Comprehensive learning materials for ${topic.name} are being prepared. This topic will help you develop essential mathematical skills and understanding.`,
+        keySkills: topic.skills || [],
+        learningObjectives: [],
+        tips: []
       };
     }
+
+    // Extract content from curriculum data
+    const overview = curriculumContent.find(c => c.stage_type === 'introduction')?.description || 
+                    curriculumContent.find(c => c.title)?.description ||
+                    `Learn ${topic.name} with structured lessons, practice exercises, and real-world applications.`;
     
-    // Default content structure for other topics
+    const skills = curriculumContent
+      .filter(c => c.stage_type === 'concept' || c.content?.skills)
+      .flatMap(c => c.content?.skills || [])
+      .filter(Boolean);
+
+    const objectives = curriculumContent
+      .filter(c => c.content?.objectives || c.content?.learningObjectives)
+      .flatMap(c => c.content?.objectives || c.content?.learningObjectives || [])
+      .filter(Boolean);
+
+    const tips = curriculumContent
+      .filter(c => c.content?.tips || c.content?.hints)
+      .flatMap(c => c.content?.tips || c.content?.hints || [])
+      .filter(Boolean);
+
     return {
-      overview: `${topicName} is a fundamental mathematical concept that builds important problem-solving skills and mathematical understanding.`,
-      keySkills: [
-        `Understanding core ${topicName.toLowerCase()} concepts`,
-        `Applying ${topicName.toLowerCase()} in various contexts`,
-        `Problem-solving with ${topicName.toLowerCase()}`,
-        `Making connections to real-world applications`
-      ],
-      learningObjectives: [
-        `Master the fundamentals of ${topicName.toLowerCase()}`,
-        `Develop fluency in related calculations`,
-        `Apply knowledge to solve complex problems`,
-        `Build confidence in mathematical reasoning`
-      ],
-      tips: [
-        `Practice regularly to build fluency`,
-        `Look for patterns and connections`,
-        `Use visual aids when helpful`,
-        `Always check your work`
-      ]
+      overview,
+      keySkills: skills.length > 0 ? skills : topic.skills || [],
+      learningObjectives: objectives,
+      tips
     };
   };
 
   if (!topic) return null;
 
-  const learningContent = generateLearningContent(topic.name);
+  const learningContent = getLearningContent();
 
   return (
     <>
