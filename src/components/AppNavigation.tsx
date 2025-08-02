@@ -1,7 +1,7 @@
 import React from 'react';
 import { Button } from '@/components/ui/button';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { BookOpen, BarChart3, User, GraduationCap, FileText, Play, Target } from 'lucide-react';
+import { BookOpen, BarChart3, User, GraduationCap, FileText, Play, Target, Calendar } from 'lucide-react';
 import { AgeGroupSelector } from './AgeGroupSelector';
 import { useAgeGroup } from '@/contexts/AgeGroupContext';
 import { useAuth } from '@/hooks/useAuth';
@@ -97,22 +97,24 @@ export const AppNavigation: React.FC<AppNavigationProps> = ({
           {/* Right section - Navigation and Age Group Selector */}
           <div className="flex items-center space-x-4 mx-0">
             {/* System Mode Buttons */}
-            <div className="hidden md:flex items-center space-x-2">
+            <div className="hidden md:flex items-center gap-2">
               <Button 
-                variant={!isBootcampRoute ? "default" : "outline"} 
+                variant={!isBootcampRoute ? "default" : "ghost"} 
                 size="sm" 
                 onClick={() => navigate('/dashboard')}
-                className="text-xs px-3 py-1 h-7"
+                className={cn("flex items-center justify-start space-x-1 flex-1 max-w-32 pr-4", !isBootcampRoute && "bg-primary text-primary-foreground")}
               >
-                📚 Daily Mode
+                <Calendar className="h-4 w-4" />
+                <span className="hidden lg:inline">Daily Mode</span>
               </Button>
               <Button 
-                variant={isBootcampRoute ? "default" : "outline"} 
+                variant={isBootcampRoute ? "default" : "ghost"} 
                 size="sm" 
                 onClick={() => navigate('/bootcamp')}
-                className="text-xs px-3 py-1 h-7"
+                className={cn("flex items-center justify-start space-x-1 flex-1 max-w-32 pr-4", isBootcampRoute && "bg-primary text-primary-foreground")}
               >
-                🎯 Bootcamp
+                <Target className="h-4 w-4" />
+                <span className="hidden lg:inline">Bootcamp</span>
               </Button>
             </div>
             
