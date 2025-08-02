@@ -4,6 +4,7 @@ import { Dashboard } from '@/components/bootcamp/Dashboard';
 import { PracticeSession } from '@/components/bootcamp/PracticeSession';
 import { ProgressView } from '@/components/bootcamp/ProgressView';
 import { TopicsView } from '@/components/bootcamp/TopicsView';
+import { LearnView } from '@/components/bootcamp/LearnView';
 import { Navigation } from '@/components/bootcamp/Navigation';
 import { BulkQuestionGenerator } from '@/components/BulkQuestionGenerator';
 import { useBootcampData } from '@/hooks/useBootcampData';
@@ -91,6 +92,7 @@ const Bootcamp = () => {
 
         {currentView === 'dashboard' && <Dashboard user={user} setCurrentView={setCurrentView} />}
         {currentView === 'practice' && <PracticeSession />}
+        {currentView === 'learn' && <LearnView />}
         {currentView === 'progress' && <ProgressView />}
         {currentView === 'topics' && <TopicsView setCurrentView={setCurrentView} />}
         {currentView === 'generate' && <BulkQuestionGenerator />}

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Calculator, BarChart3, Brain, BookOpen, TrendingUp, Zap, Star, Plus } from 'lucide-react';
+import { Calculator, BarChart3, Brain, BookOpen, TrendingUp, Zap, Star, Plus, GraduationCap } from 'lucide-react';
 interface NavItem {
   id: string;
   label: string;
@@ -31,6 +31,10 @@ export const Navigation: React.FC<NavigationProps> = ({
     id: 'practice',
     label: 'Practice',
     icon: Brain
+  }, {
+    id: 'learn',
+    label: 'Learn',
+    icon: GraduationCap
   }, {
     id: 'topics',
     label: 'Topics',
