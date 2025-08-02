@@ -8,11 +8,13 @@ interface InteractiveInsightsProps {
   explanation: string;
   onRefresh?: () => void;
   isRefreshing?: boolean;
+  hideExpandControls?: boolean;
 }
 export const InteractiveInsights = ({
   explanation,
   onRefresh,
-  isRefreshing = false
+  isRefreshing = false,
+  hideExpandControls = false
 }: InteractiveInsightsProps) => {
   const [expandedCards, setExpandedCards] = useState<Set<string>>(new Set());
   const [viewMode, setViewMode] = useState<'compact' | 'expanded'>('compact');
