@@ -435,8 +435,17 @@ export function StructuredLearningModal({
       </div>;
   };
   if (!topic) return null;
+  
+  console.log('StructuredLearningModal render:', { 
+    isOpen, 
+    topic: topic?.name, 
+    currentSubtopic: currentSubtopic?.name,
+    currentStage: currentStage?.title,
+    loading 
+  });
+
   return <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-5xl max-h-[85vh] overflow-y-auto relative bg-background border">
+      <DialogContent className="max-w-none w-[90vw] max-h-[85vh] overflow-y-auto relative bg-background border shadow-lg">
         {/* Topic Badge - Top Right */}
         <div className="absolute top-4 right-4 flex items-center gap-2 bg-muted rounded-full px-4 py-2 border z-10">
           <span className="text-lg">🎯</span>
