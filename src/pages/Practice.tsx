@@ -517,7 +517,7 @@ const Practice = () => {
     return <div className="min-h-screen bg-gradient-to-br from-background via-background to-secondary/10">
       <SessionStartModal 
         isOpen={showSessionStartModal}
-        onClose={() => navigate('/dashboard')}
+        onClose={() => setShowSessionStartModal(false)}
         onStart={handleSessionStart}
       />
     </div>;
