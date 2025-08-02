@@ -145,8 +145,59 @@ export default function Report() {
           </p>
         </div>
 
-        <div className="grid lg:grid-cols-2 gap-6">
-          {/* Topics Performance */}
+        <div className="space-y-6">
+          {/* AI Insights Panel - Full Width */}
+          <Card>
+            <CardHeader>
+              <div className="flex items-center justify-between">
+                <div>
+                  <CardTitle className="flex items-center gap-2">
+                    <Lightbulb className="h-5 w-5 text-primary" />
+                    Learning Insights & Misconception Analysis
+                  </CardTitle>
+                  <CardDescription>
+                    AI-powered analysis of your learning patterns and areas for improvement
+                  </CardDescription>
+                </div>
+                {showExplanation && (
+                  <Button
+                    onClick={handleRefreshInsights}
+                    disabled={isLoadingExplanation}
+                    size="sm"
+                    variant="outline"
+                    className="gap-2"
+                  >
+                    <Lightbulb className="h-4 w-4" />
+                    {isLoadingExplanation ? "Updating..." : "Refresh"}
+                  </Button>
+                )}
+              </div>
+            </CardHeader>
+            <CardContent>
+              {isLoadingExplanation ? (
+                <div className="flex items-center justify-center h-[400px]">
+                  <div className="text-center space-y-2">
+                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto"></div>
+                    <p className="text-sm text-muted-foreground">Analyzing your learning patterns...</p>
+                  </div>
+                </div>
+              ) : explanation ? (
+                <ScrollArea className="h-[400px] pr-4">
+                  <div className="prose prose-sm max-w-none">
+                    <div className="whitespace-pre-wrap text-sm leading-relaxed">
+                      {explanation}
+                    </div>
+                  </div>
+                </ScrollArea>
+              ) : (
+                <div className="flex items-center justify-center h-[400px] text-muted-foreground">
+                  No insights available yet. Complete some practice sessions to get personalized analysis.
+                </div>
+              )}
+            </CardContent>
+          </Card>
+          
+          {/* Topics Performance - Full Width */}
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
@@ -218,57 +269,6 @@ export default function Report() {
                   </div>
                 )}
               </ScrollArea>
-            </CardContent>
-          </Card>
-
-          {/* AI Insights Panel */}
-          <Card>
-            <CardHeader>
-              <div className="flex items-center justify-between">
-                <div>
-                  <CardTitle className="flex items-center gap-2">
-                    <Lightbulb className="h-5 w-5 text-primary" />
-                    Learning Insights & Misconception Analysis
-                  </CardTitle>
-                  <CardDescription>
-                    AI-powered analysis of your learning patterns and areas for improvement
-                  </CardDescription>
-                </div>
-                {showExplanation && (
-                  <Button
-                    onClick={handleRefreshInsights}
-                    disabled={isLoadingExplanation}
-                    size="sm"
-                    variant="outline"
-                    className="gap-2"
-                  >
-                    <Lightbulb className="h-4 w-4" />
-                    {isLoadingExplanation ? "Updating..." : "Refresh"}
-                  </Button>
-                )}
-              </div>
-            </CardHeader>
-            <CardContent>
-              {isLoadingExplanation ? (
-                <div className="flex items-center justify-center h-[600px]">
-                  <div className="text-center space-y-2">
-                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto"></div>
-                    <p className="text-sm text-muted-foreground">Analyzing your learning patterns...</p>
-                  </div>
-                </div>
-              ) : explanation ? (
-                <ScrollArea className="h-[600px] pr-4">
-                  <div className="prose prose-sm max-w-none">
-                    <div className="whitespace-pre-wrap text-sm leading-relaxed">
-                      {explanation}
-                    </div>
-                  </div>
-                </ScrollArea>
-              ) : (
-                <div className="flex items-center justify-center h-[600px] text-muted-foreground">
-                  No insights available yet. Complete some practice sessions to get personalized analysis.
-                </div>
-              )}
             </CardContent>
           </Card>
         </div>
