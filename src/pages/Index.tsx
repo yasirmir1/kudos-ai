@@ -157,10 +157,10 @@ const Index = () => {
               
               {/* Practice stats */}
               <text x="560" y="145" fontFamily="Arial" fontSize="12" fill="#86868B">Questions today:</text>
-              <text x="560" y="160" fontFamily="Arial" fontSize="20" fontWeight="600" fill="#34C759">24</text>
+              <text x="560" y="160" fontFamily="Arial" fontSize="16" fontWeight="600" fill="#34C759">24</text>
               
               <text x="680" y="145" fontFamily="Arial" fontSize="12" fill="#86868B">Accuracy:</text>
-              <text x="680" y="160" fontFamily="Arial" fontSize="20" fontWeight="600" fill="#0071E3">85%</text>
+              <text x="680" y="160" fontFamily="Arial" fontSize="16" fontWeight="600" fill="#0071E3">85%</text>
               
               <text x="560" y="185" fontFamily="Arial" fontSize="12" fill="#86868B">Time spent:</text>
               <text x="560" y="200" fontFamily="Arial" fontSize="14" fontWeight="600" fill="#0071E3">18 mins</text>
