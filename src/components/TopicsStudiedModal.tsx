@@ -3,7 +3,7 @@ import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } f
 import { Badge } from '@/components/ui/badge';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Button } from '@/components/ui/button';
-import { BookOpen, Clock, Calendar, Brain, Lightbulb } from 'lucide-react';
+import { BookOpen, Clock, Calendar, Brain, Lightbulb, Expand, Minimize2 } from 'lucide-react';
 import { InteractiveInsights } from './InteractiveInsights';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
@@ -31,6 +31,7 @@ export const TopicsStudiedModal = ({ open, onOpenChange }: TopicsStudiedModalPro
   const [explanation, setExplanation] = useState<string | null>(null);
   const [isLoadingExplanation, setIsLoadingExplanation] = useState(false);
   const [showExplanation, setShowExplanation] = useState(false);
+  const [expandAllMode, setExpandAllMode] = useState<'compact' | 'expanded'>('compact');
 
   useEffect(() => {
     if (open && user) {
@@ -151,18 +152,40 @@ export const TopicsStudiedModal = ({ open, onOpenChange }: TopicsStudiedModalPro
                 All the topics you've covered in your learning journey
               </DialogDescription>
             </div>
-            {showExplanation && (
-              <Button
-                onClick={handleRefreshInsights}
-                disabled={isLoadingExplanation}
-                size="sm"
-                variant="outline"
-                className="gap-2"
-              >
-                <Lightbulb className="h-4 w-4" />
-                {isLoadingExplanation ? "Updating..." : "Refresh Insights"}
-              </Button>
-            )}
+            <div className="flex items-center gap-2">
+              {showExplanation && explanation && (
+                <Button
+                  onClick={() => setExpandAllMode(expandAllMode === 'compact' ? 'expanded' : 'compact')}
+                  variant="outline"
+                  size="sm"
+                  className="gap-2"
+                >
+                  {expandAllMode === 'compact' ? (
+                    <>
+                      <Expand className="h-4 w-4" />
+                      Expand All
+                    </>
+                  ) : (
+                    <>
+                      <Minimize2 className="h-4 w-4" />
+                      Collapse All
+                    </>
+                  )}
+                </Button>
+              )}
+              {showExplanation && (
+                <Button
+                  onClick={handleRefreshInsights}
+                  disabled={isLoadingExplanation}
+                  size="sm"
+                  variant="outline"
+                  className="gap-2"
+                >
+                  <Lightbulb className="h-4 w-4" />
+                  {isLoadingExplanation ? "Updating..." : "Refresh Insights"}
+                </Button>
+              )}
+            </div>
           </div>
         </DialogHeader>
         
@@ -252,8 +275,8 @@ export const TopicsStudiedModal = ({ open, onOpenChange }: TopicsStudiedModalPro
                 <ScrollArea className="h-[50vh] pr-4">
                   <InteractiveInsights 
                     explanation={explanation}
-                    onRefresh={handleRefreshInsights}
-                    isRefreshing={isLoadingExplanation}
+                    hideExpandControls={true}
+                    key={expandAllMode} // Force re-render when mode changes
                   />
                 </ScrollArea>
               ) : null}

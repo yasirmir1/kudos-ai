@@ -9,12 +9,18 @@ interface InteractiveInsightsProps {
   explanation: string;
   onRefresh?: () => void;
   isRefreshing?: boolean;
+  hideExpandControls?: boolean;
+  onToggleAll?: () => void;
+  expandAllLabel?: string;
 }
 
 export const InteractiveInsights = ({ 
   explanation, 
   onRefresh, 
-  isRefreshing = false 
+  isRefreshing = false,
+  hideExpandControls = false,
+  onToggleAll,
+  expandAllLabel
 }: InteractiveInsightsProps) => {
   const [expandedCards, setExpandedCards] = useState<Set<string>>(new Set());
   const [viewMode, setViewMode] = useState<'compact' | 'expanded'>('compact');
@@ -39,6 +45,11 @@ export const InteractiveInsights = ({
       setExpandedCards(new Set());
       setViewMode('compact');
     }
+    
+    // Call external handler if provided
+    if (onToggleAll) {
+      onToggleAll();
+    }
   };
 
   if (!insights.length) {
@@ -53,35 +64,37 @@ export const InteractiveInsights = ({
 
   return (
     <div className="space-y-4">
-      {/* Controls */}
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-2">
-          <Badge variant="secondary" className="gap-1">
-            <span className="font-medium">{insights.length}</span>
-            {insights.length === 1 ? 'Insight' : 'Insights'}
-          </Badge>
+      {/* Controls - conditionally render */}
+      {!hideExpandControls && (
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <Badge variant="secondary" className="gap-1">
+              <span className="font-medium">{insights.length}</span>
+              {insights.length === 1 ? 'Insight' : 'Insights'}
+            </Badge>
+          </div>
+          <div className="flex items-center gap-2">
+            <Button
+              onClick={toggleAllCards}
+              variant="outline"
+              size="sm"
+              className="gap-2"
+            >
+              {viewMode === 'compact' ? (
+                <>
+                  <Expand className="h-4 w-4" />
+                  Expand All
+                </>
+              ) : (
+                <>
+                  <Minimize2 className="h-4 w-4" />
+                  Collapse All
+                </>
+              )}
+            </Button>
+          </div>
         </div>
-        <div className="flex items-center gap-2">
-          <Button
-            onClick={toggleAllCards}
-            variant="outline"
-            size="sm"
-            className="gap-2"
-          >
-            {viewMode === 'compact' ? (
-              <>
-                <Expand className="h-4 w-4" />
-                Expand All
-              </>
-            ) : (
-              <>
-                <Minimize2 className="h-4 w-4" />
-                Collapse All
-              </>
-            )}
-          </Button>
-        </div>
-      </div>
+      )}
 
       {/* Insights */}
       <div className="space-y-3">
