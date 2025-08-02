@@ -659,7 +659,10 @@ const Practice = () => {
     return <div className="min-h-screen bg-gradient-to-br from-background via-background to-secondary/10">
       <SessionStartModal 
         isOpen={showSessionStartModal}
-        onClose={() => setShowSessionStartModal(false)}
+        onClose={() => {
+          setShowSessionStartModal(false);
+          navigate('/dashboard');
+        }}
         onStart={handleSessionStart}
       />
     </div>;
@@ -670,7 +673,10 @@ const Practice = () => {
   return <div className="min-h-screen bg-gradient-to-br from-background via-background to-secondary/10">
       <SessionStartModal 
         isOpen={showSessionStartModal}
-        onClose={() => setShowSessionStartModal(false)}
+        onClose={() => {
+          setShowSessionStartModal(false);
+          navigate('/dashboard');
+        }}
         onStart={handleSessionStart}
       />
       <div className="container mx-auto max-w-4xl px-6 py-8">
