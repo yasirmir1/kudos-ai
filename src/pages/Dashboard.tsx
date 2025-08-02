@@ -5,7 +5,7 @@ import { Progress } from '@/components/ui/progress';
 import { Badge } from '@/components/ui/badge';
 import { useAuth } from '@/hooks/useAuth';
 import { supabase } from '@/integrations/supabase/client';
-import { Target, TrendingUp, Clock, Calendar, BookOpen, Circle, Award } from 'lucide-react';
+import { Target, TrendingUp, Clock, Calendar, BookOpen, Play, Circle, Award } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { QuestionHistoryModal } from '@/components/QuestionHistoryModal';
 import { TopicAccuracyModal } from '@/components/TopicAccuracyModal';
@@ -311,7 +311,7 @@ const Dashboard = () => {
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
             <Button size="lg" onClick={startLearning} className="bg-gradient-to-r from-primary to-primary-glow hover:from-primary-glow hover:to-primary">
-              <BookOpen className="mr-2 h-5 w-5" />
+              <Play className="mr-2 h-5 w-5" />
               Start Practice Session
             </Button>
             <WorksheetGeneratorModal />
