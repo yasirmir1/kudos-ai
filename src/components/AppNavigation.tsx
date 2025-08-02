@@ -38,21 +38,6 @@ export const AppNavigation: React.FC<AppNavigationProps> = ({
       icon: GraduationCap
     },
     {
-      path: '/practice',
-      label: 'Practice',
-      icon: Play
-    },
-    {
-      path: '/curriculum',
-      label: 'Curriculum',
-      icon: BookOpen
-    },
-    {
-      path: '/analytics',
-      label: 'Analytics',
-      icon: BarChart3
-    },
-    {
       path: '/report',
       label: 'Report',
       icon: FileText
