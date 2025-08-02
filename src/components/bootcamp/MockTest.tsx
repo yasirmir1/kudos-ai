@@ -4,8 +4,20 @@ import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
 import { Alert, AlertDescription } from '@/components/ui/alert';
-import { useBootcampDatabase } from '@/hooks/useBootcampDatabase';
-import { UniversalQuestion } from './UniversalQuestion';
+
+// Placeholder questions for demo
+const PLACEHOLDER_QUESTIONS = Array.from({ length: 50 }, (_, i) => ({
+  question_id: `Q${i + 1}`,
+  question_text: `Question ${i + 1}: What is ${Math.floor(Math.random() * 20) + 5} × ${Math.floor(Math.random() * 20) + 5}?`,
+  option_a: `${Math.floor(Math.random() * 100) + 50}`,
+  option_b: `${Math.floor(Math.random() * 100) + 150}`,
+  option_c: `${Math.floor(Math.random() * 100) + 250}`,
+  option_d: `${Math.floor(Math.random() * 100) + 350}`,
+  correct_answer: 'A',
+  topic_id: ['Arithmetic', 'Algebra', 'Geometry', 'Statistics'][Math.floor(Math.random() * 4)],
+  difficulty: ['Easy', 'Medium', 'Hard'][Math.floor(Math.random() * 3)],
+  question_type: 'multiple_choice'
+}));
 
 interface MockTestState {
   status: 'instructions' | 'active' | 'completed';
@@ -27,7 +39,6 @@ interface MockTestResults {
 }
 
 export const MockTest: React.FC = () => {
-  const { getAdaptiveQuestions, recordStudentResponse, startLearningSession } = useBootcampDatabase();
   const [testState, setTestState] = useState<MockTestState>({
     status: 'instructions',
     currentQuestion: 0,
@@ -40,106 +51,7 @@ export const MockTest: React.FC = () => {
   const [results, setResults] = useState<MockTestResults | null>(null);
   const [isLoading, setIsLoading] = useState(false);
 
-  // Timer effect
-  useEffect(() => {
-    if (testState.status === 'active' && testState.timeRemaining > 0) {
-      const timer = setInterval(() => {
-        setTestState(prev => ({
-          ...prev,
-          timeRemaining: prev.timeRemaining - 1
-        }));
-      }, 1000);
-
-      return () => clearInterval(timer);
-    } else if (testState.timeRemaining === 0 && testState.status === 'active') {
-      handleSubmitTest();
-    }
-  }, [testState.status, testState.timeRemaining]);
-
-  const formatTime = (seconds: number) => {
-    const hours = Math.floor(seconds / 3600);
-    const minutes = Math.floor((seconds % 3600) / 60);
-    const secs = seconds % 60;
-    return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
-  };
-
-  const startTest = async () => {
-    setIsLoading(true);
-    try {
-      // Start learning session
-      const session = await startLearningSession('diagnostic');
-      
-      // Get 50 questions covering all topics
-      const questions = await getAdaptiveQuestions(50);
-      
-      setTestState(prev => ({
-        ...prev,
-        status: 'active',
-        questions,
-        startTime: new Date(),
-        sessionId: session?.session_id || null
-      }));
-    } catch (error) {
-      console.error('Failed to start test:', error);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  const handleAnswer = useCallback(async (response: {
-    questionId: string;
-    selectedAnswer: string;
-    isCorrect: boolean;
-    timeSpent: number;
-    confidence: number;
-    misconception?: string;
-    feedback: string;
-  }) => {
-    // Record the response
-    await recordStudentResponse(
-      response.questionId,
-      response.selectedAnswer,
-      response.isCorrect,
-      response.timeSpent,
-      response.misconception
-    );
-
-    // Update local state
-    setTestState(prev => ({
-      ...prev,
-      answers: {
-        ...prev.answers,
-        [prev.currentQuestion]: response.selectedAnswer
-      }
-    }));
-  }, [testState.currentQuestion, recordStudentResponse]);
-
-  const navigateToQuestion = (questionIndex: number) => {
-    setTestState(prev => ({
-      ...prev,
-      currentQuestion: questionIndex
-    }));
-  };
-
-  const nextQuestion = () => {
-    if (testState.currentQuestion < testState.questions.length - 1) {
-      setTestState(prev => ({
-        ...prev,
-        currentQuestion: prev.currentQuestion + 1
-      }));
-    }
-  };
-
-  const previousQuestion = () => {
-    if (testState.currentQuestion > 0) {
-      setTestState(prev => ({
-        ...prev,
-        currentQuestion: prev.currentQuestion - 1
-      }));
-    }
-  };
-
-  const handleSubmitTest = async () => {
+  const handleSubmitTest = useCallback(async () => {
     const answeredCount = Object.keys(testState.answers).length;
     const timeSpent = testState.startTime ? Math.floor((Date.now() - testState.startTime.getTime()) / 1000) : 0;
     
@@ -175,6 +87,87 @@ export const MockTest: React.FC = () => {
 
     setResults(results);
     setTestState(prev => ({ ...prev, status: 'completed' }));
+  }, [testState.answers, testState.questions, testState.startTime]);
+
+  // Timer effect
+  useEffect(() => {
+    let interval: NodeJS.Timeout | null = null;
+    
+    if (testState.status === 'active' && testState.timeRemaining > 0) {
+      interval = setInterval(() => {
+        setTestState(prev => ({
+          ...prev,
+          timeRemaining: prev.timeRemaining - 1
+        }));
+      }, 1000);
+    } else if (testState.timeRemaining === 0 && testState.status === 'active') {
+      handleSubmitTest();
+    }
+
+    return () => {
+      if (interval) clearInterval(interval);
+    };
+  }, [testState.status, testState.timeRemaining, handleSubmitTest]);
+
+  const formatTime = (seconds: number) => {
+    const hours = Math.floor(seconds / 3600);
+    const minutes = Math.floor((seconds % 3600) / 60);
+    const secs = seconds % 60;
+    return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+  };
+
+  const startTest = async () => {
+    setIsLoading(true);
+    try {
+      // Use placeholder questions for demo
+      setTestState(prev => ({
+        ...prev,
+        status: 'active',
+        questions: PLACEHOLDER_QUESTIONS,
+        startTime: new Date(),
+        sessionId: 'demo-session'
+      }));
+    } catch (error) {
+      console.error('Failed to start test:', error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleAnswer = useCallback((selectedAnswer: string) => {
+    // Update local state
+    setTestState(prev => ({
+      ...prev,
+      answers: {
+        ...prev.answers,
+        [prev.currentQuestion]: selectedAnswer
+      }
+    }));
+  }, [testState.currentQuestion]);
+
+  const navigateToQuestion = (questionIndex: number) => {
+    setTestState(prev => ({
+      ...prev,
+      currentQuestion: questionIndex
+    }));
+  };
+
+  const nextQuestion = () => {
+    if (testState.currentQuestion < testState.questions.length - 1) {
+      setTestState(prev => ({
+        ...prev,
+        currentQuestion: prev.currentQuestion + 1
+      }));
+    }
+  };
+
+  const previousQuestion = () => {
+    if (testState.currentQuestion > 0) {
+      setTestState(prev => ({
+        ...prev,
+        currentQuestion: prev.currentQuestion - 1
+      }));
+    }
   };
 
   if (testState.status === 'instructions') {
@@ -351,14 +344,32 @@ export const MockTest: React.FC = () => {
         {/* Question content */}
         <div className="lg:col-span-3">
           {currentQuestion && (
-            <UniversalQuestion
-              question={currentQuestion}
-              onAnswer={handleAnswer}
-              questionNumber={testState.currentQuestion + 1}
-              totalQuestions={testState.questions.length}
-              studentId={testState.sessionId || ''}
-              sessionId={testState.sessionId || ''}
-            />
+            <Card className="p-6">
+              <div className="mb-4">
+                <span className="text-sm text-muted-foreground">
+                  {currentQuestion.difficulty} • {currentQuestion.topic_id}
+                </span>
+              </div>
+              
+              <h2 className="text-lg font-medium mb-6">{currentQuestion.question_text}</h2>
+              
+              <div className="space-y-3">
+                {['A', 'B', 'C', 'D'].map((option) => (
+                  <button
+                    key={option}
+                    onClick={() => handleAnswer(option)}
+                    className={`w-full p-4 text-left rounded-lg border transition-colors ${
+                      testState.answers[testState.currentQuestion] === option
+                        ? 'border-primary bg-primary/10 text-primary'
+                        : 'border-border hover:bg-muted'
+                    }`}
+                  >
+                    <span className="font-medium mr-3">{option}.</span>
+                    {currentQuestion[`option_${option.toLowerCase()}`]}
+                  </button>
+                ))}
+              </div>
+            </Card>
           )}
           
           {/* Navigation */}
