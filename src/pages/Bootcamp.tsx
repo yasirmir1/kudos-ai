@@ -1,21 +1,21 @@
 import { useState } from 'react';
-import { AppNavigation } from '@/components/AppNavigation';
-import { Dashboard } from '@/components/bootcamp/Dashboard';
-import { EnhancedPracticeSession } from '@/components/bootcamp/EnhancedPracticeSession';
-import { ProgressView } from '@/components/bootcamp/ProgressView';
-import { TopicsView } from '@/components/bootcamp/TopicsView';
-import { LearnView } from '@/components/bootcamp/LearnView';
-import { StudentAnalytics } from '@/components/bootcamp/StudentAnalytics';
-import { QuestionManager } from '@/components/bootcamp/QuestionManager';
-import { AnalyticsDashboard } from '@/components/bootcamp/AnalyticsDashboard';
-import { Navigation } from '@/components/bootcamp/Navigation';
 import { BulkQuestionGenerator } from '@/components/BulkQuestionGenerator';
-import AchievementCenter from '@/components/bootcamp/AchievementCenter';
-
-import SettingsPage from '@/components/bootcamp/SettingsPage';
-import HelpCenter from '@/components/bootcamp/HelpCenter';
-import PracticeReport from '@/components/bootcamp/PracticeReport';
-import { MockTest } from '@/components/bootcamp/MockTest';
+import {
+  Dashboard,
+  EnhancedPracticeSession,
+  ProgressView,
+  TopicsView,
+  LearnView,
+  StudentAnalytics,
+  QuestionManager,
+  AnalyticsDashboard,
+  Navigation,
+  AchievementCenter,
+  SettingsPage,
+  HelpCenter,
+  PracticeReport,
+  MockTest
+} from '@/components/bootcamp';
 import { useBootcampData } from '@/hooks/useBootcampData';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
@@ -52,7 +52,6 @@ const Bootcamp = () => {
   };
   if (isLoading) {
     return <div className="min-h-screen bg-gradient-to-br from-background via-background to-secondary/10">
-        <AppNavigation />
         <div className="flex items-center justify-center h-96">
           <div className="flex items-center gap-2">
             <Loader2 className="h-6 w-6 animate-spin" />
@@ -62,7 +61,6 @@ const Bootcamp = () => {
       </div>;
   }
   return <div className="min-h-screen bg-gradient-to-br from-background via-background to-secondary/10">
-      <AppNavigation />
       <Navigation currentView={currentView} setCurrentView={setCurrentView} user={user} />
       <main className="container mx-auto px-4 py-6">
         {error && <Alert className="mb-6">
