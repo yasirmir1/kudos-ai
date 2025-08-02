@@ -203,7 +203,7 @@ export default function Report() {
           </Card>
           
           {/* Topics Performance - Full Width */}
-          <Card>
+          <Card className="mb-8">
             <CardHeader>
               <div className="flex items-center justify-between">
                 <div>
