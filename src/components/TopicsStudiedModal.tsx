@@ -148,7 +148,7 @@ export const TopicsStudiedModal = ({ open, onOpenChange }: TopicsStudiedModalPro
                 <Brain className="h-5 w-5" />
                 Topics Studied & Learning Insights
               </DialogTitle>
-              <DialogDescription>
+              <DialogDescription className="mt-2">
                 All the topics you've covered in your learning journey
               </DialogDescription>
             </div>
