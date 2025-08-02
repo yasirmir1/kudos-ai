@@ -9,6 +9,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Loader2 } from 'lucide-react';
 import { LearningExperience } from './LearningExperience';
+import { TopicLearningModal } from './TopicLearningModal';
 
 interface Module {
   id: string;
@@ -62,6 +63,8 @@ export const LearnView: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [selectedModule, setSelectedModule] = useState<string | null>(null);
   const [showLearningExperience, setShowLearningExperience] = useState(false);
+  const [selectedTopic, setSelectedTopic] = useState<Topic | null>(null);
+  const [isTopicModalOpen, setIsTopicModalOpen] = useState(false);
 
   useEffect(() => {
     loadLearningContent();
@@ -200,6 +203,16 @@ export const LearnView: React.FC = () => {
       case 'hard': return 'bg-red-100 text-red-800';
       default: return 'bg-gray-100 text-gray-800';
     }
+  };
+
+  const handleTopicClick = (topic: Topic) => {
+    setSelectedTopic(topic);
+    setIsTopicModalOpen(true);
+  };
+
+  const handleStartPractice = (topicId: string) => {
+    setIsTopicModalOpen(false);
+    setShowLearningExperience(true);
   };
 
   if (loading) {
@@ -440,7 +453,7 @@ export const LearnView: React.FC = () => {
               const module = modules.find(m => m.id === topic.module_id);
               
               return (
-                <Card key={topic.id}>
+                <Card key={topic.id} className="cursor-pointer hover:shadow-md transition-all" onClick={() => handleTopicClick(topic)}>
                   <CardHeader>
                     <div className="flex items-center justify-between">
                       <CardTitle className="text-lg">{topic.name}</CardTitle>
@@ -489,7 +502,14 @@ export const LearnView: React.FC = () => {
                         </div>
                       )}
                       
-                      <Button className="w-full" size="sm">
+                      <Button 
+                        className="w-full" 
+                        size="sm"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleTopicClick(topic);
+                        }}
+                      >
                         <Play className="h-4 w-4 mr-2" />
                         Start Learning
                       </Button>
@@ -540,6 +560,13 @@ export const LearnView: React.FC = () => {
           </div>
         </TabsContent>
       </Tabs>
+
+      <TopicLearningModal
+        topic={selectedTopic}
+        isOpen={isTopicModalOpen}
+        onClose={() => setIsTopicModalOpen(false)}
+        onStartPractice={handleStartPractice}
+      />
     </div>
   );
 };
