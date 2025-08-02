@@ -16,7 +16,7 @@ interface MockTestQuestion {
   option_c: string;
   option_d: string;
   correct_answer: string;
-  topic_id: string;
+  topic: string;
   difficulty: string;
   question_type: string;
   marks: number;
@@ -103,12 +103,13 @@ export const MockTest: React.FC = () => {
           .order('question_order');
 
         if (sessionQuestions && sessionQuestions.length > 0) {
-          // Get the questions from the bootcamp_questions table
+          // Get the questions from the mock_test_questions table
           const questionIds = sessionQuestions.map(q => q.question_id);
           const { data: questions } = await supabase
-            .from('bootcamp_questions')
+            .from('mock_test_questions')
             .select('*')
-            .in('question_id', questionIds);
+            .in('question_id', questionIds)
+            .eq('is_active', true);
 
           if (questions) {
             const answers: Record<number, string> = {};
@@ -191,7 +192,7 @@ export const MockTest: React.FC = () => {
       let correctAnswers = 0;
 
       testState.questions.forEach((question, index) => {
-        const topic = question.topic_id || 'Unknown';
+        const topic = question.topic || 'Unknown';
         if (!topicBreakdown[topic]) {
           topicBreakdown[topic] = { correct: 0, total: 0, accuracy: 0 };
         }
@@ -323,8 +324,9 @@ export const MockTest: React.FC = () => {
 
       // Get questions from database (real 11+ style questions)
       const { data: questions, error: questionsError } = await supabase
-        .from('bootcamp_questions')
+        .from('mock_test_questions')
         .select('*')
+        .eq('is_active', true)
         .limit(50)
         .order('question_id');
 
@@ -624,7 +626,7 @@ export const MockTest: React.FC = () => {
             <Card className="p-6">
               <div className="mb-4">
                 <span className="text-sm text-muted-foreground">
-                  {currentQuestion.difficulty} • {currentQuestion.topic_id}
+                  {currentQuestion.difficulty} • {currentQuestion.topic}
                 </span>
               </div>
               
