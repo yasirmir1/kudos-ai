@@ -8,11 +8,9 @@ import { BootcampAPI } from '@/lib/bootcamp-api';
 import { useToast } from '@/hooks/use-toast';
 import { useAuth } from '@/hooks/useAuth';
 import { LearningSessionModal } from './LearningSessionModal';
-
 interface LearningExperienceProps {
   onComplete?: () => void;
 }
-
 interface Topic {
   id: string;
   name: string;
@@ -25,40 +23,42 @@ interface Topic {
     mastery_score: number;
   };
 }
-
 interface LearningSession {
   session_id: string;
   session_type: string;
   session_start: string;
 }
-
-export function LearningExperience({ onComplete }: LearningExperienceProps) {
+export function LearningExperience({
+  onComplete
+}: LearningExperienceProps) {
   const [topics, setTopics] = useState<Topic[]>([]);
   const [currentTopicIndex, setCurrentTopicIndex] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
   const [currentSession, setCurrentSession] = useState<LearningSession | null>(null);
-  const [topicProgress, setTopicProgress] = useState<{ [key: string]: number }>({});
+  const [topicProgress, setTopicProgress] = useState<{
+    [key: string]: number;
+  }>({});
   const [studentId, setStudentId] = useState<string | null>(null);
   const [isLearningSessionModalOpen, setIsLearningSessionModalOpen] = useState(false);
-  const { toast } = useToast();
-  const { user } = useAuth();
-
+  const {
+    toast
+  } = useToast();
+  const {
+    user
+  } = useAuth();
   useEffect(() => {
     if (user) {
       loadStudentId();
     }
   }, [user]);
-
   useEffect(() => {
     if (studentId) {
       loadLearningPath();
     }
   }, [studentId]);
-
   const loadStudentId = async () => {
     try {
       if (!user) return;
-      
       const profile = await BootcampAPI.getStudentProfile(user.id);
       if (profile) {
         setStudentId(profile.student_id);
@@ -79,20 +79,15 @@ export function LearningExperience({ onComplete }: LearningExperienceProps) {
       });
     }
   };
-
   const loadLearningPath = async () => {
     try {
       if (!studentId) return;
-      
       setIsLoading(true);
       const learningPath = await BootcampAPI.getLearningPath(studentId);
       setTopics(learningPath);
-      
+
       // Find the first incomplete topic
-      const firstIncomplete = learningPath.findIndex(
-        topic => topic.progress.status === 'not_started' || topic.progress.status === 'in_progress'
-      );
-      
+      const firstIncomplete = learningPath.findIndex(topic => topic.progress.status === 'not_started' || topic.progress.status === 'in_progress');
       if (firstIncomplete !== -1) {
         setCurrentTopicIndex(firstIncomplete);
       }
@@ -107,17 +102,14 @@ export function LearningExperience({ onComplete }: LearningExperienceProps) {
       setIsLoading(false);
     }
   };
-
   const startLearningSession = async () => {
     try {
       if (!studentId) return;
-      
       const session = await BootcampAPI.startLearningSession(studentId, 'learning');
       setCurrentSession(session);
-      
       toast({
         title: "Learning Session Started",
-        description: "Your progress will be tracked throughout this session.",
+        description: "Your progress will be tracked throughout this session."
       });
     } catch (error) {
       console.error('Error starting learning session:', error);
@@ -128,10 +120,8 @@ export function LearningExperience({ onComplete }: LearningExperienceProps) {
       });
     }
   };
-
   const completeTopicStep = async (topicId: string, stepProgress: number) => {
     if (!studentId) return;
-    
     setTopicProgress(prev => ({
       ...prev,
       [topicId]: stepProgress
@@ -141,29 +131,22 @@ export function LearningExperience({ onComplete }: LearningExperienceProps) {
     if (stepProgress >= 100) {
       try {
         await BootcampAPI.updateStudentProgress(studentId, topicId, 85, 45); // Mock values for demo
-        
+
         // Move to next topic
         if (currentTopicIndex < topics.length - 1) {
           setCurrentTopicIndex(currentTopicIndex + 1);
         } else {
           // All topics completed
           if (currentSession) {
-            await BootcampAPI.endLearningSession(
-              currentSession.session_id, 
-              topics.length, 
-              topics.length, 
-              topics.map(t => t.id)
-            );
+            await BootcampAPI.endLearningSession(currentSession.session_id, topics.length, topics.length, topics.map(t => t.id));
           }
-          
           toast({
             title: "Congratulations!",
-            description: "You've completed the entire learning path!",
+            description: "You've completed the entire learning path!"
           });
-          
           onComplete?.();
         }
-        
+
         // Reload learning path to get updated progress
         await loadLearningPath();
       } catch (error) {
@@ -171,120 +154,42 @@ export function LearningExperience({ onComplete }: LearningExperienceProps) {
       }
     }
   };
-
   const getProgressColor = (status: string) => {
     switch (status) {
-      case 'mastered': return 'text-green-600';
-      case 'completed': return 'text-blue-600';
-      case 'in_progress': return 'text-orange-600';
-      default: return 'text-gray-400';
+      case 'mastered':
+        return 'text-green-600';
+      case 'completed':
+        return 'text-blue-600';
+      case 'in_progress':
+        return 'text-orange-600';
+      default:
+        return 'text-gray-400';
     }
   };
-
   const getStatusIcon = (status: string) => {
     switch (status) {
-      case 'mastered': return <Award className="h-4 w-4 text-green-600" />;
-      case 'completed': return <CheckCircle2 className="h-4 w-4 text-blue-600" />;
-      case 'in_progress': return <Clock className="h-4 w-4 text-orange-600" />;
-      default: return <BookOpen className="h-4 w-4 text-gray-400" />;
+      case 'mastered':
+        return <Award className="h-4 w-4 text-green-600" />;
+      case 'completed':
+        return <CheckCircle2 className="h-4 w-4 text-blue-600" />;
+      case 'in_progress':
+        return <Clock className="h-4 w-4 text-orange-600" />;
+      default:
+        return <BookOpen className="h-4 w-4 text-gray-400" />;
     }
   };
-
   if (isLoading || !studentId) {
-    return (
-      <div className="flex items-center justify-center p-8">
+    return <div className="flex items-center justify-center p-8">
         <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
-      </div>
-    );
+      </div>;
   }
-
   const currentTopic = topics[currentTopicIndex];
-
-  return (
-    <div className="space-y-6">
+  return <div className="space-y-6">
       {/* Currently Learning: Data Representation - First Priority */}
-      <Card className="border-l-4 border-l-primary">
-        <CardHeader>
-          <div className="flex items-center justify-between">
-            <div>
-              <CardTitle className="text-xl">Currently Learning: Data Representation</CardTitle>
-              <p className="text-sm text-muted-foreground mt-1">foundation</p>
-              <p className="text-sm text-muted-foreground">Skills: graphs, interpretation</p>
-            </div>
-            <Badge variant="secondary" className="bg-primary/10 text-primary">
-              In Progress
-            </Badge>
-          </div>
-        </CardHeader>
-        <CardContent>
-          <div className="space-y-4">
-            <div>
-              <h4 className="text-sm font-medium mb-3">Learning Steps</h4>
-              <div className="space-y-2">
-                <div className="flex items-center justify-between p-3 bg-green-50 rounded-lg border border-green-200">
-                  <div className="flex items-center gap-3">
-                    <div className="w-6 h-6 bg-green-500 text-white rounded-full flex items-center justify-center text-xs font-medium">1</div>
-                    <span className="font-medium">Concept Introduction</span>
-                  </div>
-                  <Badge variant="secondary" className="bg-green-100 text-green-800">Complete Step</Badge>
-                </div>
-                <div className="flex items-center justify-between p-3 bg-yellow-50 rounded-lg border border-yellow-200">
-                  <div className="flex items-center gap-3">
-                    <div className="w-6 h-6 bg-primary text-white rounded-full flex items-center justify-center text-xs font-medium">2</div>
-                    <span className="font-medium">Guided Practice</span>
-                  </div>
-                  <Button size="sm" variant="secondary">Complete Step</Button>
-                </div>
-                <div className="flex items-center justify-between p-3 bg-muted/50 rounded-lg border">
-                  <div className="flex items-center gap-3">
-                    <div className="w-6 h-6 bg-muted-foreground text-white rounded-full flex items-center justify-center text-xs font-medium">3</div>
-                    <span className="font-medium">Independent Practice</span>
-                  </div>
-                </div>
-                <div className="flex items-center justify-between p-3 bg-muted/50 rounded-lg border">
-                  <div className="flex items-center gap-3">
-                    <div className="w-6 h-6 bg-muted-foreground text-white rounded-full flex items-center justify-center text-xs font-medium">4</div>
-                    <span className="font-medium">Assessment</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <Button 
-              className="w-full"
-              onClick={() => setIsLearningSessionModalOpen(true)}
-            >
-              <ArrowRight className="h-4 w-4 mr-2" />
-              Start Learning Session
-            </Button>
-          </div>
-        </CardContent>
-      </Card>
+      
 
       {/* Skill Development - Second Priority */}
-      <Card className="border-l-4 border-l-secondary">
-        <CardHeader>
-          <CardTitle className="text-xl flex items-center gap-2">
-            <Award className="h-5 w-5" />
-            Skill Development
-          </CardTitle>
-          <p className="text-sm text-muted-foreground">Continue building your mathematical foundation</p>
-        </CardHeader>
-        <CardContent>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {['Arithmetic', 'Problem Solving', 'Pattern Recognition', 'Logical Reasoning'].map((skill) => (
-              <div key={skill} className="space-y-2">
-                <div className="flex justify-between text-sm">
-                  <span className="font-medium">{skill}</span>
-                  <span className="text-muted-foreground">
-                    {Math.floor(Math.random() * 40 + 60)}%
-                  </span>
-                </div>
-                <Progress value={Math.floor(Math.random() * 40 + 60)} className="h-2" />
-              </div>
-            ))}
-          </div>
-        </CardContent>
-      </Card>
+      
 
       {/* Learning Path Overview */}
       <Card>
@@ -298,22 +203,12 @@ export function LearningExperience({ onComplete }: LearningExperienceProps) {
           <div className="space-y-4">
             <div className="flex justify-between text-sm text-muted-foreground">
               <span>Progress: {currentTopicIndex} of {topics.length} topics</span>
-              <span>{Math.round((currentTopicIndex / topics.length) * 100)}% Complete</span>
+              <span>{Math.round(currentTopicIndex / topics.length * 100)}% Complete</span>
             </div>
-            <Progress value={(currentTopicIndex / topics.length) * 100} className="h-2" />
+            <Progress value={currentTopicIndex / topics.length * 100} className="h-2" />
             
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mt-6">
-              {topics.map((topic, index) => (
-                <Card 
-                  key={topic.id} 
-                  className={`transition-all ${
-                    index === currentTopicIndex 
-                      ? 'ring-2 ring-primary bg-primary/5' 
-                      : index < currentTopicIndex 
-                        ? 'bg-green-50 dark:bg-green-950/20' 
-                        : 'opacity-60'
-                  }`}
-                >
+              {topics.map((topic, index) => <Card key={topic.id} className={`transition-all ${index === currentTopicIndex ? 'ring-2 ring-primary bg-primary/5' : index < currentTopicIndex ? 'bg-green-50 dark:bg-green-950/20' : 'opacity-60'}`}>
                   <CardContent className="p-4">
                     <div className="flex items-start justify-between mb-2">
                       <div className="flex items-center gap-2">
@@ -326,28 +221,23 @@ export function LearningExperience({ onComplete }: LearningExperienceProps) {
                     </div>
                     
                     <div className="space-y-2">
-                      <Progress 
-                        value={topicProgress[topic.id] || (topic.progress.mastery_score * 100)} 
-                        className="h-1" 
-                      />
+                      <Progress value={topicProgress[topic.id] || topic.progress.mastery_score * 100} className="h-1" />
                       <div className="flex items-center justify-between text-xs text-muted-foreground">
                         <span className={getProgressColor(topic.progress.status)}>
                           {topic.progress.status.replace('_', ' ')}
                         </span>
-                        <span>{Math.round(topicProgress[topic.id] || (topic.progress.mastery_score * 100))}%</span>
+                        <span>{Math.round(topicProgress[topic.id] || topic.progress.mastery_score * 100)}%</span>
                       </div>
                     </div>
                   </CardContent>
-                </Card>
-              ))}
+                </Card>)}
             </div>
           </div>
         </CardContent>
       </Card>
 
       {/* Current Topic Focus */}
-      {currentTopic && (
-        <Card>
+      {currentTopic && <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <BookOpen className="h-5 w-5" />
@@ -368,51 +258,31 @@ export function LearningExperience({ onComplete }: LearningExperienceProps) {
                 <h4 className="font-medium mb-3">Learning Steps</h4>
                 <div className="space-y-2">
                   {['Concept Introduction', 'Guided Practice', 'Independent Practice', 'Assessment'].map((step, index) => {
-                    const stepProgress = ((topicProgress[currentTopic.id] || 0) / 100) * 4;
-                    const isCompleted = stepProgress > index;
-                    const isCurrent = Math.floor(stepProgress) === index;
-                    
-                    return (
-                      <div key={step} className="flex items-center gap-3">
-                        <div className={`w-6 h-6 rounded-full flex items-center justify-center text-xs ${
-                          isCompleted 
-                            ? 'bg-green-500 text-white' 
-                            : isCurrent 
-                              ? 'bg-primary text-white' 
-                              : 'bg-gray-200 text-gray-500'
-                        }`}>
+                const stepProgress = (topicProgress[currentTopic.id] || 0) / 100 * 4;
+                const isCompleted = stepProgress > index;
+                const isCurrent = Math.floor(stepProgress) === index;
+                return <div key={step} className="flex items-center gap-3">
+                        <div className={`w-6 h-6 rounded-full flex items-center justify-center text-xs ${isCompleted ? 'bg-green-500 text-white' : isCurrent ? 'bg-primary text-white' : 'bg-gray-200 text-gray-500'}`}>
                           {isCompleted ? '✓' : index + 1}
                         </div>
                         <span className={`flex-1 ${isCompleted ? 'text-green-600 line-through' : isCurrent ? 'font-medium' : 'text-muted-foreground'}`}>
                           {step}
                         </span>
-                        {isCurrent && (
-                          <Button 
-                            size="sm" 
-                            onClick={() => completeTopicStep(currentTopic.id, (index + 1) * 25)}
-                          >
+                        {isCurrent && <Button size="sm" onClick={() => completeTopicStep(currentTopic.id, (index + 1) * 25)}>
                             Complete Step
-                          </Button>
-                        )}
-                      </div>
-                    );
-                  })}
+                          </Button>}
+                      </div>;
+              })}
                 </div>
               </div>
 
-              {!currentSession && (
-                <Button 
-                  onClick={() => setIsLearningSessionModalOpen(true)} 
-                  className="w-full"
-                >
+              {!currentSession && <Button onClick={() => setIsLearningSessionModalOpen(true)} className="w-full">
                   <ArrowRight className="h-4 w-4 mr-2" />
                   Start Learning Session
-                </Button>
-              )}
+                </Button>}
             </div>
           </CardContent>
-        </Card>
-      )}
+        </Card>}
 
       {/* Skills Progress */}
       <Card>
@@ -424,8 +294,7 @@ export function LearningExperience({ onComplete }: LearningExperienceProps) {
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {['Arithmetic', 'Problem Solving', 'Pattern Recognition', 'Logical Reasoning'].map((skill) => (
-              <div key={skill} className="space-y-2">
+            {['Arithmetic', 'Problem Solving', 'Pattern Recognition', 'Logical Reasoning'].map(skill => <div key={skill} className="space-y-2">
                 <div className="flex justify-between text-sm">
                   <span className="font-medium">{skill}</span>
                   <span className="text-muted-foreground">
@@ -433,26 +302,19 @@ export function LearningExperience({ onComplete }: LearningExperienceProps) {
                   </span>
                 </div>
                 <Progress value={Math.floor(Math.random() * 40 + 60)} className="h-2" />
-              </div>
-            ))}
+              </div>)}
           </div>
         </CardContent>
       </Card>
 
       {/* Learning Session Modal */}
-      <LearningSessionModal
-        isOpen={isLearningSessionModalOpen}
-        onClose={() => setIsLearningSessionModalOpen(false)}
-        topicName={currentTopic?.name || "Data Representation"}
-        onComplete={() => {
-          toast({
-            title: "Learning Session Completed!",
-            description: "Great job! You've completed the learning session.",
-          });
-          // Optionally update progress here
-          setIsLearningSessionModalOpen(false);
-        }}
-      />
-    </div>
-  );
+      <LearningSessionModal isOpen={isLearningSessionModalOpen} onClose={() => setIsLearningSessionModalOpen(false)} topicName={currentTopic?.name || "Data Representation"} onComplete={() => {
+      toast({
+        title: "Learning Session Completed!",
+        description: "Great job! You've completed the learning session."
+      });
+      // Optionally update progress here
+      setIsLearningSessionModalOpen(false);
+    }} />
+    </div>;
 }
