@@ -97,47 +97,85 @@ const Practice = () => {
   const loadAdaptiveQuestions = async (ageGroup: 'year 2-3' | 'year 4-5' | '11+' = 'year 4-5', questionCount: number = 20, difficulty?: string) => {
     try {
       setLoading(true);
-      console.log('🎯 Loading adaptive questions for student:', user?.id);
+      console.log('🎯 Loading bootcamp questions for student:', user?.id);
 
-      // Use the enhanced adaptive question selection system
-      const { data: adaptiveQuestions, error } = await supabase.rpc('get_adaptive_questions_enhanced', {
-        p_student_id: user?.id,
-        p_count: questionCount
-      });
+      // First get the student's bootcamp ID
+      const { data: student, error: studentError } = await supabase
+        .from('bootcamp_students')
+        .select('student_id')
+        .eq('user_id', user?.id)
+        .single();
 
-      if (error) {
-        console.error('❌ Error calling adaptive questions function:', error);
-        // Fallback to random selection if adaptive system fails
-        await loadRandomQuestions(ageGroup, questionCount, difficulty);
+      if (studentError || !student) {
+        console.error('❌ Error getting student data:', studentError);
+        toast({
+          title: "Error",
+          description: "Could not find student profile. Please try again.",
+          variant: "destructive",
+        });
         return;
       }
 
-      if (adaptiveQuestions && adaptiveQuestions.length > 0) {
-        // Extract questions from the returned format
-        const questions: Question[] = adaptiveQuestions.map((item: any) => {
-          const q = item.question_data; // Updated to match new function return column name
-          return {
-            ...q,
-            options: Array.isArray(q.options) ? q.options : typeof q.options === 'string' ? JSON.parse(q.options) : Object.values(q.options || {})
-          };
+      console.log('📚 Student ID:', student.student_id);
+
+      // Call the bootcamp question manager edge function
+      const { data: questionsData, error } = await supabase.functions.invoke('bootcamp-question-manager', {
+        body: { 
+          student_id: student.student_id,
+          question_count: questionCount,
+          difficulty_preference: difficulty 
+        }
+      });
+
+      console.log('🔍 Questions response:', { questionsData, error });
+
+      if (error) {
+        console.error('❌ Error calling bootcamp question manager:', error);
+        toast({
+          title: "Error loading questions",
+          description: "Failed to load practice questions. Please try again.",
+          variant: "destructive",
         });
+        return;
+      }
+
+      if (questionsData?.questions && questionsData.questions.length > 0) {
+        const questions: Question[] = questionsData.questions.map((q: any) => ({
+          question_id: q.question_id,
+          topic: q.topic_id || 'General',
+          subtopic: q.subtopic_id || 'Practice',
+          example_question: q.question_text,
+          question_type: q.question_type || 'multiple_choice',
+          options: [q.option_a, q.option_b, q.option_c, q.option_d].filter(Boolean),
+          correct_answer: q.correct_answer,
+          difficulty: q.difficulty,
+          red_herring_tag: null,
+          red_herring_explanation: null,
+          pedagogical_notes: q.explanation
+        }));
         
-        console.log(`✅ Loaded ${questions.length} adaptive questions covering ${new Set(questions.map(q => q.topic)).size} topics`);
+        console.log(`✅ Loaded ${questions.length} bootcamp questions`);
         console.log('📊 Question breakdown:', {
           topics: [...new Set(questions.map(q => q.topic))],
-          difficulties: [...new Set(questions.map(q => q.difficulty))],
-          subtopics: [...new Set(questions.map(q => q.subtopic))]
+          difficulties: [...new Set(questions.map(q => q.difficulty))]
         });
         
         setQuestions(questions);
       } else {
-        console.log('⚠️ No adaptive questions returned, falling back to random selection');
-        await loadRandomQuestions(ageGroup, questionCount, difficulty);
+        console.log('⚠️ No bootcamp questions returned');
+        toast({
+          title: "No questions available",
+          description: "No practice questions are currently available. Please try again later.",
+          variant: "destructive",
+        });
       }
     } catch (error) {
-      console.error('❌ Error loading adaptive questions:', error);
-      // Fallback to random selection
-      await loadRandomQuestions(ageGroup, questionCount, difficulty);
+      console.error('❌ Error loading bootcamp questions:', error);
+      toast({
+        title: "Error",
+        description: "Failed to load practice questions. Please try again.",
+        variant: "destructive",
+      });
     } finally {
       setLoading(false);
     }
