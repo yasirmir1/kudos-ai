@@ -1,4 +1,5 @@
 import React from 'react';
+import { useBootcampData } from '@/hooks/useBootcampData';
 
 interface DayData {
   day: string;
@@ -7,17 +8,57 @@ interface DayData {
 }
 
 export const PerformanceChart: React.FC = () => {
-  const data: DayData[] = [
-    { day: 'Mon', accuracy: 72, questions: 25 },
-    { day: 'Tue', accuracy: 78, questions: 30 },
-    { day: 'Wed', accuracy: 75, questions: 28 },
-    { day: 'Thu', accuracy: 82, questions: 35 },
-    { day: 'Fri', accuracy: 85, questions: 40 },
-    { day: 'Sat', accuracy: 80, questions: 32 },
-    { day: 'Sun', accuracy: 88, questions: 45 }
-  ];
+  const { responses, isLoading } = useBootcampData();
 
-  const maxQuestions = Math.max(...data.map(d => d.questions));
+  // Process responses data to create weekly performance data
+  const processPerformanceData = (): DayData[] => {
+    const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+    const dayData: { [key: string]: { questions: number; correct: number } } = {};
+    
+    // Initialize all days
+    days.forEach(day => {
+      dayData[day] = { questions: 0, correct: 0 };
+    });
+
+    // Get last 7 days of responses
+    const lastWeek = new Date();
+    lastWeek.setDate(lastWeek.getDate() - 7);
+    
+    const weeklyResponses = responses.filter(r => 
+      new Date(r.responded_at) >= lastWeek
+    );
+
+    // Group by day of week
+    weeklyResponses.forEach(response => {
+      const dayOfWeek = days[new Date(response.responded_at).getDay()];
+      dayData[dayOfWeek].questions++;
+      if (response.is_correct) {
+        dayData[dayOfWeek].correct++;
+      }
+    });
+
+    return days.map(day => ({
+      day,
+      questions: dayData[day].questions,
+      accuracy: dayData[day].questions > 0 
+        ? Math.round((dayData[day].correct / dayData[day].questions) * 100)
+        : 0
+    }));
+  };
+
+  const data = processPerformanceData();
+  const maxQuestions = Math.max(...data.map(d => d.questions), 1);
+
+  if (isLoading) {
+    return (
+      <div className="bg-card rounded-xl shadow-sm border p-6">
+        <h2 className="text-lg font-semibold text-foreground mb-4">This Week's Performance</h2>
+        <div className="flex items-center justify-center h-48">
+          <div className="animate-pulse">Loading performance data...</div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="bg-card rounded-xl shadow-sm border p-6">
