@@ -313,7 +313,7 @@ export const PracticeSession: React.FC = () => {
 
         {question.type === 'multiple_choice' && question.options ? (
           <div className="space-y-3">
-            {question.options.map(option => (
+            {question.options?.map(option => (
               <button
                 key={option.id}
                 onClick={() => !showFeedback && handleAnswerSelect(option.id)}
