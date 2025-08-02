@@ -52,7 +52,7 @@ export const AppNavigation: React.FC<AppNavigationProps> = ({
                 <img 
                   src="/lovable-uploads/343d37bc-a8af-452f-b2b9-250214aa6175.png" 
                   alt="Kudos Academy" 
-                  className="h-12 w-auto"
+                  className="h-16 w-auto"
                 />
               </div>
             )}
@@ -71,7 +71,7 @@ export const AppNavigation: React.FC<AppNavigationProps> = ({
           {/* Right section - Navigation and Age Group Selector */}
           <div className="flex items-center space-x-4">
             {/* Navigation Links */}
-            <nav className="hidden md:flex items-center space-x-2">
+            <nav className="hidden md:flex items-center space-x-1">
               {navigationItems.map((item) => {
                 const Icon = item.icon;
                 const isActive = isActivePath(item.path);
