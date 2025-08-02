@@ -140,8 +140,8 @@ const Index = () => {
               <text x="50" y="180" fontFamily="Arial" fontSize="14" fill="#34C759">↑ 12% this month</text>
               
               <rect x="285" y="90" width="230" height="140" rx="12" fill="#FF9500" fillOpacity="0.1" className="group-hover:animate-pulse"></rect>
-              <text x="305" y="120" fontFamily="Arial" fontSize="16" fill="#86868B">Verbal Reasoning</text>
-              <text x="305" y="150" fontFamily="Arial" fontSize="28" fontWeight="600" fill="#FF9500">72%</text>
+              <text x="305" y="120" fontFamily="Arial" fontSize="16" fill="#86868B">Geometry</text>
+              <text x="305" y="150" fontFamily="Arial" fontSize="28" fontWeight="600" fill="#FF9500">68%</text>
               <text x="305" y="180" fontFamily="Arial" fontSize="14" fill="#FF9500">Focus area</text>
               
               <rect x="540" y="90" width="230" height="140" rx="12" fill="#0071E3" fillOpacity="0.1" className="group-hover:animate-pulse"></rect>
