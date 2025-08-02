@@ -141,33 +141,35 @@ export const TopicsStudiedModal = ({ open, onOpenChange }: TopicsStudiedModalPro
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-6xl max-h-[80vh] overflow-hidden flex flex-col">
         <DialogHeader>
-          <DialogTitle className="flex items-center gap-2">
-            <Brain className="h-5 w-5" />
-            Topics Studied & Learning Insights
-          </DialogTitle>
-          <DialogDescription>
-            All the topics you've covered in your learning journey
-          </DialogDescription>
+          <div className="flex items-center justify-between">
+            <div>
+              <DialogTitle className="flex items-center gap-2">
+                <Brain className="h-5 w-5" />
+                Topics Studied & Learning Insights
+              </DialogTitle>
+              <DialogDescription>
+                All the topics you've covered in your learning journey
+              </DialogDescription>
+            </div>
+            {showExplanation && (
+              <Button
+                onClick={handleRefreshInsights}
+                disabled={isLoadingExplanation}
+                size="sm"
+                variant="outline"
+                className="gap-2"
+              >
+                <Lightbulb className="h-4 w-4" />
+                {isLoadingExplanation ? "Updating..." : "Refresh Insights"}
+              </Button>
+            )}
+          </div>
         </DialogHeader>
         
         <div className="flex gap-4 flex-1 min-h-0">
           {/* Topics Performance */}
           <div className="flex-1">
-            <div className="flex items-center justify-between mb-4">
-              <h3 className="font-medium">Performance Overview</h3>
-              {showExplanation && (
-                <Button
-                  onClick={handleRefreshInsights}
-                  disabled={isLoadingExplanation}
-                  size="sm"
-                  variant="outline"
-                  className="gap-2"
-                >
-                  <Lightbulb className="h-4 w-4" />
-                  {isLoadingExplanation ? "Updating..." : "Refresh Insights"}
-                </Button>
-              )}
-            </div>
+            <h3 className="font-medium mb-4">Performance Overview</h3>
             
             <ScrollArea className="h-[50vh] pr-4">
           {loading ? (
