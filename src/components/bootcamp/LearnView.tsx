@@ -10,27 +10,27 @@ import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Loader2 } from 'lucide-react';
 
 interface Module {
-  module_id: string;
-  module_name: string;
-  description: string;
-  weeks_allocated: number;
+  id: string;
+  name: string;
+  curriculum_id: string;
+  weeks: number[];
   module_order: number;
 }
 
 interface Topic {
-  topic_id: string;
-  topic_name: string;
+  id: string;
+  name: string;
   module_id: string;
-  difficulty_level: string;
-  estimated_questions: number;
+  difficulty: string;
+  skills: string[];
   topic_order: number;
 }
 
 interface Subtopic {
-  subtopic_id: string;
-  subtopic_name: string;
+  id: number;
+  name: string;
   topic_id: string;
-  learning_objectives: string[];
+  subtopic_order: number;
 }
 
 interface CurriculumItem {
@@ -61,7 +61,7 @@ export const LearnView: React.FC = () => {
       
       // Fetch modules
       const { data: modulesData, error: modulesError } = await supabase
-        .from('bootcamp_enhanced_modules')
+        .from('bootcamp_modules')
         .select('*')
         .order('module_order');
 
@@ -69,7 +69,7 @@ export const LearnView: React.FC = () => {
 
       // Fetch topics
       const { data: topicsData, error: topicsError } = await supabase
-        .from('bootcamp_enhanced_topics')
+        .from('bootcamp_topics')
         .select('*')
         .order('topic_order');
 
@@ -77,8 +77,9 @@ export const LearnView: React.FC = () => {
 
       // Fetch subtopics
       const { data: subtopicsData, error: subtopicsError } = await supabase
-        .from('bootcamp_enhanced_subtopics')
-        .select('*');
+        .from('bootcamp_subtopics')
+        .select('*')
+        .order('subtopic_order');
 
       if (subtopicsError) throw subtopicsError;
 
@@ -96,7 +97,7 @@ export const LearnView: React.FC = () => {
       setCurriculum(curriculumData || []);
       
       if (modulesData && modulesData.length > 0) {
-        setSelectedModule(modulesData[0].module_id);
+        setSelectedModule(modulesData[0].id);
       }
     } catch (err) {
       console.error('Error loading learning content:', err);
@@ -170,18 +171,18 @@ export const LearnView: React.FC = () => {
               <h3 className="text-lg font-semibold">Choose a Module</h3>
               {modules.map((module) => (
                 <Card 
-                  key={module.module_id}
+                  key={module.id}
                   className={`cursor-pointer transition-colors ${
-                    selectedModule === module.module_id ? 'ring-2 ring-primary' : ''
+                    selectedModule === module.id ? 'ring-2 ring-primary' : ''
                   }`}
-                  onClick={() => setSelectedModule(module.module_id)}
+                  onClick={() => setSelectedModule(module.id)}
                 >
                   <CardContent className="p-4">
                     <div className="flex items-center justify-between">
                       <div>
-                        <h4 className="font-medium">{module.module_name}</h4>
+                        <h4 className="font-medium">{module.name}</h4>
                         <p className="text-sm text-muted-foreground">
-                          {module.weeks_allocated} weeks
+                          {module.weeks.length} weeks
                         </p>
                       </div>
                       <ChevronRight className="h-4 w-4" />
@@ -196,21 +197,21 @@ export const LearnView: React.FC = () => {
               {selectedModule && (
                 <div className="space-y-4">
                   {(() => {
-                    const module = modules.find(m => m.module_id === selectedModule);
+                    const module = modules.find(m => m.id === selectedModule);
                     const moduleTopics = getTopicsForModule(selectedModule);
                     
                     return (
                       <>
                         <Card>
                           <CardHeader>
-                            <CardTitle>{module?.module_name}</CardTitle>
+                            <CardTitle>{module?.name}</CardTitle>
                           </CardHeader>
                           <CardContent>
-                            <p className="text-muted-foreground mb-4">{module?.description}</p>
+                            <p className="text-muted-foreground mb-4">Curriculum: {module?.curriculum_id}</p>
                             <div className="flex items-center gap-4 text-sm">
                               <div className="flex items-center gap-1">
                                 <Clock className="h-4 w-4" />
-                                <span>{module?.weeks_allocated} weeks</span>
+                                <span>{module?.weeks.length} weeks</span>
                               </div>
                               <div className="flex items-center gap-1">
                                 <BookOpen className="h-4 w-4" />
@@ -223,25 +224,25 @@ export const LearnView: React.FC = () => {
                         <div className="space-y-3">
                           <h4 className="font-medium">Topics in this Module</h4>
                           {moduleTopics.map((topic) => {
-                            const topicSubtopics = getSubtopicsForTopic(topic.topic_id);
+                            const topicSubtopics = getSubtopicsForTopic(topic.id);
                             return (
-                              <Card key={topic.topic_id}>
+                              <Card key={topic.id}>
                                 <CardContent className="p-4">
                                   <div className="flex items-center justify-between mb-2">
-                                    <h5 className="font-medium">{topic.topic_name}</h5>
-                                    <Badge className={getDifficultyColor(topic.difficulty_level)}>
-                                      {topic.difficulty_level}
+                                    <h5 className="font-medium">{topic.name}</h5>
+                                    <Badge className={getDifficultyColor(topic.difficulty)}>
+                                      {topic.difficulty}
                                     </Badge>
                                   </div>
                                   <div className="flex items-center gap-4 text-sm text-muted-foreground">
-                                    <span>{topic.estimated_questions} questions</span>
+                                    <span>{topic.skills?.length || 0} skills</span>
                                     <span>{topicSubtopics.length} subtopics</span>
                                   </div>
                                   {topicSubtopics.length > 0 && (
                                     <div className="mt-3 space-y-1">
                                       {topicSubtopics.slice(0, 3).map((subtopic) => (
-                                        <div key={subtopic.subtopic_id} className="text-xs bg-muted rounded px-2 py-1 inline-block mr-2">
-                                          {subtopic.subtopic_name}
+                                        <div key={subtopic.id} className="text-xs bg-muted rounded px-2 py-1 inline-block mr-2">
+                                          {subtopic.name}
                                         </div>
                                       ))}
                                       {topicSubtopics.length > 3 && (
@@ -268,26 +269,26 @@ export const LearnView: React.FC = () => {
         <TabsContent value="topics" className="space-y-4">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {topics.map((topic) => {
-              const topicSubtopics = getSubtopicsForTopic(topic.topic_id);
-              const module = modules.find(m => m.module_id === topic.module_id);
+              const topicSubtopics = getSubtopicsForTopic(topic.id);
+              const module = modules.find(m => m.id === topic.module_id);
               
               return (
-                <Card key={topic.topic_id}>
+                <Card key={topic.id}>
                   <CardHeader>
                     <div className="flex items-center justify-between">
-                      <CardTitle className="text-lg">{topic.topic_name}</CardTitle>
-                      <Badge className={getDifficultyColor(topic.difficulty_level)}>
-                        {topic.difficulty_level}
+                      <CardTitle className="text-lg">{topic.name}</CardTitle>
+                      <Badge className={getDifficultyColor(topic.difficulty)}>
+                        {topic.difficulty}
                       </Badge>
                     </div>
-                    <p className="text-sm text-muted-foreground">Module: {module?.module_name}</p>
+                    <p className="text-sm text-muted-foreground">Module: {module?.name}</p>
                   </CardHeader>
                   <CardContent>
                     <div className="space-y-3">
                       <div className="flex items-center gap-4 text-sm">
                         <div className="flex items-center gap-1">
                           <BookOpen className="h-4 w-4" />
-                          <span>{topic.estimated_questions} questions</span>
+                          <span>{topic.skills?.length || 0} skills</span>
                         </div>
                         <div className="flex items-center gap-1">
                           <Users className="h-4 w-4" />
@@ -297,19 +298,25 @@ export const LearnView: React.FC = () => {
                       
                       {topicSubtopics.length > 0 && (
                         <div>
-                          <h6 className="text-sm font-medium mb-2">Learning Objectives:</h6>
+                          <h6 className="text-sm font-medium mb-2">Subtopics:</h6>
                           <div className="space-y-1">
                             {topicSubtopics.slice(0, 2).map((subtopic) => (
-                              <div key={subtopic.subtopic_id}>
-                                <div className="text-sm font-medium">{subtopic.subtopic_name}</div>
-                                {subtopic.learning_objectives && subtopic.learning_objectives.length > 0 && (
-                                  <ul className="text-xs text-muted-foreground ml-2">
-                                    {subtopic.learning_objectives.slice(0, 2).map((objective, idx) => (
-                                      <li key={idx}>• {objective}</li>
-                                    ))}
-                                  </ul>
-                                )}
+                              <div key={subtopic.id}>
+                                <div className="text-sm font-medium">{subtopic.name}</div>
                               </div>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+                      
+                      {topic.skills && topic.skills.length > 0 && (
+                        <div>
+                          <h6 className="text-sm font-medium mb-2">Skills:</h6>
+                          <div className="flex flex-wrap gap-1">
+                            {topic.skills.slice(0, 3).map((skill, idx) => (
+                              <span key={idx} className="text-xs bg-primary/10 text-primary rounded px-2 py-1">
+                                {skill}
+                              </span>
                             ))}
                           </div>
                         </div>
