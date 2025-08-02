@@ -95,53 +95,114 @@ const Practice = () => {
   const loadAdaptiveQuestions = async (ageGroup: 'year 2-3' | 'year 4-5' | '11+' = 'year 4-5', questionCount: number = 20, difficulty?: string) => {
     try {
       setLoading(true);
+      console.log('🎯 Loading adaptive questions for student:', user?.id);
 
+      // Use the enhanced adaptive question selection system
+      const { data: adaptiveQuestions, error } = await supabase.rpc('get_adaptive_questions_enhanced', {
+        p_student_id: user?.id,
+        p_count: questionCount
+      });
+
+      if (error) {
+        console.error('❌ Error calling adaptive questions function:', error);
+        // Fallback to random selection if adaptive system fails
+        await loadRandomQuestions(ageGroup, questionCount, difficulty);
+        return;
+      }
+
+      if (adaptiveQuestions && adaptiveQuestions.length > 0) {
+        // Extract questions from the returned format
+        const questions: Question[] = adaptiveQuestions.map((item: any) => {
+          const q = item.question;
+          return {
+            ...q,
+            options: Array.isArray(q.options) ? q.options : typeof q.options === 'string' ? JSON.parse(q.options) : Object.values(q.options || {})
+          };
+        });
+        
+        console.log(`✅ Loaded ${questions.length} adaptive questions covering ${new Set(questions.map(q => q.topic)).size} topics`);
+        console.log('📊 Question breakdown:', {
+          topics: [...new Set(questions.map(q => q.topic))],
+          difficulties: [...new Set(questions.map(q => q.difficulty))],
+          subtopics: [...new Set(questions.map(q => q.subtopic))]
+        });
+        
+        setQuestions(questions);
+      } else {
+        console.log('⚠️ No adaptive questions returned, falling back to random selection');
+        await loadRandomQuestions(ageGroup, questionCount, difficulty);
+      }
+    } catch (error) {
+      console.error('❌ Error loading adaptive questions:', error);
+      // Fallback to random selection
+      await loadRandomQuestions(ageGroup, questionCount, difficulty);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Fallback function for random question selection
+  const loadRandomQuestions = async (ageGroup: 'year 2-3' | 'year 4-5' | '11+' = 'year 4-5', questionCount: number = 20, difficulty?: string) => {
+    try {
+      console.log('🔄 Using fallback random question selection');
+      
       // Get all question IDs the user has already answered to ensure no repeats
-      const {
-        data: answeredQuestions
-      } = await supabase.from('student_answers').select('question_id').eq('student_id', user?.id);
+      const { data: answeredQuestions } = await supabase
+        .from('student_answers')
+        .select('question_id')
+        .eq('student_id', user?.id);
       const answeredQuestionIds = answeredQuestions?.map(q => q.question_id) || [];
 
       // Get random questions from ALL topics that the user has never seen for their age group
-      let query = supabase.from('curriculum').select('*').eq('age_group', ageGroup).limit(questionCount);
+      let query = supabase
+        .from('curriculum')
+        .select('*')
+        .eq('age_group', ageGroup)
+        .limit(questionCount);
+      
       if (answeredQuestionIds.length > 0) {
         query = query.not('question_id', 'in', `(${answeredQuestionIds.map(id => `'${id}'`).join(',')})`);
       }
       if (difficulty) {
         query = query.eq('difficulty', difficulty);
       }
-      const {
-        data: newQuestions,
-        error: newError
-      } = await query;
+      
+      const { data: newQuestions, error: newError } = await query;
+      
+      if (newError) {
+        throw newError;
+      }
+
       let questions: Question[] = [];
       if (newQuestions && newQuestions.length > 0) {
         // Format questions and shuffle them randomly for variety
         questions = newQuestions.map(q => ({
           ...q,
           options: Array.isArray(q.options) ? q.options : typeof q.options === 'string' ? JSON.parse(q.options) : Object.values(q.options || {})
-        })).sort(() => Math.random() - 0.5); // Randomize the order
+        })).sort(() => Math.random() - 0.5);
 
-        console.log(`Loaded ${questions.length} new questions from ${new Set(questions.map(q => q.topic)).size} different topics`);
+        console.log(`📚 Loaded ${questions.length} random questions from ${new Set(questions.map(q => q.topic)).size} different topics`);
       } else {
-        console.log('No new questions available, need to generate more');
-
-        // If no new questions available, generate more AI questions from random topics
+        console.log('⚠️ No new questions available, need to generate more');
         await generateAdditionalQuestions();
 
-        // After generation, try loading new questions again
-        let freshQuery = supabase.from('curriculum').select('*').not('question_id', 'in', answeredQuestionIds.length > 0 ? `(${answeredQuestionIds.map(id => `'${id}'`).join(',')})` : '()').limit(questionCount);
+        // After generation, try loading questions again
+        let freshQuery = supabase
+          .from('curriculum')
+          .select('*')
+          .not('question_id', 'in', answeredQuestionIds.length > 0 ? `(${answeredQuestionIds.map(id => `'${id}'`).join(',')})` : '()')
+          .limit(questionCount);
+        
         if (difficulty) {
           freshQuery = freshQuery.eq('difficulty', difficulty);
         }
-        const {
-          data: freshQuestions
-        } = await freshQuery;
+        
+        const { data: freshQuestions } = await freshQuery;
         if (freshQuestions && freshQuestions.length > 0) {
           questions = freshQuestions.map(q => ({
             ...q,
             options: Array.isArray(q.options) ? q.options : typeof q.options === 'string' ? JSON.parse(q.options) : Object.values(q.options || {})
-          })).sort(() => Math.random() - 0.5); // Randomize the order
+          })).sort(() => Math.random() - 0.5);
         } else {
           toast({
             title: "No new questions available",
@@ -153,14 +214,12 @@ const Practice = () => {
       }
       setQuestions(questions);
     } catch (error) {
-      console.error('Error:', error);
+      console.error('❌ Error loading random questions:', error);
       toast({
         title: "Error loading questions",
         description: "Failed to load practice questions.",
         variant: "destructive"
       });
-    } finally {
-      setLoading(false);
     }
   };
   const handleAnswerSelect = (answer: string) => {
