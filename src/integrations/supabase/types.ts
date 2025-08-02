@@ -851,6 +851,67 @@ export type Database = {
           },
         ]
       }
+      bootcamp_learning_sessions: {
+        Row: {
+          created_at: string | null
+          performance_score: number | null
+          questions_attempted: number | null
+          questions_correct: number | null
+          session_end: string | null
+          session_id: string
+          session_start: string | null
+          session_type: string | null
+          student_id: string | null
+          topics_covered: string[] | null
+        }
+        Insert: {
+          created_at?: string | null
+          performance_score?: number | null
+          questions_attempted?: number | null
+          questions_correct?: number | null
+          session_end?: string | null
+          session_id?: string
+          session_start?: string | null
+          session_type?: string | null
+          student_id?: string | null
+          topics_covered?: string[] | null
+        }
+        Update: {
+          created_at?: string | null
+          performance_score?: number | null
+          questions_attempted?: number | null
+          questions_correct?: number | null
+          session_end?: string | null
+          session_id?: string
+          session_start?: string | null
+          session_type?: string | null
+          student_id?: string | null
+          topics_covered?: string[] | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "bootcamp_learning_sessions_student_id_fkey"
+            columns: ["student_id"]
+            isOneToOne: false
+            referencedRelation: "bootcamp_student_performance_summary"
+            referencedColumns: ["student_id"]
+          },
+          {
+            foreignKeyName: "bootcamp_learning_sessions_student_id_fkey"
+            columns: ["student_id"]
+            isOneToOne: false
+            referencedRelation: "bootcamp_student_skills_proficiency"
+            referencedColumns: ["student_id"]
+          },
+          {
+            foreignKeyName: "bootcamp_learning_sessions_student_id_fkey"
+            columns: ["student_id"]
+            isOneToOne: false
+            referencedRelation: "bootcamp_students"
+            referencedColumns: ["student_id"]
+          },
+        ]
+      }
       bootcamp_misconceptions_catalog: {
         Row: {
           category: string
@@ -1069,6 +1130,70 @@ export type Database = {
         }
         Relationships: []
       }
+      bootcamp_student_progress: {
+        Row: {
+          accuracy_percentage: number | null
+          average_speed_seconds: number | null
+          created_at: string | null
+          last_activity: string | null
+          mastery_score: number | null
+          module_id: string | null
+          progress_id: string
+          status: string | null
+          student_id: string | null
+          topic_id: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          accuracy_percentage?: number | null
+          average_speed_seconds?: number | null
+          created_at?: string | null
+          last_activity?: string | null
+          mastery_score?: number | null
+          module_id?: string | null
+          progress_id?: string
+          status?: string | null
+          student_id?: string | null
+          topic_id?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          accuracy_percentage?: number | null
+          average_speed_seconds?: number | null
+          created_at?: string | null
+          last_activity?: string | null
+          mastery_score?: number | null
+          module_id?: string | null
+          progress_id?: string
+          status?: string | null
+          student_id?: string | null
+          topic_id?: string | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "bootcamp_student_progress_student_id_fkey"
+            columns: ["student_id"]
+            isOneToOne: false
+            referencedRelation: "bootcamp_student_performance_summary"
+            referencedColumns: ["student_id"]
+          },
+          {
+            foreignKeyName: "bootcamp_student_progress_student_id_fkey"
+            columns: ["student_id"]
+            isOneToOne: false
+            referencedRelation: "bootcamp_student_skills_proficiency"
+            referencedColumns: ["student_id"]
+          },
+          {
+            foreignKeyName: "bootcamp_student_progress_student_id_fkey"
+            columns: ["student_id"]
+            isOneToOne: false
+            referencedRelation: "bootcamp_students"
+            referencedColumns: ["student_id"]
+          },
+        ]
+      }
       bootcamp_student_responses: {
         Row: {
           created_at: string | null
@@ -1113,6 +1238,76 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "bootcamp_questions"
             referencedColumns: ["question_id"]
+          },
+        ]
+      }
+      bootcamp_student_skills: {
+        Row: {
+          active_misconceptions: string[] | null
+          average_time_seconds: number | null
+          created_at: string | null
+          last_assessed: string | null
+          misconceptions_cleared: string[] | null
+          proficiency_level: number | null
+          questions_attempted: number | null
+          questions_correct: number | null
+          skill_category: string | null
+          skill_id: string
+          skill_name: string | null
+          student_id: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          active_misconceptions?: string[] | null
+          average_time_seconds?: number | null
+          created_at?: string | null
+          last_assessed?: string | null
+          misconceptions_cleared?: string[] | null
+          proficiency_level?: number | null
+          questions_attempted?: number | null
+          questions_correct?: number | null
+          skill_category?: string | null
+          skill_id?: string
+          skill_name?: string | null
+          student_id?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          active_misconceptions?: string[] | null
+          average_time_seconds?: number | null
+          created_at?: string | null
+          last_assessed?: string | null
+          misconceptions_cleared?: string[] | null
+          proficiency_level?: number | null
+          questions_attempted?: number | null
+          questions_correct?: number | null
+          skill_category?: string | null
+          skill_id?: string
+          skill_name?: string | null
+          student_id?: string | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "bootcamp_student_skills_student_id_fkey"
+            columns: ["student_id"]
+            isOneToOne: false
+            referencedRelation: "bootcamp_student_performance_summary"
+            referencedColumns: ["student_id"]
+          },
+          {
+            foreignKeyName: "bootcamp_student_skills_student_id_fkey"
+            columns: ["student_id"]
+            isOneToOne: false
+            referencedRelation: "bootcamp_student_skills_proficiency"
+            referencedColumns: ["student_id"]
+          },
+          {
+            foreignKeyName: "bootcamp_student_skills_student_id_fkey"
+            columns: ["student_id"]
+            isOneToOne: false
+            referencedRelation: "bootcamp_students"
+            referencedColumns: ["student_id"]
           },
         ]
       }
