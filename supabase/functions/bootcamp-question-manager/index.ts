@@ -174,31 +174,31 @@ async function getAdaptiveQuestions(supabaseClient: any, studentId: string, ques
       console.log('New student detected, providing foundation questions')
       
       const { data: foundationQuestions, error: foundationError } = await supabaseClient
-        .from('bootcamp_questions')
+        .from('mock_test_questions')
         .select(`
+          id,
           question_id,
-          module_id,
-          topic_id,
-          subtopic_id,
-          question_category,
-          cognitive_level,
-          difficulty,
-          question_type,
           question_text,
+          question_type,
           option_a,
           option_b,
           option_c,
           option_d,
           correct_answer,
           explanation,
+          difficulty,
+          topic,
+          subtopic,
           marks,
           time_seconds,
-          prerequisite_skills,
-          exam_boards,
+          visual_aid_url,
+          tags,
+          exam_board,
+          year_level,
           created_at
         `)
-        .eq('difficulty', 'foundation')
-        .order('question_id')
+        .eq('is_active', true)
+        .order('created_at')
         .limit(questionCount)
 
       questions = foundationQuestions
@@ -226,32 +226,32 @@ async function getAdaptiveQuestions(supabaseClient: any, studentId: string, ques
       if (adaptiveError || !adaptiveData || adaptiveData.length === 0) {
         console.error('Adaptive algorithm failed, falling back to foundation questions:', adaptiveError)
         
-        // Fallback to foundation questions if adaptive fails
+        // Fallback to mock test questions if adaptive fails
         const { data: fallbackQuestions, error: fallbackError } = await supabaseClient
-          .from('bootcamp_questions')
+          .from('mock_test_questions')
           .select(`
+            id,
             question_id,
-            module_id,
-            topic_id,
-            subtopic_id,
-            question_category,
-            cognitive_level,
-            difficulty,
-            question_type,
             question_text,
+            question_type,
             option_a,
             option_b,
             option_c,
             option_d,
             correct_answer,
             explanation,
+            difficulty,
+            topic,
+            subtopic,
             marks,
             time_seconds,
-            prerequisite_skills,
-            exam_boards,
+            visual_aid_url,
+            tags,
+            exam_board,
+            year_level,
             created_at
           `)
-          .in('difficulty', ['foundation', 'intermediate'])
+          .eq('is_active', true)
           .order('difficulty')
           .limit(questionCount)
 
@@ -345,7 +345,7 @@ async function submitResponse(supabaseClient: any, responseData: any) {
 
     // Get the question details
     const { data: question, error: questionError } = await supabaseClient
-      .from('bootcamp_questions')
+      .from('mock_test_questions')
       .select('*')
       .eq('question_id', question_id)
       .single()
