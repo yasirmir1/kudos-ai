@@ -1,5 +1,5 @@
 import React from 'react';
-import { Play, BookOpen, BarChart3, Home } from 'lucide-react';
+import { Play, BookOpen, BarChart3, Home, FileText } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 
@@ -38,6 +38,11 @@ export const DashboardNavigation: React.FC<DashboardNavigationProps> = ({
       id: 'analytics',
       label: 'Analytics',
       icon: BarChart3
+    },
+    {
+      id: 'report',
+      label: 'Report',
+      icon: FileText
     }
   ];
 

@@ -22,6 +22,7 @@ import { DashboardNavigation } from '@/components/dashboard';
 import Practice from './Practice';
 import Curriculum from './Curriculum';
 import Analytics from './Analytics';
+import Report from './Report';
 interface PerformanceData {
   topic: string;
   accuracy: number;
@@ -312,6 +313,8 @@ const Dashboard = () => {
         return <Curriculum />;
       case 'analytics':
         return <Analytics />;
+      case 'report':
+        return <Report />;
       default:
         return renderOverview();
     }
