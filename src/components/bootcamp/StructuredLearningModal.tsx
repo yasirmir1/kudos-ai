@@ -588,28 +588,6 @@ export function StructuredLearningModal({ topic, isOpen, onClose, onComplete }: 
           <Card className="border shadow-sm">
             <CardContent className="pt-4">
               <div className="space-y-4">
-                {/* Main Progress Bar */}
-                <div className="space-y-3">
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-2">
-                      <span className="text-2xl">🎯</span>
-                      <span className="text-lg font-bold">Your Learning Journey</span>
-                    </div>
-                    <div className="text-right">
-                      <div className="text-2xl font-bold text-primary">{Math.round(progressPercentage)}%</div>
-                      <div className="text-xs text-muted-foreground">Complete!</div>
-                    </div>
-                  </div>
-                  <div className="relative">
-                    <Progress value={progressPercentage} className="h-4 bg-gray-100 dark:bg-gray-800" />
-                    <div className="absolute inset-0 flex items-center justify-center">
-                      <span className="text-xs font-bold text-white drop-shadow-sm">
-                        Step {currentStep} of {totalSteps}
-                      </span>
-                    </div>
-                  </div>
-                </div>
-                
                 {/* Subtopic Navigation - Like a Fun Journey Map */}
                 <div className="space-y-3">
                   <h6 className="font-semibold flex items-center gap-2">
