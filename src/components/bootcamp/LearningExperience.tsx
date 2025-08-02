@@ -6,9 +6,9 @@ import { Badge } from '@/components/ui/badge';
 import { BookOpen, Target, Clock, Award, ArrowRight, CheckCircle2 } from 'lucide-react';
 import { BootcampAPI } from '@/lib/bootcamp-api';
 import { useToast } from '@/hooks/use-toast';
+import { useAuth } from '@/hooks/useAuth';
 
 interface LearningExperienceProps {
-  studentId: string;
   onComplete?: () => void;
 }
 
@@ -31,20 +31,57 @@ interface LearningSession {
   session_start: string;
 }
 
-export function LearningExperience({ studentId, onComplete }: LearningExperienceProps) {
+export function LearningExperience({ onComplete }: LearningExperienceProps) {
   const [topics, setTopics] = useState<Topic[]>([]);
   const [currentTopicIndex, setCurrentTopicIndex] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
   const [currentSession, setCurrentSession] = useState<LearningSession | null>(null);
   const [topicProgress, setTopicProgress] = useState<{ [key: string]: number }>({});
+  const [studentId, setStudentId] = useState<string | null>(null);
   const { toast } = useToast();
+  const { user } = useAuth();
 
   useEffect(() => {
-    loadLearningPath();
+    if (user) {
+      loadStudentId();
+    }
+  }, [user]);
+
+  useEffect(() => {
+    if (studentId) {
+      loadLearningPath();
+    }
   }, [studentId]);
+
+  const loadStudentId = async () => {
+    try {
+      if (!user) return;
+      
+      const profile = await BootcampAPI.getStudentProfile(user.id);
+      if (profile) {
+        setStudentId(profile.student_id);
+      } else {
+        // Create a new student profile if none exists
+        const newProfile = await BootcampAPI.createStudentProfile(user.id, {
+          email: user.email,
+          username: user.email?.split('@')[0]
+        });
+        setStudentId(newProfile.student_id);
+      }
+    } catch (error) {
+      console.error('Error loading student ID:', error);
+      toast({
+        title: "Error",
+        description: "Failed to load student profile",
+        variant: "destructive"
+      });
+    }
+  };
 
   const loadLearningPath = async () => {
     try {
+      if (!studentId) return;
+      
       setIsLoading(true);
       const learningPath = await BootcampAPI.getLearningPath(studentId);
       setTopics(learningPath);
@@ -71,6 +108,8 @@ export function LearningExperience({ studentId, onComplete }: LearningExperience
 
   const startLearningSession = async () => {
     try {
+      if (!studentId) return;
+      
       const session = await BootcampAPI.startLearningSession(studentId, 'learning');
       setCurrentSession(session);
       
@@ -89,6 +128,8 @@ export function LearningExperience({ studentId, onComplete }: LearningExperience
   };
 
   const completeTopicStep = async (topicId: string, stepProgress: number) => {
+    if (!studentId) return;
+    
     setTopicProgress(prev => ({
       ...prev,
       [topicId]: stepProgress
@@ -147,7 +188,7 @@ export function LearningExperience({ studentId, onComplete }: LearningExperience
     }
   };
 
-  if (isLoading) {
+  if (isLoading || !studentId) {
     return (
       <div className="flex items-center justify-center p-8">
         <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>

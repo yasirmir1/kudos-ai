@@ -234,7 +234,6 @@ export const LearnView: React.FC = () => {
           </Button>
         </div>
         <LearningExperience 
-          studentId={'demo-student'} 
           onComplete={() => setShowLearningExperience(false)}
         />
       </div>
