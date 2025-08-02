@@ -47,17 +47,6 @@ export const InteractiveInsights = ({
         <div className="text-muted-foreground mb-4">
           No insights available yet. Complete some practice sessions to get personalized analysis.
         </div>
-        {onRefresh && (
-          <Button 
-            onClick={onRefresh} 
-            disabled={isRefreshing}
-            variant="outline"
-            className="gap-2"
-          >
-            <RotateCcw className={`h-4 w-4 ${isRefreshing ? 'animate-spin' : ''}`} />
-            {isRefreshing ? 'Generating...' : 'Generate Insights'}
-          </Button>
-        )}
       </div>
     );
   }
@@ -91,18 +80,6 @@ export const InteractiveInsights = ({
               </>
             )}
           </Button>
-          {onRefresh && (
-            <Button 
-              onClick={onRefresh} 
-              disabled={isRefreshing}
-              variant="outline"
-              size="sm"
-              className="gap-2"
-            >
-              <RotateCcw className={`h-4 w-4 ${isRefreshing ? 'animate-spin' : ''}`} />
-              {isRefreshing ? 'Updating...' : 'Refresh'}
-            </Button>
-          )}
         </div>
       </div>
 
