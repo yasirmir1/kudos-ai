@@ -3,7 +3,7 @@ import { Badge } from '@/components/ui/badge';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { BookOpen, Clock, Calendar, Brain, Lightbulb, BarChart3 } from 'lucide-react';
+import { BookOpen, Clock, Calendar, Brain, Lightbulb, BarChart3, Filter } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
 import { useToast } from '@/hooks/use-toast';
@@ -27,6 +27,7 @@ export default function Report() {
   const [explanation, setExplanation] = useState<string | null>(null);
   const [isLoadingExplanation, setIsLoadingExplanation] = useState(false);
   const [showExplanation, setShowExplanation] = useState(false);
+  const [activeFilters, setActiveFilters] = useState<Set<string>>(new Set(['mastered', 'learning', 'needs-work']));
 
   useEffect(() => {
     if (user) {
@@ -124,12 +125,40 @@ export default function Report() {
     return <Badge className="bg-red-100 text-red-800">Needs Work</Badge>;
   };
 
+  const getAccuracyCategory = (accuracy: number): string => {
+    if (accuracy >= 0.8) return 'mastered';
+    if (accuracy >= 0.6) return 'learning';
+    return 'needs-work';
+  };
+
+  const toggleFilter = (filter: string) => {
+    const newFilters = new Set(activeFilters);
+    if (newFilters.has(filter)) {
+      newFilters.delete(filter);
+    } else {
+      newFilters.add(filter);
+    }
+    setActiveFilters(newFilters);
+  };
+
+  const filteredTopics = topics.filter(topic => 
+    activeFilters.has(getAccuracyCategory(topic.accuracy))
+  );
+
   const handleRefreshInsights = async () => {
     await loadMisconceptionInsights();
     toast({
       title: "Insights Refreshed",
       description: "Your learning insights have been updated!",
     });
+  };
+
+  const getFilterButtonVariant = (filter: string) => {
+    return activeFilters.has(filter) ? 'default' : 'outline';
+  };
+
+  const getFilterCount = (filter: string) => {
+    return topics.filter(topic => getAccuracyCategory(topic.accuracy) === filter).length;
   };
 
   return (
@@ -170,13 +199,51 @@ export default function Report() {
           {/* Topics Performance - Full Width */}
           <Card>
             <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Brain className="h-5 w-5" />
-                Performance Overview
-              </CardTitle>
-              <CardDescription>
-                All the topics you've covered in your learning journey
-              </CardDescription>
+              <div className="flex items-center justify-between">
+                <div>
+                  <CardTitle className="flex items-center gap-2">
+                    <Brain className="h-5 w-5" />
+                    Performance Overview
+                  </CardTitle>
+                  <CardDescription>
+                    All the topics you've covered in your learning journey
+                  </CardDescription>
+                </div>
+                
+                {/* Filter Controls */}
+                <div className="flex items-center gap-2">
+                  <Filter className="h-4 w-4 text-muted-foreground" />
+                  <div className="flex gap-1">
+                    <Button
+                      size="sm"
+                      variant={getFilterButtonVariant('mastered')}
+                      onClick={() => toggleFilter('mastered')}
+                      className="gap-1"
+                    >
+                      <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                      Mastered ({getFilterCount('mastered')})
+                    </Button>
+                    <Button
+                      size="sm"
+                      variant={getFilterButtonVariant('learning')}
+                      onClick={() => toggleFilter('learning')}
+                      className="gap-1"
+                    >
+                      <div className="w-2 h-2 bg-yellow-500 rounded-full"></div>
+                      Learning ({getFilterCount('learning')})
+                    </Button>
+                    <Button
+                      size="sm"
+                      variant={getFilterButtonVariant('needs-work')}
+                      onClick={() => toggleFilter('needs-work')}
+                      className="gap-1"
+                    >
+                      <div className="w-2 h-2 bg-red-500 rounded-full"></div>
+                      Needs Work ({getFilterCount('needs-work')})
+                    </Button>
+                  </div>
+                </div>
+              </div>
             </CardHeader>
             <CardContent>
               <ScrollArea className="h-[600px] pr-4">
@@ -184,13 +251,16 @@ export default function Report() {
                   <div className="flex items-center justify-center py-8">
                     <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
                   </div>
-                ) : topics.length === 0 ? (
+                ) : filteredTopics.length === 0 ? (
                   <div className="text-center py-8 text-muted-foreground">
-                    No topics studied yet. Start practicing to see your learning progress!
+                    {activeFilters.size === 0 
+                      ? "No filters selected. Choose a performance level to view topics."
+                      : "No topics found for the selected filters."
+                    }
                   </div>
                 ) : (
                   <div className="space-y-4">
-                    {topics.map((topic) => (
+                    {filteredTopics.map((topic) => (
                       <div
                         key={topic.topic}
                         className="p-4 rounded-lg border bg-card hover:shadow-sm transition-shadow"
