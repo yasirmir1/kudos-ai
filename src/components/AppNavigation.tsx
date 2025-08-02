@@ -1,7 +1,7 @@
 import React from 'react';
 import { Button } from '@/components/ui/button';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { BookOpen, BarChart3, User, GraduationCap, FileText, Play } from 'lucide-react';
+import { BookOpen, BarChart3, User, GraduationCap, FileText, Play, Target } from 'lucide-react';
 import { AgeGroupSelector } from './AgeGroupSelector';
 import { useAgeGroup } from '@/contexts/AgeGroupContext';
 import { useAuth } from '@/hooks/useAuth';
@@ -30,6 +30,7 @@ export const AppNavigation: React.FC<AppNavigationProps> = ({
   const navigationItems = [
     { path: '/dashboard', label: 'Dashboard', icon: GraduationCap },
     { path: '/practice', label: 'Practice', icon: Play },
+    { path: '/bootcamp', label: 'Bootcamp', icon: Target },
     { path: '/curriculum', label: 'Curriculum', icon: BookOpen },
     { path: '/analytics', label: 'Analytics', icon: BarChart3 },
     { path: '/report', label: 'Report', icon: FileText },
