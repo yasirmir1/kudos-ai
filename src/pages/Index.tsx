@@ -124,43 +124,38 @@ const Index = () => {
               <rect y="0" width="800" height="60" fill="#667EEA" fillOpacity="0.1"></rect>
               <text x="30" y="38" fontFamily="Arial" fontSize="20" fontWeight="600" fill="#667EEA">Emma's Learning Dashboard</text>
               
-              {/* Progress Cards */}
-              <rect x="30" y="90" width="230" height="140" rx="12" fill="#34C759" fillOpacity="0.1" className="group-hover:animate-pulse"></rect>
-              <text x="50" y="120" fontFamily="Arial" fontSize="16" fill="#86868B">Mathematics</text>
-              <text x="50" y="150" fontFamily="Arial" fontSize="28" fontWeight="600" fill="#34C759">87%</text>
-              <text x="50" y="180" fontFamily="Arial" fontSize="14" fill="#34C759">↑ 12% this month</text>
-              
+              {/* Progress Cards - Only Topic Breakdown and Practice Insights */}
               {/* Topic Breakdown - replacing Geometry tile */}
-              <rect x="285" y="90" width="230" height="140" rx="12" fill="#F3F4F6"></rect>
-              <text x="305" y="120" fontFamily="Arial" fontSize="16" fontWeight="600" fill="#1D1D1F">Topic Breakdown</text>
+              <rect x="30" y="90" width="230" height="140" rx="12" fill="#F3F4F6"></rect>
+              <text x="50" y="120" fontFamily="Arial" fontSize="16" fontWeight="600" fill="#1D1D1F">Topic Breakdown</text>
               
               {/* Mini progress bars */}
-              <rect x="305" y="140" width="120" height="4" rx="2" fill="#E5E5EA"></rect>
-              <rect x="305" y="140" width="96" height="4" rx="2" fill="#34C759"></rect>
-              <text x="435" y="143" fontFamily="Arial" fontSize="10" fill="#86868B">Fractions 80%</text>
+              <rect x="50" y="140" width="120" height="4" rx="2" fill="#E5E5EA"></rect>
+              <rect x="50" y="140" width="96" height="4" rx="2" fill="#34C759"></rect>
+              <text x="180" y="143" fontFamily="Arial" fontSize="10" fill="#86868B">Fractions 80%</text>
               
-              <rect x="305" y="155" width="120" height="4" rx="2" fill="#E5E5EA"></rect>
-              <rect x="305" y="155" width="72" height="4" rx="2" fill="#FF9500"></rect>
-              <text x="435" y="158" fontFamily="Arial" fontSize="10" fill="#86868B">Geometry 60%</text>
+              <rect x="50" y="155" width="120" height="4" rx="2" fill="#E5E5EA"></rect>
+              <rect x="50" y="155" width="72" height="4" rx="2" fill="#FF9500"></rect>
+              <text x="180" y="158" fontFamily="Arial" fontSize="10" fill="#86868B">Geometry 60%</text>
               
-              <rect x="305" y="170" width="120" height="4" rx="2" fill="#E5E5EA"></rect>
-              <rect x="305" y="170" width="108" height="4" rx="2" fill="#34C759"></rect>
-              <text x="435" y="173" fontFamily="Arial" fontSize="10" fill="#86868B">Algebra 90%</text>
+              <rect x="50" y="170" width="120" height="4" rx="2" fill="#E5E5EA"></rect>
+              <rect x="50" y="170" width="108" height="4" rx="2" fill="#34C759"></rect>
+              <text x="180" y="173" fontFamily="Arial" fontSize="10" fill="#86868B">Algebra 90%</text>
               
-              <rect x="305" y="185" width="120" height="4" rx="2" fill="#E5E5EA"></rect>
-              <rect x="305" y="185" width="84" height="4" rx="2" fill="#0071E3"></rect>
-              <text x="435" y="188" fontFamily="Arial" fontSize="10" fill="#86868B">Numbers 70%</text>
+              <rect x="50" y="185" width="120" height="4" rx="2" fill="#E5E5EA"></rect>
+              <rect x="50" y="185" width="84" height="4" rx="2" fill="#0071E3"></rect>
+              <text x="180" y="188" fontFamily="Arial" fontSize="10" fill="#86868B">Numbers 70%</text>
               
               {/* Practice Insights - replacing English tile */}
-              <rect x="540" y="90" width="230" height="140" rx="12" fill="#F3F4F6"></rect>
-              <text x="560" y="120" fontFamily="Arial" fontSize="16" fontWeight="600" fill="#1D1D1F">Practice Insights</text>
+              <rect x="285" y="90" width="230" height="140" rx="12" fill="#F3F4F6"></rect>
+              <text x="305" y="120" fontFamily="Arial" fontSize="16" fontWeight="600" fill="#1D1D1F">Practice Insights</text>
               
               {/* Practice stats - improved spacing */}
-              <text x="560" y="150" fontFamily="Arial" fontSize="11" fill="#86868B">Accuracy:</text>
-              <text x="660" y="150" fontFamily="Arial" fontSize="14" fontWeight="600" fill="#0071E3">85%</text>
+              <text x="305" y="150" fontFamily="Arial" fontSize="11" fill="#86868B">Accuracy:</text>
+              <text x="405" y="150" fontFamily="Arial" fontSize="14" fontWeight="600" fill="#0071E3">85%</text>
               
-              <text x="560" y="170" fontFamily="Arial" fontSize="11" fill="#86868B">Time spent:</text>
-              <text x="660" y="170" fontFamily="Arial" fontSize="14" fontWeight="600" fill="#0071E3">18 mins</text>
+              <text x="305" y="170" fontFamily="Arial" fontSize="11" fill="#86868B">Time spent:</text>
+              <text x="405" y="170" fontFamily="Arial" fontSize="14" fontWeight="600" fill="#0071E3">18 mins</text>
               
               {/* Weekly Progress - Width aligned with Topic Breakdown */}
               <rect x="30" y="260" width="485" height="200" rx="12" fill="#F3F4F6"></rect>
@@ -184,6 +179,12 @@ const Index = () => {
               <text x="280" y="410" fontFamily="Arial" fontSize="10" fill="#86868B" textAnchor="middle">Fri</text>
               <text x="330" y="410" fontFamily="Arial" fontSize="10" fill="#86868B" textAnchor="middle">Sat</text>
               <text x="380" y="410" fontFamily="Arial" fontSize="10" fill="#86868B" textAnchor="middle">Sun</text>
+              
+              {/* Mathematics Card - Right of Weekly Progress */}
+              <rect x="540" y="260" width="230" height="200" rx="12" fill="#34C759" fillOpacity="0.1" className="group-hover:animate-pulse"></rect>
+              <text x="560" y="290" fontFamily="Arial" fontSize="16" fill="#86868B">Mathematics</text>
+              <text x="560" y="330" fontFamily="Arial" fontSize="28" fontWeight="600" fill="#34C759">87%</text>
+              <text x="560" y="360" fontFamily="Arial" fontSize="14" fill="#34C759">↑ 12% this month</text>
             </svg>
           </div>
         </div>
