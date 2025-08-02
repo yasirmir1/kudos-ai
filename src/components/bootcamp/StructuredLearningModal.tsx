@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
@@ -462,6 +462,9 @@ export function StructuredLearningModal({
               <div className="text-sm text-muted-foreground font-normal">{currentStage.description}</div>
             </div>
           </DialogTitle>
+          <DialogDescription className="sr-only">
+            Interactive learning journey for {topic?.name}. Follow the structured stages to master new concepts.
+          </DialogDescription>
         </DialogHeader>
 
         <div className="space-y-6">
