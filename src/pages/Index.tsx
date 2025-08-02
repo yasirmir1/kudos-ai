@@ -232,8 +232,7 @@ const Index = () => {
               </div>
               <h3 className="text-2xl font-bold mb-4 text-center">Adaptive Learning</h3>
               <p className="text-muted-foreground leading-relaxed text-center">
-                AI adjusts to your child's level in real-time. Every question is perfectly matched to their ability, 
-                ensuring optimal challenge without frustration.
+                Our AI adjusts to your child's level in real-time, matching every question to their ability for an optimal challenge without frustration.
               </p>
             </div>
 
@@ -243,8 +242,7 @@ const Index = () => {
               </div>
               <h3 className="text-2xl font-bold mb-4 text-center">Targeted Practice</h3>
               <p className="text-muted-foreground leading-relaxed text-center">
-                Focus on exactly what matters. Our system identifies knowledge gaps and provides 
-                targeted practice to strengthen weak areas efficiently.
+                Our system identifies knowledge gaps and provides focused practice to strengthen weak areas efficiently.
               </p>
             </div>
 
@@ -254,8 +252,7 @@ const Index = () => {
               </div>
               <h3 className="text-2xl font-bold mb-4 text-center">Progress Tracking</h3>
               <p className="text-muted-foreground leading-relaxed text-center">
-                Crystal-clear visibility into learning progress. See improvements by topic, 
-                track readiness, and know exactly where to focus next.
+                Get clear visibility into your child's learning progress. See improvements by topic and know exactly where to focus next.
               </p>
             </div>
 
@@ -265,7 +262,7 @@ const Index = () => {
               </div>
               <h3 className="text-2xl font-bold mb-4 text-center">Real-time Dashboard</h3>
               <p className="text-muted-foreground leading-relaxed text-center">
-                See exactly where your child excels and where they need support. Updated after every question.
+                Our dashboard updates after every question, showing you exactly where your child excels and needs support.
               </p>
             </div>
           </div>
