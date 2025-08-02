@@ -166,30 +166,24 @@ const Index = () => {
               <rect x="30" y="260" width="740" height="200" rx="12" fill="#F3F4F6"></rect>
               <text x="50" y="290" fontFamily="Arial" fontSize="18" fontWeight="600" fill="#1D1D1F">Weekly Progress</text>
               
-              {/* Extended line graph within container bounds */}
-              <polyline points="80,350 140,340 200,335 260,330 320,325 380,320 440,315 500,310 560,305 620,300" stroke="#667EEA" strokeWidth="3" fill="none"></polyline>
-              <circle cx="80" cy="350" r="3" fill="#667EEA"></circle>
-              <circle cx="140" cy="340" r="3" fill="#667EEA"></circle>
-              <circle cx="200" cy="335" r="3" fill="#667EEA"></circle>
-              <circle cx="260" cy="330" r="3" fill="#667EEA"></circle>
-              <circle cx="320" cy="325" r="3" fill="#667EEA"></circle>
-              <circle cx="380" cy="320" r="3" fill="#667EEA"></circle>
-              <circle cx="440" cy="315" r="3" fill="#667EEA"></circle>
-              <circle cx="500" cy="310" r="3" fill="#667EEA"></circle>
-              <circle cx="560" cy="305" r="3" fill="#667EEA"></circle>
-              <circle cx="620" cy="300" r="3" fill="#667EEA"></circle>
+              {/* Extended line graph within container bounds - 7 days wider */}
+              <polyline points="100,350 160,340 220,335 280,330 340,325 400,320 460,315" stroke="#667EEA" strokeWidth="3" fill="none"></polyline>
+              <circle cx="100" cy="350" r="3" fill="#667EEA"></circle>
+              <circle cx="160" cy="340" r="3" fill="#667EEA"></circle>
+              <circle cx="220" cy="335" r="3" fill="#667EEA"></circle>
+              <circle cx="280" cy="330" r="3" fill="#667EEA"></circle>
+              <circle cx="340" cy="325" r="3" fill="#667EEA"></circle>
+              <circle cx="400" cy="320" r="3" fill="#667EEA"></circle>
+              <circle cx="460" cy="315" r="3" fill="#667EEA"></circle>
               
-              {/* Day labels */}
-              <text x="80" y="410" fontFamily="Arial" fontSize="10" fill="#86868B" textAnchor="middle">Mon</text>
-              <text x="140" y="410" fontFamily="Arial" fontSize="10" fill="#86868B" textAnchor="middle">Tue</text>
-              <text x="200" y="410" fontFamily="Arial" fontSize="10" fill="#86868B" textAnchor="middle">Wed</text>
-              <text x="260" y="410" fontFamily="Arial" fontSize="10" fill="#86868B" textAnchor="middle">Thu</text>
-              <text x="320" y="410" fontFamily="Arial" fontSize="10" fill="#86868B" textAnchor="middle">Fri</text>
-              <text x="380" y="410" fontFamily="Arial" fontSize="10" fill="#86868B" textAnchor="middle">Sat</text>
-              <text x="440" y="410" fontFamily="Arial" fontSize="10" fill="#86868B" textAnchor="middle">Sun</text>
-              <text x="500" y="410" fontFamily="Arial" fontSize="10" fill="#86868B" textAnchor="middle">Mon</text>
-              <text x="560" y="410" fontFamily="Arial" fontSize="10" fill="#86868B" textAnchor="middle">Tue</text>
-              <text x="620" y="410" fontFamily="Arial" fontSize="10" fill="#86868B" textAnchor="middle">Wed</text>
+              {/* Day labels - Mon to Sun */}
+              <text x="100" y="410" fontFamily="Arial" fontSize="10" fill="#86868B" textAnchor="middle">Mon</text>
+              <text x="160" y="410" fontFamily="Arial" fontSize="10" fill="#86868B" textAnchor="middle">Tue</text>
+              <text x="220" y="410" fontFamily="Arial" fontSize="10" fill="#86868B" textAnchor="middle">Wed</text>
+              <text x="280" y="410" fontFamily="Arial" fontSize="10" fill="#86868B" textAnchor="middle">Thu</text>
+              <text x="340" y="410" fontFamily="Arial" fontSize="10" fill="#86868B" textAnchor="middle">Fri</text>
+              <text x="400" y="410" fontFamily="Arial" fontSize="10" fill="#86868B" textAnchor="middle">Sat</text>
+              <text x="460" y="410" fontFamily="Arial" fontSize="10" fill="#86868B" textAnchor="middle">Sun</text>
             </svg>
           </div>
         </div>
