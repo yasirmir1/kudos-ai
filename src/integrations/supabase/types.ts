@@ -455,12 +455,18 @@ export type Database = {
       bootcamp_questions: {
         Row: {
           cognitive_level: Database["public"]["Enums"]["cognitive_level"]
+          correct_answer: string
           created_at: string | null
           difficulty: Database["public"]["Enums"]["difficulty_level"]
           exam_boards: string[] | null
+          explanation: string | null
           id: number
           marks: number
           module_id: string
+          option_a: string | null
+          option_b: string | null
+          option_c: string | null
+          option_d: string | null
           prerequisite_skills: string[] | null
           question_category: Database["public"]["Enums"]["question_category"]
           question_id: string
@@ -474,12 +480,18 @@ export type Database = {
         }
         Insert: {
           cognitive_level: Database["public"]["Enums"]["cognitive_level"]
+          correct_answer?: string
           created_at?: string | null
           difficulty: Database["public"]["Enums"]["difficulty_level"]
           exam_boards?: string[] | null
+          explanation?: string | null
           id?: number
           marks?: number
           module_id: string
+          option_a?: string | null
+          option_b?: string | null
+          option_c?: string | null
+          option_d?: string | null
           prerequisite_skills?: string[] | null
           question_category: Database["public"]["Enums"]["question_category"]
           question_id: string
@@ -493,12 +505,18 @@ export type Database = {
         }
         Update: {
           cognitive_level?: Database["public"]["Enums"]["cognitive_level"]
+          correct_answer?: string
           created_at?: string | null
           difficulty?: Database["public"]["Enums"]["difficulty_level"]
           exam_boards?: string[] | null
+          explanation?: string | null
           id?: number
           marks?: number
           module_id?: string
+          option_a?: string | null
+          option_b?: string | null
+          option_c?: string | null
+          option_d?: string | null
           prerequisite_skills?: string[] | null
           question_category?: Database["public"]["Enums"]["question_category"]
           question_id?: string
