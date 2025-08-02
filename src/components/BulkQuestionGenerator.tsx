@@ -4,9 +4,10 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Progress } from "@/components/ui/progress";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
-import { AlertCircle, CheckCircle, Loader2 } from "lucide-react";
+import { AlertCircle, CheckCircle, Loader2, Zap } from "lucide-react";
 
 interface GenerationResult {
   topic: string;
@@ -32,6 +33,14 @@ export const BulkQuestionGenerator = () => {
   const [questionsPerType, setQuestionsPerType] = useState(100);
   const [isGenerating, setIsGenerating] = useState(false);
   const [results, setResults] = useState<BulkGenerationResponse | null>(null);
+  
+  // DeepSeek generation states
+  const [isGeneratingDeepSeek, setIsGeneratingDeepSeek] = useState(false);
+  const [deepSeekTopic, setDeepSeekTopic] = useState('');
+  const [deepSeekDifficulty, setDeepSeekDifficulty] = useState('foundation');
+  const [deepSeekCount, setDeepSeekCount] = useState(5);
+  const [deepSeekResults, setDeepSeekResults] = useState<any>(null);
+  
   const { toast } = useToast();
 
   const handleBulkGeneration = async () => {
@@ -82,8 +91,184 @@ export const BulkQuestionGenerator = () => {
     }
   };
 
+  const handleDeepSeekGeneration = async () => {
+    if (!deepSeekTopic.trim()) {
+      toast({
+        title: "Topic required",
+        description: "Please enter a topic for question generation.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    if (deepSeekCount < 1 || deepSeekCount > 20) {
+      toast({
+        title: "Invalid count",
+        description: "Please enter a number between 1 and 20.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    setIsGeneratingDeepSeek(true);
+    setDeepSeekResults(null);
+
+    try {
+      const { data, error } = await supabase.functions.invoke('generate-bootcamp-questions', {
+        body: { 
+          topic: deepSeekTopic,
+          difficulty: deepSeekDifficulty,
+          count: deepSeekCount
+        }
+      });
+
+      if (error) {
+        throw new Error(error.message);
+      }
+
+      setDeepSeekResults(data);
+      
+      if (data.success) {
+        toast({
+          title: "Questions generated successfully!",
+          description: `Generated ${data.generated} questions for ${deepSeekTopic} at ${deepSeekDifficulty} level.`,
+        });
+      } else {
+        toast({
+          title: "Generation failed",
+          description: data.error || "An error occurred during question generation.",
+          variant: "destructive",
+        });
+      }
+    } catch (error) {
+      console.error('DeepSeek generation error:', error);
+      toast({
+        title: "Generation failed",
+        description: "Failed to generate questions with DeepSeek. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsGeneratingDeepSeek(false);
+    }
+  };
+
   return (
     <div className="space-y-6">
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <Zap className="h-5 w-5" />
+            DeepSeek AI Question Generator
+          </CardTitle>
+          <CardDescription>
+            Generate high-quality questions for specific topics using DeepSeek AI.
+            Perfect for targeting specific areas or creating custom practice sets.
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div className="space-y-2">
+              <Label htmlFor="deepseek-topic">Topic</Label>
+              <Input
+                id="deepseek-topic"
+                placeholder="e.g., Fractions, Place Value, Multiplication"
+                value={deepSeekTopic}
+                onChange={(e) => setDeepSeekTopic(e.target.value)}
+                disabled={isGeneratingDeepSeek}
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="deepseek-difficulty">Difficulty Level</Label>
+              <Select value={deepSeekDifficulty} onValueChange={setDeepSeekDifficulty} disabled={isGeneratingDeepSeek}>
+                <SelectTrigger>
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="foundation">Foundation</SelectItem>
+                  <SelectItem value="intermediate">Intermediate</SelectItem>
+                  <SelectItem value="advanced">Advanced</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="deepseek-count">Question Count</Label>
+              <Input
+                id="deepseek-count"
+                type="number"
+                min="1"
+                max="20"
+                value={deepSeekCount}
+                onChange={(e) => setDeepSeekCount(parseInt(e.target.value) || 5)}
+                disabled={isGeneratingDeepSeek}
+              />
+            </div>
+          </div>
+
+          <Button
+            onClick={handleDeepSeekGeneration}
+            disabled={isGeneratingDeepSeek}
+            className="w-full"
+          >
+            {isGeneratingDeepSeek ? (
+              <>
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                Generating with DeepSeek AI...
+              </>
+            ) : (
+              <>
+                <Zap className="mr-2 h-4 w-4" />
+                Generate Questions with AI
+              </>
+            )}
+          </Button>
+        </CardContent>
+      </Card>
+
+      {deepSeekResults && (
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              {deepSeekResults.success ? (
+                <CheckCircle className="h-5 w-5 text-green-500" />
+              ) : (
+                <AlertCircle className="h-5 w-5 text-red-500" />
+              )}
+              DeepSeek Generation Results
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            {deepSeekResults.success && (
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div className="text-center">
+                  <div className="text-2xl font-bold text-green-500">{deepSeekResults.generated}</div>
+                  <div className="text-sm text-muted-foreground">Questions Generated</div>
+                </div>
+                <div className="text-center">
+                  <div className="text-lg font-medium">{deepSeekTopic}</div>
+                  <div className="text-sm text-muted-foreground">Topic</div>
+                </div>
+                <div className="text-center">
+                  <div className="text-lg font-medium capitalize">{deepSeekDifficulty}</div>
+                  <div className="text-sm text-muted-foreground">Difficulty</div>
+                </div>
+              </div>
+            )}
+            
+            {deepSeekResults.message && (
+              <div className="p-3 bg-green-50 border border-green-200 rounded-md">
+                <p className="text-green-800 text-sm">{deepSeekResults.message}</p>
+              </div>
+            )}
+
+            {deepSeekResults.error && (
+              <div className="p-3 bg-red-50 border border-red-200 rounded-md">
+                <p className="text-red-800 text-sm">{deepSeekResults.error}</p>
+              </div>
+            )}
+          </CardContent>
+        </Card>
+      )}
+
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
