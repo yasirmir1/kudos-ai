@@ -199,22 +199,22 @@ export function StructuredLearningModal({ topic, isOpen, onClose, onComplete }: 
     const stageContent = subtopicContent?.stages[currentStage.type];
     const isCompleted = isStageCompleted(currentSubtopicIndex, currentStageIndex);
 
-    return (
-      <div className="space-y-6 animate-fade-in">
-        {/* Fun Stage Header */}
-        <div className="text-center space-y-4">
+      return (
+        <div className="space-y-4">
+        {/* Stage Header */}
+        <div className="text-center space-y-3">
           <div className="flex items-center justify-center gap-3">
-            <div className={`p-3 rounded-full ${isCompleted ? 'bg-green-100 text-green-600' : 'bg-primary/10 text-primary'} transition-all duration-300`}>
-              <currentStage.icon className="h-8 w-8" />
+            <div className={`p-2 rounded-lg ${isCompleted ? 'bg-green-100 text-green-600' : 'bg-primary/10 text-primary'} transition-colors`}>
+              <currentStage.icon className="h-6 w-6" />
             </div>
             <div className="text-left">
-              <h3 className="text-2xl font-bold">{currentStage.title}</h3>
+              <h3 className="text-xl font-bold">{currentStage.title}</h3>
               <p className="text-muted-foreground text-sm">{currentStage.description}</p>
             </div>
           </div>
           
-          {/* Fun Topic Badge */}
-          <div className="inline-flex items-center gap-2 bg-gradient-to-r from-primary/10 to-secondary/10 rounded-full px-4 py-2 border">
+          {/* Topic Badge */}
+          <div className="inline-flex items-center gap-2 bg-muted rounded-full px-4 py-2 border">
             <span className="text-lg">🎯</span>
             <span className="font-medium">{currentSubtopic.name}</span>
           </div>
@@ -231,9 +231,9 @@ export function StructuredLearningModal({ topic, isOpen, onClose, onComplete }: 
         </div>
 
         {/* Main Content Area */}
-        <Card className="border-2 hover:shadow-lg transition-all duration-300">
-          <CardHeader className="pb-4">
-            <CardTitle className="text-xl flex items-center gap-2">
+        <Card className="border shadow-sm">
+          <CardHeader className="pb-3">
+            <CardTitle className="text-lg flex items-center gap-2">
               <span className="text-2xl">
                 {currentStage.type === 'concept' ? '📚' : 
                  currentStage.type === 'guided' ? '🤝' : 
@@ -242,13 +242,13 @@ export function StructuredLearningModal({ topic, isOpen, onClose, onComplete }: 
               {currentStage.title}: {currentSubtopic.name}
             </CardTitle>
           </CardHeader>
-          <CardContent className="space-y-6">{/* Content will continue in next replacement */}
+          <CardContent className="space-y-4">
             {currentStage.type === 'concept' && stageContent && (
-              <div className="space-y-6">
-                <div className="bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-950 dark:to-indigo-950 rounded-xl p-6 border-2 border-blue-100 dark:border-blue-800">
-                  <div className="flex items-center gap-2 mb-4">
-                    <span className="text-2xl">💡</span>
-                    <h4 className="text-xl font-bold">Cool Things to Learn!</h4>
+              <div className="space-y-4">
+                <div className="bg-muted/50 rounded-lg p-4 border">
+                  <div className="flex items-center gap-2 mb-3">
+                    <span className="text-xl">💡</span>
+                    <h4 className="text-lg font-bold">Cool Things to Learn!</h4>
                   </div>
                   <p className="text-muted-foreground mb-6 text-lg leading-relaxed">
                     {stageContent.introduction}
@@ -307,11 +307,11 @@ export function StructuredLearningModal({ topic, isOpen, onClose, onComplete }: 
             )}
 
             {currentStage.type === 'guided' && stageContent && (
-              <div className="space-y-6">
-                <div className="bg-gradient-to-r from-green-50 to-emerald-50 dark:from-green-950 dark:to-emerald-950 rounded-xl p-6 border-2 border-green-100 dark:border-green-800">
-                  <div className="flex items-center gap-2 mb-4">
-                    <span className="text-2xl">🤝</span>
-                    <h4 className="text-xl font-bold">Let's Practice Together!</h4>
+              <div className="space-y-4">
+                <div className="bg-muted/50 rounded-lg p-4 border">
+                  <div className="flex items-center gap-2 mb-3">
+                    <span className="text-xl">🤝</span>
+                    <h4 className="text-lg font-bold">Let's Practice Together!</h4>
                   </div>
                   <p className="text-muted-foreground mb-6 text-lg leading-relaxed">
                     {stageContent.introduction}
@@ -349,7 +349,7 @@ export function StructuredLearningModal({ topic, isOpen, onClose, onComplete }: 
                           ))}
                         </div>
                         
-                        <div className="mt-4 p-4 bg-gradient-to-r from-green-100 to-emerald-100 dark:from-green-900 dark:to-emerald-900 rounded-lg border-2 border-green-300 dark:border-green-600">
+                        <div className="mt-4 p-4 bg-green-50 dark:bg-green-950 rounded-lg border border-green-200 dark:border-green-800">
                           <div className="flex items-center gap-2 mb-2">
                             <span className="text-xl">🎉</span>
                             <h6 className="font-bold text-green-700 dark:text-green-300">Final Answer:</h6>
@@ -365,11 +365,11 @@ export function StructuredLearningModal({ topic, isOpen, onClose, onComplete }: 
             )}
 
             {currentStage.type === 'independent' && stageContent && (
-              <div className="space-y-6">
-                <div className="bg-gradient-to-r from-yellow-50 to-orange-50 dark:from-yellow-950 dark:to-orange-950 rounded-xl p-6 border-2 border-yellow-100 dark:border-yellow-800">
-                  <div className="flex items-center gap-2 mb-4">
-                    <span className="text-2xl">💪</span>
-                    <h4 className="text-xl font-bold">You've Got This! Try On Your Own</h4>
+              <div className="space-y-4">
+                <div className="bg-muted/50 rounded-lg p-4 border">
+                  <div className="flex items-center gap-2 mb-3">
+                    <span className="text-xl">💪</span>
+                    <h4 className="text-lg font-bold">You've Got This! Try On Your Own</h4>
                   </div>
                   <p className="text-muted-foreground mb-6 text-lg leading-relaxed">
                     {stageContent.introduction}
@@ -442,17 +442,17 @@ export function StructuredLearningModal({ topic, isOpen, onClose, onComplete }: 
             )}
 
             {currentStage.type === 'assessment' && stageContent && (
-              <div className="space-y-6">
-                <div className="bg-gradient-to-r from-purple-50 to-pink-50 dark:from-purple-950 dark:to-pink-950 rounded-xl p-6 border-2 border-purple-100 dark:border-purple-800">
-                  <div className="flex items-center gap-2 mb-4">
-                    <span className="text-2xl">🏆</span>
-                    <h4 className="text-xl font-bold">Time to Shine! Show What You Know</h4>
+              <div className="space-y-4">
+                <div className="bg-muted/50 rounded-lg p-4 border">
+                  <div className="flex items-center gap-2 mb-3">
+                    <span className="text-xl">🏆</span>
+                    <h4 className="text-lg font-bold">Time to Shine! Show What You Know</h4>
                   </div>
                   <p className="text-muted-foreground mb-6 text-lg leading-relaxed">
                     {stageContent.introduction}
                   </p>
                   
-                  <div className="bg-gradient-to-r from-blue-100 to-purple-100 dark:from-blue-900 dark:to-purple-900 border-2 border-blue-200 dark:border-blue-700 rounded-lg p-5 mb-6">
+                  <div className="bg-primary/10 border border-primary/20 rounded-lg p-4 mb-4">
                     <div className="flex items-center gap-2 mb-3">
                       <span className="text-xl">📊</span>
                       <h5 className="font-bold text-lg">Success Goal:</h5>
@@ -512,11 +512,11 @@ export function StructuredLearningModal({ topic, isOpen, onClose, onComplete }: 
 
             {/* Fallback content if no structured content is available */}
             {!stageContent && (
-              <div className="space-y-6">
-                <div className="bg-gradient-to-r from-gray-50 to-slate-50 dark:from-gray-950 dark:to-slate-950 rounded-xl p-6 border-2 border-dashed border-gray-300 dark:border-gray-600">
-                  <div className="text-center space-y-4">
-                    <div className="text-6xl">📚</div>
-                    <h4 className="text-xl font-bold">Getting Your Learning Content Ready!</h4>
+              <div className="space-y-4">
+                <div className="bg-muted/30 rounded-lg p-4 border-2 border-dashed border-muted-foreground/20">
+                  <div className="text-center space-y-3">
+                    <div className="text-4xl">📚</div>
+                    <h4 className="text-lg font-bold">Getting Your Learning Content Ready!</h4>
                     <p className="text-muted-foreground text-lg">
                       Amazing content for <span className="font-semibold text-primary">{currentSubtopic.name}</span> is being prepared just for you!
                     </p>
@@ -530,14 +530,14 @@ export function StructuredLearningModal({ topic, isOpen, onClose, onComplete }: 
               </div>
             )}
 
-            {/* Fun Action Button */}
-            <div className="flex justify-center pt-6">
+            {/* Action Button */}
+            <div className="flex justify-center pt-4">
               <Button 
                 onClick={handleStageComplete}
-                className={`px-8 py-4 text-lg font-bold transition-all duration-300 ${
+                className={`px-6 py-3 font-semibold transition-colors ${
                   isCompleted 
                     ? 'bg-green-500 hover:bg-green-600 text-white' 
-                    : 'bg-gradient-to-r from-primary to-secondary hover:shadow-lg hover:scale-105'
+                    : ''
                 }`}
                 disabled={isCompleted}
                 size="lg"
@@ -570,24 +570,24 @@ export function StructuredLearningModal({ topic, isOpen, onClose, onComplete }: 
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-6xl max-h-[95vh] overflow-y-auto">
-        <DialogHeader className="pb-4">
-          <DialogTitle className="flex items-center gap-3 text-3xl">
-            <div className="p-2 bg-gradient-to-br from-primary to-secondary rounded-full text-white">
-              <BookOpen className="h-8 w-8" />
+      <DialogContent className="max-w-5xl max-h-[85vh] overflow-y-auto">
+        <DialogHeader className="pb-3">
+          <DialogTitle className="flex items-center gap-3 text-2xl">
+            <div className="p-2 bg-primary rounded-lg text-primary-foreground">
+              <BookOpen className="h-6 w-6" />
             </div>
             <div className="text-left">
-              <div className="text-2xl font-bold">Learning: {topic.name}</div>
+              <div className="text-xl font-bold">Learning: {topic.name}</div>
               <div className="text-sm text-muted-foreground font-normal">Your journey to mastery starts here! 🚀</div>
             </div>
           </DialogTitle>
         </DialogHeader>
 
-        <div className="space-y-8">
-          {/* Super Fun Progress Overview */}
-          <Card className="border-2 border-primary/20 bg-gradient-to-r from-primary/5 to-secondary/5">
-            <CardContent className="pt-6">
-              <div className="space-y-6">
+        <div className="space-y-6">
+          {/* Progress Overview */}
+          <Card className="border shadow-sm">
+            <CardContent className="pt-4">
+              <div className="space-y-4">
                 {/* Main Progress Bar */}
                 <div className="space-y-3">
                   <div className="flex items-center justify-between">
@@ -653,12 +653,12 @@ export function StructuredLearningModal({ topic, isOpen, onClose, onComplete }: 
                       return (
                         <div
                           key={stage.id}
-                          className={`relative flex flex-col items-center gap-2 p-4 rounded-xl border-2 text-sm transition-all duration-300 ${
+                          className={`relative flex flex-col items-center gap-2 p-3 rounded-lg border transition-all ${
                             isCurrent 
-                              ? 'bg-gradient-to-br from-primary to-secondary text-white border-primary shadow-lg transform scale-105' 
+                              ? 'bg-primary text-primary-foreground border-primary shadow-md' 
                               : isCompleted
-                              ? 'bg-green-50 text-green-700 border-green-300 dark:bg-green-900 dark:text-green-300 shadow-md'
-                              : 'bg-gray-50 border-gray-200 text-gray-600 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400'
+                              ? 'bg-green-50 text-green-700 border-green-300 dark:bg-green-900 dark:text-green-300'
+                              : 'bg-muted border-muted-foreground/20 text-muted-foreground'
                           }`}
                         >
                           {isCompleted && (
@@ -690,8 +690,8 @@ export function StructuredLearningModal({ topic, isOpen, onClose, onComplete }: 
             renderStageContent()
           )}
 
-          {/* Fun Navigation Footer */}
-          <div className="flex items-center justify-between pt-6 border-t-2 border-primary/20">
+          {/* Navigation Footer */}
+          <div className="flex items-center justify-between pt-4 border-t border-border">
             <Button
               variant="outline"
               onClick={handlePrevious}
@@ -720,7 +720,7 @@ export function StructuredLearningModal({ topic, isOpen, onClose, onComplete }: 
                   disabled={!canProceed()}
                   variant={canProceed() ? "default" : "outline"}
                   size="lg"
-                  className={`font-semibold ${canProceed() ? 'bg-gradient-to-r from-primary to-secondary hover:shadow-lg' : ''}`}
+                  className="font-semibold"
                 >
                   What's Next?
                   <ChevronRight className="h-5 w-5 ml-2" />
@@ -731,7 +731,7 @@ export function StructuredLearningModal({ topic, isOpen, onClose, onComplete }: 
                 <Button 
                   onClick={onComplete}
                   size="lg"
-                  className="bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600 text-white font-bold shadow-lg hover:shadow-xl"
+                  className="bg-green-500 hover:bg-green-600 text-white font-bold"
                 >
                   <span className="mr-2">🎉</span>
                   I'm a Champion!
