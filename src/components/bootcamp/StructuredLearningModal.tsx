@@ -436,9 +436,9 @@ export function StructuredLearningModal({
   };
   if (!topic) return null;
   return <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-5xl max-h-[85vh] overflow-y-auto relative">
+      <DialogContent className="max-w-5xl max-h-[85vh] overflow-y-auto relative bg-background border">
         {/* Topic Badge - Top Right */}
-        <div className="absolute top-4 right-4 flex items-center gap-2 bg-muted rounded-full px-4 py-2 border">
+        <div className="absolute top-4 right-4 flex items-center gap-2 bg-muted rounded-full px-4 py-2 border z-10">
           <span className="text-lg">🎯</span>
           <span className="font-medium">{currentSubtopic?.name}</span>
         </div>
