@@ -5,6 +5,7 @@ import { FractionBar, NumberLine, GeometryShape } from './VisualMathTools';
 import PracticeReport from './PracticeReport';
 import { BootcampAPI, BootcampQuestion } from '../../lib/bootcamp-api';
 import { useAuth } from '../../hooks/useAuth';
+import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -67,13 +68,34 @@ export const EnhancedPracticeSession: React.FC = () => {
   const [sessionComplete, setSessionComplete] = useState(false);
   const [activeTab, setActiveTab] = useState<'question' | 'tools' | 'notes'>('question');
   const [notes, setNotes] = useState<string>('');
+  const [topicNameMap, setTopicNameMap] = useState<Map<string, string>>(new Map());
 
   useEffect(() => {
     if (user) {
+      loadTopicNames();
       loadQuestions();
       startSession();
     }
   }, [user]);
+
+  const loadTopicNames = async () => {
+    try {
+      const { data: topics } = await supabase
+        .from('bootcamp_topics')
+        .select('id, name')
+        .order('topic_order');
+      
+      const nameMap = new Map();
+      if (topics) {
+        topics.forEach((topic: any) => {
+          nameMap.set(topic.id, topic.name);
+        });
+      }
+      setTopicNameMap(nameMap);
+    } catch (error) {
+      console.error('Error loading topic names:', error);
+    }
+  };
 
   const startSession = async () => {
     if (!user) return;
@@ -381,7 +403,7 @@ export const EnhancedPracticeSession: React.FC = () => {
           duration: `${Math.floor((Date.now() - sessionData.startTime) / 60000)} minutes`,
           questionsCompleted: questions.length,
           accuracy: Math.round((correctCount / questions.length) * 100),
-          topicsCovered: [...new Set(questions.map(q => q.topic))],
+          topicsCovered: [...new Set(questions.map(q => topicNameMap.get(q.topic) || q.topic))],
           strengths: ['Visual problem solving', 'Interactive tools usage'],
           improvements: ['Multi-step reasoning', 'Time management'],
           misconceptions: [],
