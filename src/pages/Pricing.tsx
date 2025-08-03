@@ -147,7 +147,7 @@ export default function Pricing() {
           const isPlusPlan = plan.id === 'pass_plus';
           const planDisplayName = plan.id === 'pass' ? 'Pass' : 'Pass Plus';
           const monthlyPrice = plan.id === 'pass' ? '7.99' : '14.99';
-          return <Card key={plan.id} className="relative bg-card border-2 transition-all duration-300 hover:shadow-xl hover:-translate-y-1 border-border/50 hover:border-primary/50 overflow-hidden">
+          return <Card key={plan.id} className="relative bg-card border-2 transition-all duration-300 hover:shadow-xl hover:-translate-y-1 border-border/50 hover:border-primary/50 overflow-hidden flex flex-col h-full">
                 {/* Premium Badge */}
                 <div className="absolute top-4 right-4">
                   <Badge className="bg-primary text-primary-foreground hover:bg-primary hover:text-white border-primary/20 px-3 py-1 text-[11px] font-medium transition-colors">
@@ -177,8 +177,8 @@ export default function Pricing() {
                   </div>
                 </CardHeader>
 
-                <CardContent className="px-8 pb-8">
-                  <div className="space-y-6 mb-8">
+                <CardContent className="px-8 pb-8 flex flex-col flex-1">
+                  <div className="space-y-6 mb-8 flex-1">
                     {(plan.id === 'pass' ? [{
                   title: "Daily Performance Snapshots",
                   description: "'Daily Mode' gives you a quick, clear view of your child's skills and understanding, so you always know where they stand."
