@@ -45,12 +45,6 @@ export const LearningJourneyCard: React.FC<LearningJourneyCardProps> = ({
       topic: 'Fractions',
       level: 'Foundation',
       mainConcepts: ['Simple Fractions', 'Equivalent Fractions']
-    },
-    {
-      week: 5,
-      topic: 'Decimals',
-      level: 'Intermediate',
-      mainConcepts: ['Decimal Places', 'Converting Fractions']
     }
   ];
 
