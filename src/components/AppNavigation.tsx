@@ -5,6 +5,7 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { BookOpen, BarChart3, User, GraduationCap, FileText, Play, Target, Calendar, CreditCard, LogOut, Clock } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
 import { useSubscriptionState } from '@/hooks/useSubscriptionState';
+import { usePricingModal } from '@/contexts/PricingModalContext';
 import { cn } from '@/lib/utils';
 interface AppNavigationProps {
   title?: string;
@@ -28,9 +29,10 @@ export const AppNavigation: React.FC<AppNavigationProps> = ({
     isTrialActive, 
     trialDaysRemaining, 
     isTrialExpired,
-    hasAccessTo,
-    createCheckoutSession 
+    hasAccessTo
   } = useSubscriptionState();
+  
+  const { openPricingModal } = usePricingModal();
   
   const handleLogout = async () => {
     const { error } = await signOut();
@@ -45,16 +47,14 @@ export const AppNavigation: React.FC<AppNavigationProps> = ({
   // Check if trial is expired and require payment
   const shouldShowUpgrade = isTrialExpired || (userState === 'pass' && isBootcampRoute);
 
-  const handleUpgradeClick = async () => {
-    try {
-      const planId = isBootcampRoute ? 'pass_plus' : 'pass';
-      const data = await createCheckoutSession(planId);
-      if (data?.url) {
-        window.open(data.url, '_blank');
-      }
-    } catch (error) {
-      console.error('Error creating checkout session:', error);
-    }
+  const handleUpgradeClick = () => {
+    const planId = isBootcampRoute ? 'pass_plus' : 'pass';
+    const feature = isBootcampRoute ? 'bootcamp' : 'daily_mode';
+    
+    openPricingModal({
+      highlightPlan: planId,
+      requiredFeature: feature
+    });
   };
   
   const mainAppItems = [

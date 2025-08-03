@@ -6,8 +6,10 @@ import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
 import { AuthProvider } from "./hooks/useAuth";
 import { AgeGroupProvider } from "./contexts/AgeGroupContext";
 import { AccessibilityProvider } from "./contexts/AccessibilityContext";
+import { PricingModalProvider, usePricingModal } from "./contexts/PricingModalContext";
 import { AppNavigation } from "./components/AppNavigation";
 import { SubscriptionOverlay } from "./components/SubscriptionOverlay";
+import { PricingModal } from "./components/PricingModal";
 import Index from "./pages/Index";
 import Auth from "./pages/Auth";
 import Dashboard from "./pages/Dashboard";
@@ -31,7 +33,22 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
     <div className="min-h-screen bg-gradient-to-br from-background via-background to-secondary/10">
       {showNavigation && <AppNavigation />}
       {children}
+      <PricingModalManager />
     </div>
+  );
+};
+
+// Component to manage the pricing modal
+const PricingModalManager = () => {
+  const { isOpen, closePricingModal, highlightPlan, requiredFeature } = usePricingModal();
+  
+  return (
+    <PricingModal 
+      isOpen={isOpen}
+      onClose={closePricingModal}
+      highlightPlan={highlightPlan}
+      requiredFeature={requiredFeature}
+    />
   );
 };
 
@@ -39,8 +56,9 @@ const App = () => (
   <QueryClientProvider client={queryClient}>
     <TooltipProvider>
       <AuthProvider>
-        <AgeGroupProvider>
-          <AccessibilityProvider>
+        <PricingModalProvider>
+          <AgeGroupProvider>
+            <AccessibilityProvider>
             <Toaster />
             <Sonner />
             <BrowserRouter>
@@ -72,8 +90,9 @@ const App = () => (
                 </Routes>
               </Layout>
             </BrowserRouter>
-          </AccessibilityProvider>
-        </AgeGroupProvider>
+            </AccessibilityProvider>
+          </AgeGroupProvider>
+        </PricingModalProvider>
       </AuthProvider>
     </TooltipProvider>
   </QueryClientProvider>

@@ -1,10 +1,9 @@
-import React from 'react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
+import React, { useEffect } from 'react';
 import { Badge } from '@/components/ui/badge';
-import { useNavigate } from 'react-router-dom';
-import { useSubscriptionState, UserState } from '@/hooks/useSubscriptionState';
-import { CreditCard, Lock, AlertTriangle, Clock, Crown, Star } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { useSubscriptionState } from '@/hooks/useSubscriptionState';
+import { usePricingModal } from '@/contexts/PricingModalContext';
+import { Clock, Crown } from 'lucide-react';
 
 interface SubscriptionOverlayProps {
   children: React.ReactNode;
@@ -15,27 +14,15 @@ export const SubscriptionOverlay: React.FC<SubscriptionOverlayProps> = ({
   children, 
   requiredFeature 
 }) => {
-  const navigate = useNavigate();
   const { 
     userState, 
     loading, 
     hasAccessTo, 
-    isTrialExpired, 
-    trialDaysRemaining, 
-    createCheckoutSession 
+    isTrialActive, 
+    trialDaysRemaining
   } = useSubscriptionState();
 
-  const handleUpgradeClick = async () => {
-    try {
-      const planId = requiredFeature === 'bootcamp' ? 'pass_plus' : 'pass';
-      const data = await createCheckoutSession(planId);
-      if (data?.url) {
-        window.open(data.url, '_blank');
-      }
-    } catch (error) {
-      console.error('Error creating checkout session:', error);
-    }
-  };
+  const { openPricingModal } = usePricingModal();
 
   // Show loading state
   if (loading) {
@@ -46,151 +33,8 @@ export const SubscriptionOverlay: React.FC<SubscriptionOverlayProps> = ({
     );
   }
 
-  // Show upgrade overlay for users without access
-  if (!hasAccessTo(requiredFeature)) {
-    const getOverlayContent = () => {
-      switch (userState) {
-        case 'expired':
-          return {
-            icon: <AlertTriangle className="h-12 w-12 text-destructive" />,
-            title: 'Trial Expired',
-            description: `Your 30-day free trial has ended. Upgrade to continue accessing ${requiredFeature === 'bootcamp' ? 'Bootcamp' : 'Daily Mode'}.`,
-            buttonText: 'Upgrade Now',
-            buttonVariant: 'destructive' as const,
-            showDaysLeft: false
-          };
-        case 'pass':
-          return {
-            icon: <Lock className="h-12 w-12 text-amber-500" />,
-            title: 'Bootcamp Access Required',
-            description: 'Upgrade to Pass Plus to access Bootcamp features with advanced learning paths and mock exams.',
-            buttonText: 'Upgrade to Pass Plus',
-            buttonVariant: 'default' as const,
-            showDaysLeft: false
-          };
-        case 'no_access':
-        default:
-          return {
-            icon: <Crown className="h-12 w-12 text-primary" />,
-            title: 'Subscription Required',
-            description: `Get access to ${requiredFeature === 'bootcamp' ? 'Bootcamp' : 'Daily Mode'} with personalized learning and progress tracking.`,
-            buttonText: 'Start Free Trial',
-            buttonVariant: 'default' as const,
-            showDaysLeft: false
-          };
-      }
-    };
-
-    const overlayContent = getOverlayContent();
-
-    return (
-      <div className="min-h-screen bg-background flex items-center justify-center p-4 relative">
-        {/* Blurred background content */}
-        <div className="absolute inset-0 filter blur-sm opacity-30 pointer-events-none overflow-hidden">
-          {children}
-        </div>
-
-        {/* Overlay */}
-        <div className="absolute inset-0 bg-background/80 backdrop-blur-sm" />
-
-        {/* Content */}
-        <Card className="w-full max-w-md z-10 shadow-2xl border-2">
-          <CardHeader className="text-center pb-6">
-            <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-gradient-to-r from-primary/10 to-primary/20">
-              {overlayContent.icon}
-            </div>
-            <CardTitle className="text-2xl font-bold">{overlayContent.title}</CardTitle>
-            <CardDescription className="text-base mt-2">
-              {overlayContent.description}
-            </CardDescription>
-          </CardHeader>
-          
-          <CardContent className="space-y-4">
-            {overlayContent.showDaysLeft && (
-              <div className="text-center p-3 bg-amber-50 dark:bg-amber-950/20 rounded-lg border border-amber-200 dark:border-amber-800">
-                <Clock className="inline h-5 w-5 mr-2 text-amber-600" />
-                <span className="text-sm font-medium text-amber-800 dark:text-amber-200">
-                  Trial ends in {trialDaysRemaining} {trialDaysRemaining === 1 ? 'day' : 'days'}
-                </span>
-              </div>
-            )}
-            
-            <div className="space-y-3">
-              <Button 
-                onClick={handleUpgradeClick}
-                className="w-full h-12 text-base font-semibold"
-                size="lg"
-                variant={overlayContent.buttonVariant}
-              >
-                <CreditCard className="mr-2 h-5 w-5" />
-                {overlayContent.buttonText}
-              </Button>
-              
-              <Button 
-                variant="outline" 
-                onClick={() => navigate('/pricing')}
-                className="w-full h-10"
-              >
-                View All Plans
-              </Button>
-              
-              <Button 
-                variant="ghost" 
-                onClick={() => navigate('/dashboard')}
-                className="w-full h-10"
-                size="sm"
-              >
-                Back to Dashboard
-              </Button>
-            </div>
-
-            {/* Feature highlights */}
-            <div className="mt-6 pt-4 border-t">
-              <p className="text-xs text-muted-foreground text-center mb-3">
-                What you'll get:
-              </p>
-              <div className="grid grid-cols-1 gap-2 text-xs">
-                {requiredFeature === 'bootcamp' ? (
-                  <>
-                    <div className="flex items-center text-muted-foreground">
-                      <Star className="h-3 w-3 mr-2 text-primary" />
-                      Structured learning paths
-                    </div>
-                    <div className="flex items-center text-muted-foreground">
-                      <Star className="h-3 w-3 mr-2 text-primary" />
-                      Mock exams & progress tracking
-                    </div>
-                    <div className="flex items-center text-muted-foreground">
-                      <Star className="h-3 w-3 mr-2 text-primary" />
-                      Advanced analytics
-                    </div>
-                  </>
-                ) : (
-                  <>
-                    <div className="flex items-center text-muted-foreground">
-                      <Star className="h-3 w-3 mr-2 text-primary" />
-                      Daily practice questions
-                    </div>
-                    <div className="flex items-center text-muted-foreground">
-                      <Star className="h-3 w-3 mr-2 text-primary" />
-                      Progress tracking
-                    </div>
-                    <div className="flex items-center text-muted-foreground">
-                      <Star className="h-3 w-3 mr-2 text-primary" />
-                      Performance insights
-                    </div>
-                  </>
-                )}
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-      </div>
-    );
-  }
-
   // Show trial warning for trials ending soon
-  if (userState === 'trial' && trialDaysRemaining <= 3 && trialDaysRemaining > 0) {
+  if (isTrialActive && trialDaysRemaining <= 3 && trialDaysRemaining > 0) {
     return (
       <div className="relative">
         <div className="bg-gradient-to-r from-amber-50 to-orange-50 dark:from-amber-950/20 dark:to-orange-950/20 border-l-4 border-amber-400 p-4 mb-4 shadow-sm">
@@ -208,7 +52,10 @@ export const SubscriptionOverlay: React.FC<SubscriptionOverlayProps> = ({
               </div>
             </div>
             <Button 
-              onClick={handleUpgradeClick}
+              onClick={() => openPricingModal({ 
+                requiredFeature,
+                highlightPlan: requiredFeature === 'bootcamp' ? 'pass_plus' : 'pass'
+              })}
               size="sm"
               className="ml-4 flex-shrink-0 bg-amber-600 hover:bg-amber-700 text-white"
             >
@@ -218,6 +65,73 @@ export const SubscriptionOverlay: React.FC<SubscriptionOverlayProps> = ({
           </div>
         </div>
         {children}
+      </div>
+    );
+  }
+
+  // If user doesn't have access, show grayed out content with click overlay
+  if (!hasAccessTo(requiredFeature)) {
+    return (
+      <div className="relative">
+        {/* Grayed out content */}
+        <div className="filter grayscale opacity-50 pointer-events-none select-none">
+          {children}
+        </div>
+        
+        {/* Invisible overlay to capture clicks */}
+        <div 
+          className="absolute inset-0 z-50 cursor-pointer bg-transparent"
+          onClick={() => openPricingModal({ 
+            requiredFeature,
+            highlightPlan: requiredFeature === 'bootcamp' ? 'pass_plus' : 'pass'
+          })}
+        >
+          {/* Optional: Add some visual indicators */}
+          <div className="absolute top-4 right-4">
+            <Badge 
+              variant="secondary" 
+              className="bg-primary/90 text-primary-foreground shadow-lg animate-pulse"
+            >
+              <Crown className="h-3 w-3 mr-1" />
+              {userState === 'expired' 
+                ? 'Trial Expired - Click to Upgrade' 
+                : userState === 'pass' && requiredFeature === 'bootcamp'
+                  ? 'Bootcamp Access Required'
+                  : 'Upgrade Required'
+              }
+            </Badge>
+          </div>
+          
+          {/* Center upgrade button */}
+          <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
+            <div className="bg-white/95 dark:bg-gray-900/95 backdrop-blur-sm rounded-lg p-6 shadow-2xl border-2 border-primary/20 text-center">
+              <Crown className="h-12 w-12 text-primary mx-auto mb-3" />
+              <h3 className="text-lg font-semibold mb-2">
+                {userState === 'expired' 
+                  ? 'Trial Expired' 
+                  : userState === 'pass' && requiredFeature === 'bootcamp'
+                    ? 'Bootcamp Access Required'
+                    : 'Upgrade to Continue'
+                }
+              </h3>
+              <p className="text-sm text-muted-foreground mb-4">
+                {userState === 'expired' 
+                  ? 'Your free trial has ended. Upgrade to continue learning.'
+                  : userState === 'pass' && requiredFeature === 'bootcamp'
+                    ? 'Upgrade to Pass Plus to access Bootcamp features.'
+                    : 'Get full access to all features and content.'
+                }
+              </p>
+              <Button 
+                size="lg" 
+                className="bg-primary hover:bg-primary/90 text-primary-foreground shadow-lg"
+              >
+                <Crown className="h-4 w-4 mr-2" />
+                {userState === 'expired' ? 'Upgrade Now' : 'View Plans'}
+              </Button>
+            </div>
+          </div>
+        </div>
       </div>
     );
   }
