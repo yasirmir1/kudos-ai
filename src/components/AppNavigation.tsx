@@ -2,8 +2,6 @@ import React from 'react';
 import { Button } from '@/components/ui/button';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { BookOpen, BarChart3, User, GraduationCap, FileText, Play, Target, Calendar, CreditCard } from 'lucide-react';
-import { AgeGroupSelector } from './AgeGroupSelector';
-import { useAgeGroup } from '@/contexts/AgeGroupContext';
 import { useAuth } from '@/hooks/useAuth';
 import { cn } from '@/lib/utils';
 interface AppNavigationProps {
@@ -22,9 +20,6 @@ export const AppNavigation: React.FC<AppNavigationProps> = ({
 }) => {
   const navigate = useNavigate();
   const location = useLocation();
-  const {
-    selectedAgeGroup
-  } = useAgeGroup();
   const {
     user
   } = useAuth();
@@ -134,8 +129,6 @@ export const AppNavigation: React.FC<AppNavigationProps> = ({
               </select>
             </div>
 
-            {/* Age Group Selector - only show for main app */}
-            {!isBootcampRoute && <AgeGroupSelector />}
           </div>
         </div>
       </div>
