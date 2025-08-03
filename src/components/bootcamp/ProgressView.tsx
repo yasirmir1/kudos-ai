@@ -3,6 +3,7 @@ import { TrendingUp, Zap, Target, Award, Loader2 } from 'lucide-react';
 import { PerformanceChart } from './PerformanceChart';
 import { MockTestPerformanceContainer } from './MockTestPerformanceContainer';
 import { WeeklyTestPerformanceContainer } from './WeeklyTestPerformanceContainer';
+import { SkillDevelopmentCard } from './SkillDevelopmentCard';
 import { useAuth } from '../../hooks/useAuth';
 import { useBootcampData } from '../../hooks/useBootcampData';
 import { BootcampAPI } from '../../lib/bootcamp-api';
@@ -25,6 +26,7 @@ export const ProgressView: React.FC = () => {
   const { user } = useAuth();
   const { student, stats, progress, isLoading } = useBootcampData();
   const [skillsData, setSkillsData] = useState<Skill[]>([]);
+  const [skillDevelopmentData, setSkillDevelopmentData] = useState<{ skill: string; accuracy: number }[]>([]);
   const [recentAchievements, setRecentAchievements] = useState<Achievement[]>([]);
 
   useEffect(() => {
@@ -64,6 +66,66 @@ export const ProgressView: React.FC = () => {
             topicNameMap.set(topic.id, topic.name);
           });
         }
+
+        // Get topic performance data from both sources
+        const [responseCounts, mockTestCounts] = await Promise.all([
+          // Regular practice responses
+          supabase
+            .from('bootcamp_student_responses')
+            .select(`
+              is_correct,
+              bootcamp_questions!inner(topic_id)
+            `)
+            .eq('student_id', studentProfile.student_id),
+          
+          // Mock test answers  
+          supabase
+            .from('bootcamp_mock_test_answers')
+            .select(`
+              is_correct,
+              bootcamp_mock_test_sessions!inner(student_id),
+              mock_test_questions!inner(topic)
+            `)
+            .eq('bootcamp_mock_test_sessions.student_id', studentProfile.student_id)
+        ]);
+
+        // Calculate topic performance from both sources
+        const topicStats = new Map<string, { correct: number; total: number }>();
+
+        // Process regular responses
+        responseCounts.data?.forEach((response: any) => {
+          const topicId = response.bootcamp_questions.topic_id;
+          const current = topicStats.get(topicId) || { correct: 0, total: 0 };
+          current.total++;
+          if (response.is_correct) current.correct++;
+          topicStats.set(topicId, current);
+        });
+
+        // Process mock test answers
+        mockTestCounts.data?.forEach((answer: any) => {
+          const topicName = answer.mock_test_questions.topic;
+          // Find topic ID by name
+          const topicId = Array.from(topicNameMap.entries())
+            .find(([_, name]) => name.toLowerCase().includes(topicName.toLowerCase()))?.[0];
+          
+          if (topicId) {
+            const current = topicStats.get(topicId) || { correct: 0, total: 0 };
+            current.total++;
+            if (answer.is_correct) current.correct++;
+            topicStats.set(topicId, current);
+          }
+        });
+
+        // Convert to skill development data
+        const skillsDataForCard = Array.from(topicStats.entries())
+          .map(([topicId, stats]) => ({
+            skill: topicNameMap.get(topicId) || topicId,
+            accuracy: stats.total > 0 ? Math.round((stats.correct / stats.total) * 100) : 0
+          }))
+          .filter(skill => skill.skill) // Only include named topics
+          .sort((a, b) => b.accuracy - a.accuracy); // Sort by accuracy descending
+
+        setSkillDevelopmentData(skillsDataForCard);
 
         // Map progress to skills data with proper topic names
         const skills: Skill[] = progress.map((p: any) => ({
@@ -216,6 +278,11 @@ export const ProgressView: React.FC = () => {
       <div className="bg-card rounded-xl shadow-sm border p-6">
         <h2 className="text-lg font-semibold text-foreground mb-6">Performance Overview</h2>
         <PerformanceChart />
+      </div>
+
+      {/* Skill Development */}
+      <div className="mb-6">
+        <SkillDevelopmentCard skills={skillDevelopmentData} />
       </div>
 
     </div>

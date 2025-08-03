@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Brain, Target, Shield, Award, Play, RefreshCw, ChevronRight, TrendingUp, AlertCircle, Loader2, Clock } from 'lucide-react';
 import { WeeklyProgressChart } from './WeeklyProgressChart';
-import { SkillDevelopmentCard } from './SkillDevelopmentCard';
 import { WeeklyTestPerformanceCard } from './WeeklyTestPerformanceCard';
 import { MockTestPerformanceCard } from './MockTestPerformanceCard';
 import { useAuth } from '../../hooks/useAuth';
@@ -40,7 +39,6 @@ export const Dashboard: React.FC<DashboardProps> = ({
     user: authUser
   } = useAuth();
   const [recentTopics, setRecentTopics] = useState<RecentTopic[]>([]);
-  const [skillDevelopmentData, setSkillDevelopmentData] = useState<{ skill: string; accuracy: number }[]>([]);
   const [loading, setLoading] = useState(true);
 
   // Sample data for Weekly Test Performance
@@ -178,16 +176,6 @@ export const Dashboard: React.FC<DashboardProps> = ({
           }
         });
 
-        // Convert to skill development data
-        const skillsData = Array.from(topicStats.entries())
-          .map(([topicId, stats]) => ({
-            skill: topicNameMap.get(topicId) || topicId,
-            accuracy: stats.total > 0 ? Math.round((stats.correct / stats.total) * 100) : 0
-          }))
-          .filter(skill => skill.skill) // Only include named topics
-          .sort((a, b) => b.accuracy - a.accuracy); // Sort by accuracy descending
-
-        setSkillDevelopmentData(skillsData);
 
         // Recent topics for the other card
         const topicsData: RecentTopic[] = progress.map((p: any) => ({
@@ -276,10 +264,6 @@ export const Dashboard: React.FC<DashboardProps> = ({
         <MockTestPerformanceCard {...mockTestData} />
       </div>
 
-      {/* Skill Development */}
-      <div className="mb-6">
-        <SkillDevelopmentCard skills={skillDevelopmentData} />
-      </div>
 
       {/* Quick Practice and Recent Topics */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
