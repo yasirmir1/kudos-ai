@@ -23,6 +23,7 @@ import { Button } from '@/components/ui/button';
 import { Loader2, AlertCircle } from 'lucide-react';
 const Bootcamp = () => {
   const [currentView, setCurrentView] = useState('dashboard');
+  const [selectedWeek, setSelectedWeek] = useState<number | null>(null);
   const {
     student,
     stats,
@@ -51,6 +52,11 @@ const Bootcamp = () => {
       alert(`Error: ${result.message}`);
     }
   };
+
+  const handleStartLearning = (week: number) => {
+    setSelectedWeek(week);
+    setCurrentView('learn');
+  };
   if (isLoading) {
     return <div>
         <div className="flex items-center justify-center h-96">
@@ -71,10 +77,10 @@ const Bootcamp = () => {
             </AlertDescription>
           </Alert>}
         
-        {currentView === 'dashboard' && <Dashboard user={user} setCurrentView={setCurrentView} />}
+        {currentView === 'dashboard' && <Dashboard user={user} setCurrentView={setCurrentView} onStartLearning={handleStartLearning} />}
         {currentView === 'practice' && <EnhancedPracticeSession />}
         {currentView === 'mocktest' && <MockTest />}
-        {currentView === 'learn' && <LearnView />}
+        {currentView === 'learn' && <LearnView selectedWeek={selectedWeek} onWeekChange={setSelectedWeek} />}
         {currentView === 'progress' && <ProgressView />}
         {currentView === 'topics' && <TopicsView setCurrentView={setCurrentView} />}
         {currentView === 'achievements' && <AchievementCenter />}

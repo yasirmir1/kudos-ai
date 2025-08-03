@@ -19,6 +19,7 @@ interface User {
 interface DashboardProps {
   user: User;
   setCurrentView: (view: string) => void;
+  onStartLearning: (week: number) => void;
 }
 interface QuickStat {
   label: string;
@@ -34,7 +35,8 @@ interface RecentTopic {
 }
 export const Dashboard: React.FC<DashboardProps> = ({
   user,
-  setCurrentView
+  setCurrentView,
+  onStartLearning
 }) => {
   const {
     user: authUser
@@ -263,7 +265,7 @@ export const Dashboard: React.FC<DashboardProps> = ({
       <LearningJourneyCard 
         currentWeek={1} 
         hasStarted={false} 
-        onStartLearning={() => setCurrentView('learn')} 
+        onStartLearning={onStartLearning} 
       />
 
       {/* Top Performance Cards */}

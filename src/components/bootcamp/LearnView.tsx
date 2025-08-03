@@ -52,7 +52,12 @@ interface CurriculumItem {
   difficulty: string;
   pedagogical_notes: string;
 }
-export const LearnView: React.FC = () => {
+interface LearnViewProps {
+  selectedWeek?: number | null;
+  onWeekChange?: (week: number | null) => void;
+}
+
+export const LearnView: React.FC<LearnViewProps> = ({ selectedWeek, onWeekChange }) => {
   const { student, progress } = useBootcampData();
   const [modules, setModules] = useState<Module[]>([]);
   const [topics, setTopics] = useState<Topic[]>([]);
@@ -83,6 +88,17 @@ export const LearnView: React.FC = () => {
       calculateWeekProgress();
     }
   }, [progress, weeklyPlan, topics]);
+
+  // Auto-open weekly modal if selectedWeek is provided
+  useEffect(() => {
+    if (selectedWeek && weeklyPlan.length > 0 && !isWeeklyModalOpen) {
+      const weekPlan = weeklyPlan.find(week => week.week === selectedWeek);
+      if (weekPlan) {
+        setSelectedWeekPlan(weekPlan);
+        setIsWeeklyModalOpen(true);
+      }
+    }
+  }, [selectedWeek, weeklyPlan, isWeeklyModalOpen]);
 
   const calculateWeekProgress = () => {
     const weekProgressMap: Record<number, number> = {};
@@ -924,6 +940,10 @@ export const LearnView: React.FC = () => {
         onClose={() => {
           setIsWeeklyModalOpen(false);
           setSelectedWeekPlan(null);
+          // Clear the selectedWeek when modal is closed
+          if (onWeekChange) {
+            onWeekChange(null);
+          }
         }} 
       />
     </div>;
