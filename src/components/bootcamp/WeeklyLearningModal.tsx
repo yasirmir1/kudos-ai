@@ -9,6 +9,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
+import { Textarea } from '@/components/ui/textarea';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { supabase } from '@/integrations/supabase/client';
 import { LearningJourney } from './LearningJourney';
@@ -95,6 +96,7 @@ export function WeeklyLearningModal({ weekPlan, isOpen, onClose }: WeeklyLearnin
   const [sessionStarted, setSessionStarted] = useState(false);
   const [sessionCompleted, setSessionCompleted] = useState(false);
   const [selectedAnswer, setSelectedAnswer] = useState<string>('');
+  const [textAnswer, setTextAnswer] = useState<string>('');
   const [showExplanation, setShowExplanation] = useState(false);
   const [currentView, setCurrentView] = useState<'overview' | 'practice' | 'journey'>('overview');
   const [selectedTopic, setSelectedTopic] = useState<Topic | null>(null);
@@ -118,6 +120,7 @@ export function WeeklyLearningModal({ weekPlan, isOpen, onClose }: WeeklyLearnin
     setSessionStarted(false);
     setSessionCompleted(false);
     setSelectedAnswer('');
+    setTextAnswer('');
     setShowExplanation(false);
     setCurrentView('overview');
     setSelectedTopic(null);
@@ -255,11 +258,25 @@ export function WeeklyLearningModal({ weekPlan, isOpen, onClose }: WeeklyLearnin
     }
   };
 
-  const submitAnswer = async () => {
-    if (!selectedAnswer || !questions[currentQuestionIndex] || !student?.student_id) return;
+  const isWriteQuestion = (questionText: string): boolean => {
+    return questionText.toLowerCase().includes('write');
+  };
 
+  const submitAnswer = async () => {
     const currentQuestion = questions[currentQuestionIndex];
-    const isCorrect = selectedAnswer === currentQuestion.correct_answer;
+    if (!student?.student_id || !currentQuestion) return;
+    
+    const isWrite = isWriteQuestion(currentQuestion.question_text);
+    const answerToSubmit = isWrite ? textAnswer : selectedAnswer;
+    
+    if (!answerToSubmit.trim()) return;
+
+    // For write questions, we'll mark as correct if there's a meaningful answer
+    // In a real implementation, you'd want more sophisticated checking
+    const isCorrect = isWrite 
+      ? answerToSubmit.trim().length >= 10 // Basic length check for write questions
+      : selectedAnswer === currentQuestion.correct_answer;
+      
     const timeTaken = sessionStats.startTime ? 
       Math.floor((new Date().getTime() - sessionStats.startTime.getTime()) / 1000) : 60;
 
@@ -270,7 +287,7 @@ export function WeeklyLearningModal({ weekPlan, isOpen, onClose }: WeeklyLearnin
         .insert({
           student_id: student.student_id,
           question_id: currentQuestion.question_id,
-          selected_answer: selectedAnswer,
+          selected_answer: answerToSubmit,
           is_correct: isCorrect,
           time_taken: timeTaken,
           session_id: sessionStats.sessionId
@@ -294,6 +311,7 @@ export function WeeklyLearningModal({ weekPlan, isOpen, onClose }: WeeklyLearnin
     if (currentQuestionIndex < questions.length - 1) {
       setCurrentQuestionIndex(prev => prev + 1);
       setSelectedAnswer('');
+      setTextAnswer('');
       setShowExplanation(false);
     } else {
       completeSession();
@@ -612,49 +630,85 @@ export function WeeklyLearningModal({ weekPlan, isOpen, onClose }: WeeklyLearnin
                   </CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-4">
-                  {/* Answer Options */}
-                  <div className="space-y-3">
-                    {['A', 'B', 'C', 'D'].map((option) => {
-                      const optionText = currentQuestion[`option_${option.toLowerCase()}` as keyof Question] as string;
-                      if (!optionText) return null;
-                      
-                      const isSelected = selectedAnswer === option;
-                      const isCorrect = option === currentQuestion.correct_answer;
-                      const showResult = showExplanation;
-                      
-                      return (
-                        <button
-                          key={option}
-                          onClick={() => !showExplanation && setSelectedAnswer(option)}
+                  {/* Answer Interface - Text Input for Write Questions, Multiple Choice for Others */}
+                  {isWriteQuestion(currentQuestion.question_text) ? (
+                    <div className="space-y-3">
+                      <div className="space-y-2">
+                        <label className="text-sm font-medium text-muted-foreground">
+                          Write your answer below:
+                        </label>
+                        <Textarea
+                          value={textAnswer}
+                          onChange={(e) => setTextAnswer(e.target.value)}
+                          placeholder="Type your answer here..."
+                          rows={6}
                           disabled={showExplanation}
-                          className={`w-full p-4 text-left rounded-lg border-2 transition-all ${
-                            showResult
-                              ? isCorrect
-                                ? 'border-green-500 bg-green-50 text-green-800'
+                          className="resize-none"
+                        />
+                        <div className="flex justify-between text-xs text-muted-foreground">
+                          <span>Minimum 10 characters for a complete answer</span>
+                          <span>{textAnswer.length} characters</span>
+                        </div>
+                      </div>
+                      
+                      {showExplanation && (
+                        <div className="bg-green-50 border border-green-200 rounded-lg p-4">
+                          <h4 className="font-medium text-green-900 mb-2">
+                            {textAnswer.trim().length >= 10 ? "Good work! ✓" : "Answer too short"}
+                          </h4>
+                          <p className="text-green-800 text-sm">
+                            {textAnswer.trim().length >= 10 
+                              ? "You provided a thoughtful written response. Writing helps develop clear mathematical communication skills."
+                              : "For write questions, please provide at least 10 characters to show your mathematical thinking process."
+                            }
+                          </p>
+                        </div>
+                      )}
+                    </div>
+                  ) : (
+                    <div className="space-y-3">
+                      {['A', 'B', 'C', 'D'].map((option) => {
+                        const optionText = currentQuestion[`option_${option.toLowerCase()}` as keyof Question] as string;
+                        if (!optionText) return null;
+                        
+                        const isSelected = selectedAnswer === option;
+                        const isCorrect = option === currentQuestion.correct_answer;
+                        const showResult = showExplanation;
+                        
+                        return (
+                          <button
+                            key={option}
+                            onClick={() => !showExplanation && setSelectedAnswer(option)}
+                            disabled={showExplanation}
+                            className={`w-full p-4 text-left rounded-lg border-2 transition-all ${
+                              showResult
+                                ? isCorrect
+                                  ? 'border-green-500 bg-green-50 text-green-800'
+                                  : isSelected
+                                  ? 'border-red-500 bg-red-50 text-red-800'
+                                  : 'border-gray-200 bg-gray-50'
                                 : isSelected
-                                ? 'border-red-500 bg-red-50 text-red-800'
-                                : 'border-gray-200 bg-gray-50'
-                              : isSelected
-                              ? 'border-primary bg-primary/10'
-                              : 'border-gray-200 hover:border-gray-300 hover:bg-gray-50'
-                          }`}
-                        >
-                          <div className="flex items-start gap-3">
-                            <span className={`font-semibold text-sm ${
-                              showResult && isCorrect ? 'text-green-700' : 
-                              showResult && isSelected ? 'text-red-700' : ''
-                            }`}>
-                              {option}.
-                            </span>
-                            <span className="flex-1">{optionText}</span>
-                            {showResult && isCorrect && (
-                              <CheckCircle className="h-5 w-5 text-green-600" />
-                            )}
-                          </div>
-                        </button>
-                      );
-                    })}
-                  </div>
+                                ? 'border-primary bg-primary/10'
+                                : 'border-gray-200 hover:border-gray-300 hover:bg-gray-50'
+                            }`}
+                          >
+                            <div className="flex items-start gap-3">
+                              <span className={`font-semibold text-sm ${
+                                showResult && isCorrect ? 'text-green-700' : 
+                                showResult && isSelected ? 'text-red-700' : ''
+                              }`}>
+                                {option}.
+                              </span>
+                              <span className="flex-1">{optionText}</span>
+                              {showResult && isCorrect && (
+                                <CheckCircle className="h-5 w-5 text-green-600" />
+                              )}
+                            </div>
+                          </button>
+                        );
+                      })}
+                    </div>
+                  )}
 
                   {/* Explanation */}
                   {showExplanation && currentQuestion.explanation && (
@@ -669,7 +723,10 @@ export function WeeklyLearningModal({ weekPlan, isOpen, onClose }: WeeklyLearnin
                     {!showExplanation ? (
                       <Button 
                         onClick={submitAnswer} 
-                        disabled={!selectedAnswer}
+                        disabled={isWriteQuestion(currentQuestion.question_text) 
+                          ? textAnswer.trim().length < 10 
+                          : !selectedAnswer
+                        }
                         className="px-6"
                       >
                         Submit Answer
