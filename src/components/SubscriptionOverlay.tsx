@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import { useSubscriptionState } from '@/hooks/useSubscriptionState';
 import { usePricingModal } from '@/contexts/PricingModalContext';
 import { Clock, Crown } from 'lucide-react';
+import { toast } from 'sonner';
 
 interface SubscriptionOverlayProps {
   children: React.ReactNode;
@@ -19,10 +20,32 @@ export const SubscriptionOverlay: React.FC<SubscriptionOverlayProps> = ({
     loading, 
     hasAccessTo, 
     isTrialActive, 
-    trialDaysRemaining
+    trialDaysRemaining,
+    createCheckoutSession
   } = useSubscriptionState();
 
   const { openPricingModal } = usePricingModal();
+
+  const handleSubscribeClick = async (e: React.MouseEvent) => {
+    e.stopPropagation(); // Prevent the overlay click from triggering
+    
+    try {
+      const planId = requiredFeature === 'bootcamp' ? 'pass_plus' : 'pass';
+      const { url, error } = await createCheckoutSession(planId);
+      
+      if (error) {
+        toast.error('Failed to start checkout process. Please try again.');
+        return;
+      }
+      
+      if (url) {
+        // Open Stripe checkout in a new tab
+        window.open(url, '_blank');
+      }
+    } catch (error) {
+      toast.error('An error occurred. Please try again.');
+    }
+  };
 
   // Show loading state
   if (loading) {
@@ -177,6 +200,7 @@ export const SubscriptionOverlay: React.FC<SubscriptionOverlayProps> = ({
               
               {/* CTA Button */}
               <Button 
+                onClick={handleSubscribeClick}
                 size="lg" 
                 className="w-full py-4 font-semibold text-lg rounded-full transition-all duration-200 hover:scale-[1.02]"
               >
