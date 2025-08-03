@@ -3,6 +3,7 @@ import { Brain, Target, Shield, Award, RefreshCw, TrendingUp, AlertCircle, Loade
 import { WeeklyProgressChart } from './WeeklyProgressChart';
 import { WeeklyTestPerformanceCard } from './WeeklyTestPerformanceCard';
 import { MockTestPerformanceCard } from './MockTestPerformanceCard';
+import { LearningJourneyCard } from './LearningJourneyCard';
 import { useAuth } from '../../hooks/useAuth';
 import { BootcampAPI } from '../../lib/bootcamp-api';
 import { supabase } from '@/integrations/supabase/client';
@@ -257,6 +258,13 @@ export const Dashboard: React.FC<DashboardProps> = ({
             <p className="text-2xl font-bold text-foreground">{stat.value}</p>
           </div>)}
       </div>
+
+      {/* Learning Journey */}
+      <LearningJourneyCard 
+        currentWeek={1} 
+        hasStarted={false} 
+        onStartLearning={() => setCurrentView('learn')} 
+      />
 
       {/* Top Performance Cards */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
