@@ -133,7 +133,7 @@ export default function Pricing() {
           <p className="max-w-3xl mx-auto leading-relaxed text-lg text-slate-800">
             Start your free trial now, <span className="text-primary font-semibold text-lg">no credit card needed</span>
           </p>
-          <p className="text-muted-foreground mt-2 font-medium text-base my-[4px]">
+          <p className="text-muted-foreground mt-2 font-medium text-base my-[2px]">
             <span className="text-base text-slate-800 font-medium">No hidden fees, cancel anytime.</span>
           </p>
         </div>
@@ -179,56 +179,42 @@ export default function Pricing() {
 
                 <CardContent className="px-8 pb-8">
                   <div className="space-y-6 mb-8">
-                    {(plan.id === 'pass' ? [
-                      {
-                        title: "Daily Performance Snapshots",
-                        description: "'Daily Mode' gives you a quick, clear view of your child's skills and understanding, so you always know where they stand."
-                      },
-                      {
-                        title: "Personalized Progress Analytics", 
-                        description: "Stop guessing which topics to focus on. Our insights show you exactly where your child is improving and which areas need a little more practice."
-                      },
-                      {
-                        title: "Customized Worksheets",
-                        description: "Never run out of practice material. Generate unlimited worksheets tailored to your child's specific needs in seconds."
-                      },
-                      ...plan.features.filter(feature => 
-                        !feature.toLowerCase().includes('daily practice mode') && 
-                        !feature.toLowerCase().includes('progress tracking') && 
-                        !feature.toLowerCase().includes('basic analytics')
-                      ).map(feature => ({ title: feature }))
-                    ] : plan.id === 'pass_plus' ? [
-                      {
-                        title: "All features from Pass",
-                        description: "Daily Performance Snapshots, Personalized Progress Analytics, and Customized Worksheets."
-                      },
-                      {
-                        title: "The 52-Week Bootcamp",
-                        description: "A complete, structured 11+ course with a personalized learning plan that adapts to your child's needs, taking them through the entire curriculum."
-                      },
-                      {
-                        title: "Weekly Performance Monitoring",
-                        description: "On top of the course, you'll get access to a weekly test that closely monitors your child's progress and helps you track their development over time."
-                      },
-                      {
-                        title: "Realistic Mock Exams",
-                        description: "Gain access to authentic GL and CEM style mock exams (50 questions over 60 minutes). Instantly marked, with a personalized report that provides detailed feedback and a roadmap for improvement."
-                      }
-                    ] : plan.features.map(feature => ({ title: feature }))).map((feature, index) =>
-                      <div key={index} className="flex items-start">
+                    {(plan.id === 'pass' ? [{
+                  title: "Daily Performance Snapshots",
+                  description: "'Daily Mode' gives you a quick, clear view of your child's skills and understanding, so you always know where they stand."
+                }, {
+                  title: "Personalized Progress Analytics",
+                  description: "Stop guessing which topics to focus on. Our insights show you exactly where your child is improving and which areas need a little more practice."
+                }, {
+                  title: "Customized Worksheets",
+                  description: "Never run out of practice material. Generate unlimited worksheets tailored to your child's specific needs in seconds."
+                }, ...plan.features.filter(feature => !feature.toLowerCase().includes('daily practice mode') && !feature.toLowerCase().includes('progress tracking') && !feature.toLowerCase().includes('basic analytics')).map(feature => ({
+                  title: feature
+                }))] : plan.id === 'pass_plus' ? [{
+                  title: "All features from Pass",
+                  description: "Daily Performance Snapshots, Personalized Progress Analytics, and Customized Worksheets."
+                }, {
+                  title: "The 52-Week Bootcamp",
+                  description: "A complete, structured 11+ course with a personalized learning plan that adapts to your child's needs, taking them through the entire curriculum."
+                }, {
+                  title: "Weekly Performance Monitoring",
+                  description: "On top of the course, you'll get access to a weekly test that closely monitors your child's progress and helps you track their development over time."
+                }, {
+                  title: "Realistic Mock Exams",
+                  description: "Gain access to authentic GL and CEM style mock exams (50 questions over 60 minutes). Instantly marked, with a personalized report that provides detailed feedback and a roadmap for improvement."
+                }] : plan.features.map(feature => ({
+                  title: feature
+                }))).map((feature, index) => <div key={index} className="flex items-start">
                         <div className="w-2 h-2 rounded-full bg-primary mt-2 mr-3 flex-shrink-0" />
                         <div className="flex-1">
                           <div className="font-medium text-foreground text-sm leading-relaxed">
                             {feature.title}
                           </div>
-                          {feature.description && (
-                            <div className="text-xs text-muted-foreground mt-1 leading-relaxed">
+                          {feature.description && <div className="text-xs text-muted-foreground mt-1 leading-relaxed">
                               {feature.description}
-                            </div>
-                          )}
+                            </div>}
                         </div>
-                      </div>
-                    )}
+                      </div>)}
                   </div>
 
                   <div className="space-y-4">
