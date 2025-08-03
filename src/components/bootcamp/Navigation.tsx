@@ -65,11 +65,6 @@ export const Navigation: React.FC<NavigationProps> = ({
       icon: Settings
     },
     {
-      id: 'generate',
-      label: 'Generate',
-      icon: Plus
-    },
-    {
       id: 'help',
       label: 'Help',
       icon: HelpCircle
