@@ -15,7 +15,7 @@ import Profile from "./pages/Profile";
 import Analytics from "./pages/Analytics";
 import Curriculum from "./pages/Curriculum";
 import Report from "./pages/Report";
-import Settings from "./pages/Settings";
+
 import Bootcamp from "./pages/Bootcamp";
 
 import NotFound from "./pages/NotFound";
@@ -51,7 +51,7 @@ const App = () => (
                   <Route path="/dashboard" element={<Dashboard />} />
                   <Route path="/profile" element={<Profile />} />
                   <Route path="/report" element={<Report />} />
-                  <Route path="/settings" element={<Settings />} />
+                  
                   <Route path="/bootcamp" element={<Bootcamp />} />
                   
                   {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}

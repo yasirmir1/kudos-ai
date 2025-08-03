@@ -4,14 +4,17 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Switch } from '@/components/ui/switch';
+import { Separator } from '@/components/ui/separator';
 import { useAuth } from '@/hooks/useAuth';
 import { supabase } from '@/integrations/supabase/client';
 import { useNavigate } from 'react-router-dom';
-import { ArrowLeft, User, Calendar, Target, Save } from 'lucide-react';
+import { ArrowLeft, User, Calendar, Target, Save, Bell, CreditCard, Gem, Check, ChevronRight, Download, Trash2, Shield } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { ResetProgressModal } from '@/components/ResetProgressModal';
 import { useAgeGroup, updateAgeGroupFromProfile } from '@/contexts/AgeGroupContext';
 import { AgeGroupSelector } from '@/components/AgeGroupSelector';
+import { useAccessibility } from '@/contexts/AccessibilityContext';
 
 type AgeGroup = 'year 2-3' | 'year 4-5' | '11+';
 
@@ -27,6 +30,7 @@ interface Profile {
 const Profile = () => {
   const { user, signOut } = useAuth();
   const { selectedAgeGroup } = useAgeGroup();
+  const { settings: accessibilitySettings, updateSetting: updateAccessibilitySetting } = useAccessibility();
   const navigate = useNavigate();
   const { toast } = useToast();
   
@@ -42,6 +46,37 @@ const Profile = () => {
     age_group: 'year 4-5',
     target_exam_date: ''
   });
+
+  // Learning and subscription settings
+  const [learningSettings, setLearningSettings] = useState({
+    difficultyLevel: 'adaptive',
+    practiceGoal: 20,
+    showHints: true,
+    audioFeedback: false,
+    practiceReminders: true,
+    achievementAlerts: true,
+    weeklyReports: false,
+    emailUpdates: true,
+    reminderTime: '16:00'
+  });
+
+  const [privacySettings, setPrivacySettings] = useState({
+    shareProgress: 'parents',
+    allowChallenges: true
+  });
+
+  const subscription = {
+    plan: 'Premium',
+    price: '£9.99/month',
+    nextBilling: '2024-02-15',
+    features: [
+      'Unlimited practice questions',
+      'Detailed progress analytics',
+      'Video tutorials',
+      'Parent dashboard',
+      'Priority support'
+    ]
+  };
 
   useEffect(() => {
     if (user) {
@@ -296,6 +331,314 @@ const Profile = () => {
                   </p>
                 </div>
                 <ResetProgressModal onResetComplete={loadProfile} />
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Learning Preferences */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center space-x-2">
+                <Target className="h-5 w-5" />
+                <span>Learning Preferences</span>
+              </CardTitle>
+              <CardDescription>
+                Customize your learning experience and practice settings
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label>Difficulty Level</Label>
+                  <Select value={learningSettings.difficultyLevel} onValueChange={(value) => setLearningSettings(prev => ({ ...prev, difficultyLevel: value }))}>
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="beginner">Beginner</SelectItem>
+                      <SelectItem value="intermediate">Intermediate</SelectItem>
+                      <SelectItem value="advanced">Advanced</SelectItem>
+                      <SelectItem value="adaptive">Adaptive (Recommended)</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                <div className="space-y-2">
+                  <Label>Daily Practice Goal</Label>
+                  <Select value={learningSettings.practiceGoal.toString()} onValueChange={(value) => setLearningSettings(prev => ({ ...prev, practiceGoal: parseInt(value) }))}>
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="10">10 questions</SelectItem>
+                      <SelectItem value="20">20 questions</SelectItem>
+                      <SelectItem value="30">30 questions</SelectItem>
+                      <SelectItem value="50">50 questions</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+
+              <div className="space-y-4">
+                <div className="flex items-center justify-between">
+                  <div className="space-y-0.5">
+                    <Label>Show Hints</Label>
+                    <p className="text-sm text-muted-foreground">Get helpful hints when you're stuck</p>
+                  </div>
+                  <Switch
+                    checked={learningSettings.showHints}
+                    onCheckedChange={(checked) => setLearningSettings(prev => ({ ...prev, showHints: checked }))}
+                  />
+                </div>
+
+                <div className="flex items-center justify-between">
+                  <div className="space-y-0.5">
+                    <Label>Audio Feedback</Label>
+                    <p className="text-sm text-muted-foreground">Play sounds for correct/incorrect answers</p>
+                  </div>
+                  <Switch
+                    checked={learningSettings.audioFeedback}
+                    onCheckedChange={(checked) => setLearningSettings(prev => ({ ...prev, audioFeedback: checked }))}
+                  />
+                </div>
+              </div>
+
+              <Separator />
+
+              <div className="space-y-4">
+                <h4 className="font-medium text-foreground">Accessibility</h4>
+                
+                <div className="space-y-2">
+                  <Label>Font Size</Label>
+                  <Select 
+                    value={accessibilitySettings.fontSize} 
+                    onValueChange={(value: any) => updateAccessibilitySetting('fontSize', value)}
+                  >
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="small">Small</SelectItem>
+                      <SelectItem value="medium">Medium</SelectItem>
+                      <SelectItem value="large">Large</SelectItem>
+                      <SelectItem value="extra-large">Extra Large</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                <div className="flex items-center justify-between">
+                  <div className="space-y-0.5">
+                    <Label>Dyslexia-Friendly Font</Label>
+                    <p className="text-sm text-muted-foreground">Use OpenDyslexic font for better readability</p>
+                  </div>
+                  <Switch
+                    checked={accessibilitySettings.dyslexiaFont}
+                    onCheckedChange={(checked) => updateAccessibilitySetting('dyslexiaFont', checked)}
+                  />
+                </div>
+
+                <div className="flex items-center justify-between">
+                  <div className="space-y-0.5">
+                    <Label>High Contrast Mode</Label>
+                    <p className="text-sm text-muted-foreground">Increase contrast for better visibility</p>
+                  </div>
+                  <Switch
+                    checked={accessibilitySettings.highContrast}
+                    onCheckedChange={(checked) => updateAccessibilitySetting('highContrast', checked)}
+                  />
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Notifications */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center space-x-2">
+                <Bell className="h-5 w-5" />
+                <span>Notification Preferences</span>
+              </CardTitle>
+              <CardDescription>
+                Manage how and when you receive notifications
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="flex items-center justify-between">
+                <div className="space-y-0.5">
+                  <Label>Practice Reminders</Label>
+                  <p className="text-sm text-muted-foreground">Get notified when it's time to practice</p>
+                </div>
+                <Switch
+                  checked={learningSettings.practiceReminders}
+                  onCheckedChange={(checked) => setLearningSettings(prev => ({ ...prev, practiceReminders: checked }))}
+                />
+              </div>
+
+              <div className="flex items-center justify-between">
+                <div className="space-y-0.5">
+                  <Label>Achievement Alerts</Label>
+                  <p className="text-sm text-muted-foreground">Celebrate when you unlock achievements</p>
+                </div>
+                <Switch
+                  checked={learningSettings.achievementAlerts}
+                  onCheckedChange={(checked) => setLearningSettings(prev => ({ ...prev, achievementAlerts: checked }))}
+                />
+              </div>
+
+              <div className="flex items-center justify-between">
+                <div className="space-y-0.5">
+                  <Label>Weekly Reports</Label>
+                  <p className="text-sm text-muted-foreground">Summary of your weekly progress</p>
+                </div>
+                <Switch
+                  checked={learningSettings.weeklyReports}
+                  onCheckedChange={(checked) => setLearningSettings(prev => ({ ...prev, weeklyReports: checked }))}
+                />
+              </div>
+
+              <div className="flex items-center justify-between">
+                <div className="space-y-0.5">
+                  <Label>Email Updates</Label>
+                  <p className="text-sm text-muted-foreground">Important updates via email</p>
+                </div>
+                <Switch
+                  checked={learningSettings.emailUpdates}
+                  onCheckedChange={(checked) => setLearningSettings(prev => ({ ...prev, emailUpdates: checked }))}
+                />
+              </div>
+
+              {learningSettings.practiceReminders && (
+                <>
+                  <Separator />
+                  <div className="space-y-4">
+                    <h4 className="font-medium text-foreground">Reminder Schedule</h4>
+                    
+                    <div className="space-y-2">
+                      <Label>Reminder Time</Label>
+                      <Input
+                        type="time"
+                        value={learningSettings.reminderTime}
+                        onChange={(e) => setLearningSettings(prev => ({ ...prev, reminderTime: e.target.value }))}
+                      />
+                    </div>
+                  </div>
+                </>
+              )}
+            </CardContent>
+          </Card>
+
+          {/* Subscription */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center space-x-2">
+                <CreditCard className="h-5 w-5" />
+                <span>Subscription & Billing</span>
+              </CardTitle>
+              <CardDescription>
+                Manage your subscription plan and billing preferences
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-6">
+              <div className="bg-gradient-to-r from-primary/10 to-primary-glow/10 rounded-lg p-6 border border-primary/20">
+                <div className="flex items-center justify-between mb-4">
+                  <div>
+                    <h4 className="text-lg font-semibold text-foreground">{subscription.plan} Plan</h4>
+                    <p className="text-primary">{subscription.price}</p>
+                  </div>
+                  <div className="flex items-center space-x-2 text-green-600">
+                    <Check className="h-4 w-4" />
+                    <span className="text-sm font-medium">Active</span>
+                  </div>
+                </div>
+                
+                <div className="space-y-3">
+                  <p className="text-sm text-muted-foreground">Next billing: {subscription.nextBilling}</p>
+                  
+                  <div className="space-y-2">
+                    <h5 className="font-medium text-foreground">Plan Features:</h5>
+                    <ul className="space-y-1">
+                      {subscription.features.map((feature, index) => (
+                        <li key={index} className="flex items-center space-x-2 text-sm">
+                          <Check className="h-3 w-3 text-green-600" />
+                          <span>{feature}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                </div>
+              </div>
+
+              <div className="flex flex-wrap gap-3">
+                <Button variant="outline" className="flex items-center space-x-2">
+                  <span>Manage Subscription</span>
+                  <ChevronRight className="h-4 w-4" />
+                </Button>
+                <Button variant="outline" className="flex items-center space-x-2">
+                  <span>Billing History</span>
+                  <ChevronRight className="h-4 w-4" />
+                </Button>
+                <Button variant="outline" className="flex items-center space-x-2">
+                  <Gem className="h-4 w-4" />
+                  <span>Upgrade Plan</span>
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Privacy Settings */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center space-x-2">
+                <Shield className="h-5 w-5" />
+                <span>Privacy Settings</span>
+              </CardTitle>
+              <CardDescription>
+                Control your privacy and data sharing preferences
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-6">
+              <div className="space-y-2">
+                <Label>Share Progress With</Label>
+                <Select value={privacySettings.shareProgress} onValueChange={(value) => setPrivacySettings(prev => ({ ...prev, shareProgress: value }))}>
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="none">No One</SelectItem>
+                    <SelectItem value="parents">Parents Only</SelectItem>
+                    <SelectItem value="friends">Friends</SelectItem>
+                    <SelectItem value="everyone">Everyone</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <div className="space-y-4">
+                <div className="flex items-center justify-between">
+                  <div className="space-y-0.5">
+                    <Label>Allow Challenges</Label>
+                    <p className="text-sm text-muted-foreground">Let friends challenge you to practice battles</p>
+                  </div>
+                  <Switch
+                    checked={privacySettings.allowChallenges}
+                    onCheckedChange={(checked) => setPrivacySettings(prev => ({ ...prev, allowChallenges: checked }))}
+                  />
+                </div>
+              </div>
+
+              <Separator />
+
+              <div className="space-y-4">
+                <h4 className="font-medium text-foreground">Data & Account</h4>
+                <div className="space-y-3">
+                  <Button variant="outline" className="flex items-center space-x-2">
+                    <Download className="h-4 w-4" />
+                    <span>Download My Data</span>
+                  </Button>
+                  <Button variant="destructive" className="flex items-center space-x-2">
+                    <Trash2 className="h-4 w-4" />
+                    <span>Delete Account</span>
+                  </Button>
+                </div>
               </div>
             </CardContent>
           </Card>

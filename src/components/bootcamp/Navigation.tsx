@@ -70,12 +70,6 @@ export const Navigation: React.FC<NavigationProps> = ({
       icon: Plus
     },
     {
-      id: 'settings',
-      label: 'Settings',
-      icon: Settings,
-      href: '/settings'
-    },
-    {
       id: 'help',
       label: 'Help',
       icon: HelpCircle
