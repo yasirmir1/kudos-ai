@@ -168,10 +168,10 @@ const Pricing = () => {
         {/* Billing Toggle */}
         <div className="flex flex-col items-center justify-center mb-12 space-y-6">
           <div className="bg-muted/80 rounded-xl p-1.5 flex items-center border border-border/50 shadow-sm">
-            <button className={`px-6 py-3 rounded-lg text-sm font-semibold transition-all duration-200 ${!isAnnual ? 'bg-background text-foreground shadow-md border border-border/50' : 'text-muted-foreground hover:text-foreground'}`} onClick={() => setIsAnnual(false)}>
+            <button className={`px-6 py-2 rounded-lg text-sm font-semibold transition-all duration-200 ${!isAnnual ? 'bg-background text-foreground shadow-md border border-border/50' : 'text-muted-foreground hover:text-foreground'}`} onClick={() => setIsAnnual(false)}>
               Monthly
             </button>
-            <button className={`px-6 py-3 rounded-lg text-sm font-semibold transition-all duration-200 ${isAnnual ? 'bg-background text-foreground shadow-md border border-border/50' : 'text-muted-foreground hover:text-foreground'}`} onClick={() => setIsAnnual(true)}>
+            <button className={`px-6 py-2 rounded-lg text-sm font-semibold transition-all duration-200 ${isAnnual ? 'bg-background text-foreground shadow-md border border-border/50' : 'text-muted-foreground hover:text-foreground'}`} onClick={() => setIsAnnual(true)}>
               Annual
             </button>
           </div>
