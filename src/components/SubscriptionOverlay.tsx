@@ -120,70 +120,78 @@ export const SubscriptionOverlay: React.FC<SubscriptionOverlayProps> = ({
           
           {/* Center upgrade button */}
           <div className="absolute top-[130px] left-1/2 transform -translate-x-1/2">
-            <div className="bg-card border-2 border-border/50 hover:border-primary/50 rounded-lg p-8 shadow-xl max-w-lg transition-all duration-300">
+            <div className="bg-card border-2 border-border/50 hover:border-primary/50 rounded-xl p-10 shadow-2xl max-w-lg transition-all duration-300">
               {/* Title */}
-              <h3 className="text-4xl font-bold text-foreground mb-4 text-center">
-                {userState === 'expired' 
-                  ? 'Pass Plus' 
-                  : userState === 'pass' && requiredFeature === 'bootcamp'
-                    ? 'Pass Plus'
-                    : requiredFeature === 'bootcamp' ? 'Pass Plus' : 'Pass'
-                }
-              </h3>
-              
-              {/* Pricing */}
-              <div className="text-center mb-6">
-                <div className="text-3xl font-bold text-foreground">
-                  {requiredFeature === 'bootcamp' ? '£15/month' : '£8/month'}
-                </div>
-                <div className="text-sm text-muted-foreground">
-                  {requiredFeature === 'bootcamp' 
-                    ? 'Or £99/year (save £81)' 
-                    : 'Or £59/year (save £37)'
+              <div className="text-center mb-8">
+                <h3 className="text-5xl font-bold text-foreground mb-3">
+                  {userState === 'expired' 
+                    ? 'Pass Plus' 
+                    : userState === 'pass' && requiredFeature === 'bootcamp'
+                      ? 'Pass Plus'
+                      : requiredFeature === 'bootcamp' ? 'Pass Plus' : 'Pass'
                   }
+                </h3>
+                
+                {/* Pricing */}
+                <div className="space-y-2">
+                  <div className="text-4xl font-bold text-primary">
+                    £{requiredFeature === 'bootcamp' ? '15' : '8'}<span className="text-xl text-muted-foreground font-normal">/month</span>
+                  </div>
+                  <div className="text-sm text-muted-foreground font-medium">
+                    Or £{requiredFeature === 'bootcamp' ? '99' : '59'}/year 
+                    <span className="text-green-600 font-semibold ml-1">
+                      (save £{requiredFeature === 'bootcamp' ? '81' : '37'})
+                    </span>
+                  </div>
                 </div>
               </div>
 
               {/* Key Features */}
-              <div className="space-y-3 mb-8">
+              <div className="space-y-4 mb-10">
                 {requiredFeature === 'bootcamp' ? (
                   <>
-                    <div className="flex items-start">
-                      <div className="w-2 h-2 rounded-full bg-primary mt-2 mr-3 flex-shrink-0" />
-                      <div className="text-sm text-foreground font-medium">
+                    <div className="flex items-center">
+                      <div className="w-2 h-2 rounded-full bg-primary mr-4 flex-shrink-0" />
+                      <div className="text-sm text-foreground font-semibold">
                         The 52-Week Bootcamp
                       </div>
                     </div>
-                    <div className="flex items-start">
-                      <div className="w-2 h-2 rounded-full bg-primary mt-2 mr-3 flex-shrink-0" />
-                      <div className="text-sm text-foreground font-medium">
+                    <div className="flex items-center">
+                      <div className="w-2 h-2 rounded-full bg-primary mr-4 flex-shrink-0" />
+                      <div className="text-sm text-foreground font-semibold">
                         Realistic Mock Exams
                       </div>
                     </div>
-                    <div className="flex items-start">
-                      <div className="w-2 h-2 rounded-full bg-primary mt-2 mr-3 flex-shrink-0" />
-                      <div className="text-sm text-foreground font-medium">
+                    <div className="flex items-center">
+                      <div className="w-2 h-2 rounded-full bg-primary mr-4 flex-shrink-0" />
+                      <div className="text-sm text-foreground font-semibold">
                         Weekly Performance Monitoring
+                      </div>
+                    </div>
+                    <div className="flex items-center">
+                      <div className="w-2 h-2 rounded-full bg-primary mr-4 flex-shrink-0" />
+                      <div className="text-sm text-foreground font-semibold">
+                        All Pass features included
                       </div>
                     </div>
                   </>
                 ) : (
                   <>
-                    <div className="flex items-start">
-                      <div className="w-2 h-2 rounded-full bg-primary mt-2 mr-3 flex-shrink-0" />
-                      <div className="text-sm text-foreground font-medium">
+                    <div className="flex items-center">
+                      <div className="w-2 h-2 rounded-full bg-primary mr-4 flex-shrink-0" />
+                      <div className="text-sm text-foreground font-semibold">
                         Daily Performance Snapshots
                       </div>
                     </div>
-                    <div className="flex items-start">
-                      <div className="w-2 h-2 rounded-full bg-primary mt-2 mr-3 flex-shrink-0" />
-                      <div className="text-sm text-foreground font-medium">
+                    <div className="flex items-center">
+                      <div className="w-2 h-2 rounded-full bg-primary mr-4 flex-shrink-0" />
+                      <div className="text-sm text-foreground font-semibold">
                         Personalized Progress Analytics
                       </div>
                     </div>
-                    <div className="flex items-start">
-                      <div className="w-2 h-2 rounded-full bg-primary mt-2 mr-3 flex-shrink-0" />
-                      <div className="text-sm text-foreground font-medium">
+                    <div className="flex items-center">
+                      <div className="w-2 h-2 rounded-full bg-primary mr-4 flex-shrink-0" />
+                      <div className="text-sm text-foreground font-semibold">
                         Customized Worksheets
                       </div>
                     </div>
