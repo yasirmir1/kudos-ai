@@ -120,17 +120,20 @@ export const useBootcampData = () => {
       console.log('Using student_id for data queries:', studentId);
 
       if (studentId) {
+        console.log('📊 Starting data fetch for student_id:', studentId);
+        
         // Fetch actual progress data from bootcamp_student_progress
+        console.log('🔍 Fetching bootcamp_student_progress...');
         const { data: progressData, error: progressError } = await supabase
           .from('bootcamp_student_progress')
           .select('*')
           .eq('student_id', studentId);
 
         if (progressError) {
-          console.error('Error fetching progress:', progressError);
+          console.error('❌ Error fetching progress:', progressError);
           setProgress([]);
         } else {
-          console.log('Fetched progress data:', progressData);
+          console.log('✅ Fetched progress data:', progressData);
           setProgress(progressData || []);
         }
 
