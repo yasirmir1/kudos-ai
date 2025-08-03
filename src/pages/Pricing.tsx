@@ -134,7 +134,7 @@ export default function Pricing() {
             Start your free trial now, <span className="text-primary font-semibold">no credit card needed</span>
           </p>
           <p className="text-muted-foreground text-lg mt-2">
-            <span className="text-primary font-semibold">No credit card needed, No hidden fees.</span> hidden fees. Cancel anytime.
+            <span className="text-primary font-semibold">No hidden fees, cancel anytime.</span>
           </p>
         </div>
 
