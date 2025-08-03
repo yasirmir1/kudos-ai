@@ -147,7 +147,6 @@ export default function Pricing() {
           const isPlusPlan = plan.id === 'pass_plus';
           const planDisplayName = plan.id === 'pass' ? 'Pass' : 'Pass Plus';
           const monthlyPrice = plan.id === 'pass' ? '7.99' : '14.99';
-          
           return <Card key={plan.id} className="relative bg-card border-2 transition-all duration-300 hover:shadow-xl hover:-translate-y-1 border-border/50 hover:border-primary/50 overflow-hidden">
                 {/* Premium Badge */}
                 <div className="absolute top-4 left-4">
@@ -164,7 +163,7 @@ export default function Pricing() {
                 </div>
                 
                 <CardHeader className="pt-16 pb-8 px-8">
-                  <CardTitle className="text-4xl font-bold text-foreground mb-4">
+                  <CardTitle className="text-4xl font-bold text-foreground mb-4 my-[10px]">
                     {planDisplayName}
                   </CardTitle>
                   
@@ -180,68 +179,39 @@ export default function Pricing() {
 
                 <CardContent className="px-8 pb-8">
                   <div className="space-y-4 mb-8">
-                    {plan.features.map((feature, index) => (
-                      <div key={index} className="flex items-start">
+                    {plan.features.map((feature, index) => <div key={index} className="flex items-start">
                         <div className="w-2 h-2 rounded-full bg-primary mt-2 mr-3 flex-shrink-0" />
                         <span className="text-sm text-foreground leading-relaxed">{feature}</span>
-                      </div>
-                    ))}
+                      </div>)}
                   </div>
 
                   <div className="space-y-4">
-                    {isCurrentPlan ? (
-                      <div className="space-y-3">
+                    {isCurrentPlan ? <div className="space-y-3">
                         <Badge variant="secondary" className="w-full justify-center py-3 text-sm font-medium bg-primary/10 text-primary border-primary/20">
                           {isTrialActivePlan ? 'Trial Active' : 'Current Plan'}
                         </Badge>
-                        {isTrialActivePlan && userSub?.trial_end_date && (
-                          <p className="text-xs text-center text-muted-foreground">
+                        {isTrialActivePlan && userSub?.trial_end_date && <p className="text-xs text-center text-muted-foreground">
                             Trial ends {formatDate(userSub.trial_end_date)}
-                          </p>
-                        )}
-                        {!isTrialActivePlan && userSub?.subscription_end_date && (
-                          <p className="text-xs text-center text-muted-foreground">
+                          </p>}
+                        {!isTrialActivePlan && userSub?.subscription_end_date && <p className="text-xs text-center text-muted-foreground">
                             Renews {formatDate(userSub.subscription_end_date)}
-                          </p>
-                        )}
-                      </div>
-                    ) : (
-                      <div className="space-y-4">
-                        {plan.trial_days > 0 && !hasUsedTrialForPlan && (
-                          <Button 
-                            className="w-full py-4 font-semibold text-lg rounded-full transition-all duration-200 hover:scale-[1.02]" 
-                            variant="default"
-                            onClick={() => startTrial(plan.id)} 
-                            disabled={startingTrial === plan.id}
-                          >
-                            {startingTrial === plan.id ? (
-                              <div className="flex items-center">
+                          </p>}
+                      </div> : <div className="space-y-4">
+                        {plan.trial_days > 0 && !hasUsedTrialForPlan && <Button className="w-full py-4 font-semibold text-lg rounded-full transition-all duration-200 hover:scale-[1.02]" variant="default" onClick={() => startTrial(plan.id)} disabled={startingTrial === plan.id}>
+                            {startingTrial === plan.id ? <div className="flex items-center">
                                 <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-current mr-2"></div>
                                 Starting Trial...
-                              </div>
-                            ) : (
-                              `Try 1 month for £0`
-                            )}
-                          </Button>
-                        )}
+                              </div> : `Try 1 month for £0`}
+                          </Button>}
                         
-                        {(!plan.trial_days || hasUsedTrialForPlan) && (
-                          <Button 
-                            className="w-full py-4 font-semibold text-lg rounded-full transition-all duration-200 hover:scale-[1.02]" 
-                            variant="outline"
-                            onClick={() => toast.info('Subscription flow coming soon!')}
-                          >
+                        {(!plan.trial_days || hasUsedTrialForPlan) && <Button className="w-full py-4 font-semibold text-lg rounded-full transition-all duration-200 hover:scale-[1.02]" variant="outline" onClick={() => toast.info('Subscription flow coming soon!')}>
                             Get Started
-                          </Button>
-                        )}
+                          </Button>}
                         
-                        {hasUsedTrialForPlan && (
-                          <p className="text-xs text-center text-muted-foreground bg-muted/50 rounded-md py-2 px-3">
+                        {hasUsedTrialForPlan && <p className="text-xs text-center text-muted-foreground bg-muted/50 rounded-md py-2 px-3">
                             Trial already used for this plan
-                          </p>
-                        )}
-                      </div>
-                    )}
+                          </p>}
+                      </div>}
                     
                     {/* Small print */}
                     <p className="text-xs text-muted-foreground text-center leading-relaxed pt-4">
