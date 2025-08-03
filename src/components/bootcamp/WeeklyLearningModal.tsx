@@ -9,7 +9,9 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { supabase } from '@/integrations/supabase/client';
+import { LearningJourney } from './LearningJourney';
 import { 
   BookOpen, 
   Target, 
@@ -19,7 +21,11 @@ import {
   Play,
   Calendar,
   Users,
-  Clock
+  Clock,
+  Lightbulb,
+  GraduationCap,
+  ListChecks,
+  Eye
 } from 'lucide-react';
 import { useBootcampData } from '@/hooks/useBootcampData';
 import { toast } from 'sonner';
@@ -55,6 +61,24 @@ interface Question {
   explanation?: string;
 }
 
+interface CurriculumContent {
+  id: string;
+  topic_id: string;
+  stage_type: string;
+  title: string;
+  description: string;
+  content: any;
+  stage_order: number;
+  estimated_time_minutes: number;
+}
+
+interface Subtopic {
+  id: number;
+  name: string;
+  topic_id: string;
+  subtopic_order: number;
+}
+
 interface WeeklyLearningModalProps {
   weekPlan: WeeklyPlan | null;
   isOpen: boolean;
@@ -64,6 +88,7 @@ interface WeeklyLearningModalProps {
 export function WeeklyLearningModal({ weekPlan, isOpen, onClose }: WeeklyLearningModalProps) {
   const { student, fetchBootcampData } = useBootcampData();
   const [topics, setTopics] = useState<Topic[]>([]);
+  const [topicDetails, setTopicDetails] = useState<{[key: string]: {subtopics: Subtopic[], curriculumContent: CurriculumContent[]}}>({});
   const [questions, setQuestions] = useState<Question[]>([]);
   const [loading, setLoading] = useState(false);
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
@@ -71,6 +96,9 @@ export function WeeklyLearningModal({ weekPlan, isOpen, onClose }: WeeklyLearnin
   const [sessionCompleted, setSessionCompleted] = useState(false);
   const [selectedAnswer, setSelectedAnswer] = useState<string>('');
   const [showExplanation, setShowExplanation] = useState(false);
+  const [currentView, setCurrentView] = useState<'overview' | 'practice' | 'journey'>('overview');
+  const [selectedTopic, setSelectedTopic] = useState<Topic | null>(null);
+  const [showLearningJourney, setShowLearningJourney] = useState(false);
   const [sessionStats, setSessionStats] = useState({
     questionsAnswered: 0,
     questionsCorrect: 0,
@@ -91,6 +119,9 @@ export function WeeklyLearningModal({ weekPlan, isOpen, onClose }: WeeklyLearnin
     setSessionCompleted(false);
     setSelectedAnswer('');
     setShowExplanation(false);
+    setCurrentView('overview');
+    setSelectedTopic(null);
+    setShowLearningJourney(false);
     setSessionStats({
       questionsAnswered: 0,
       questionsCorrect: 0,
@@ -114,8 +145,42 @@ export function WeeklyLearningModal({ weekPlan, isOpen, onClose }: WeeklyLearnin
       if (topicsError) throw topicsError;
       setTopics(topicsData || []);
 
-      // Fetch questions for these topics (mix of difficulties)
+      // Fetch detailed content for each topic
       if (topicsData && topicsData.length > 0) {
+        const detailsPromises = topicsData.map(async (topic) => {
+          // Fetch subtopics
+          const { data: subtopics } = await supabase
+            .from('bootcamp_subtopics')
+            .select('*')
+            .eq('topic_id', topic.id)
+            .order('subtopic_order');
+
+          // Fetch curriculum content
+          const { data: curriculumContent } = await supabase
+            .from('bootcamp_curriculum_content')
+            .select('*')
+            .eq('topic_id', topic.id)
+            .order('stage_order');
+
+          return {
+            topicId: topic.id,
+            subtopics: subtopics || [],
+            curriculumContent: curriculumContent || []
+          };
+        });
+
+        const detailsResults = await Promise.all(detailsPromises);
+        const detailsMap = detailsResults.reduce((acc, result) => {
+          acc[result.topicId] = {
+            subtopics: result.subtopics,
+            curriculumContent: result.curriculumContent
+          };
+          return acc;
+        }, {} as {[key: string]: {subtopics: Subtopic[], curriculumContent: CurriculumContent[]}});
+        
+        setTopicDetails(detailsMap);
+        
+        // Fetch questions for these topics (mix of difficulties)
         const topicIds = topicsData.map(t => t.id);
         const { data: questionsData, error: questionsError } = await supabase
           .from('bootcamp_questions')
@@ -164,6 +229,29 @@ export function WeeklyLearningModal({ weekPlan, isOpen, onClose }: WeeklyLearnin
     } catch (error) {
       console.error('Error starting session:', error);
       toast.error('Failed to start learning session');
+    }
+  };
+
+  const startQuickPractice = () => {
+    setCurrentView('practice');
+    startSession();
+  };
+
+  const startTopicJourney = (topic: Topic) => {
+    setSelectedTopic(topic);
+    setShowLearningJourney(true);
+  };
+
+  const getDifficultyColor = (difficulty: string) => {
+    switch (difficulty?.toLowerCase()) {
+      case 'foundation':
+        return 'bg-green-100 text-green-800 border-green-200';
+      case 'intermediate':
+        return 'bg-yellow-100 text-yellow-800 border-yellow-200';
+      case 'advanced':
+        return 'bg-red-100 text-red-800 border-red-200';
+      default:
+        return 'bg-gray-100 text-gray-800 border-gray-200';
     }
   };
 
@@ -272,8 +360,8 @@ export function WeeklyLearningModal({ weekPlan, isOpen, onClose }: WeeklyLearnin
           </DialogTitle>
         </DialogHeader>
 
-        {!sessionStarted ? (
-          // Session Overview
+        {!sessionStarted && currentView === 'overview' ? (
+          // Weekly Overview with Topic Details
           <div className="space-y-6">
             <div className="bg-gradient-to-r from-primary/10 to-secondary/10 rounded-xl p-6">
               <h3 className="text-xl font-semibold mb-2">{weekPlan?.title}</h3>
@@ -296,44 +384,159 @@ export function WeeklyLearningModal({ weekPlan, isOpen, onClose }: WeeklyLearnin
               </div>
             </div>
 
-            {/* Topics Coverage */}
-            <div className="space-y-4">
-              <h4 className="font-semibold text-lg">Topics Covered This Week</h4>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {topics.map((topic, index) => (
-                  <Card key={topic.id} className="border-l-4 border-l-primary">
-                    <CardContent className="p-4">
-                      <div className="flex items-start justify-between">
-                        <div>
-                          <h5 className="font-medium">{topic.name}</h5>
-                          <div className="flex items-center gap-2 mt-2">
-                            <Badge variant="outline" className="text-xs">
+            {/* Topic Deep Dive */}
+            <Tabs defaultValue="topics" className="w-full">
+              <TabsList className="grid w-full grid-cols-2">
+                <TabsTrigger value="topics">Topic Overview</TabsTrigger>
+                <TabsTrigger value="journey">Learning Journey</TabsTrigger>
+              </TabsList>
+
+              <TabsContent value="topics" className="space-y-6">
+                {topics.map((topic, index) => {
+                  const details = topicDetails[topic.id];
+                  return (
+                    <Card key={topic.id} className="border-l-4 border-l-primary">
+                      <CardHeader>
+                        <div className="flex items-start justify-between">
+                          <div className="space-y-2">
+                            <CardTitle className="flex items-center gap-3">
+                              <span className="text-lg font-bold text-primary bg-primary/10 rounded-full w-8 h-8 flex items-center justify-center">
+                                {index + 1}
+                              </span>
+                              {topic.name}
+                            </CardTitle>
+                            <Badge variant="outline" className={getDifficultyColor(topic.difficulty)}>
                               {topic.difficulty}
                             </Badge>
-                            <span className="text-xs text-muted-foreground">
-                              {topic.skills?.length || 0} skills
-                            </span>
                           </div>
                         </div>
-                        <span className="text-sm font-medium text-primary">
-                          Topic {index + 1}
-                        </span>
-                      </div>
-                    </CardContent>
-                  </Card>
-                ))}
-              </div>
-            </div>
+                      </CardHeader>
+                      <CardContent className="space-y-4">
+                        {/* Topic Description */}
+                        <div className="bg-muted/30 rounded-lg p-4">
+                          <p className="text-sm text-muted-foreground leading-relaxed">
+                            {topic.difficulty === 'foundation' 
+                              ? `Master the fundamentals of ${topic.name.toLowerCase()}. These essential concepts form the building blocks for more advanced mathematical understanding.`
+                              : topic.difficulty === 'intermediate'
+                              ? `Build upon your foundation with intermediate ${topic.name.toLowerCase()} concepts. Develop deeper understanding and problem-solving skills.`
+                              : `Challenge yourself with advanced ${topic.name.toLowerCase()} problems. Apply your knowledge to complex, real-world scenarios.`
+                            }
+                          </p>
+                        </div>
+
+                        {/* Structured Learning Journey Available */}
+                        {details?.curriculumContent && details.curriculumContent.length > 0 && (
+                          <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                            <div className="flex items-center gap-2 mb-2">
+                              <GraduationCap className="h-5 w-5 text-blue-600" />
+                              <h4 className="font-medium text-blue-900">Structured Learning Journey Available</h4>
+                            </div>
+                            <p className="text-blue-800 text-sm mb-3">
+                              This topic includes {details.curriculumContent.length} guided learning stages: concept introduction, guided practice, independent practice, and assessment.
+                            </p>
+                            <Button 
+                              variant="outline" 
+                              size="sm" 
+                              onClick={() => startTopicJourney(topic)}
+                              className="border-blue-300 text-blue-700 hover:bg-blue-100"
+                            >
+                              <Play className="h-4 w-4 mr-2" />
+                              Start Learning Journey
+                            </Button>
+                          </div>
+                        )}
+
+                        {/* Key Skills */}
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                          <div>
+                            <div className="flex items-center gap-2 mb-3">
+                              <Target className="h-4 w-4 text-primary" />
+                              <h4 className="font-medium">Essential Skills You'll Master</h4>
+                            </div>
+                            <div className="space-y-2">
+                              {topic.skills?.slice(0, 4).map((skill, idx) => (
+                                <div key={idx} className="flex items-start gap-2 text-sm">
+                                  <CheckCircle className="h-4 w-4 text-green-600 mt-0.5 flex-shrink-0" />
+                                  <span>{skill}</span>
+                                </div>
+                              )) || (
+                                <div className="space-y-2">
+                                  <div className="flex items-start gap-2 text-sm">
+                                    <CheckCircle className="h-4 w-4 text-green-600 mt-0.5 flex-shrink-0" />
+                                    <span>Understand core concepts and principles</span>
+                                  </div>
+                                  <div className="flex items-start gap-2 text-sm">
+                                    <CheckCircle className="h-4 w-4 text-green-600 mt-0.5 flex-shrink-0" />
+                                    <span>Apply knowledge to solve problems</span>
+                                  </div>
+                                  <div className="flex items-start gap-2 text-sm">
+                                    <CheckCircle className="h-4 w-4 text-green-600 mt-0.5 flex-shrink-0" />
+                                    <span>Build confidence through practice</span>
+                                  </div>
+                                </div>
+                              )}
+                            </div>
+                          </div>
+
+                          {/* Subtopics */}
+                          {details?.subtopics && details.subtopics.length > 0 && (
+                            <div>
+                              <div className="flex items-center gap-2 mb-3">
+                                <ListChecks className="h-4 w-4 text-primary" />
+                                <h4 className="font-medium">Learning Breakdown</h4>
+                              </div>
+                              <div className="space-y-2">
+                                {details.subtopics.slice(0, 4).map((subtopic, idx) => (
+                                  <div key={subtopic.id} className="flex items-start gap-2 text-sm">
+                                    <span className="text-primary font-medium min-w-[1.5rem]">{idx + 1}.</span>
+                                    <span>{subtopic.name}</span>
+                                  </div>
+                                ))}
+                                {details.subtopics.length > 4 && (
+                                  <div className="text-xs text-muted-foreground ml-6">
+                                    +{details.subtopics.length - 4} more topics
+                                  </div>
+                                )}
+                              </div>
+                            </div>
+                          )}
+                        </div>
+                      </CardContent>
+                    </Card>
+                  );
+                })}
+              </TabsContent>
+
+              <TabsContent value="journey" className="space-y-4">
+                <div className="bg-card rounded-lg p-6 text-center">
+                  <GraduationCap className="h-12 w-12 text-primary mx-auto mb-4" />
+                  <h3 className="text-lg font-semibold mb-2">Choose Your Learning Path</h3>
+                  <p className="text-muted-foreground mb-6">
+                    You can either practice all topics together or dive deep into individual topic journeys.
+                  </p>
+                  <div className="flex flex-col sm:flex-row gap-4 justify-center">
+                    <Button onClick={startQuickPractice} size="lg" className="px-8">
+                      <Brain className="h-5 w-5 mr-2" />
+                      Practice All Topics
+                    </Button>
+                    <Button variant="outline" size="lg" className="px-8" onClick={() => setCurrentView('overview')}>
+                      <Eye className="h-5 w-5 mr-2" />
+                      Explore Individual Topics
+                    </Button>
+                  </div>
+                </div>
+              </TabsContent>
+            </Tabs>
 
             <div className="flex justify-center pt-4">
               <Button 
-                onClick={startSession} 
+                onClick={startQuickPractice} 
                 size="lg" 
                 disabled={questions.length === 0}
                 className="px-8"
               >
                 <Play className="h-5 w-5 mr-2" />
-                Start Weekly Session
+                Start Weekly Practice Session
               </Button>
             </div>
           </div>
@@ -492,6 +695,17 @@ export function WeeklyLearningModal({ weekPlan, isOpen, onClose }: WeeklyLearnin
             )}
           </div>
         )}
+
+        {/* Learning Journey Modal */}
+        <LearningJourney 
+          topic={selectedTopic} 
+          isOpen={showLearningJourney} 
+          onClose={() => setShowLearningJourney(false)} 
+          onComplete={() => {
+            setShowLearningJourney(false);
+            setSelectedTopic(null);
+          }} 
+        />
       </DialogContent>
     </Dialog>
   );
