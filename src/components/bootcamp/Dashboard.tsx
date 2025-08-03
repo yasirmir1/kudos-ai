@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { Brain, Target, Shield, Award, Play, RefreshCw, ChevronRight, TrendingUp, AlertCircle, Loader2, Clock } from 'lucide-react';
 import { WeeklyProgressChart } from './WeeklyProgressChart';
 import { SkillDevelopmentCard } from './SkillDevelopmentCard';
+import { WeeklyTestPerformanceCard } from './WeeklyTestPerformanceCard';
+import { MockTestPerformanceCard } from './MockTestPerformanceCard';
 import { useAuth } from '../../hooks/useAuth';
 import { BootcampAPI } from '../../lib/bootcamp-api';
 import { supabase } from '@/integrations/supabase/client';
@@ -40,6 +42,60 @@ export const Dashboard: React.FC<DashboardProps> = ({
   const [recentTopics, setRecentTopics] = useState<RecentTopic[]>([]);
   const [skillDevelopmentData, setSkillDevelopmentData] = useState<{ skill: string; accuracy: number }[]>([]);
   const [loading, setLoading] = useState(true);
+
+  // Sample data for Weekly Test Performance
+  const weeklyTestData = {
+    activeWeeks: 2,
+    averageScore: 28,
+    bestWeek: 35,
+    weekStreak: 0,
+    recentWeeks: [
+      {
+        weekNumber: 2,
+        dateRange: 'Aug 3 - Aug 9',
+        correct: 26,
+        total: 75,
+        accuracy: 35,
+        status: 'Needs Improvement' as const
+      },
+      {
+        weekNumber: 1,
+        dateRange: 'Aug 2 - Aug 8',
+        correct: 9,
+        total: 42,
+        accuracy: 21,
+        status: 'Needs Improvement' as const
+      }
+    ]
+  };
+
+  // Sample data for Mock Test Performance
+  const mockTestData = {
+    testsCompleted: 3,
+    averageScore: 42,
+    bestScore: 58,
+    averageTime: '45m',
+    recentTests: [
+      {
+        testNumber: 3,
+        date: 'Aug 9, 2024',
+        score: 58,
+        totalQuestions: 50,
+        correctAnswers: 29,
+        timeSpent: '42m',
+        status: 'Good' as const
+      },
+      {
+        testNumber: 2,
+        date: 'Aug 5, 2024',
+        score: 34,
+        totalQuestions: 50,
+        correctAnswers: 17,
+        timeSpent: '38m',
+        status: 'Needs Improvement' as const
+      }
+    ]
+  };
   useEffect(() => {
     if (authUser) {
       loadProgressData();
@@ -214,7 +270,19 @@ export const Dashboard: React.FC<DashboardProps> = ({
           </div>)}
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      {/* Top Performance Cards */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+        <WeeklyTestPerformanceCard {...weeklyTestData} />
+        <MockTestPerformanceCard {...mockTestData} />
+      </div>
+
+      {/* Skill Development */}
+      <div className="mb-6">
+        <SkillDevelopmentCard skills={skillDevelopmentData} />
+      </div>
+
+      {/* Quick Practice and Recent Topics */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <div className="bg-card rounded-xl shadow-sm border p-6">
           <h2 className="text-lg font-semibold text-foreground mb-4">Quick Practice</h2>
           <div className="space-y-3">
@@ -241,8 +309,6 @@ export const Dashboard: React.FC<DashboardProps> = ({
             </button>
           </div>
         </div>
-
-        <SkillDevelopmentCard skills={skillDevelopmentData} />
 
         <div className="bg-card rounded-xl shadow-sm border p-6">
           <h2 className="text-lg font-semibold text-foreground mb-4">Recent Topics</h2>
