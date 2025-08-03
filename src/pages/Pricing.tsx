@@ -138,82 +138,118 @@ export default function Pricing() {
           </p>
         </div>
 
-        <div className="grid lg:grid-cols-2 gap-8 max-w-4xl mx-auto mb-16">
+        <div className="grid lg:grid-cols-2 gap-8 max-w-5xl mx-auto mb-16">
           {plans.map(plan => {
           const userSub = getUserSubscriptionForPlan(plan.id);
           const isCurrentPlan = !!userSub;
           const isTrialActivePlan = userSub && isTrialActive(userSub);
           const hasUsedTrialForPlan = hasUsedTrial(plan.id);
           const isPlusPlan = plan.id === 'pass_plus';
-          return <Card key={plan.id} className={`relative bg-white dark:bg-card border-2 transition-all duration-300 hover:shadow-xl hover:-translate-y-1 ${isPlusPlan ? 'border-primary shadow-lg scale-[1.02]' : 'border-border/50 hover:border-primary/50'}`}>
-                {isPlusPlan && <div className="absolute -top-3 left-1/2 transform -translate-x-1/2">
-                    <Badge className="bg-primary hover:bg-primary/90 text-primary-foreground px-4 py-1 text-sm font-semibold shadow-lg rounded-full">
-                      Popular
-                    </Badge>
-                  </div>}
+          const planDisplayName = plan.id === 'pass' ? 'Individual' : 'Student';
+          const monthlyPrice = plan.id === 'pass' ? '7.99' : '14.99';
+          
+          return <Card key={plan.id} className="relative bg-card border-2 transition-all duration-300 hover:shadow-xl hover:-translate-y-1 border-border/50 hover:border-primary/50 overflow-hidden">
+                {/* Premium Badge */}
+                <div className="absolute top-4 left-4">
+                  <Badge className="bg-primary/10 text-primary border-primary/20 px-3 py-1 text-xs font-medium">
+                    Premium
+                  </Badge>
+                </div>
+
+                {/* Trial Badge */}
+                <div className="absolute top-4 right-4">
+                  <Badge className="bg-accent/20 text-accent-foreground px-3 py-1 text-xs font-medium">
+                    £0 for 1 month
+                  </Badge>
+                </div>
                 
-                <CardHeader className="text-center pb-6 pt-8">
-                  <CardTitle className="text-3xl font-bold text-foreground mb-2">
-                    {plan.name}
+                <CardHeader className="pt-16 pb-8 px-8">
+                  <CardTitle className="text-4xl font-bold text-foreground mb-4">
+                    {planDisplayName}
                   </CardTitle>
-                  <CardDescription className="text-lg text-muted-foreground mb-6">
-                    {plan.description}
-                  </CardDescription>
                   
-                  <div className="space-y-2 mb-6">
-                    {plan.trial_days > 0 ? <div className="space-y-1">
-                        
-                        <div className="text-4xl font-bold text-primary">£0*</div>
-                        <div className="text-sm text-muted-foreground">
-                          *For the first {plan.trial_days} days
-                        </div>
-                      </div> : <div>
-                        <span className="text-4xl font-bold text-foreground">
-                          £{plan.id === 'pass' ? '7.99' : '14.99'}
-                        </span>
-                        <span className="text-muted-foreground text-lg">/User</span>
-                      </div>}
+                  <div className="space-y-2">
+                    <div className="text-3xl font-bold text-foreground">
+                      £0 for 1 month
+                    </div>
+                    <div className="text-lg text-muted-foreground">
+                      £{monthlyPrice}/month after
+                    </div>
                   </div>
-                  
-                  {plan.trial_days > 0 && <div className="flex items-center justify-center text-sm text-primary mt-4 font-semibold bg-primary/10 rounded-full px-4 py-2">
-                      <Clock className="w-4 h-4 mr-2" />
-                      {plan.trial_days}-day FREE trial
-                    </div>}
                 </CardHeader>
 
-                <CardContent className="space-y-6 pb-8">
-                  <div className="space-y-4">
-                    {plan.features.map((feature, index) => <div key={index} className="flex items-start">
-                        <Check className="w-5 h-5 text-primary mr-3 flex-shrink-0 mt-0.5" />
+                <CardContent className="px-8 pb-8">
+                  <div className="space-y-4 mb-8">
+                    {plan.features.map((feature, index) => (
+                      <div key={index} className="flex items-start">
+                        <div className="w-2 h-2 rounded-full bg-primary mt-2 mr-3 flex-shrink-0" />
                         <span className="text-sm text-foreground leading-relaxed">{feature}</span>
-                      </div>)}
+                      </div>
+                    ))}
                   </div>
 
-                  <div className="pt-4">
-                    {isCurrentPlan ? <div className="space-y-3">
+                  <div className="space-y-4">
+                    {isCurrentPlan ? (
+                      <div className="space-y-3">
                         <Badge variant="secondary" className="w-full justify-center py-3 text-sm font-medium bg-primary/10 text-primary border-primary/20">
                           {isTrialActivePlan ? 'Trial Active' : 'Current Plan'}
                         </Badge>
-                        {isTrialActivePlan && userSub?.trial_end_date && <p className="text-xs text-center text-muted-foreground">
+                        {isTrialActivePlan && userSub?.trial_end_date && (
+                          <p className="text-xs text-center text-muted-foreground">
                             Trial ends {formatDate(userSub.trial_end_date)}
-                          </p>}
-                        {!isTrialActivePlan && userSub?.subscription_end_date && <p className="text-xs text-center text-muted-foreground">
+                          </p>
+                        )}
+                        {!isTrialActivePlan && userSub?.subscription_end_date && (
+                          <p className="text-xs text-center text-muted-foreground">
                             Renews {formatDate(userSub.subscription_end_date)}
-                          </p>}
-                      </div> : <div className="space-y-3">
-                        {plan.trial_days > 0 && !hasUsedTrialForPlan && <Button className="w-full py-3 font-semibold transition-all duration-200 hover:scale-[1.02]" variant={isPlusPlan ? "default" : "outline"} onClick={() => startTrial(plan.id)} disabled={startingTrial === plan.id}>
-                            {startingTrial === plan.id ? <div className="flex items-center">
+                          </p>
+                        )}
+                      </div>
+                    ) : (
+                      <div className="space-y-4">
+                        {plan.trial_days > 0 && !hasUsedTrialForPlan && (
+                          <Button 
+                            className="w-full py-4 font-semibold text-lg rounded-full transition-all duration-200 hover:scale-[1.02]" 
+                            variant="default"
+                            onClick={() => startTrial(plan.id)} 
+                            disabled={startingTrial === plan.id}
+                          >
+                            {startingTrial === plan.id ? (
+                              <div className="flex items-center">
                                 <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-current mr-2"></div>
                                 Starting Trial...
-                              </div> : `Start Free Trial`}
-                          </Button>}
-                        <Button className="w-full py-3 font-semibold transition-all duration-200 hover:scale-[1.02]" variant={isPlusPlan && plan.trial_days === 0 ? "default" : "secondary"} onClick={() => toast.info('Subscription flow coming soon!')}>
-                          Get Started
-                        </Button>
-                        {hasUsedTrialForPlan && <p className="text-xs text-center text-muted-foreground bg-muted/50 rounded-md py-2 px-3">
+                              </div>
+                            ) : (
+                              `Try 1 month for £0`
+                            )}
+                          </Button>
+                        )}
+                        
+                        {(!plan.trial_days || hasUsedTrialForPlan) && (
+                          <Button 
+                            className="w-full py-4 font-semibold text-lg rounded-full transition-all duration-200 hover:scale-[1.02]" 
+                            variant="outline"
+                            onClick={() => toast.info('Subscription flow coming soon!')}
+                          >
+                            Get Started
+                          </Button>
+                        )}
+                        
+                        {hasUsedTrialForPlan && (
+                          <p className="text-xs text-center text-muted-foreground bg-muted/50 rounded-md py-2 px-3">
                             Trial already used for this plan
-                          </p>}
-                      </div>}
+                          </p>
+                        )}
+                      </div>
+                    )}
+                    
+                    {/* Small print */}
+                    <p className="text-xs text-muted-foreground text-center leading-relaxed pt-4">
+                      £0 for 1 month, then £{monthlyPrice} per month after. Offer only available if you haven't tried Premium before. 
+                      <span className="underline cursor-pointer hover:text-foreground transition-colors">
+                        Terms apply.
+                      </span>
+                    </p>
                   </div>
                 </CardContent>
               </Card>;
