@@ -233,7 +233,7 @@ const Pricing = () => {
                   
                    <div className="space-y-2">
                      <div className="text-3xl font-bold text-foreground">
-                       {isAnnual ? `£${currentPrice}` : '£0 for 30 days'}
+                       {isAnnual ? `£${currentPrice}` : 'Free for 30 days'}
                      </div>
                      <div className="text-lg text-muted-foreground">
                        {isAnnual ? <>per year <span className="text-sm">(£{monthlyEquivalent}/month)</span></> : <>£{currentPrice}/{billingPeriod} after</>}
