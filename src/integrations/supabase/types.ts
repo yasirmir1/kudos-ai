@@ -182,56 +182,6 @@ export type Database = {
         }
         Relationships: []
       }
-      bootcamp_answers: {
-        Row: {
-          answer_id: string
-          answer_option: Database["public"]["Enums"]["answer_option"] | null
-          answer_value: string
-          created_at: string | null
-          diagnostic_feedback: string
-          error_category: string | null
-          id: number
-          is_correct: boolean
-          misconception_type: string | null
-          question_id: string
-          remedial_topic: string | null
-        }
-        Insert: {
-          answer_id: string
-          answer_option?: Database["public"]["Enums"]["answer_option"] | null
-          answer_value: string
-          created_at?: string | null
-          diagnostic_feedback: string
-          error_category?: string | null
-          id?: number
-          is_correct?: boolean
-          misconception_type?: string | null
-          question_id: string
-          remedial_topic?: string | null
-        }
-        Update: {
-          answer_id?: string
-          answer_option?: Database["public"]["Enums"]["answer_option"] | null
-          answer_value?: string
-          created_at?: string | null
-          diagnostic_feedback?: string
-          error_category?: string | null
-          id?: number
-          is_correct?: boolean
-          misconception_type?: string | null
-          question_id?: string
-          remedial_topic?: string | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "bootcamp_answers_question_id_fkey"
-            columns: ["question_id"]
-            isOneToOne: false
-            referencedRelation: "bootcamp_questions"
-            referencedColumns: ["question_id"]
-          },
-        ]
-      }
       bootcamp_assessment_criteria: {
         Row: {
           accuracy_range: string
@@ -488,33 +438,6 @@ export type Database = {
             referencedColumns: ["student_id"]
           },
         ]
-      }
-      bootcamp_misconceptions: {
-        Row: {
-          created_at: string | null
-          description: string | null
-          diagnostic_indicators: string[] | null
-          misconception_code: string
-          misconception_type: string | null
-          remediation_pathway_id: string | null
-        }
-        Insert: {
-          created_at?: string | null
-          description?: string | null
-          diagnostic_indicators?: string[] | null
-          misconception_code: string
-          misconception_type?: string | null
-          remediation_pathway_id?: string | null
-        }
-        Update: {
-          created_at?: string | null
-          description?: string | null
-          diagnostic_indicators?: string[] | null
-          misconception_code?: string
-          misconception_type?: string | null
-          remediation_pathway_id?: string | null
-        }
-        Relationships: []
       }
       bootcamp_misconceptions_catalog: {
         Row: {
@@ -854,22 +777,7 @@ export type Database = {
           success_rate?: number | null
           updated_at?: string | null
         }
-        Relationships: [
-          {
-            foreignKeyName: "fk_remediation_misconception"
-            columns: ["misconception_code"]
-            isOneToOne: false
-            referencedRelation: "bootcamp_misconceptions"
-            referencedColumns: ["misconception_code"]
-          },
-          {
-            foreignKeyName: "fk_remediation_misconception"
-            columns: ["misconception_code"]
-            isOneToOne: false
-            referencedRelation: "misconception_frequency"
-            referencedColumns: ["misconception_code"]
-          },
-        ]
+        Relationships: []
       }
       bootcamp_skills: {
         Row: {
@@ -888,63 +796,6 @@ export type Database = {
           skill_order?: number
         }
         Relationships: []
-      }
-      bootcamp_student_profiles: {
-        Row: {
-          accuracy_by_topic: Json | null
-          arithmetic_proficiency: number | null
-          common_misconceptions: string[] | null
-          created_at: string | null
-          id: number
-          reasoning_proficiency: number | null
-          skill_strengths: Json | null
-          skill_weaknesses: Json | null
-          speed_percentile: number | null
-          student_id: string
-          updated_at: string | null
-        }
-        Insert: {
-          accuracy_by_topic?: Json | null
-          arithmetic_proficiency?: number | null
-          common_misconceptions?: string[] | null
-          created_at?: string | null
-          id?: number
-          reasoning_proficiency?: number | null
-          skill_strengths?: Json | null
-          skill_weaknesses?: Json | null
-          speed_percentile?: number | null
-          student_id: string
-          updated_at?: string | null
-        }
-        Update: {
-          accuracy_by_topic?: Json | null
-          arithmetic_proficiency?: number | null
-          common_misconceptions?: string[] | null
-          created_at?: string | null
-          id?: number
-          reasoning_proficiency?: number | null
-          skill_strengths?: Json | null
-          skill_weaknesses?: Json | null
-          speed_percentile?: number | null
-          student_id?: string
-          updated_at?: string | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "bootcamp_student_profiles_student_id_fkey"
-            columns: ["student_id"]
-            isOneToOne: true
-            referencedRelation: "bootcamp_students"
-            referencedColumns: ["student_id"]
-          },
-          {
-            foreignKeyName: "bootcamp_student_profiles_student_id_fkey"
-            columns: ["student_id"]
-            isOneToOne: true
-            referencedRelation: "student_performance_summary"
-            referencedColumns: ["student_id"]
-          },
-        ]
       }
       bootcamp_student_progress: {
         Row: {
@@ -1647,17 +1498,6 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
-      }
-      misconception_frequency: {
-        Row: {
-          affected_students: number | null
-          description: string | null
-          misconception_code: string | null
-          misconception_type: string | null
-          remediation_success_rate: number | null
-          total_occurrences: number | null
-        }
-        Relationships: []
       }
       student_performance: {
         Row: {

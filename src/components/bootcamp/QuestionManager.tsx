@@ -37,12 +37,15 @@ interface Question {
 interface Answer {
   answer_id: string;
   question_id: string;
+  option_letter: string;
   answer_value: string;
   is_correct: boolean;
-  misconception_type: string;
+  misconception_code: string;
   error_category: string;
   diagnostic_feedback: string;
   remedial_topic: string;
+  selection_count: number;
+  created_at: string;
 }
 
 interface StudentResponse {
@@ -113,14 +116,14 @@ export const QuestionManager: React.FC = () => {
         console.warn('Questions not available:', questionsError);
       }
 
-      // Fetch answers
-      const { data: answersData, error: answersError } = await supabase
-        .from('bootcamp_answers')
+      // Fetch answer options
+      const { data: answerOptionsData, error: answerOptionsError } = await supabase
+        .from('bootcamp_answer_options')
         .select('*')
         .limit(200);
 
-      if (answersError && answersError.code !== 'PGRST116') {
-        console.warn('Answers not available:', answersError);
+      if (answerOptionsError && answerOptionsError.code !== 'PGRST116') {
+        console.warn('Answer options not available:', answerOptionsError);
       }
 
       // Fetch responses
@@ -156,7 +159,7 @@ export const QuestionManager: React.FC = () => {
       // Skip topic analysis for now - table doesn't exist
       
       setQuestions(questionsData || []);
-      setAnswers(answersData || []);
+      setAnswers(answerOptionsData || []);
       setResponses(responsesData || []);
       setQuestionTypes(typesData || []);
       setDifficultyLevels(difficultyData || []);

@@ -51,11 +51,11 @@ interface ExtendedBootcampQuestion extends BootcampQuestion {
   question_type: QuestionType;
   drag_items?: string[];
   drop_zones?: { id: string; label: string; correct_items: string[] }[];
-  bootcamp_answers?: Array<{
-    answer_option: string;
+  bootcamp_answer_options?: Array<{
+    option_letter: string;
     answer_value: string;
     is_correct: boolean;
-    misconception_type?: string;
+    misconception_code?: string;
     diagnostic_feedback?: string;
   }>;
 }
@@ -242,11 +242,11 @@ export const ComprehensiveQuestionInterface: React.FC<ComprehensiveQuestionInter
 
       // Determine correctness based on question type
       if (currentQuestion.question_type === 'multiple_choice') {
-        const selectedOption = currentQuestion.bootcamp_answers?.find(
-          opt => opt.answer_option === answer
+        const selectedOption = currentQuestion.bootcamp_answer_options?.find(
+          opt => opt.option_letter === answer
         );
         isCorrect = selectedOption?.is_correct || false;
-        misconception = selectedOption?.misconception_type || '';
+        misconception = selectedOption?.misconception_code || '';
         feedback = selectedOption?.diagnostic_feedback || '';
       } else if (currentQuestion.question_type === 'drag_drop') {
         // Simplified drag-drop correctness check
@@ -511,14 +511,14 @@ export const ComprehensiveQuestionInterface: React.FC<ComprehensiveQuestionInter
         <div className="space-y-4">
           {currentQuestion.question_type === 'multiple_choice' && (
             <div className="space-y-3">
-              {currentQuestion.bootcamp_answers?.map((option, index) => {
-                const isSelected = selectedAnswer === option.answer_option;
+              {currentQuestion.bootcamp_answer_options?.map((option, index) => {
+                const isSelected = selectedAnswer === option.option_letter;
                 const isCorrect = option.is_correct;
                 
                 return (
                   <button
                     key={index}
-                    onClick={() => handleAnswerSelect(option.answer_option)}
+                    onClick={() => handleAnswerSelect(option.option_letter)}
                     disabled={isAnswered}
                     className={cn(
                       "w-full p-4 text-left rounded-lg border-2 transition-all",
@@ -531,7 +531,7 @@ export const ComprehensiveQuestionInterface: React.FC<ComprehensiveQuestionInter
                   >
                     <div className="flex items-center gap-3">
                       <span className="flex-shrink-0 w-8 h-8 rounded-full border-2 flex items-center justify-center font-medium">
-                        {option.answer_option}
+                        {option.option_letter}
                       </span>
                       <span>{option.answer_value}</span>
                       
@@ -677,17 +677,17 @@ export const ComprehensiveQuestionInterface: React.FC<ComprehensiveQuestionInter
               <span className="font-medium">Diagnostic Feedback</span>
             </div>
             
-            {currentQuestion.bootcamp_answers?.find(opt => opt.answer_option === selectedAnswer)?.diagnostic_feedback && (
+            {currentQuestion.bootcamp_answer_options?.find(opt => opt.option_letter === selectedAnswer)?.diagnostic_feedback && (
               <p className="text-sm">
-                {currentQuestion.bootcamp_answers.find(opt => opt.answer_option === selectedAnswer)?.diagnostic_feedback}
+                {currentQuestion.bootcamp_answer_options.find(opt => opt.option_letter === selectedAnswer)?.diagnostic_feedback}
               </p>
             )}
             
-            {currentQuestion.bootcamp_answers?.find(opt => opt.answer_option === selectedAnswer)?.misconception_type && (
+            {currentQuestion.bootcamp_answer_options?.find(opt => opt.option_letter === selectedAnswer)?.misconception_code && (
               <RemediationSuggestion 
                 misconception={{
-                  code: currentQuestion.bootcamp_answers.find(opt => opt.answer_option === selectedAnswer)?.misconception_type || '',
-                  name: currentQuestion.bootcamp_answers.find(opt => opt.answer_option === selectedAnswer)?.misconception_type || ''
+                  code: currentQuestion.bootcamp_answer_options.find(opt => opt.option_letter === selectedAnswer)?.misconception_code || '',
+                  name: currentQuestion.bootcamp_answer_options.find(opt => opt.option_letter === selectedAnswer)?.misconception_code || ''
                 }}
                 topic={currentQuestion.topic_id}
               />
