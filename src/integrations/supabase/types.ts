@@ -797,6 +797,51 @@ export type Database = {
         }
         Relationships: []
       }
+      bootcamp_student_points_history: {
+        Row: {
+          created_at: string | null
+          description: string | null
+          id: string
+          points_earned: number
+          points_type: string
+          source_id: string | null
+          student_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          points_earned: number
+          points_type: string
+          source_id?: string | null
+          student_id: string
+        }
+        Update: {
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          points_earned?: number
+          points_type?: string
+          source_id?: string | null
+          student_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "fk_points_student"
+            columns: ["student_id"]
+            isOneToOne: false
+            referencedRelation: "bootcamp_students"
+            referencedColumns: ["student_id"]
+          },
+          {
+            foreignKeyName: "fk_points_student"
+            columns: ["student_id"]
+            isOneToOne: false
+            referencedRelation: "student_performance_summary"
+            referencedColumns: ["student_id"]
+          },
+        ]
+      }
       bootcamp_student_progress: {
         Row: {
           accuracy_percentage: number | null
@@ -1005,6 +1050,7 @@ export type Database = {
           subscription_tier: string | null
           success_rate: number | null
           target_exam_date: string | null
+          total_points: number
           usage_count: number | null
           user_id: string | null
           username: string | null
@@ -1020,6 +1066,7 @@ export type Database = {
           subscription_tier?: string | null
           success_rate?: number | null
           target_exam_date?: string | null
+          total_points?: number
           usage_count?: number | null
           user_id?: string | null
           username?: string | null
@@ -1035,6 +1082,7 @@ export type Database = {
           subscription_tier?: string | null
           success_rate?: number | null
           target_exam_date?: string | null
+          total_points?: number
           usage_count?: number | null
           user_id?: string | null
           username?: string | null
@@ -1812,6 +1860,16 @@ export type Database = {
       }
     }
     Functions: {
+      award_points: {
+        Args: {
+          p_student_id: string
+          p_points: number
+          p_points_type: string
+          p_source_id?: string
+          p_description?: string
+        }
+        Returns: undefined
+      }
       bootcamp_generate_adaptive_practice_set: {
         Args: { p_student_id: string; p_question_count?: number }
         Returns: {
@@ -1890,6 +1948,10 @@ export type Database = {
       import_mock_test_questions: {
         Args: { questions_data: Json }
         Returns: string
+      }
+      recalculate_student_points: {
+        Args: { p_student_id: string }
+        Returns: number
       }
       start_trial: {
         Args: { plan_id_param: string }
