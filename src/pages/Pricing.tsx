@@ -130,11 +130,11 @@ export default function Pricing() {
           <h1 className="text-5xl font-bold mb-6 text-foreground">
             Pricing
           </h1>
-          <p className="text-muted-foreground text-xl max-w-3xl mx-auto leading-relaxed">
-            Start your free trial now, <span className="text-primary font-semibold">no credit card needed</span>
+          <p className="max-w-3xl mx-auto leading-relaxed text-lg text-slate-800">
+            Start your free trial now, <span className="text-primary font-semibold text-lg">no credit card needed</span>
           </p>
-          <p className="text-muted-foreground text-lg mt-2">
-            <span className="text-primary font-semibold">No hidden fees, cancel anytime.</span>
+          <p className="text-muted-foreground mt-2 font-medium text-base my-[4px]">
+            <span className="text-base text-slate-800 font-medium">No hidden fees, cancel anytime.</span>
           </p>
         </div>
 
