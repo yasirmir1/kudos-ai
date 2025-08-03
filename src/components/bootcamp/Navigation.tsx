@@ -59,16 +59,6 @@ export const Navigation: React.FC<NavigationProps> = ({
       label: 'Achievements',
       icon: Trophy
     },
-    {
-      id: 'questions',
-      label: 'Questions',
-      icon: Settings
-    },
-    {
-      id: 'help',
-      label: 'Help',
-      icon: HelpCircle
-    }
   ];
   return (
     <nav className="bg-card shadow-sm border-b sticky top-0 z-50">

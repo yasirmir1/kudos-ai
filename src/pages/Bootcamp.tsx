@@ -80,10 +80,8 @@ const Bootcamp = () => {
         {currentView === 'achievements' && <AchievementCenter />}
         
         {currentView === 'analytics' && <AnalyticsDashboard />}
-        {currentView === 'questions' && <QuestionManager />}
         
         {currentView === 'settings' && (window.location.href = '/settings')}
-        {currentView === 'help' && <HelpCenter />}
         {currentView === 'report' && <PracticeReport />}
       </main>
     </div>;
