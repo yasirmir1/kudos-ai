@@ -34,6 +34,11 @@ export const Navigation: React.FC<NavigationProps> = ({
       icon: BarChart3
     },
     {
+      id: 'learn',
+      label: 'Learn',
+      icon: GraduationCap
+    },
+    {
       id: 'practice',
       label: 'Practice',
       icon: Brain
@@ -42,11 +47,6 @@ export const Navigation: React.FC<NavigationProps> = ({
       id: 'mocktest',
       label: 'Mock Test',
       icon: Star
-    },
-    {
-      id: 'learn',
-      label: 'Learn',
-      icon: GraduationCap
     },
     {
       id: 'progress',
