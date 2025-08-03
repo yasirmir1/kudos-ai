@@ -158,7 +158,7 @@ export default function Pricing() {
                 {/* Trial Badge */}
                 <div className="absolute top-4 left-4">
                   <Badge className="bg-accent/20 text-accent-foreground px-3 py-1 text-xs font-medium">
-                    £0 for 1 month
+                    Free 30 day trial
                   </Badge>
                 </div>
                 
@@ -169,7 +169,7 @@ export default function Pricing() {
                   
                   <div className="space-y-2">
                     <div className="text-3xl font-bold text-foreground">
-                      £0 for 1 month
+                      Free 30 day trial
                     </div>
                     <div className="text-lg text-muted-foreground">
                       £{monthlyPrice}/month after
@@ -247,7 +247,7 @@ export default function Pricing() {
                             {startingTrial === plan.id ? <div className="flex items-center">
                                 <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-current mr-2"></div>
                                 Starting Trial...
-                              </div> : `Try 1 month for £0`}
+                              </div> : `Start free 30 day trial`}
                           </Button>}
                         
                         {(!plan.trial_days || hasUsedTrialForPlan) && <Button className="w-full py-4 font-semibold text-lg rounded-full transition-all duration-200 hover:scale-[1.02]" variant="outline" onClick={() => toast.info('Subscription flow coming soon!')}>
@@ -261,7 +261,7 @@ export default function Pricing() {
                     
                     {/* Small print */}
                     <p className="text-xs text-muted-foreground text-center leading-relaxed pt-4">
-                      £0 for 1 month, then £{monthlyPrice} per month after. Offer only available if you haven't tried Premium before. 
+                      Free 30 day trial, then £{monthlyPrice} per month after. Offer only available if you haven't tried Premium before. 
                       <span className="underline cursor-pointer hover:text-foreground transition-colors">
                         Terms apply.
                       </span>
