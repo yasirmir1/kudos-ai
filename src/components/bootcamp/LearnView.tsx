@@ -178,7 +178,7 @@ export const LearnView: React.FC = () => {
       case 'completed':
         return 'bg-green-600 hover:bg-green-700 text-white border-green-600';
       case 'started':
-        return 'bg-blue-600 hover:bg-blue-700 text-white border-blue-600';
+        return 'bg-black hover:bg-gray-800 text-white border-black';
       case 'current':
         return 'bg-blue-600 hover:bg-blue-700 text-white border-blue-600';
       default:
