@@ -27,6 +27,7 @@ interface StudentResponse {
   time_taken: number;
   responded_at: string;
   misconception_detected?: string;
+  activity_source?: string;
 }
 
 interface BootcampStats {
@@ -206,29 +207,36 @@ export const useBootcampData = () => {
   };
 
   const calculateStats = (responses: StudentResponse[], progress: StudentProgress[], mockTestSessions: any[] = []) => {
+    // Filter responses to only include mock test and weekly sessions for progress tracking
+    const progressResponses = responses.filter(r => 
+      r.activity_source === 'mock_test' || r.activity_source === 'weekly_test'
+    );
+    
     console.log('Calculating stats with:', {
-      responsesCount: responses.length,
+      totalResponsesCount: responses.length,
+      progressResponsesCount: progressResponses.length,
+      excludedLearningSessionsCount: responses.filter(r => r.activity_source === 'learning_session').length,
       progressCount: progress.length,
       mockTestSessionsCount: mockTestSessions.length
     });
 
     const today = new Date().toDateString();
-    const todayResponses = responses.filter(r => {
+    const todayProgressResponses = progressResponses.filter(r => {
       const responseDate = new Date(r.responded_at);
       return responseDate.toDateString() === today;
     });
     
-    const correctResponses = responses.filter(r => r.is_correct);
-    const accuracy = responses.length > 0 ? 
-      Math.round((correctResponses.length / responses.length) * 100) : 0;
+    const correctProgressResponses = progressResponses.filter(r => r.is_correct);
+    const progressAccuracy = progressResponses.length > 0 ? 
+      Math.round((correctProgressResponses.length / progressResponses.length) * 100) : 0;
 
-    // Enhanced streak calculation including mock test sessions for activity tracking
-    const allActivityDates = [
-      ...responses.map(r => new Date(r.responded_at).toDateString()),
+    // Enhanced streak calculation using only mock test and weekly sessions
+    const progressActivityDates = [
+      ...progressResponses.map(r => new Date(r.responded_at).toDateString()),
       ...mockTestSessions.map(s => new Date(s.started_at).toDateString())
     ];
     
-    const uniqueDays = [...new Set(allActivityDates)].sort();
+    const uniqueProgressDays = [...new Set(progressActivityDates)].sort();
     
     let streakDays = 0;
     const today_str = new Date().toDateString();
@@ -237,7 +245,7 @@ export const useBootcampData = () => {
     let currentDate = new Date();
     while (true) {
       const dateStr = currentDate.toDateString();
-      if (uniqueDays.includes(dateStr)) {
+      if (uniqueProgressDays.includes(dateStr)) {
         streakDays++;
         currentDate.setDate(currentDate.getDate() - 1);
       } else {
@@ -247,26 +255,27 @@ export const useBootcampData = () => {
 
     // Simple points calculation including mock test bonuses
     const mockTestBonus = mockTestSessions.length * 25;
-    const totalPoints = correctResponses.length * 10 + streakDays * 50 + mockTestBonus;
+    const totalPoints = correctProgressResponses.length * 10 + streakDays * 50 + mockTestBonus;
 
-    // Determine level based on total questions and accuracy
+    // Determine level based on progress questions and accuracy
     let level = 'Beginner';
-    if (responses.length > 100 && accuracy > 80) {
+    if (progressResponses.length > 50 && progressAccuracy > 80) {
       level = 'Advanced';
-    } else if (responses.length > 50 && accuracy > 70) {
+    } else if (progressResponses.length > 25 && progressAccuracy > 70) {
       level = 'Intermediate';
     }
 
     const calculatedStats = {
-      totalQuestions: responses.length,
-      questionsToday: todayResponses.length,
-      accuracy,
+      totalQuestions: progressResponses.length, // Only mock test and weekly sessions
+      questionsToday: todayProgressResponses.length,
+      accuracy: progressAccuracy,
       streakDays,
       totalPoints,
       level
     };
 
-    console.log('Calculated stats:', calculatedStats);
+    console.log('Progress-focused stats (mock/weekly only):', calculatedStats);
+    console.log('Excluded learning sessions from progress tracking');
     setStats(calculatedStats);
   };
 
