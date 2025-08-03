@@ -2,7 +2,7 @@ import React from 'react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { BookOpen, BarChart3, User, GraduationCap, FileText, Play, Target, Calendar, CreditCard, LogOut, Clock } from 'lucide-react';
+import { BookOpen, BarChart3, User, GraduationCap, FileText, Play, Target, Calendar, CreditCard, LogOut, Clock, Crown } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
 import { useSubscriptionState } from '@/hooks/useSubscriptionState';
 import { usePricingModal } from '@/contexts/PricingModalContext';
@@ -59,11 +59,6 @@ export const AppNavigation: React.FC<AppNavigationProps> = ({
   
   const mainAppItems = [
     {
-      path: '/pricing',
-      label: 'Pricing',
-      icon: CreditCard
-    },
-    {
       path: '/profile',
       label: 'Profile',
       icon: User
@@ -71,11 +66,6 @@ export const AppNavigation: React.FC<AppNavigationProps> = ({
   ];
 
   const bootcampItems = [
-    {
-      path: '/pricing',
-      label: 'Pricing',
-      icon: CreditCard
-    },
     {
       path: '/profile',
       label: 'Profile',
@@ -85,6 +75,46 @@ export const AppNavigation: React.FC<AppNavigationProps> = ({
 
   // Show bootcamp items when in bootcamp, main app items otherwise
   const navigationItems = isBootcampRoute ? bootcampItems : mainAppItems;
+
+  // Get plan display info
+  const getPlanDisplay = () => {
+    if (isTrialActive) {
+      return {
+        text: 'Trial',
+        variant: 'secondary' as const,
+        icon: Clock
+      };
+    }
+    
+    switch (userState) {
+      case 'pass':
+        return {
+          text: 'Pass',
+          variant: 'default' as const,
+          icon: Calendar
+        };
+      case 'pass_plus':
+        return {
+          text: 'Pass Plus',
+          variant: 'default' as const,
+          icon: Crown
+        };
+      case 'expired':
+        return {
+          text: 'Expired',
+          variant: 'destructive' as const,
+          icon: Clock
+        };
+      default:
+        return {
+          text: 'Free',
+          variant: 'outline' as const,
+          icon: User
+        };
+    }
+  };
+
+  const planDisplay = getPlanDisplay();
   
   // Add a system switcher button
   const switchToOtherSystem = () => {
@@ -168,6 +198,18 @@ export const AppNavigation: React.FC<AppNavigationProps> = ({
                 <span className="hidden lg:inline">Bootcamp</span>
               </Button>
             </div>
+
+            {/* Plan Status Indicator */}
+            <div className="hidden md:flex items-center space-x-2">
+              <span className="text-sm text-muted-foreground font-medium">Plan:</span>
+              <Badge 
+                variant={planDisplay.variant}
+                className="flex items-center space-x-1 px-3 py-1"
+              >
+                <planDisplay.icon className="h-3 w-3" />
+                <span className="text-xs font-medium">{planDisplay.text}</span>
+              </Badge>
+            </div>
             
             {/* Navigation Links */}
             <nav className="hidden md:flex items-center space-x-2">
@@ -188,15 +230,15 @@ export const AppNavigation: React.FC<AppNavigationProps> = ({
                 );
               })}
               
-              {/* Logout Button */}
+              {/* Logout Button - Icon only */}
               <Button 
                 variant="ghost" 
                 size="sm" 
                 onClick={handleLogout}
-                className="flex items-center space-x-2 px-4 py-2 min-w-[100px] justify-center"
+                className="flex items-center justify-center px-3 py-2 w-auto"
+                title="Logout"
               >
                 <LogOut className="h-4 w-4" />
-                <span className="hidden lg:inline">Logout</span>
               </Button>
             </nav>
 
