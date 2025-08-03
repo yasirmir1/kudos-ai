@@ -7,7 +7,6 @@ import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/
 import { supabase } from '@/integrations/supabase/client';
 import { BookOpen, Target, Users, ArrowLeft, Lightbulb } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import { AppNavigation } from '@/components/AppNavigation';
 
 interface CurriculumItem {
   id: number;
@@ -105,8 +104,7 @@ const Curriculum = () => {
   const availableYears = Object.keys(groupedData).sort();
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background via-background to-secondary/10">
-      <AppNavigation />
+    <div>
 
       {/* Page Title Section */}
       <div className="container mx-auto px-4 pt-4">

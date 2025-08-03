@@ -1,5 +1,4 @@
 import { useState } from 'react';
-import { AppNavigation } from '@/components/AppNavigation';
 import { BulkQuestionGenerator } from '@/components/BulkQuestionGenerator';
 import {
   Dashboard,
@@ -53,8 +52,7 @@ const Bootcamp = () => {
     }
   };
   if (isLoading) {
-    return <div className="min-h-screen bg-gradient-to-br from-background via-background to-secondary/10">
-        <AppNavigation />
+    return <div>
         <div className="flex items-center justify-center h-96">
           <div className="flex items-center gap-2">
             <Loader2 className="h-6 w-6 animate-spin" />
@@ -63,8 +61,7 @@ const Bootcamp = () => {
         </div>
       </div>;
   }
-  return <div className="min-h-screen bg-gradient-to-br from-background via-background to-secondary/10">
-      <AppNavigation />
+  return <div>
       <Navigation currentView={currentView} setCurrentView={setCurrentView} user={user} />
       <main className="container mx-auto px-4 py-6">
         {error && <Alert className="mb-6">
@@ -74,8 +71,6 @@ const Bootcamp = () => {
             </AlertDescription>
           </Alert>}
         
-        {stats.totalQuestions === 0}
-
         {currentView === 'dashboard' && <Dashboard user={user} setCurrentView={setCurrentView} />}
         {currentView === 'practice' && <EnhancedPracticeSession />}
         {currentView === 'mocktest' && <MockTest />}

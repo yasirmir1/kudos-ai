@@ -11,7 +11,6 @@ import { useToast } from '@/hooks/use-toast';
 import { useAgeGroup } from '@/contexts/AgeGroupContext';
 import { AgeGroupSelector } from '@/components/AgeGroupSelector';
 import { SessionStartModal } from '@/components/SessionStartModal';
-import { AppNavigation } from '@/components/AppNavigation';
 interface Question {
   question_id: string;
   topic: string;
@@ -694,8 +693,7 @@ const Practice = () => {
   
   // Don't render the practice interface if no questions are available yet
   if (questions.length === 0) {
-    return <div className="min-h-screen bg-gradient-to-br from-background via-background to-secondary/10">
-      <AppNavigation />
+    return <div>
       <SessionStartModal 
         isOpen={showSessionStartModal}
         onClose={() => {
@@ -709,8 +707,7 @@ const Practice = () => {
   
   const currentQuestion = questions[currentIndex];
   const progress = (currentIndex + 1) / sessionQuestionCount * 100;
-  return <div className="min-h-screen bg-gradient-to-br from-background via-background to-secondary/10">
-      <AppNavigation />
+  return <div>
       <SessionStartModal
         isOpen={showSessionStartModal}
         onClose={() => {

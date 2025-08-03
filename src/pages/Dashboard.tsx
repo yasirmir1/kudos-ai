@@ -16,7 +16,6 @@ import { FocusAreaQuestionsModal } from '@/components/FocusAreaQuestionsModal';
 import { WorksheetGeneratorModal } from '@/components/WorksheetGeneratorModal';
 import { SessionsModal } from '@/components/SessionsModal';
 import { AgeGroupSelector } from '@/components/AgeGroupSelector';
-import { AppNavigation } from '@/components/AppNavigation';
 import { useAgeGroup } from '@/contexts/AgeGroupContext';
 import { DashboardNavigation } from '@/components/dashboard';
 import Practice from './Practice';
@@ -533,8 +532,7 @@ const Dashboard = () => {
   );
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background via-background to-secondary/10">
-      <AppNavigation />
+    <div>
       <DashboardNavigation currentView={currentView} setCurrentView={setCurrentView} />
       
       {renderCurrentView()}

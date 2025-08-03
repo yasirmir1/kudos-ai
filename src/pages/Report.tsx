@@ -7,7 +7,6 @@ import { BookOpen, Clock, Calendar, Brain, Lightbulb, BarChart3, Filter } from '
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
 import { useToast } from '@/hooks/use-toast';
-import { AppNavigation } from '@/components/AppNavigation';
 import { InteractiveInsights } from '@/components/InteractiveInsights';
 
 interface StudiedTopic {
@@ -168,8 +167,7 @@ export default function Report() {
   };
 
   return (
-    <div className="min-h-screen bg-background">
-      <AppNavigation />
+    <div>
       <div className="container mx-auto p-6">
         <div className="mb-8">
           <h1 className="text-3xl font-bold flex items-center gap-3">

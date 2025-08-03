@@ -12,7 +12,6 @@ import { useToast } from '@/hooks/use-toast';
 import { ResetProgressModal } from '@/components/ResetProgressModal';
 import { useAgeGroup, updateAgeGroupFromProfile } from '@/contexts/AgeGroupContext';
 import { AgeGroupSelector } from '@/components/AgeGroupSelector';
-import { AppNavigation } from '@/components/AppNavigation';
 
 type AgeGroup = 'year 2-3' | 'year 4-5' | '11+';
 
@@ -154,8 +153,7 @@ const Profile = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background via-background to-secondary/10">
-      <AppNavigation />
+    <div>
 
       {/* Page Title Section */}
       <div className="container mx-auto px-4 py-6">

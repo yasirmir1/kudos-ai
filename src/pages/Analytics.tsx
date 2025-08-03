@@ -7,7 +7,6 @@ import { useNavigate } from 'react-router-dom';
 import { ArrowLeft, TrendingUp, BarChart3, PieChart, Calendar } from 'lucide-react';
 import { useAgeGroup } from '@/contexts/AgeGroupContext';
 import { AgeGroupSelector } from '@/components/AgeGroupSelector';
-import { AppNavigation } from '@/components/AppNavigation';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, BarChart, Bar, PieChart as RechartsPieChart, Cell, Pie } from 'recharts';
 
 interface StudentAnswer {
@@ -240,8 +239,7 @@ const Analytics = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background via-background to-secondary/10">
-      <AppNavigation />
+    <div>
 
       {/* Page Title Section */}
       <div className="container mx-auto px-4 py-6">
