@@ -169,7 +169,7 @@ export default function Pricing() {
                   
                   <div className="space-y-2">
                     <div className="text-3xl font-bold text-foreground">
-                      Free 30 day trial
+                      £0 for 30 days
                     </div>
                     <div className="text-lg text-muted-foreground">
                       £{monthlyPrice}/month after
