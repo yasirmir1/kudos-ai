@@ -35,6 +35,7 @@ const Pricing = () => {
   } = useSubscription();
   const [checkingOut, setCheckingOut] = useState<string | null>(null);
   const [startingTrial, setStartingTrial] = useState<string | null>(null);
+  const [isAnnual, setIsAnnual] = useState(false);
 
   useEffect(() => {
     // Check for success/cancel parameters
@@ -108,13 +109,15 @@ const Pricing = () => {
       id: 'pass',
       name: 'Pass',
       displayName: 'Pass',
-      monthlyPrice: '7.99'
+      monthlyPrice: '8',
+      annualPrice: '59'
     },
     {
       id: 'pass_plus',
       name: 'Pass Plus',
       displayName: 'Pass Plus', 
-      monthlyPrice: '14.99'
+      monthlyPrice: '15',
+      annualPrice: '99'
     }
   ];
 
@@ -181,6 +184,35 @@ const Pricing = () => {
           </div>
         )}
 
+        {/* Billing Toggle */}
+        <div className="flex items-center justify-center mb-8">
+          <div className="bg-muted rounded-lg p-1 flex items-center">
+            <button
+              className={`px-4 py-2 rounded-md text-sm font-medium transition-all ${
+                !isAnnual 
+                  ? 'bg-background text-foreground shadow-sm' 
+                  : 'text-muted-foreground hover:text-foreground'
+              }`}
+              onClick={() => setIsAnnual(false)}
+            >
+              Monthly
+            </button>
+            <button
+              className={`px-4 py-2 rounded-md text-sm font-medium transition-all ${
+                isAnnual 
+                  ? 'bg-background text-foreground shadow-sm' 
+                  : 'text-muted-foreground hover:text-foreground'
+              }`}
+              onClick={() => setIsAnnual(true)}
+            >
+              Annual
+              <span className="ml-1 text-xs bg-primary text-primary-foreground px-1.5 py-0.5 rounded">
+                Save up to 63%
+              </span>
+            </button>
+          </div>
+        </div>
+
         {/* Subscription Status */}
         {user && hasActiveSubscription() && (
           <div className="bg-primary/10 border border-primary/20 rounded-lg p-4 max-w-md mx-auto mb-8">
@@ -214,7 +246,9 @@ const Pricing = () => {
             const hasUsedTrialForPlan = hasUsedTrial(plan.id);
             const isPlusPlan = plan.id === 'pass_plus';
             const planDisplayName = plan.displayName;
-            const monthlyPrice = plan.monthlyPrice;
+            const currentPrice = isAnnual ? plan.annualPrice : plan.monthlyPrice;
+            const billingPeriod = isAnnual ? 'year' : 'month';
+            const monthlyEquivalent = isAnnual ? (parseInt(plan.annualPrice) / 12).toFixed(0) : plan.monthlyPrice;
             
             return (
               <Card 
@@ -240,14 +274,23 @@ const Pricing = () => {
                     {planDisplayName}
                   </CardTitle>
                   
-                  <div className="space-y-2">
-                    <div className="text-3xl font-bold text-foreground">
-                      £0 for 30 days
-                    </div>
-                    <div className="text-lg text-muted-foreground">
-                      £{monthlyPrice}/month after
-                    </div>
-                  </div>
+                   <div className="space-y-2">
+                     <div className="text-3xl font-bold text-foreground">
+                       {isAnnual ? `£${currentPrice}` : '£0 for 30 days'}
+                     </div>
+                     <div className="text-lg text-muted-foreground">
+                       {isAnnual ? (
+                         <>per year <span className="text-sm">(£{monthlyEquivalent}/month)</span></>
+                       ) : (
+                         <>£{currentPrice}/{billingPeriod} after</>
+                       )}
+                     </div>
+                     {!isAnnual && (
+                       <div className="text-sm text-muted-foreground">
+                         Or £{plan.annualPrice}/year (save £{(parseInt(plan.monthlyPrice) * 12 - parseInt(plan.annualPrice)).toFixed(0)})
+                       </div>
+                     )}
+                   </div>
                 </CardHeader>
 
                 <CardContent className="px-8 pb-8 flex flex-col flex-1">
@@ -386,13 +429,13 @@ const Pricing = () => {
                       </div>
                     )}
                     
-                    {/* Small print */}
-                    <p className="text-xs text-muted-foreground text-center leading-relaxed pt-4">
-                      Free 30 day trial, then £{monthlyPrice} per month after. Offer only available if you haven't tried Premium before.{' '}
-                      <span className="underline cursor-pointer hover:text-foreground transition-colors">
-                        Terms apply.
-                      </span>
-                    </p>
+                     {/* Small print */}
+                     <p className="text-xs text-muted-foreground text-center leading-relaxed pt-4">
+                       Free 30 day trial, then £{currentPrice} per {billingPeriod} after. Offer only available if you haven't tried Premium before.{' '}
+                       <span className="underline cursor-pointer hover:text-foreground transition-colors">
+                         Terms apply.
+                       </span>
+                     </p>
                   </div>
                 </CardContent>
               </Card>
