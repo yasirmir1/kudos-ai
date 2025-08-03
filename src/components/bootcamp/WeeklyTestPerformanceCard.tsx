@@ -1,5 +1,5 @@
 import React from 'react';
-import { Calendar, TrendingUp, Trophy, Flame } from 'lucide-react';
+import { Calendar, TrendingUp, Trophy, Flame, Play, ChevronRight } from 'lucide-react';
 
 interface WeeklyTestData {
   weekNumber: number;
@@ -16,6 +16,7 @@ interface WeeklyTestPerformanceCardProps {
   bestWeek: number;
   weekStreak: number;
   recentWeeks: WeeklyTestData[];
+  onStartWeeklyChallenge?: () => void;
 }
 
 export const WeeklyTestPerformanceCard: React.FC<WeeklyTestPerformanceCardProps> = ({
@@ -23,7 +24,8 @@ export const WeeklyTestPerformanceCard: React.FC<WeeklyTestPerformanceCardProps>
   averageScore,
   bestWeek,
   weekStreak,
-  recentWeeks
+  recentWeeks,
+  onStartWeeklyChallenge
 }) => {
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -104,6 +106,22 @@ export const WeeklyTestPerformanceCard: React.FC<WeeklyTestPerformanceCardProps>
           ))}
         </div>
       </div>
+
+      {/* Start Weekly Challenge Button */}
+      {onStartWeeklyChallenge && (
+        <div className="mt-6 pt-4 border-t border-muted">
+          <button 
+            onClick={onStartWeeklyChallenge} 
+            className="w-full bg-gradient-to-r from-primary to-primary/80 text-primary-foreground rounded-lg p-4 flex items-center justify-between hover:from-primary/90 hover:to-primary/70 transition-colors"
+          >
+            <div className="flex items-center space-x-3">
+              <Play className="h-5 w-5" />
+              <span className="font-medium">Start Weekly Challenge</span>
+            </div>
+            <ChevronRight className="h-5 w-5" />
+          </button>
+        </div>
+      )}
     </div>
   );
 };
