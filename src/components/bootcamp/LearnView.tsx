@@ -142,7 +142,7 @@ export const LearnView: React.FC = () => {
       case 'available':
         return 'opacity-70 hover:opacity-100';
       case 'locked':
-        return 'opacity-40 pointer-events-none';
+        return 'opacity-40 hover:opacity-100';
       default:
         return '';
     }
@@ -603,10 +603,9 @@ export const LearnView: React.FC = () => {
                         className={`w-full mt-4 ${
                           weekStatus === 'completed' ? 'bg-green-600 hover:bg-green-700 text-white border-green-600' :
                           weekStatus === 'current' ? 'bg-blue-600 hover:bg-blue-700 text-white border-blue-600' :
-                          weekStatus === 'locked' ? 'opacity-50 cursor-not-allowed' : ''
+                          ''
                         }`}
                         onClick={() => handleWeekClick(week)}
-                        disabled={weekStatus === 'locked'}
                       >
                         {weekStatus === 'completed' ? (
                           <>
