@@ -22,7 +22,7 @@ interface Question {
   id: number;
   question_id: string;
   topic_id: string;
-  subtopic_id: string;
+  subtopic_name: string;
   module_id: string;
   question_text: string;
   question_type: string;
