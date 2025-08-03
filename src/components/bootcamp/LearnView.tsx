@@ -289,6 +289,39 @@ export const LearnView: React.FC = () => {
         return 'bg-gray-100 text-gray-800';
     }
   };
+
+  const getTopicCTA = (topicProgress: any) => {
+    if (!topicProgress) {
+      return {
+        text: 'Start Learning',
+        variant: 'default' as const,
+        icon: Play
+      };
+    }
+
+    switch (topicProgress.status) {
+      case 'mastered':
+      case 'completed':
+        return {
+          text: 'Complete',
+          variant: 'default' as const,
+          icon: CheckCircle,
+          className: 'bg-green-600 hover:bg-green-700 text-white'
+        };
+      case 'in_progress':
+        return {
+          text: 'Continue Learning',
+          variant: 'default' as const,
+          icon: Play
+        };
+      default:
+        return {
+          text: 'Start Learning',
+          variant: 'default' as const,
+          icon: Play
+        };
+    }
+  };
   const handleTopicClick = (topic: Topic) => {
     setSelectedTopic(topic);
     setIsTopicModalOpen(true);
@@ -534,17 +567,24 @@ export const LearnView: React.FC = () => {
                                 <span>{sampleQuestionsCount} sample questions</span>
                               </div>
                             )}
-                            <Button 
-                              className="w-full" 
-                              size="sm" 
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                handleTopicClick(topic);
-                              }}
-                            >
-                              <Play className="h-4 w-4 mr-2" />
-                              Start Learning
-                            </Button>
+                            
+                            {(() => {
+                              const cta = getTopicCTA(topicProgress);
+                              return (
+                                <Button 
+                                  className={`w-full ${cta.className || ''}`} 
+                                  size="sm" 
+                                  variant={cta.variant}
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    handleTopicClick(topic);
+                                  }}
+                                >
+                                  <cta.icon className="h-4 w-4 mr-2" />
+                                  {cta.text}
+                                </Button>
+                              );
+                            })()}
                           </div>
                         </CardContent>
                       </Card>
@@ -623,14 +663,24 @@ export const LearnView: React.FC = () => {
                               </span>)}
                           </div>
                         </div>}
-                      
-                      <Button className="w-full" size="sm" onClick={e => {
-                    e.stopPropagation();
-                    handleTopicClick(topic);
-                  }}>
-                        <Play className="h-4 w-4 mr-2" />
-                        Start Learning
-                      </Button>
+                       
+                       {(() => {
+                         const cta = getTopicCTA(topicProgress);
+                         return (
+                           <Button 
+                             className={`w-full ${cta.className || ''}`} 
+                             size="sm" 
+                             variant={cta.variant}
+                             onClick={e => {
+                               e.stopPropagation();
+                               handleTopicClick(topic);
+                             }}
+                           >
+                             <cta.icon className="h-4 w-4 mr-2" />
+                             {cta.text}
+                           </Button>
+                         );
+                       })()}
                     </div>
                   </CardContent>
                 </Card>;
