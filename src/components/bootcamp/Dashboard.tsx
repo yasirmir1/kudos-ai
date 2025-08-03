@@ -47,11 +47,9 @@ export const Dashboard: React.FC<DashboardProps> = ({
   // Auto-refresh data every 30 seconds to catch new session updates
   useEffect(() => {
     if (!authUser) return;
-    
     const interval = setInterval(() => {
       loadProgressData();
     }, 30000);
-
     return () => clearInterval(interval);
   }, [authUser]);
   const loadProgressData = async () => {
@@ -60,10 +58,7 @@ export const Dashboard: React.FC<DashboardProps> = ({
     try {
       const studentProfile = await BootcampAPI.getStudentProfile(authUser.id);
       if (studentProfile) {
-        const [progress, topics] = await Promise.all([
-          BootcampAPI.getStudentProgress(studentProfile.student_id),
-          supabase.from('bootcamp_topics').select('id, name').order('topic_order')
-        ]);
+        const [progress, topics] = await Promise.all([BootcampAPI.getStudentProgress(studentProfile.student_id), supabase.from('bootcamp_topics').select('id, name').order('topic_order')]);
 
         // Create topic name mapping
         const topicNameMap = new Map();
@@ -74,12 +69,11 @@ export const Dashboard: React.FC<DashboardProps> = ({
         }
 
         // Get actual question counts per topic from responses
-        const { data: responseCounts } = await supabase
-          .from('bootcamp_student_responses')
-          .select(`
+        const {
+          data: responseCounts
+        } = await supabase.from('bootcamp_student_responses').select(`
             bootcamp_questions!inner(topic_id)
-          `)
-          .eq('student_id', studentProfile.student_id);
+          `).eq('student_id', studentProfile.student_id);
 
         // Count questions per topic
         const questionCounts = new Map();
@@ -87,14 +81,12 @@ export const Dashboard: React.FC<DashboardProps> = ({
           const topicId = response.bootcamp_questions.topic_id;
           questionCounts.set(topicId, (questionCounts.get(topicId) || 0) + 1);
         });
-
         const topicsData: RecentTopic[] = progress.map((p: any) => ({
           name: topicNameMap.get(p.topic_id) || p.topic_id,
           accuracy: Math.round(p.accuracy_percentage || 0),
           questions: questionCounts.get(p.topic_id) || 0,
           status: (p.accuracy_percentage >= 80 ? 'improving' : p.accuracy_percentage >= 70 ? 'stable' : 'needs-work') as 'improving' | 'stable' | 'needs-work'
         })).slice(0, 3);
-        
         setRecentTopics(topicsData);
       }
     } catch (error) {
@@ -152,14 +144,7 @@ export const Dashboard: React.FC<DashboardProps> = ({
             </h1>
             <p className="text-muted-foreground">You're making great progress. Keep up the momentum!</p>
           </div>
-          <button
-            onClick={loadProgressData}
-            disabled={loading}
-            className="flex items-center space-x-2 px-4 py-2 rounded-lg bg-primary text-primary-foreground hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-          >
-            <RefreshCw className={`h-4 w-4 ${loading ? 'animate-spin' : ''}`} />
-            <span className="text-sm font-medium">Refresh</span>
-          </button>
+          
         </div>
       </div>
 
