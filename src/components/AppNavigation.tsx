@@ -78,6 +78,7 @@ export const AppNavigation: React.FC<AppNavigationProps> = ({
 
   // Get plan display info
   const getPlanDisplay = () => {
+    // Check if user is in trial period
     if (isTrialActive) {
       return {
         text: 'Trial',
@@ -86,6 +87,7 @@ export const AppNavigation: React.FC<AppNavigationProps> = ({
       };
     }
     
+    // Check subscription state from database
     switch (userState) {
       case 'pass':
         return {
@@ -99,17 +101,12 @@ export const AppNavigation: React.FC<AppNavigationProps> = ({
           variant: 'default' as const,
           icon: Crown
         };
-      case 'expired':
-        return {
-          text: 'Expired',
-          variant: 'destructive' as const,
-          icon: Clock
-        };
       default:
+        // Default to Trial for any other state
         return {
-          text: 'Free',
-          variant: 'outline' as const,
-          icon: User
+          text: 'Trial',
+          variant: 'secondary' as const,
+          icon: Clock
         };
     }
   };
