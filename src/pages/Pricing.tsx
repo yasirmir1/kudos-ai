@@ -145,7 +145,7 @@ export default function Pricing() {
           const isTrialActivePlan = userSub && isTrialActive(userSub);
           const hasUsedTrialForPlan = hasUsedTrial(plan.id);
           const isPlusPlan = plan.id === 'pass_plus';
-          const planDisplayName = plan.id === 'pass' ? 'Pass' : 'Pass Plus';
+          const planDisplayName = plan.id === 'pass' ? 'Pass' : plan.id === 'pass_plus' ? 'The Ultimate 11+ Preparation Package' : 'Pass Plus';
           const monthlyPrice = plan.id === 'pass' ? '7.99' : '14.99';
           return <Card key={plan.id} className="relative bg-card border-2 transition-all duration-300 hover:shadow-xl hover:-translate-y-1 border-border/50 hover:border-primary/50 overflow-hidden">
                 {/* Premium Badge */}
@@ -197,7 +197,24 @@ export default function Pricing() {
                         !feature.toLowerCase().includes('progress tracking') && 
                         !feature.toLowerCase().includes('basic analytics')
                       ).map(feature => ({ title: feature }))
-                    ] : plan.features.map(feature => ({ title: feature }))).map((feature, index) => 
+                    ] : plan.id === 'pass_plus' ? [
+                      {
+                        title: "All features from Pass",
+                        description: "Daily Performance Snapshots, Personalized Progress Analytics, and Customized Worksheets."
+                      },
+                      {
+                        title: "The 52-Week Bootcamp",
+                        description: "A complete, structured 11+ course with a personalized learning plan that adapts to your child's needs, taking them through the entire curriculum."
+                      },
+                      {
+                        title: "Weekly Performance Monitoring",
+                        description: "On top of the course, you'll get access to a weekly test that closely monitors your child's progress and helps you track their development over time."
+                      },
+                      {
+                        title: "Realistic Mock Exams",
+                        description: "Gain access to authentic GL and CEM style mock exams (50 questions over 60 minutes). Instantly marked, with a personalized report that provides detailed feedback and a roadmap for improvement."
+                      }
+                    ] : plan.features.map(feature => ({ title: feature }))).map((feature, index) =>
                       <div key={index} className="flex items-start">
                         <div className="w-2 h-2 rounded-full bg-primary mt-2 mr-3 flex-shrink-0" />
                         <div className="flex-1">
