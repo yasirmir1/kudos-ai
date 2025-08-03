@@ -79,8 +79,6 @@ const Bootcamp = () => {
         {currentView === 'topics' && <TopicsView setCurrentView={setCurrentView} />}
         {currentView === 'achievements' && <AchievementCenter />}
         
-        {currentView === 'analytics' && <AnalyticsDashboard />}
-        
         {currentView === 'settings' && (window.location.href = '/settings')}
         {currentView === 'report' && <PracticeReport />}
       </main>

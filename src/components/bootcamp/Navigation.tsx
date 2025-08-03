@@ -59,11 +59,6 @@ export const Navigation: React.FC<NavigationProps> = ({
       label: 'Achievements',
       icon: Trophy
     },
-    {
-      id: 'analytics',
-      label: 'Analytics',
-      icon: PieChart
-    },
   ];
   return (
     <nav className="bg-card shadow-sm border-b sticky top-0 z-50">
