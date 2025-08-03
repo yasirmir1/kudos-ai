@@ -185,7 +185,7 @@ const Pricing = () => {
         )}
 
         {/* Billing Toggle */}
-        <div className="flex items-center justify-center mb-8 relative">
+        <div className="flex items-center justify-center mb-8 space-x-4">
           <div className="bg-muted rounded-lg p-1 flex items-center">
             <button
               className={`px-4 py-2 rounded-md text-sm font-medium transition-all ${
@@ -209,16 +209,9 @@ const Pricing = () => {
             </button>
           </div>
           
-          {/* Curved Arrow and Savings Text */}
-          <div className="absolute left-full ml-4 flex items-center space-x-2 animate-in fade-in duration-500">
-            <ArrowUpRight 
-              className="w-6 h-6 text-slate-400 transform -rotate-12 animate-pulse" 
-              strokeWidth={1.5} 
-            />
-            <span className="text-sm font-thin text-slate-500 whitespace-nowrap">
-              save up to 63%
-            </span>
-          </div>
+          <span className="text-sm font-thin text-slate-500">
+            save up to 63%
+          </span>
         </div>
 
         {/* Subscription Status */}
