@@ -127,24 +127,30 @@ export default function Pricing() {
   return <div className="min-h-screen bg-gradient-to-br from-background via-background to-primary/5">
       <div className="container mx-auto px-4 py-12">
         <div className="text-center mb-16">
-          <h1 className="text-5xl font-bold mb-6 bg-gradient-to-r from-primary to-primary-glow bg-clip-text text-transparent">
-            Choose Your Plan
+          <h1 className="text-5xl font-bold mb-6 text-foreground">
+            Pricing
           </h1>
-          <p className="text-muted-foreground text-xl max-w-3xl mx-auto leading-relaxed">Sign Up for a free trial now. No credit card required.</p>
+          <p className="text-muted-foreground text-xl max-w-3xl mx-auto leading-relaxed">
+            Flexible plans that scale <span className="text-primary font-semibold">with you</span>
+          </p>
+          <p className="text-muted-foreground text-lg mt-2">
+            <span className="text-primary font-semibold">No</span> hidden fees. Cancel anytime.
+          </p>
         </div>
 
-        <div className="grid lg:grid-cols-2 gap-8 max-w-5xl mx-auto mb-16">
+        <div className="grid lg:grid-cols-2 gap-8 max-w-4xl mx-auto mb-16">
           {plans.map(plan => {
           const userSub = getUserSubscriptionForPlan(plan.id);
           const isCurrentPlan = !!userSub;
           const isTrialActivePlan = userSub && isTrialActive(userSub);
           const hasUsedTrialForPlan = hasUsedTrial(plan.id);
           const isPlusPlan = plan.id === 'pass_plus';
-          return <Card key={plan.id} className={`relative transition-all duration-300 hover:shadow-lg ${isPlusPlan ? 'border-primary shadow-md bg-gradient-to-br from-card via-card to-primary/5' : 'hover:shadow-md'}`}>
-                {isPlusPlan && <Badge className="absolute -top-3 left-1/2 transform -translate-x-1/2 bg-primary hover:bg-primary/90 shadow-lg">
-                    <Star className="w-3 h-3 mr-1" />
-                    Most Popular
-                  </Badge>}
+          return <Card key={plan.id} className={`relative bg-white dark:bg-card border-2 transition-all duration-300 hover:shadow-xl hover:-translate-y-1 ${isPlusPlan ? 'border-primary shadow-lg scale-[1.02]' : 'border-border/50 hover:border-primary/50'}`}>
+                {isPlusPlan && <div className="absolute -top-3 left-1/2 transform -translate-x-1/2">
+                    <Badge className="bg-primary hover:bg-primary/90 text-primary-foreground px-4 py-1 text-sm font-semibold shadow-lg rounded-full">
+                      Popular
+                    </Badge>
+                  </div>}
                 
                 <CardHeader className="text-center pb-6 pt-8">
                   <CardTitle className="text-3xl font-bold text-foreground mb-2">
@@ -154,20 +160,20 @@ export default function Pricing() {
                     {plan.description}
                   </CardDescription>
                   
-                  <div className="space-y-2">
-                    {plan.trial_days > 0 ? <div className="space-y-2">
+                  <div className="space-y-2 mb-6">
+                    {plan.trial_days > 0 ? <div className="space-y-1">
                         <div className="text-lg text-muted-foreground line-through">
-                          £{plan.id === 'pass' ? '7.99' : '14.99'}/month
+                          £{plan.id === 'pass' ? '7.99' : '14.99'}/User
                         </div>
-                        <div className="text-5xl font-bold text-primary">£0*</div>
+                        <div className="text-4xl font-bold text-primary">£0*</div>
                         <div className="text-sm text-muted-foreground">
                           *For the first {plan.trial_days} days
                         </div>
                       </div> : <div>
-                        <span className="text-5xl font-bold text-foreground">
+                        <span className="text-4xl font-bold text-foreground">
                           £{plan.id === 'pass' ? '7.99' : '14.99'}
                         </span>
-                        <span className="text-muted-foreground text-lg">/month</span>
+                        <span className="text-muted-foreground text-lg">/User</span>
                       </div>}
                   </div>
                   
@@ -201,10 +207,10 @@ export default function Pricing() {
                             {startingTrial === plan.id ? <div className="flex items-center">
                                 <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-current mr-2"></div>
                                 Starting Trial...
-                              </div> : `Start ${plan.trial_days}-Day Free Trial`}
+                              </div> : `Start Free Trial`}
                           </Button>}
                         <Button className="w-full py-3 font-semibold transition-all duration-200 hover:scale-[1.02]" variant={isPlusPlan && plan.trial_days === 0 ? "default" : "secondary"} onClick={() => toast.info('Subscription flow coming soon!')}>
-                          Subscribe Now
+                          Get Started
                         </Button>
                         {hasUsedTrialForPlan && <p className="text-xs text-center text-muted-foreground bg-muted/50 rounded-md py-2 px-3">
                             Trial already used for this plan
