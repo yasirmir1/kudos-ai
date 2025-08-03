@@ -120,9 +120,9 @@ const Practice = () => {
       // Call the bootcamp question manager edge function
       const { data: questionsData, error } = await supabase.functions.invoke('bootcamp-question-manager', {
         body: { 
-          student_id: student.student_id,
-          question_count: questionCount,
-          difficulty_preference: difficulty 
+          action: 'get_adaptive_questions',
+          studentId: student.student_id,
+          questionCount: questionCount
         }
       });
 
