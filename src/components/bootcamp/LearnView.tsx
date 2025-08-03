@@ -371,11 +371,9 @@ export const LearnView: React.FC = () => {
       </div>
 
       <Tabs defaultValue="plan" className="w-full">
-        <TabsList className="grid w-full grid-cols-4">
+        <TabsList className="grid w-full grid-cols-2">
           <TabsTrigger value="plan">52-Week Plan</TabsTrigger>
           <TabsTrigger value="modules">Learning Modules</TabsTrigger>
-          <TabsTrigger value="topics">All Topics</TabsTrigger>
-          <TabsTrigger value="curriculum">Sample Questions</TabsTrigger>
         </TabsList>
 
         <TabsContent value="plan" className="space-y-6">
@@ -596,128 +594,6 @@ export const LearnView: React.FC = () => {
           })}
         </TabsContent>
 
-        <TabsContent value="topics" className="space-y-4">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {topics.map(topic => {
-            const topicSubtopics = getSubtopicsForTopic(topic.id);
-            const module = modules.find(m => m.id === topic.module_id);
-            
-            // Get progress for this specific topic
-            const topicProgress = progress.find(p => p.topic_id === topic.id);
-            const progressPercentage = topicProgress ? (topicProgress.mastery_score || 0) * 100 : 0;
-            const statusColor = topicProgress?.status === 'mastered' ? 'text-green-600' : 
-                               topicProgress?.status === 'completed' ? 'text-blue-600' : 
-                               topicProgress?.status === 'in_progress' ? 'text-yellow-600' : 
-                               'text-gray-500';
-            
-            return <Card key={topic.id} className="cursor-pointer hover:shadow-md transition-all" onClick={() => handleTopicClick(topic)}>
-                  <CardHeader>
-                    <div className="flex items-center justify-between">
-                      <CardTitle className="text-lg">{topic.name}</CardTitle>
-                      <Badge className={getDifficultyColor(topic.difficulty)}>
-                        {topic.difficulty}
-                      </Badge>
-                    </div>
-                    <p className="text-sm text-muted-foreground">Module: {module?.name}</p>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="space-y-3">
-                      <div className="flex items-center gap-4 text-sm">
-                        <div className="flex items-center gap-1">
-                          <BookOpen className="h-4 w-4" />
-                          <span>{topic.skills?.length || 0} skills</span>
-                        </div>
-                        <div className="flex items-center gap-1">
-                          <Users className="h-4 w-4" />
-                          <span>{topicSubtopics.length} subtopics</span>
-                        </div>
-                      </div>
-                      
-                      {/* Topic Progress Bar */}
-                      {topicProgress && (
-                        <div className="space-y-2">
-                          <div className="flex items-center justify-between text-xs">
-                            <span className={statusColor}>
-                              {topicProgress.status.replace('_', ' ')}
-                            </span>
-                            <span>{Math.round(progressPercentage)}%</span>
-                          </div>
-                          <Progress value={progressPercentage} className="h-1.5" />
-                        </div>
-                      )}
-                      
-                      {topicSubtopics.length > 0 && <div>
-                          <h6 className="text-sm font-medium mb-2">Subtopics:</h6>
-                          <div className="space-y-1">
-                            {topicSubtopics.slice(0, 2).map(subtopic => <div key={subtopic.id}>
-                                <div className="text-sm font-medium">{subtopic.name}</div>
-                              </div>)}
-                          </div>
-                        </div>}
-                      
-                      {topic.skills && topic.skills.length > 0 && <div>
-                          <h6 className="text-sm font-medium mb-2">Skills:</h6>
-                          <div className="flex flex-wrap gap-1">
-                            {topic.skills.slice(0, 3).map((skill, idx) => <span key={idx} className="text-xs bg-primary/10 text-primary rounded px-2 py-1">
-                                {skill}
-                              </span>)}
-                          </div>
-                        </div>}
-                       
-                       {(() => {
-                         const cta = getTopicCTA(topicProgress);
-                         return (
-                           <Button 
-                             className={`w-full ${cta.className || ''}`} 
-                             size="sm" 
-                             variant={cta.variant}
-                             onClick={e => {
-                               e.stopPropagation();
-                               handleTopicClick(topic);
-                             }}
-                           >
-                             <cta.icon className="h-4 w-4 mr-2" />
-                             {cta.text}
-                           </Button>
-                         );
-                       })()}
-                    </div>
-                  </CardContent>
-                </Card>;
-          })}
-          </div>
-        </TabsContent>
-
-        <TabsContent value="curriculum" className="space-y-4">
-          <div className="space-y-4">
-            <h3 className="text-lg font-semibold">Sample Curriculum Questions</h3>
-            {curriculum.length > 0 ? <div className="grid grid-cols-1 gap-4">
-                {curriculum.slice(0, 20).map(item => <Card key={item.question_id}>
-                    <CardContent className="p-4">
-                      <div className="flex items-start justify-between mb-2">
-                        <div className="flex-1">
-                          <div className="flex items-center gap-2 mb-2">
-                            <Badge variant="outline">{item.topic}</Badge>
-                            <Badge variant="outline">{item.subtopic}</Badge>
-                            <Badge className={getDifficultyColor(item.difficulty)}>
-                              {item.difficulty}
-                            </Badge>
-                          </div>
-                          <p className="text-sm font-medium mb-2">{item.example_question}</p>
-                          {item.pedagogical_notes && <p className="text-xs text-muted-foreground bg-muted p-2 rounded">
-                              <strong>Teaching Note:</strong> {item.pedagogical_notes}
-                            </p>}
-                        </div>
-                      </div>
-                    </CardContent>
-                  </Card>)}
-              </div> : <Card>
-                <CardContent className="p-6 text-center">
-                  <p className="text-muted-foreground">No curriculum questions available. Generate some questions to populate the learning content.</p>
-                </CardContent>
-              </Card>}
-          </div>
-        </TabsContent>
       </Tabs>
 
       <TopicLearningModal topic={selectedTopic} isOpen={isTopicModalOpen} onClose={() => setIsTopicModalOpen(false)} onStartPractice={handleStartPractice} />
