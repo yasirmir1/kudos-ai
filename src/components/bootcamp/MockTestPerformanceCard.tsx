@@ -1,5 +1,5 @@
 import React from 'react';
-import { Clock, Target, BarChart3, Award } from 'lucide-react';
+import { Clock, Target, BarChart3, Award, RefreshCw } from 'lucide-react';
 
 interface MockTestSession {
   testNumber: number;
@@ -120,6 +120,13 @@ export const MockTestPerformanceCard: React.FC<MockTestPerformanceCardProps> = (
               <span className="font-medium">11+ Mock Test</span>
             </div>
             <span className="text-sm bg-white/20 px-2 py-1 rounded text-xs">60 min</span>
+          </button>
+          <button className="w-full mt-3 bg-muted text-muted-foreground rounded-lg p-4 flex items-center justify-between hover:bg-muted/80 transition-colors">
+            <div className="flex items-center space-x-3">
+              <RefreshCw className="h-5 w-5" />
+              <span className="font-medium">Review Mistakes</span>
+            </div>
+            <span className="text-sm text-muted-foreground">8 questions</span>
           </button>
         </div>
       )}

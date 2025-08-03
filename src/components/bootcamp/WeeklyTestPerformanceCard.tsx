@@ -1,5 +1,5 @@
 import React from 'react';
-import { Calendar, TrendingUp, Trophy, Flame, Play, ChevronRight } from 'lucide-react';
+import { Calendar, TrendingUp, Trophy, Flame, Play, ChevronRight, RefreshCw } from 'lucide-react';
 
 interface WeeklyTestData {
   weekNumber: number;
@@ -119,6 +119,13 @@ export const WeeklyTestPerformanceCard: React.FC<WeeklyTestPerformanceCardProps>
               <span className="font-medium">Start Weekly Challenge</span>
             </div>
             <ChevronRight className="h-5 w-5" />
+          </button>
+          <button className="w-full mt-3 bg-muted text-muted-foreground rounded-lg p-4 flex items-center justify-between hover:bg-muted/80 transition-colors">
+            <div className="flex items-center space-x-3">
+              <RefreshCw className="h-5 w-5" />
+              <span className="font-medium">Review Mistakes</span>
+            </div>
+            <span className="text-sm text-muted-foreground">8 questions</span>
           </button>
         </div>
       )}

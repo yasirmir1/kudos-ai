@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Brain, Target, Shield, Award, RefreshCw, TrendingUp, AlertCircle, Loader2 } from 'lucide-react';
+import { Brain, Target, Shield, Award, TrendingUp, AlertCircle, Loader2 } from 'lucide-react';
 import { WeeklyProgressChart } from './WeeklyProgressChart';
 import { WeeklyTestPerformanceCard } from './WeeklyTestPerformanceCard';
 import { MockTestPerformanceCard } from './MockTestPerformanceCard';
@@ -280,13 +280,6 @@ export const Dashboard: React.FC<DashboardProps> = ({
         <div className="bg-card rounded-xl shadow-sm border p-6">
           <h2 className="text-lg font-semibold text-foreground mb-4">Quick Practice</h2>
           <div className="space-y-3">
-            <button className="w-full bg-muted text-muted-foreground rounded-lg p-4 flex items-center justify-between hover:bg-muted/80 transition-colors">
-              <div className="flex items-center space-x-3">
-                <RefreshCw className="h-5 w-5" />
-                <span className="font-medium">Review Mistakes</span>
-              </div>
-              <span className="text-sm text-muted-foreground">8 questions</span>
-            </button>
           </div>
         </div>
 
