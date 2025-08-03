@@ -75,15 +75,12 @@ export const SubscriptionOverlay: React.FC<SubscriptionOverlayProps> = ({
               </div>
             </div>
             <Button 
-              onClick={() => openPricingModal({ 
-                requiredFeature,
-                highlightPlan: requiredFeature === 'bootcamp' ? 'pass_plus' : 'pass'
-              })}
+              onClick={handleSubscribeClick}
               size="sm"
               className="ml-4 flex-shrink-0 bg-amber-600 hover:bg-amber-700 text-white"
             >
               <Crown className="mr-1 h-4 w-4" />
-              Upgrade
+              Subscribe
             </Button>
           </div>
         </div>
@@ -103,11 +100,7 @@ export const SubscriptionOverlay: React.FC<SubscriptionOverlayProps> = ({
         
         {/* Invisible overlay to capture clicks */}
         <div 
-          className="absolute inset-0 z-50 cursor-pointer bg-transparent"
-          onClick={() => openPricingModal({ 
-            requiredFeature,
-            highlightPlan: requiredFeature === 'bootcamp' ? 'pass_plus' : 'pass'
-          })}
+          className="absolute inset-0 z-50 cursor-default bg-transparent"
         >
           {/* Optional: Add some visual indicators */}
           <div className="absolute top-4 right-4">
