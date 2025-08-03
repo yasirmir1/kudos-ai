@@ -428,29 +428,56 @@ function getMisconceptionType(code: string): string {
 
 function getMisconceptionDescription(code: string): string {
   const descriptions: { [key: string]: string } = {
+    // Place Value misconceptions
     'PV1': 'Place value position confusion',
     'PV3': 'Decimal place value errors',
     'PV4': 'Powers of 10 confusion',
+    'npv1': 'Number place value confusion',
+    
+    // Fractions misconceptions
     'FR1': 'Adding denominators when adding fractions',
     'FR3': 'Fraction size comparison errors',
+    'fdp1': 'Fraction, decimal, percentage conversion errors',
+    'fdp2': 'Decimal place value confusion in fractions',
+    'fdp6': 'Percentage calculation misconceptions',
+    
+    // Addition and Operations misconceptions
+    'ao1': 'Addition algorithm errors',
+    'ao2': 'Column alignment mistakes in addition',
+    'ao3': 'Carrying errors in addition',
+    'ao4': 'Place value confusion in addition',
+    
+    // Calculation errors
     'CE1': 'Basic calculation errors',
     'CE2': 'Carrying/borrowing errors',
     'CE6': 'Rounding errors',
+    
+    // Operations
     'OP1': 'Operation selection or order confusion',
+    
+    // Conceptual
     'CN1': 'Conceptual misunderstanding',
     'CN2': 'Method application errors',
     'CN4': 'Unit confusion',
     'CN5': 'Procedural confusion',
+    
+    // Measurement
     'ME3': 'Perimeter/area confusion',
     'ME4': 'Unit measurement errors',
+    
+    // Pattern & Algebra
     'PA1': 'Pattern recognition errors',
     'PA2': 'Local vs global pattern confusion',
+    
+    // Reasoning
     'RE2': 'Incomplete problem solving',
     'RE4': 'Insufficient information assumption',
     'RE5': 'Sequential operation errors',
+    
+    // Problem solving
     'PE5': 'Estimation errors'
   }
-  return descriptions[code] || `Misconception type: ${code}`
+  return descriptions[code] || `Misconception: ${code}`
 }
 
 async function generateQuestions(supabaseClient: any, data: any) {
