@@ -92,7 +92,7 @@ export const MockTest: React.FC = () => {
         const timeElapsed = Math.floor((Date.now() - startTime.getTime()) / 1000);
         
         // Load questions for this session from unified table
-        const { data: sessionQuestions } = await supabase
+        const { data: sessionResponses } = await supabase
           .from('bootcamp_student_responses')
           .select(`
             question_id,
@@ -102,37 +102,41 @@ export const MockTest: React.FC = () => {
           .eq('activity_source', 'mock_test')
           .order('responded_at');
 
-        if (sessionQuestions && sessionQuestions.length > 0) {
-          // Get the questions from the mock_test_questions table
-          const questionIds = (sessionQuestions as any[]).map((q: any) => q.question_id);
-          const { data: questions } = await supabase
-            .from('mock_test_questions')
-            .select('*')
-            .in('question_id', questionIds)
-            .eq('is_active', true);
+        // Get all original questions for this session (maintain original order)
+        const { data: questions, error: questionsError } = await supabase
+          .from('mock_test_questions')
+          .select('*')
+          .eq('is_active', true)
+          .limit(50)
+          .order('question_id');
 
-          if (questions) {
-            const answers: Record<number, string> = {};
-            
-            (sessionQuestions as any[]).forEach((q: any, index: number) => {
-              if (q.selected_answer) {
-                answers[index] = q.selected_answer;
+        if (questionsError) throw questionsError;
+
+        if (questions && questions.length > 0) {
+          const answers: Record<number, string> = {};
+          
+          // Map responses back to question indices
+          if (sessionResponses && sessionResponses.length > 0) {
+            (sessionResponses as any[]).forEach((response: any) => {
+              const questionIndex = questions.findIndex(q => q.question_id === response.question_id);
+              if (questionIndex >= 0 && response.selected_answer) {
+                answers[questionIndex] = response.selected_answer;
               }
             });
-
-            setTestState({
-              status: 'active',
-              currentQuestion: (sessionData.currentQuestion as number) || 0,
-              timeRemaining: Math.max(0, existingSession.time_limit_seconds - timeElapsed),
-              answers,
-              questions: questions as MockTestQuestion[],
-              startTime,
-              sessionId: existingSession.session_id,
-              timeSpent: timeElapsed
-            });
-
-            toast.info('Continuing your mock test session');
           }
+
+          setTestState({
+            status: 'active',
+            currentQuestion: (sessionData.currentQuestion as number) || 0,
+            timeRemaining: Math.max(0, existingSession.time_limit_seconds - timeElapsed),
+            answers,
+            questions: questions as MockTestQuestion[],
+            startTime,
+            sessionId: existingSession.session_id,
+            timeSpent: timeElapsed
+          });
+
+          toast.info('Continuing your mock test session');
         }
       }
     } catch (error) {
@@ -161,7 +165,8 @@ export const MockTest: React.FC = () => {
         const isCorrect = response.student_answer === question.correct_answer;
         if (isCorrect) correctCount++;
 
-        await supabase
+        // Use INSERT instead of UPDATE since these are new responses
+        const { error: responseError } = await supabase
           .from('bootcamp_student_responses')
           .insert({
             student_id: student.student_id,
@@ -174,6 +179,10 @@ export const MockTest: React.FC = () => {
             activity_source: 'mock_test',
             responded_at: response.answered_at
           });
+
+        if (responseError) {
+          console.error('Error inserting response:', responseError);
+        }
       }
 
       // Complete the session
