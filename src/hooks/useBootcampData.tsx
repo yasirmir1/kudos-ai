@@ -175,6 +175,22 @@ export const useBootcampData = () => {
           setResponses(unifiedResponses);
         }
 
+        // Fetch mock test answers separately since they're in a different table
+        console.log('🔍 Fetching mock test answers...');
+        const { data: allMockTestAnswers, error: mockAnswersError } = await supabase
+          .from('bootcamp_mock_test_answers')
+          .select(`
+            *,
+            bootcamp_mock_test_sessions!inner(student_id)
+          `)
+          .eq('bootcamp_mock_test_sessions.student_id', studentId);
+
+        if (mockAnswersError) {
+          console.error('❌ Error fetching mock test answers:', mockAnswersError);
+        } else {
+          console.log('✅ Fetched mock test answers:', allMockTestAnswers?.length);
+        }
+
         // For mock test sessions, we still get session metadata for achievements and detailed analysis
         console.log('🔍 Fetching mock test session metadata...');
         const { data: mockTestSessions, error: mockTestError } = await supabase
@@ -190,9 +206,10 @@ export const useBootcampData = () => {
           console.log('✅ Fetched mock test sessions:', mockTestSessions?.length);
         }
 
-        // Calculate stats with unified data
+        // Calculate stats with unified data including mock test answers
         const mockTestData = mockTestSessions || [];
-        calculateStats(allResponsesData || [], progressData || [], mockTestData);
+        const mockAnswersData = allMockTestAnswers || [];
+        calculateStats(allResponsesData || [], progressData || [], mockTestData, mockAnswersData);
       }
     } catch (err) {
       console.error('Error fetching bootcamp data:', err);
@@ -206,14 +223,30 @@ export const useBootcampData = () => {
     return user?.id;
   };
 
-  const calculateStats = (responses: StudentResponse[], progress: StudentProgress[], mockTestSessions: any[] = []) => {
+  const calculateStats = (responses: StudentResponse[], progress: StudentProgress[], mockTestSessions: any[] = [], mockTestAnswers: any[] = []) => {
+    // Convert mock test answers to unified format for counting
+    const mockTestResponses = mockTestAnswers.map(answer => ({
+      response_id: answer.assignment_id,
+      question_id: answer.question_id,
+      is_correct: answer.is_correct || false,
+      time_taken: answer.time_taken_seconds || 0,
+      responded_at: answer.answered_at || new Date().toISOString(),
+      misconception_detected: answer.misconception_detected,
+      activity_source: 'mock_test'
+    }));
+
+    // Combine all responses (unified + mock test answers)
+    const allResponses = [...responses, ...mockTestResponses];
+    
     // Filter responses to include practice and mock test activity types
-    const progressResponses = responses.filter(r => 
+    const progressResponses = allResponses.filter(r => 
       r.activity_source === 'practice' || r.activity_source === 'mock_test'
     );
     
     console.log('Calculating stats with:', {
-      totalResponsesCount: responses.length,
+      totalResponsesCount: allResponses.length,
+      unifiedResponsesCount: responses.length,
+      mockTestAnswersCount: mockTestResponses.length,
       progressResponsesCount: progressResponses.length,
       excludedLearningSessionsCount: responses.filter(r => r.activity_source === 'learning_session').length,
       progressCount: progress.length,
@@ -275,7 +308,7 @@ export const useBootcampData = () => {
     };
 
     console.log('Progress-focused stats (practice/mock only):', calculatedStats);
-    console.log('Excluded learning sessions from progress tracking');
+    console.log('Including mock test answers from separate table');
     setStats(calculatedStats);
   };
 
