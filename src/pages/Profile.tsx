@@ -16,13 +16,14 @@ import { useAgeGroup, updateAgeGroupFromProfile } from '@/contexts/AgeGroupConte
 import { AgeGroupSelector } from '@/components/AgeGroupSelector';
 import { useAccessibility } from '@/contexts/AccessibilityContext';
 
-type AgeGroup = 'year 2-3' | 'year 4-5' | '11+';
+type AgeGroup = '11+';
+type DatabaseAgeGroup = 'year 2-3' | 'year 4-5' | '11+';
 
 interface Profile {
   id: string;
   email: string;
   current_level: string;
-  age_group: AgeGroup;
+  age_group: DatabaseAgeGroup;
   target_exam_date: string | null;
   created_at: string;
 }
@@ -43,9 +44,14 @@ const Profile = () => {
     target_exam_date: string;
   }>({
     current_level: 'beginner',
-    age_group: 'year 4-5',
+    age_group: '11+',
     target_exam_date: ''
   });
+
+  // Helper function to migrate old age groups to new system
+  const migrateAgeGroup = (ageGroup: DatabaseAgeGroup): AgeGroup => {
+    return '11+'; // All users now use 11+ regardless of previous setting
+  };
 
   // Learning and subscription settings
   const [learningSettings, setLearningSettings] = useState({
@@ -84,6 +90,13 @@ const Profile = () => {
     }
   }, [user]);
 
+  // Sync with age group context
+  useEffect(() => {
+    if (selectedAgeGroup && formData.age_group !== selectedAgeGroup) {
+      setFormData(prev => ({ ...prev, age_group: selectedAgeGroup as AgeGroup }));
+    }
+  }, [selectedAgeGroup]);
+
   const loadProfile = async () => {
     try {
       const { data, error } = await supabase
@@ -101,7 +114,7 @@ const Profile = () => {
         setProfile(data);
         setFormData({
           current_level: data.current_level || 'beginner',
-          age_group: data.age_group || 'year 4-5',
+          age_group: migrateAgeGroup(data.age_group || '11+'),
           target_exam_date: data.target_exam_date || ''
         });
       } else {
@@ -250,21 +263,19 @@ const Profile = () => {
 
               <div className="space-y-2">
                 <Label htmlFor="age-group">School Year</Label>
-                <Select 
-                  value={formData.age_group} 
-                  onValueChange={(value: AgeGroup) => setFormData(prev => ({ ...prev, age_group: value }))}
-                >
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select your school year" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="year 2-3">Year 2-3</SelectItem>
-                    <SelectItem value="year 4-5">Year 4-5</SelectItem>
-                    <SelectItem value="11+">11+</SelectItem>
-                  </SelectContent>
-                </Select>
+                <div className="flex items-center space-x-2">
+                  <div className="flex-1 p-3 bg-muted rounded-md">
+                    <span className="font-medium">11+ Preparation</span>
+                    <p className="text-xs text-muted-foreground mt-1">
+                      All content is now optimized for 11+ exam preparation
+                    </p>
+                  </div>
+                  <div className="px-3 py-2 bg-green-100 text-green-800 rounded-md text-sm font-medium">
+                    Current
+                  </div>
+                </div>
                 <p className="text-xs text-muted-foreground">
-                  Questions and curriculum will be tailored to your school year
+                  Questions and curriculum are tailored for 11+ exam preparation
                 </p>
               </div>
 
