@@ -41,15 +41,24 @@ export const MockTestPerformanceContainer: React.FC = () => {
   }, [user, student]);
 
   const loadMockTestData = async () => {
-    if (!student?.student_id) return;
+    if (!user?.id) return;
     
     setLoading(true);
     try {
+      // Get bootcamp student ID first
+      const { data: bootcampStudent } = await supabase
+        .from('bootcamp_students')
+        .select('student_id')
+        .eq('user_id', user.id)
+        .single();
+
+      if (!bootcampStudent) return;
+
       // Fetch mock test sessions
       const { data: sessions, error } = await supabase
         .from('bootcamp_mock_test_sessions')
         .select('*')
-        .eq('student_id', student.student_id)
+        .eq('student_id', bootcampStudent.student_id)
         .order('started_at', { ascending: false });
 
       if (error) throw error;

@@ -43,15 +43,24 @@ export const WeeklyTestPerformanceContainer: React.FC = () => {
   }, [user, student]);
 
   const loadWeeklyTestData = async () => {
-    if (!student?.student_id) return;
+    if (!user?.id) return;
     
     setLoading(true);
     try {
+      // Get bootcamp student ID first
+      const { data: bootcampStudent } = await supabase
+        .from('bootcamp_students')
+        .select('student_id')
+        .eq('user_id', user.id)
+        .single();
+
+      if (!bootcampStudent) return;
+
       // Fetch learning sessions that represent weekly practice/tests
       const { data: sessions, error } = await supabase
         .from('bootcamp_learning_sessions')
         .select('*')
-        .eq('student_id', student.student_id)
+        .eq('student_id', bootcampStudent.student_id)
         .not('session_end', 'is', null)
         .order('session_start', { ascending: false });
 
