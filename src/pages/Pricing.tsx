@@ -138,7 +138,7 @@ export default function Pricing() {
           </p>
         </div>
 
-        <div className="grid lg:grid-cols-2 gap-8 max-w-5xl mx-auto mb-16">
+        <div className="grid lg:grid-cols-2 gap-8 max-w-5xl mx-auto mb-16 mt-8">
           {plans.map(plan => {
           const userSub = getUserSubscriptionForPlan(plan.id);
           const isCurrentPlan = !!userSub;
@@ -151,7 +151,7 @@ export default function Pricing() {
                 {/* Premium Badge */}
                 <div className="absolute top-4 right-4">
                   <Badge className="bg-primary text-primary-foreground hover:bg-primary hover:text-white border-primary/20 px-3 py-1 text-[11px] font-medium transition-colors">
-                    Free 30 Day Trial
+                    {plan.id === 'pass' ? 'Basic' : 'Premium'}
                   </Badge>
                 </div>
 
