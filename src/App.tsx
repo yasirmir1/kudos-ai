@@ -7,6 +7,7 @@ import { AuthProvider } from "./hooks/useAuth";
 import { AgeGroupProvider } from "./contexts/AgeGroupContext";
 import { AccessibilityProvider } from "./contexts/AccessibilityContext";
 import { AppNavigation } from "./components/AppNavigation";
+import { TrialProtectedRoute } from "./components/TrialProtectedRoute";
 import Index from "./pages/Index";
 import Auth from "./pages/Auth";
 import Dashboard from "./pages/Dashboard";
@@ -16,9 +17,7 @@ import Pricing from "./pages/Pricing";
 import Analytics from "./pages/Analytics";
 import Curriculum from "./pages/Curriculum";
 import Report from "./pages/Report";
-
 import Bootcamp from "./pages/Bootcamp";
-
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -49,12 +48,24 @@ const App = () => (
                 <Routes>
                   <Route path="/" element={<Index />} />
                   <Route path="/auth" element={<Auth />} />
-                  <Route path="/dashboard" element={<Dashboard />} />
+                  <Route path="/dashboard" element={
+                    <TrialProtectedRoute requiredFeature="daily_mode">
+                      <Dashboard />
+                    </TrialProtectedRoute>
+                  } />
                   <Route path="/profile" element={<Profile />} />
                   <Route path="/pricing" element={<Pricing />} />
-                  <Route path="/report" element={<Report />} />
+                  <Route path="/report" element={
+                    <TrialProtectedRoute requiredFeature="daily_mode">
+                      <Report />
+                    </TrialProtectedRoute>
+                  } />
                   
-                  <Route path="/bootcamp" element={<Bootcamp />} />
+                  <Route path="/bootcamp" element={
+                    <TrialProtectedRoute requiredFeature="bootcamp">
+                      <Bootcamp />
+                    </TrialProtectedRoute>
+                  } />
                   
                   {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
                   <Route path="*" element={<NotFound />} />

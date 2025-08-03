@@ -1,8 +1,10 @@
 import React from 'react';
 import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { BookOpen, BarChart3, User, GraduationCap, FileText, Play, Target, Calendar, CreditCard, LogOut } from 'lucide-react';
+import { BookOpen, BarChart3, User, GraduationCap, FileText, Play, Target, Calendar, CreditCard, LogOut, Clock } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
+import { useSubscription } from '@/hooks/useSubscription';
 import { cn } from '@/lib/utils';
 interface AppNavigationProps {
   title?: string;
@@ -20,15 +22,33 @@ export const AppNavigation: React.FC<AppNavigationProps> = ({
 }) => {
   const navigate = useNavigate();
   const location = useLocation();
-  const {
-    user,
-    signOut
-  } = useAuth();
+  const { user, signOut } = useAuth();
+  const { 
+    isTrialActive, 
+    getTrialDaysRemaining, 
+    hasActiveSubscription,
+    createCheckoutSession 
+  } = useSubscription();
   
   const handleLogout = async () => {
     const { error } = await signOut();
     if (!error) {
       navigate('/auth');
+    }
+  };
+
+  // Check if trial is expired and require payment
+  const trialDaysRemaining = getTrialDaysRemaining();
+  const isTrialExpired = isTrialActive() && trialDaysRemaining <= 0;
+
+  const handleUpgradeClick = async () => {
+    try {
+      const data = await createCheckoutSession('pass_plus');
+      if (data?.url) {
+        window.open(data.url, '_blank');
+      }
+    } catch (error) {
+      console.error('Error creating checkout session:', error);
     }
   };
   // Determine which navigation items to show based on current route
@@ -92,15 +112,44 @@ export const AppNavigation: React.FC<AppNavigationProps> = ({
               </div>
             </div>}
 
-          {/* Right section - Navigation and Age Group Selector */}
-          <div className="flex items-center space-x-4 mx-0">
+          {/* Right section - Navigation and Trial Indicator */}
+          <div className="flex items-center space-x-3">
+            {/* Trial Days Indicator */}
+            {isTrialActive() && trialDaysRemaining > 0 && (
+              <div className="flex items-center space-x-2">
+                <Badge 
+                  variant={trialDaysRemaining <= 3 ? "destructive" : "secondary"} 
+                  className="flex items-center space-x-1 px-3 py-1"
+                >
+                  <Clock className="h-3 w-3" />
+                  <span className="text-xs font-medium">
+                    {trialDaysRemaining} {trialDaysRemaining === 1 ? 'day' : 'days'} left
+                  </span>
+                </Badge>
+              </div>
+            )}
+
+            {/* Upgrade Button for Expired Trial */}
+            {isTrialExpired && (
+              <Button 
+                variant="destructive" 
+                size="sm" 
+                onClick={handleUpgradeClick}
+                className="flex items-center space-x-2 px-4 py-2"
+              >
+                <CreditCard className="h-4 w-4" />
+                <span>Upgrade Now</span>
+              </Button>
+            )}
+
             {/* System Mode Buttons */}
-            <div className="hidden md:flex items-center gap-3">
+            <div className="hidden md:flex items-center space-x-2">
               <Button 
                 variant={!isBootcampRoute ? "default" : "ghost"} 
                 size="sm" 
                 onClick={() => navigate('/dashboard')}
-                className={cn("flex items-center justify-center space-x-2 px-4 py-2 min-w-[110px]", !isBootcampRoute && "bg-primary text-primary-foreground")}
+                className={cn("flex items-center space-x-2 px-4 py-2 min-w-[120px] justify-center", !isBootcampRoute && "bg-primary text-primary-foreground")}
+                disabled={isTrialExpired && !hasActiveSubscription()}
               >
                 <Calendar className="h-4 w-4" />
                 <span className="hidden lg:inline">Daily Mode</span>
@@ -109,7 +158,8 @@ export const AppNavigation: React.FC<AppNavigationProps> = ({
                 variant={isBootcampRoute ? "default" : "ghost"} 
                 size="sm" 
                 onClick={() => navigate('/bootcamp')}
-                className={cn("flex items-center justify-center space-x-2 px-4 py-2 min-w-[110px]", isBootcampRoute && "bg-primary text-primary-foreground")}
+                className={cn("flex items-center space-x-2 px-4 py-2 min-w-[120px] justify-center", isBootcampRoute && "bg-primary text-primary-foreground")}
+                disabled={isTrialExpired && !hasActiveSubscription()}
               >
                 <Target className="h-4 w-4" />
                 <span className="hidden lg:inline">Bootcamp</span>
@@ -117,21 +167,30 @@ export const AppNavigation: React.FC<AppNavigationProps> = ({
             </div>
             
             {/* Navigation Links */}
-            <nav className="hidden md:flex items-center justify-between flex-1 max-w-5xl mr-4 gap-8">
+            <nav className="hidden md:flex items-center space-x-2">
               {navigationItems.map(item => {
-              const Icon = item.icon;
-              const isActive = isActivePath(item.path);
-              return <Button key={item.path} variant={isActive ? "default" : "ghost"} size="sm" onClick={() => navigate(item.path)} className={cn("flex items-center justify-start space-x-1 flex-1 max-w-32 pr-4", isActive && "bg-primary text-primary-foreground")}>
+                const Icon = item.icon;
+                const isActive = isActivePath(item.path);
+                return (
+                  <Button 
+                    key={item.path} 
+                    variant={isActive ? "default" : "ghost"} 
+                    size="sm" 
+                    onClick={() => navigate(item.path)} 
+                    className={cn("flex items-center space-x-2 px-4 py-2 min-w-[100px] justify-center", isActive && "bg-primary text-primary-foreground")}
+                  >
                     <Icon className="h-4 w-4" />
                     <span className="hidden lg:inline">{item.label}</span>
-                  </Button>;
-            })}
+                  </Button>
+                );
+              })}
+              
               {/* Logout Button */}
               <Button 
                 variant="ghost" 
                 size="sm" 
                 onClick={handleLogout}
-                className="flex items-center justify-start space-x-1 flex-1 max-w-32 pr-4"
+                className="flex items-center space-x-2 px-4 py-2 min-w-[100px] justify-center"
               >
                 <LogOut className="h-4 w-4" />
                 <span className="hidden lg:inline">Logout</span>
