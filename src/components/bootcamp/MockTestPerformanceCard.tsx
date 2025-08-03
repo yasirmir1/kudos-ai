@@ -17,6 +17,7 @@ interface MockTestPerformanceCardProps {
   bestScore: number;
   averageTime: string;
   recentTests: MockTestSession[];
+  onStartMockTest?: () => void;
 }
 
 export const MockTestPerformanceCard: React.FC<MockTestPerformanceCardProps> = ({
@@ -24,7 +25,8 @@ export const MockTestPerformanceCard: React.FC<MockTestPerformanceCardProps> = (
   averageScore,
   bestScore,
   averageTime,
-  recentTests
+  recentTests,
+  onStartMockTest
 }) => {
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -105,6 +107,22 @@ export const MockTestPerformanceCard: React.FC<MockTestPerformanceCardProps> = (
           ))}
         </div>
       </div>
+
+      {/* Start Mock Test Button */}
+      {onStartMockTest && (
+        <div className="mt-6 pt-4 border-t border-muted">
+          <button 
+            onClick={onStartMockTest} 
+            className="w-full bg-gradient-to-r from-orange-500 to-orange-600 text-white rounded-lg p-4 flex items-center justify-between hover:from-orange-600 hover:to-orange-700 transition-colors"
+          >
+            <div className="flex items-center space-x-3">
+              <Clock className="h-5 w-5" />
+              <span className="font-medium">11+ Mock Test</span>
+            </div>
+            <span className="text-sm bg-white/20 px-2 py-1 rounded text-xs">60 min</span>
+          </button>
+        </div>
+      )}
     </div>
   );
 };
