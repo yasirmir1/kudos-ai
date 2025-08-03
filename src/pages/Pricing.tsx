@@ -233,10 +233,10 @@ const Pricing = () => {
                   
                    <div className="space-y-2">
                      <div className="text-3xl font-bold text-foreground">
-                       {isAnnual ? `£${currentPrice}` : 'Free for 30 days'}
+                       {isAnnual ? 'Free for 30 days' : 'Free for 30 days'}
                      </div>
                      <div className="text-lg text-muted-foreground">
-                       {isAnnual ? <>per year <span className="text-sm">(£{monthlyEquivalent}/month)</span></> : <>£{currentPrice}/{billingPeriod} after</>}
+                       {isAnnual ? <>£{currentPrice}/year (£{monthlyEquivalent}/month)</> : <>£{currentPrice}/{billingPeriod} after</>}
                      </div>
                      {!isAnnual && <div className="text-sm text-muted-foreground">
                          Or £{plan.annualPrice}/year (save £{(parseInt(plan.monthlyPrice) * 12 - parseInt(plan.annualPrice)).toFixed(0)})
