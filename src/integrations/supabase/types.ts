@@ -1777,6 +1777,10 @@ export type Database = {
         Args: { json_data: Json }
         Returns: undefined
       }
+      import_mock_test_questions: {
+        Args: { questions_data: Json }
+        Returns: string
+      }
     }
     Enums: {
       age_group: "year 2-3" | "year 4-5" | "11+"
