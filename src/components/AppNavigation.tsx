@@ -60,7 +60,7 @@ export const AppNavigation: React.FC<AppNavigationProps> = ({
   };
   const isActivePath = (path: string) => location.pathname === path;
   return <header className="border-b bg-card/50 backdrop-blur-sm">
-      <div className="container mx-auto px-0 py-[15px]">
+      <div className="container mx-auto px-0 py-[15px] pr-6">
         <div className="flex justify-between items-center">
           {/* Left section - Back button or Logo */}
           <div className="flex items-center space-x-4">
