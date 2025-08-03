@@ -1,10 +1,14 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Trophy, Star, Target, Calendar, Lock, Gift, Medal, Crown } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { useBootcampData } from '@/hooks/useBootcampData';
+import { useAuth } from '@/hooks/useAuth';
+import { supabase } from '@/integrations/supabase/client';
+
 interface Achievement {
   id: string;
   title: string;
@@ -23,14 +27,13 @@ interface Achievement {
     value: number | string;
   };
 }
-const achievements: Achievement[] = [{
+// Achievement templates - keeping the same content but making them dynamic
+const achievementTemplates: Omit<Achievement, 'unlocked' | 'progress' | 'unlockedAt'>[] = [{
   id: 'first-steps',
   title: 'First Steps',
   description: 'Complete your first practice session',
   category: 'practice',
   icon: Target,
-  unlocked: true,
-  unlockedAt: '2024-01-10',
   rarity: 'common',
   reward: {
     type: 'points',
@@ -42,8 +45,6 @@ const achievements: Achievement[] = [{
   description: 'Get 10 questions correct in a row',
   category: 'accuracy',
   icon: Star,
-  unlocked: true,
-  unlockedAt: '2024-01-12',
   rarity: 'rare',
   reward: {
     type: 'points',
@@ -55,8 +56,6 @@ const achievements: Achievement[] = [{
   description: 'Practice for 7 days in a row',
   category: 'streak',
   icon: Calendar,
-  unlocked: false,
-  progress: 4,
   maxProgress: 7,
   rarity: 'epic',
   reward: {
@@ -69,17 +68,150 @@ const achievements: Achievement[] = [{
   description: 'Complete all topic modules',
   category: 'special',
   icon: Crown,
-  unlocked: false,
-  progress: 8,
   maxProgress: 12,
   rarity: 'legendary',
   reward: {
     type: 'unlock',
     value: 'Advanced Practice Mode'
   }
+}, {
+  id: 'question-master',
+  title: 'Question Master',
+  description: 'Complete 100+ practice questions',
+  category: 'practice',
+  icon: Medal,
+  maxProgress: 100,
+  rarity: 'rare',
+  reward: {
+    type: 'points',
+    value: 500
+  }
+}, {
+  id: 'accuracy-master',
+  title: 'Accuracy Master',
+  description: 'Achieve 95% overall accuracy',
+  category: 'accuracy',
+  icon: Target,
+  maxProgress: 95,
+  rarity: 'epic',
+  reward: {
+    type: 'badge',
+    value: 'Precision Expert'
+  }
 }];
+
 const AchievementCenter: React.FC = () => {
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
+  const [achievements, setAchievements] = useState<Achievement[]>([]);
+  const [unlockedAchievements, setUnlockedAchievements] = useState<any[]>([]);
+  const { user } = useAuth();
+  const { stats, student, progress } = useBootcampData();
+
+  useEffect(() => {
+    if (user && student) {
+      loadUserAchievements();
+    }
+  }, [user, student, stats]);
+
+  const loadUserAchievements = async () => {
+    if (!student) return;
+
+    try {
+      // Fetch user's unlocked achievements from database
+      const { data: userAchievements, error } = await supabase
+        .from('bootcamp_achievements')
+        .select('*')
+        .eq('student_id', student.student_id);
+
+      if (error) {
+        console.error('Error fetching achievements:', error);
+        setUnlockedAchievements([]);
+      } else {
+        setUnlockedAchievements(userAchievements || []);
+      }
+
+      // Calculate dynamic achievements based on current stats and progress
+      const dynamicAchievements = calculateAchievements();
+      setAchievements(dynamicAchievements);
+      
+      // Check for newly earned achievements
+      await checkAndAwardNewAchievements(dynamicAchievements);
+    } catch (error) {
+      console.error('Error loading achievements:', error);
+    }
+  };
+
+  const calculateAchievements = (): Achievement[] => {
+    return achievementTemplates.map(template => {
+      const userAchievement = unlockedAchievements.find(ua => ua.achievement_type === template.id);
+      const unlocked = !!userAchievement;
+      
+      let currentProgress = 0;
+      
+      // Calculate progress based on achievement type
+      switch (template.id) {
+        case 'first-steps':
+          currentProgress = stats.totalQuestions > 0 ? 1 : 0;
+          break;
+        case 'question-master':
+          currentProgress = stats.totalQuestions;
+          break;
+        case 'perfect-ten':
+          // This would need streak tracking - simplified for now
+          currentProgress = stats.accuracy >= 90 ? 10 : Math.floor(stats.accuracy / 10);
+          break;
+        case 'week-warrior':
+          currentProgress = stats.streakDays;
+          break;
+        case 'accuracy-master':
+          currentProgress = stats.accuracy;
+          break;
+        case 'math-master':
+          currentProgress = progress.filter(p => p.status === 'completed' || p.status === 'mastered').length;
+          break;
+        default:
+          currentProgress = 0;
+      }
+
+      const maxProgress = template.maxProgress || 1;
+      const isComplete = currentProgress >= maxProgress;
+      
+      return {
+        ...template,
+        unlocked: unlocked || isComplete,
+        progress: !unlocked && !isComplete ? currentProgress : undefined,
+        unlockedAt: userAchievement?.earned_at || (isComplete && !unlocked ? new Date().toISOString() : undefined)
+      };
+    });
+  };
+
+  const checkAndAwardNewAchievements = async (currentAchievements: Achievement[]) => {
+    if (!student) return;
+
+    for (const achievement of currentAchievements) {
+      const alreadyAwarded = unlockedAchievements.some(ua => ua.achievement_type === achievement.id);
+      
+      if (achievement.unlocked && !alreadyAwarded) {
+        // Award new achievement
+        try {
+          await supabase
+            .from('bootcamp_achievements')
+            .insert({
+              student_id: student.student_id,
+              achievement_type: achievement.id,
+              achievement_name: achievement.title,
+              points_awarded: typeof achievement.reward?.value === 'number' ? achievement.reward.value : 0,
+              earned_at: new Date().toISOString()
+            });
+
+          console.log(`New achievement earned: ${achievement.title}`);
+        } catch (error) {
+          console.error('Error awarding achievement:', error);
+        }
+      }
+    }
+  };
+
   const getRarityStyle = (rarity: Achievement['rarity']) => {
     switch (rarity) {
       case 'common':
@@ -94,10 +226,16 @@ const AchievementCenter: React.FC = () => {
         return 'bg-muted text-muted-foreground';
     }
   };
-  const filteredAchievements = achievements.filter(achievement => selectedCategory === 'all' || achievement.category === selectedCategory);
+
+  const filteredAchievements = achievements.filter(achievement => 
+    selectedCategory === 'all' || achievement.category === selectedCategory
+  );
+  
   const unlockedCount = achievements.filter(a => a.unlocked).length;
   const totalCount = achievements.length;
-  return <div className="max-w-6xl mx-auto p-6">
+
+  return (
+    <div className="max-w-6xl mx-auto p-6">
       <div className="mb-8">
         <h1 className="text-3xl font-bold text-foreground mb-4">Achievement Center</h1>
         <div className="flex items-center justify-between">
@@ -107,10 +245,9 @@ const AchievementCenter: React.FC = () => {
               <p className="text-lg font-semibold text-foreground">
                 {unlockedCount} of {totalCount} Unlocked
               </p>
-              <Progress value={unlockedCount / totalCount * 100} className="w-48 mt-1" />
+              <Progress value={totalCount > 0 ? (unlockedCount / totalCount) * 100 : 0} className="w-48 mt-1" />
             </div>
           </div>
-          
         </div>
       </div>
 
@@ -125,11 +262,14 @@ const AchievementCenter: React.FC = () => {
 
         <TabsContent value={selectedCategory} className="mt-6">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {filteredAchievements.map(achievement => <AchievementCard key={achievement.id} achievement={achievement} />)}
+            {filteredAchievements.map(achievement => (
+              <AchievementCard key={achievement.id} achievement={achievement} />
+            ))}
           </div>
         </TabsContent>
       </Tabs>
-    </div>;
+    </div>
+  );
 };
 interface AchievementCardProps {
   achievement: Achievement;
