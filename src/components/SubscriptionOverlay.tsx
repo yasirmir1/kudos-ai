@@ -103,7 +103,7 @@ export const SubscriptionOverlay: React.FC<SubscriptionOverlayProps> = ({
           </div>
           
           {/* Center upgrade button */}
-          <div className="absolute top-20 left-1/2 transform -translate-x-1/2">
+          <div className="absolute top-[130px] left-1/2 transform -translate-x-1/2">
             <div className="bg-card/95 backdrop-blur-sm rounded-lg p-6 shadow-xl border text-center max-w-md">
               <Crown className="h-10 w-10 text-primary mx-auto mb-3" />
               <h3 className="text-xl font-semibold text-foreground mb-2">
