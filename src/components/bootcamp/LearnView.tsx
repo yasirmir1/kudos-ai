@@ -630,22 +630,22 @@ export const LearnView: React.FC = () => {
               <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
                 <div className="bg-background/80 backdrop-blur rounded-lg p-4 border border-primary/20">
                   <div className="text-lg font-bold text-primary mb-1">Weeks 1-36</div>
-                  <div className="text-sm text-muted-foreground">Core Curriculum</div>
+                  <div className="text-sm text-foreground font-medium">Core Curriculum</div>
                   <div className="text-xs text-primary mt-1">Foundation Building</div>
                 </div>
                 <div className="bg-background/80 backdrop-blur rounded-lg p-4 border border-secondary/20">
                   <div className="text-lg font-bold text-secondary mb-1">Weeks 37-46</div>
-                  <div className="text-sm text-muted-foreground">Review & Practice</div>
+                  <div className="text-sm text-foreground font-medium">Review & Practice</div>
                   <div className="text-xs text-secondary mt-1">Skills Reinforcement</div>
                 </div>
                 <div className="bg-background/80 backdrop-blur rounded-lg p-4 border border-accent/20">
                   <div className="text-lg font-bold text-accent mb-1">Weeks 47-50</div>
-                  <div className="text-sm text-muted-foreground">Final Review</div>
+                  <div className="text-sm text-foreground font-medium">Final Review</div>
                   <div className="text-xs text-accent mt-1">Pre-Exam Prep</div>
                 </div>
                 <div className="bg-background/80 backdrop-blur rounded-lg p-4 border border-warning/20">
                   <div className="text-lg font-bold text-warning mb-1">Weeks 51-52</div>
-                  <div className="text-sm text-muted-foreground">Exam Ready</div>
+                  <div className="text-sm text-foreground font-medium">Exam Ready</div>
                   <div className="text-xs text-warning mt-1">Assessment Focus</div>
                 </div>
               </div>
