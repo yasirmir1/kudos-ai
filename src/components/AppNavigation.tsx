@@ -101,6 +101,12 @@ export const AppNavigation: React.FC<AppNavigationProps> = ({
           variant: 'default' as const,
           icon: Crown
         };
+      case 'expired':
+        return {
+          text: 'Trial Expired',
+          variant: 'destructive' as const,
+          icon: Clock
+        };
       default:
         // Default to Trial for any other state
         return {
