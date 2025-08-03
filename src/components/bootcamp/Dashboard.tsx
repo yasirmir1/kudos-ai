@@ -275,35 +275,6 @@ export const Dashboard: React.FC<DashboardProps> = ({
       </div>
 
 
-      {/* Quick Practice and Recent Topics */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <div className="bg-card rounded-xl shadow-sm border p-6">
-          <h2 className="text-lg font-semibold text-foreground mb-4">Quick Practice</h2>
-          <div className="space-y-3">
-          </div>
-        </div>
-
-        <div className="bg-card rounded-xl shadow-sm border p-6">
-          <h2 className="text-lg font-semibold text-foreground mb-4">Recent Topics</h2>
-          <div className="space-y-3">
-            {recentTopics.map((topic, index) => (
-              <div key={index} className="flex items-center justify-between p-3 rounded-lg hover:bg-muted/50">
-                <div>
-                  <p className="font-medium text-foreground">{topic.name}</p>
-                  <p className="text-sm text-muted-foreground">{topic.questions} questions</p>
-                </div>
-                <div className="flex items-center space-x-3">
-                  <span className={`text-sm font-medium ${getAccuracyColor(topic.accuracy)}`}>
-                    {topic.accuracy}%
-                  </span>
-                  {topic.status === 'improving' && <TrendingUp className="h-4 w-4 text-success" />}
-                  {topic.status === 'needs-work' && <AlertCircle className="h-4 w-4 text-warning" />}
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </div>
 
       <WeeklyProgressChart />
     </div>;
