@@ -103,10 +103,10 @@ export const SubscriptionOverlay: React.FC<SubscriptionOverlayProps> = ({
           </div>
           
           {/* Center upgrade button */}
-          <div className="absolute top-1/3 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
-            <div className="bg-white/95 dark:bg-gray-900/95 backdrop-blur-sm rounded-lg p-6 shadow-2xl border-2 border-primary/20 text-center">
-              <Crown className="h-12 w-12 text-primary mx-auto mb-3" />
-              <h3 className="text-lg font-semibold mb-2">
+          <div className="absolute top-20 left-1/2 transform -translate-x-1/2">
+            <div className="bg-card/95 backdrop-blur-sm rounded-lg p-6 shadow-xl border text-center max-w-md">
+              <Crown className="h-10 w-10 text-primary mx-auto mb-3" />
+              <h3 className="text-xl font-semibold text-foreground mb-2">
                 {userState === 'expired' 
                   ? 'Trial Expired' 
                   : userState === 'pass' && requiredFeature === 'bootcamp'
@@ -124,7 +124,7 @@ export const SubscriptionOverlay: React.FC<SubscriptionOverlayProps> = ({
               </p>
               <Button 
                 size="lg" 
-                className="bg-primary hover:bg-primary/90 text-primary-foreground shadow-lg"
+                className="font-semibold"
               >
                 <Crown className="h-4 w-4 mr-2" />
                 {userState === 'expired' ? 'Upgrade Now' : 'View Plans'}
