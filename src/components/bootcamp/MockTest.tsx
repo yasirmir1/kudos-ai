@@ -91,16 +91,16 @@ export const MockTest: React.FC = () => {
         const startTime = new Date(existingSession.started_at);
         const timeElapsed = Math.floor((Date.now() - startTime.getTime()) / 1000);
         
-        // Load questions for this session
+        // Load questions for this session from unified table
         const { data: sessionQuestions } = await supabase
-          .from('bootcamp_mock_test_answers' as any)
+          .from('bootcamp_student_responses')
           .select(`
             question_id,
-            question_order,
-            student_answer
+            selected_answer
           `)
           .eq('session_id', existingSession.session_id)
-          .order('question_order');
+          .eq('activity_source', 'mock_test')
+          .order('responded_at');
 
         if (sessionQuestions && sessionQuestions.length > 0) {
           // Get the questions from the mock_test_questions table
@@ -115,8 +115,8 @@ export const MockTest: React.FC = () => {
             const answers: Record<number, string> = {};
             
             (sessionQuestions as any[]).forEach((q: any, index: number) => {
-              if (q.student_answer) {
-                answers[index] = q.student_answer;
+              if (q.selected_answer) {
+                answers[index] = q.selected_answer;
               }
             });
 
@@ -154,7 +154,7 @@ export const MockTest: React.FC = () => {
         answered_at: new Date().toISOString()
       }));
 
-      // Update responses in the database with correctness calculation
+      // Insert responses into unified bootcamp_student_responses table
       let correctCount = 0;
       for (const response of responses) {
         const question = testState.questions[response.question_order];
@@ -162,16 +162,18 @@ export const MockTest: React.FC = () => {
         if (isCorrect) correctCount++;
 
         await supabase
-          .from('bootcamp_mock_test_answers' as any)
-          .update({
-            student_answer: response.student_answer,
-            answered_at: response.answered_at,
+          .from('bootcamp_student_responses')
+          .insert({
+            student_id: student.student_id,
+            question_id: response.question_id,
+            selected_answer: response.student_answer,
             is_correct: isCorrect,
-            time_taken_seconds: testState.startTime ? 
-              Math.floor((Date.now() - testState.startTime.getTime()) / 1000) / Object.keys(testState.answers).length : 60
-          })
-          .eq('session_id', response.session_id)
-          .eq('question_order', response.question_order);
+            time_taken: testState.startTime ? 
+              Math.floor((Date.now() - testState.startTime.getTime()) / 1000) / Object.keys(testState.answers).length : 60,
+            session_id: testState.sessionId,
+            activity_source: 'mock_test',
+            responded_at: response.answered_at
+          });
       }
 
       // Complete the session
@@ -276,16 +278,8 @@ export const MockTest: React.FC = () => {
         })
         .eq('session_id', currentState.sessionId);
 
-      // Update individual question responses
-      Object.entries(currentState.answers).forEach(async ([questionIndex, answer]) => {
-        await supabase
-          .from('bootcamp_mock_test_answers' as any)
-          .update({
-            student_answer: answer
-          })
-          .eq('session_id', currentState.sessionId)
-          .eq('question_order', parseInt(questionIndex));
-      });
+      // Note: Individual responses will be saved on test submission
+      // We only save session metadata during progress saves
     } catch (error) {
       console.error('Failed to save progress:', error);
     }
@@ -336,18 +330,8 @@ export const MockTest: React.FC = () => {
         throw new Error('No questions available');
       }
 
-      // Create question assignments for this session
-      const questionAssignments = questions.map((question, index) => ({
-        session_id: newSession.session_id,
-        question_id: question.question_id,
-        question_order: index
-      }));
-
-      const { error: assignmentError } = await supabase
-        .from('bootcamp_mock_test_answers' as any)
-        .insert(questionAssignments);
-
-      if (assignmentError) throw assignmentError;
+      // Questions will be recorded in unified table when answered during test
+      // No need to pre-create question assignments
 
       setTestState({
         status: 'active',
