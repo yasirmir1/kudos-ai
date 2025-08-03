@@ -145,7 +145,7 @@ export default function Pricing() {
           const isTrialActivePlan = userSub && isTrialActive(userSub);
           const hasUsedTrialForPlan = hasUsedTrial(plan.id);
           const isPlusPlan = plan.id === 'pass_plus';
-          const planDisplayName = plan.id === 'pass' ? 'Individual' : 'Student';
+          const planDisplayName = plan.id === 'pass' ? 'Pass' : 'Pass Plus';
           const monthlyPrice = plan.id === 'pass' ? '7.99' : '14.99';
           
           return <Card key={plan.id} className="relative bg-card border-2 transition-all duration-300 hover:shadow-xl hover:-translate-y-1 border-border/50 hover:border-primary/50 overflow-hidden">
