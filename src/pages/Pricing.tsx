@@ -127,7 +127,7 @@ export default function Pricing() {
   return <div className="min-h-screen bg-gradient-to-br from-background via-background to-primary/5">
       <div className="container mx-auto px-4 py-12">
         <div className="text-center mb-16">
-          <h1 className="text-5xl font-bold mb-6 text-foreground">
+          <h1 className="text-5xl font-bold mb-3 text-foreground">
             Pricing
           </h1>
           <p className="max-w-3xl mx-auto leading-relaxed text-lg text-slate-800">
