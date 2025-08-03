@@ -7,7 +7,7 @@ import { AuthProvider } from "./hooks/useAuth";
 import { AgeGroupProvider } from "./contexts/AgeGroupContext";
 import { AccessibilityProvider } from "./contexts/AccessibilityContext";
 import { AppNavigation } from "./components/AppNavigation";
-import { TrialProtectedRoute } from "./components/TrialProtectedRoute";
+import { SubscriptionOverlay } from "./components/SubscriptionOverlay";
 import Index from "./pages/Index";
 import Auth from "./pages/Auth";
 import Dashboard from "./pages/Dashboard";
@@ -49,22 +49,22 @@ const App = () => (
                   <Route path="/" element={<Index />} />
                   <Route path="/auth" element={<Auth />} />
                   <Route path="/dashboard" element={
-                    <TrialProtectedRoute requiredFeature="daily_mode">
+                    <SubscriptionOverlay requiredFeature="daily_mode">
                       <Dashboard />
-                    </TrialProtectedRoute>
+                    </SubscriptionOverlay>
                   } />
                   <Route path="/profile" element={<Profile />} />
                   <Route path="/pricing" element={<Pricing />} />
                   <Route path="/report" element={
-                    <TrialProtectedRoute requiredFeature="daily_mode">
+                    <SubscriptionOverlay requiredFeature="daily_mode">
                       <Report />
-                    </TrialProtectedRoute>
+                    </SubscriptionOverlay>
                   } />
                   
                   <Route path="/bootcamp" element={
-                    <TrialProtectedRoute requiredFeature="bootcamp">
+                    <SubscriptionOverlay requiredFeature="bootcamp">
                       <Bootcamp />
-                    </TrialProtectedRoute>
+                    </SubscriptionOverlay>
                   } />
                   
                   {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}

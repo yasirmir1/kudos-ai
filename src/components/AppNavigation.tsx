@@ -4,7 +4,7 @@ import { Badge } from '@/components/ui/badge';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { BookOpen, BarChart3, User, GraduationCap, FileText, Play, Target, Calendar, CreditCard, LogOut, Clock } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
-import { useSubscription } from '@/hooks/useSubscription';
+import { useSubscriptionState } from '@/hooks/useSubscriptionState';
 import { cn } from '@/lib/utils';
 interface AppNavigationProps {
   title?: string;
@@ -24,11 +24,13 @@ export const AppNavigation: React.FC<AppNavigationProps> = ({
   const location = useLocation();
   const { user, signOut } = useAuth();
   const { 
+    userState,
     isTrialActive, 
-    getTrialDaysRemaining, 
-    hasActiveSubscription,
+    trialDaysRemaining, 
+    isTrialExpired,
+    hasAccessTo,
     createCheckoutSession 
-  } = useSubscription();
+  } = useSubscriptionState();
   
   const handleLogout = async () => {
     const { error } = await signOut();
@@ -37,13 +39,16 @@ export const AppNavigation: React.FC<AppNavigationProps> = ({
     }
   };
 
+  // Determine which navigation items to show based on current route
+  const isBootcampRoute = location.pathname.startsWith('/bootcamp');
+
   // Check if trial is expired and require payment
-  const trialDaysRemaining = getTrialDaysRemaining();
-  const isTrialExpired = isTrialActive() && trialDaysRemaining <= 0;
+  const shouldShowUpgrade = isTrialExpired || (userState === 'pass' && isBootcampRoute);
 
   const handleUpgradeClick = async () => {
     try {
-      const data = await createCheckoutSession('pass_plus');
+      const planId = isBootcampRoute ? 'pass_plus' : 'pass';
+      const data = await createCheckoutSession(planId);
       if (data?.url) {
         window.open(data.url, '_blank');
       }
@@ -51,8 +56,6 @@ export const AppNavigation: React.FC<AppNavigationProps> = ({
       console.error('Error creating checkout session:', error);
     }
   };
-  // Determine which navigation items to show based on current route
-  const isBootcampRoute = location.pathname.startsWith('/bootcamp');
   
   const mainAppItems = [
     {
@@ -115,7 +118,7 @@ export const AppNavigation: React.FC<AppNavigationProps> = ({
           {/* Right section - Navigation and Trial Indicator */}
           <div className="flex items-center space-x-3">
             {/* Trial Days Indicator */}
-            {isTrialActive() && trialDaysRemaining > 0 && (
+            {isTrialActive && trialDaysRemaining > 0 && (
               <div className="flex items-center space-x-2">
                 <Badge 
                   variant={trialDaysRemaining <= 3 ? "destructive" : "secondary"} 
@@ -129,8 +132,8 @@ export const AppNavigation: React.FC<AppNavigationProps> = ({
               </div>
             )}
 
-            {/* Upgrade Button for Expired Trial */}
-            {isTrialExpired && (
+            {/* Upgrade Button for limited access */}
+            {shouldShowUpgrade && (
               <Button 
                 variant="destructive" 
                 size="sm" 
@@ -138,7 +141,7 @@ export const AppNavigation: React.FC<AppNavigationProps> = ({
                 className="flex items-center space-x-2 px-4 py-2"
               >
                 <CreditCard className="h-4 w-4" />
-                <span>Upgrade Now</span>
+                <span>{isTrialExpired ? 'Upgrade Now' : 'Upgrade to Plus'}</span>
               </Button>
             )}
 
@@ -149,7 +152,7 @@ export const AppNavigation: React.FC<AppNavigationProps> = ({
                 size="sm" 
                 onClick={() => navigate('/dashboard')}
                 className={cn("flex items-center space-x-2 px-4 py-2 min-w-[120px] justify-center", !isBootcampRoute && "bg-primary text-primary-foreground")}
-                disabled={isTrialExpired && !hasActiveSubscription()}
+                disabled={!hasAccessTo('daily_mode')}
               >
                 <Calendar className="h-4 w-4" />
                 <span className="hidden lg:inline">Daily Mode</span>
@@ -159,7 +162,7 @@ export const AppNavigation: React.FC<AppNavigationProps> = ({
                 size="sm" 
                 onClick={() => navigate('/bootcamp')}
                 className={cn("flex items-center space-x-2 px-4 py-2 min-w-[120px] justify-center", isBootcampRoute && "bg-primary text-primary-foreground")}
-                disabled={isTrialExpired && !hasActiveSubscription()}
+                disabled={!hasAccessTo('bootcamp')}
               >
                 <Target className="h-4 w-4" />
                 <span className="hidden lg:inline">Bootcamp</span>
