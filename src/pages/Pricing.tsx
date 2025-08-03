@@ -185,8 +185,8 @@ const Pricing = () => {
         )}
 
         {/* Billing Toggle */}
-        <div className="flex items-center justify-center mb-8 space-x-4">
-          <div className="bg-muted rounded-lg p-1 flex items-center">
+        <div className="flex items-center justify-center mb-8 relative">
+          <div className="bg-muted rounded-lg p-1 flex items-center relative">
             <button
               className={`px-4 py-2 rounded-md text-sm font-medium transition-all ${
                 !isAnnual 
@@ -207,11 +207,28 @@ const Pricing = () => {
             >
               Annual
             </button>
+            
+            {/* Arrow line pointing to Annual */}
+            <div className="absolute -top-8 right-8 w-12 h-6">
+              <svg className="w-full h-full" viewBox="0 0 48 24">
+                <path 
+                  d="M8 20 L32 4 L28 8 M32 4 L36 8" 
+                  stroke="rgb(148 163 184)" 
+                  strokeWidth="1.5" 
+                  fill="none"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+              </svg>
+            </div>
           </div>
           
-          <span className="text-sm font-thin text-slate-500">
-            save up to 63%
-          </span>
+          {/* Angled savings text */}
+          <div className="absolute right-full mr-12 -mt-8">
+            <span className="text-sm font-thin text-slate-500 transform -rotate-25 block origin-center">
+              save up to 63%
+            </span>
+          </div>
         </div>
 
         {/* Subscription Status */}
