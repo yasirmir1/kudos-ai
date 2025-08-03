@@ -149,8 +149,8 @@ export default function Pricing() {
           const monthlyPrice = plan.id === 'pass' ? '7.99' : '14.99';
           return <Card key={plan.id} className="relative bg-card border-2 transition-all duration-300 hover:shadow-xl hover:-translate-y-1 border-border/50 hover:border-primary/50 overflow-hidden">
                 {/* Premium Badge */}
-                <div className="absolute top-6 right-4 pr-2">
-                  <Badge className="bg-primary text-primary-foreground hover:bg-primary hover:text-white border-primary/20 px-4 py-1 mr-2 text-[10px] font-semibold transition-colors">
+                <div className="absolute top-4 right-4 pr-2">
+                  <Badge className="bg-primary text-primary-foreground hover:bg-primary hover:text-white border-primary/20 px-3 py-1 text-xs font-medium transition-colors">
                     Free 30 Day Trial
                   </Badge>
                 </div>
