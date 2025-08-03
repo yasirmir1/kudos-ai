@@ -185,7 +185,7 @@ export const AppNavigation: React.FC<AppNavigationProps> = ({
             </div>
 
             {/* System Mode Buttons */}
-            <div className="hidden md:flex items-center space-x-2 mr-6">
+            <div className="hidden md:flex items-center space-x-4 mr-6">
               <Button 
                 variant={!isBootcampRoute ? "default" : "ghost"} 
                 size="sm" 
