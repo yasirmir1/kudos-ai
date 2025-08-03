@@ -59,7 +59,10 @@ export const LearnView: React.FC = () => {
   const [curriculum, setCurriculum] = useState<CurriculumItem[]>([]);
   const [weeklyPlan, setWeeklyPlan] = useState<WeeklyPlan[]>([]);
   const [weekProgress, setWeekProgress] = useState<Record<number, number>>({});
-  const [startedWeeks, setStartedWeeks] = useState<Set<number>>(new Set());
+  const [startedWeeks, setStartedWeeks] = useState<Set<number>>(() => {
+    const saved = localStorage.getItem('bootcamp-started-weeks');
+    return saved ? new Set(JSON.parse(saved)) : new Set();
+  });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [selectedModule, setSelectedModule] = useState<string | null>(null);
@@ -142,7 +145,7 @@ export const LearnView: React.FC = () => {
       case 'completed':
         return 'border-green-500 bg-green-50 shadow-green-100';
       case 'started':
-        return 'border-yellow-500 bg-yellow-50 shadow-yellow-100';
+        return 'border-blue-500 bg-blue-50 shadow-blue-100';
       case 'current':
         return 'border-blue-500 bg-blue-50 shadow-blue-100 ring-2 ring-blue-200';
       case 'available':
@@ -175,7 +178,7 @@ export const LearnView: React.FC = () => {
       case 'completed':
         return 'bg-green-600 hover:bg-green-700 text-white border-green-600';
       case 'started':
-        return 'bg-yellow-600 hover:bg-yellow-700 text-white border-yellow-600';
+        return 'bg-blue-600 hover:bg-blue-700 text-white border-blue-600';
       case 'current':
         return 'bg-blue-600 hover:bg-blue-700 text-white border-blue-600';
       default:
@@ -438,7 +441,9 @@ export const LearnView: React.FC = () => {
   };
   const handleWeekClick = (week: WeeklyPlan) => {
     // Mark the week as started when user clicks to begin learning
-    setStartedWeeks(prev => new Set([...prev, week.week]));
+    const newStartedWeeks = new Set([...startedWeeks, week.week]);
+    setStartedWeeks(newStartedWeeks);
+    localStorage.setItem('bootcamp-started-weeks', JSON.stringify([...newStartedWeeks]));
     setSelectedWeekPlan(week);
     setIsWeeklyModalOpen(true);
   };
@@ -544,7 +549,7 @@ export const LearnView: React.FC = () => {
                           variant="outline" 
                           className={`text-xs ${
                             weekStatus === 'completed' ? 'border-green-500 text-green-700 bg-green-50' :
-                            weekStatus === 'started' ? 'border-yellow-500 text-yellow-700 bg-yellow-50' :
+                            weekStatus === 'started' ? 'border-blue-500 text-blue-700 bg-blue-50' :
                             weekStatus === 'current' ? 'border-blue-500 text-blue-700 bg-blue-50' :
                             'text-xs'
                           }`}
@@ -575,7 +580,7 @@ export const LearnView: React.FC = () => {
                             <span className="text-muted-foreground">Progress</span>
                             <span className={
                               weekStatus === 'completed' ? 'text-green-600' :
-                              weekStatus === 'started' ? 'text-yellow-600' :
+                              weekStatus === 'started' ? 'text-blue-600' :
                               weekStatus === 'current' ? 'text-blue-600' :
                               'text-muted-foreground'
                             }>
@@ -586,7 +591,7 @@ export const LearnView: React.FC = () => {
                             value={progress} 
                             className={`h-1.5 ${
                               weekStatus === 'completed' ? '[&>div]:bg-green-500' :
-                              weekStatus === 'started' ? '[&>div]:bg-yellow-500' :
+                              weekStatus === 'started' ? '[&>div]:bg-blue-500' :
                               weekStatus === 'current' ? '[&>div]:bg-blue-500' :
                               ''
                             }`}
@@ -602,7 +607,7 @@ export const LearnView: React.FC = () => {
                             <div key={idx} className="flex items-center gap-2 text-sm">
                               <CheckCircle className={`h-3 w-3 ${
                                 weekStatus === 'completed' ? 'text-green-500' :
-                                weekStatus === 'started' ? 'text-yellow-500' :
+                                weekStatus === 'started' ? 'text-blue-500' :
                                 weekStatus === 'current' ? 'text-blue-500' :
                                 'text-muted-foreground'
                               }`} />
@@ -618,7 +623,7 @@ export const LearnView: React.FC = () => {
                         size="sm" 
                         className={`w-full mt-4 ${
                           weekStatus === 'completed' ? 'bg-green-600 hover:bg-green-700 text-white border-green-600' :
-                          weekStatus === 'started' ? 'bg-yellow-600 hover:bg-yellow-700 text-white border-yellow-600' :
+                          weekStatus === 'started' ? 'bg-blue-600 hover:bg-blue-700 text-white border-blue-600' :
                           weekStatus === 'current' ? 'bg-blue-600 hover:bg-blue-700 text-white border-blue-600' :
                           ''
                         }`}
@@ -632,7 +637,7 @@ export const LearnView: React.FC = () => {
                         ) : (
                           <>
                             <Play className="h-3 w-3 mr-2" />
-                            {week.week <= 36 ? 'Start Learning' : week.week <= 46 ? 'Practice' : week.week <= 50 ? 'Review' : 'Final Prep'}
+                            {buttonText}
                           </>
                         )}
                       </Button>
