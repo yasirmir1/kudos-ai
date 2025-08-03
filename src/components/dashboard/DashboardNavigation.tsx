@@ -3,51 +3,43 @@ import { Play, BookOpen, BarChart3, Home, FileText, Zap, Star, User } from 'luci
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import { useAuth } from '@/hooks/useAuth';
-
 interface NavItem {
   id: string;
   label: string;
   icon: React.ComponentType<any>;
 }
-
 interface DashboardNavigationProps {
   currentView: string;
   setCurrentView: (view: string) => void;
 }
-
 export const DashboardNavigation: React.FC<DashboardNavigationProps> = ({
   currentView,
   setCurrentView
 }) => {
-  const { user } = useAuth();
-  
-  const navItems: NavItem[] = [
-    {
-      id: 'overview',
-      label: 'Overview',
-      icon: Home
-    },
-    {
-      id: 'practice',
-      label: 'Practice',
-      icon: Play
-    },
-    {
-      id: 'curriculum',
-      label: 'Curriculum',
-      icon: BookOpen
-    },
-    {
-      id: 'analytics',
-      label: 'Analytics',
-      icon: BarChart3
-    },
-    {
-      id: 'report',
-      label: 'Report',
-      icon: FileText
-    }
-  ];
+  const {
+    user
+  } = useAuth();
+  const navItems: NavItem[] = [{
+    id: 'overview',
+    label: 'Overview',
+    icon: Home
+  }, {
+    id: 'practice',
+    label: 'Practice',
+    icon: Play
+  }, {
+    id: 'curriculum',
+    label: 'Curriculum',
+    icon: BookOpen
+  }, {
+    id: 'analytics',
+    label: 'Analytics',
+    icon: BarChart3
+  }, {
+    id: 'report',
+    label: 'Report',
+    icon: FileText
+  }];
 
   // Mock user stats for dashboard - in real app these would come from props or context
   const userStats = {
@@ -56,84 +48,30 @@ export const DashboardNavigation: React.FC<DashboardNavigationProps> = ({
     streakDays: 7,
     totalPoints: 2450
   };
-
-  return (
-    <nav className="bg-card border-b border-border shadow-sm sticky top-0 z-10">
+  return <nav className="bg-card border-b border-border shadow-sm sticky top-0 z-10">
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between h-16">
           <div className="flex items-center space-x-8">
             {/* Main Navigation */}
             <div className="hidden lg:flex space-x-1">
-              {navItems.map(item => (
-                <button 
-                  key={item.id} 
-                  onClick={() => setCurrentView(item.id)}
-                  className={`flex items-center space-x-1 px-3 py-2 rounded-md text-sm font-medium transition-colors ${
-                    currentView === item.id 
-                      ? 'bg-primary/10 text-primary' 
-                      : 'text-muted-foreground hover:text-foreground hover:bg-muted'
-                  }`}
-                >
+              {navItems.map(item => <button key={item.id} onClick={() => setCurrentView(item.id)} className={`flex items-center space-x-1 px-3 py-2 rounded-md text-sm font-medium transition-colors ${currentView === item.id ? 'bg-primary/10 text-primary' : 'text-muted-foreground hover:text-foreground hover:bg-muted'}`}>
                   <item.icon className="h-4 w-4" />
                   <span>{item.label}</span>
-                </button>
-              ))}
+                </button>)}
             </div>
             
             {/* Mobile Navigation */}
             <div className="lg:hidden flex space-x-1">
-              {navItems.slice(0, 4).map(item => (
-                <button 
-                  key={item.id} 
-                  onClick={() => setCurrentView(item.id)} 
-                  className={`flex items-center space-x-1 px-2 py-2 rounded-md text-xs font-medium transition-colors ${
-                    currentView === item.id 
-                      ? 'bg-primary/10 text-primary' 
-                      : 'text-muted-foreground hover:text-foreground hover:bg-muted'
-                  }`}
-                >
+              {navItems.slice(0, 4).map(item => <button key={item.id} onClick={() => setCurrentView(item.id)} className={`flex items-center space-x-1 px-2 py-2 rounded-md text-xs font-medium transition-colors ${currentView === item.id ? 'bg-primary/10 text-primary' : 'text-muted-foreground hover:text-foreground hover:bg-muted'}`}>
                   <item.icon className="h-4 w-4" />
                   <span className="hidden sm:inline">{item.label}</span>
-                </button>
-              ))}
+                </button>)}
             </div>
           </div>
           
           {/* User Info Section */}
-          <div className="flex items-center space-x-4">
-            <div className="hidden sm:flex items-center space-x-4">
-              <div className="text-right">
-                <div className="flex items-center space-x-2">
-                  <span className="text-sm font-medium text-foreground">
-                    {userStats.name}
-                  </span>
-                  <span className="text-xs text-muted-foreground">
-                    {userStats.level}
-                  </span>
-                </div>
-              </div>
-              
-              <div className="flex items-center space-x-4">
-                <div className="flex items-center space-x-2 text-sm">
-                  <Zap className="h-4 w-4 text-yellow-500" />
-                  <span className="font-medium">{userStats.streakDays} day streak</span>
-                </div>
-                <div className="flex items-center space-x-2 text-sm">
-                  <Star className="h-4 w-4 text-primary" />
-                  <span className="font-medium">{userStats.totalPoints}</span>
-                </div>
-              </div>
-            </div>
-            
-            {/* Profile Avatar */}
-            <div className="flex items-center space-x-2">
-              <div className="h-8 w-8 rounded-full bg-primary/10 flex items-center justify-center">
-                <User className="h-4 w-4 text-primary" />
-              </div>
-            </div>
-          </div>
+          
         </div>
       </div>
-    </nav>
-  );
+    </nav>;
 };
