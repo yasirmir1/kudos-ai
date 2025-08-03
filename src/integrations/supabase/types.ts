@@ -522,6 +522,7 @@ export type Database = {
           common_indicators: string[] | null
           created_at: string | null
           description: string
+          exam_board: string | null
           id: number
           misconception_id: string
           misconception_name: string
@@ -534,6 +535,7 @@ export type Database = {
           common_indicators?: string[] | null
           created_at?: string | null
           description: string
+          exam_board?: string | null
           id?: number
           misconception_id: string
           misconception_name: string
@@ -546,6 +548,7 @@ export type Database = {
           common_indicators?: string[] | null
           created_at?: string | null
           description?: string
+          exam_board?: string | null
           id?: number
           misconception_id?: string
           misconception_name?: string
