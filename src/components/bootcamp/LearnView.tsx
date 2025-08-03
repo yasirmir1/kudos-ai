@@ -4,8 +4,9 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
-import { BookOpen, Clock, Users, ChevronRight, Play, CheckCircle } from 'lucide-react';
+import { BookOpen, Clock, Users, ChevronRight, Play, CheckCircle, ChevronDown } from 'lucide-react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Loader2 } from 'lucide-react';
 import { LearningExperience } from './LearningExperience';
@@ -439,6 +440,120 @@ export const LearnView: React.FC = () => {
         };
     }
   };
+
+  const renderWeekCard = (week: WeeklyPlan) => {
+    const weekStatus = getWeekStatus(week.week);
+    const cardStyle = getWeekCardStyle(week.week);
+    const buttonText = getWeekButtonText(week);
+    const progress = weekProgress[week.week] || 0;
+    
+    return (
+      <Card 
+        key={week.week} 
+        className={`hover:shadow-md transition-all duration-200 ${cardStyle}`}
+      >
+        <CardHeader className="pb-3">
+          <div className="flex items-center justify-between">
+            <Badge 
+              variant="outline" 
+              className={`text-xs ${
+                weekStatus === 'completed' ? 'border-green-500 text-green-700 bg-green-50' :
+                weekStatus === 'started' ? 'border-blue-500 text-blue-700 bg-blue-50' :
+                weekStatus === 'current' ? 'border-blue-500 text-blue-700 bg-blue-50' :
+                'text-xs'
+              }`}
+            >
+              Week {week.week}
+            </Badge>
+            <Badge className={getDifficultyColor(week.difficulty)} variant="secondary">
+              {week.difficulty}
+            </Badge>
+          </div>
+          <CardTitle 
+            className={`text-lg leading-tight ${
+              weekStatus === 'locked' ? 'text-muted-foreground' : ''
+            }`}
+          >
+            {week.title}
+          </CardTitle>
+          <div className="flex items-center gap-2 text-sm text-muted-foreground">
+            <span>{week.module}</span>
+            <span>•</span>
+            <span>{week.focus}</span>
+          </div>
+          
+          {/* Week Progress Bar */}
+          {progress > 0 && (
+            <div className="space-y-1">
+              <div className="flex items-center justify-between text-xs">
+                <span className="text-muted-foreground">Progress</span>
+                <span className={
+                  weekStatus === 'completed' ? 'text-green-600' :
+                  weekStatus === 'started' ? 'text-blue-600' :
+                  weekStatus === 'current' ? 'text-blue-600' :
+                  'text-muted-foreground'
+                }>
+                  {Math.round(progress)}%
+                </span>
+              </div>
+              <Progress 
+                value={progress} 
+                className={`h-1.5 ${
+                  weekStatus === 'completed' ? '[&>div]:bg-green-500' :
+                  weekStatus === 'started' ? '[&>div]:bg-blue-500' :
+                  weekStatus === 'current' ? '[&>div]:bg-blue-500' :
+                  ''
+                }`}
+              />
+            </div>
+          )}
+        </CardHeader>
+        <CardContent className="pt-0">
+          <div className="space-y-2">
+            <h6 className="text-sm font-medium text-muted-foreground">This week covers:</h6>
+            <div className="space-y-1">
+              {week.topics.map((topic, idx) => (
+                <div key={idx} className="flex items-center gap-2 text-sm">
+                  <CheckCircle className={`h-3 w-3 ${
+                    weekStatus === 'completed' ? 'text-green-500' :
+                    weekStatus === 'started' ? 'text-blue-500' :
+                    weekStatus === 'current' ? 'text-blue-500' :
+                    'text-muted-foreground'
+                  }`} />
+                  <span className={weekStatus === 'locked' ? 'text-muted-foreground' : ''}>
+                    {topic}
+                  </span>
+                </div>
+              ))}
+            </div>
+          </div>
+          <Button 
+            variant={weekStatus === 'completed' || weekStatus === 'current' || weekStatus === 'started' ? undefined : "outline"}
+            size="sm" 
+            className={`w-full mt-4 ${
+              weekStatus === 'completed' ? 'bg-green-600 hover:bg-green-700 text-white border-green-600' :
+              weekStatus === 'started' ? 'bg-blue-600 hover:bg-blue-700 text-white border-blue-600' :
+              weekStatus === 'current' ? 'bg-blue-600 hover:bg-blue-700 text-white border-blue-600' :
+              ''
+            }`}
+            onClick={() => handleWeekClick(week)}
+          >
+            {weekStatus === 'completed' ? (
+              <>
+                <CheckCircle className="h-3 w-3 mr-2" />
+                Complete
+              </>
+            ) : (
+              <>
+                <Play className="h-3 w-3 mr-2" />
+                {buttonText}
+              </>
+            )}
+          </Button>
+        </CardContent>
+      </Card>
+    );
+  };
   const handleWeekClick = (week: WeeklyPlan) => {
     // Mark the week as started when user clicks to begin learning
     const newStartedWeeks = new Set([...startedWeeks, week.week]);
@@ -506,145 +621,135 @@ export const LearnView: React.FC = () => {
           <div className="space-y-6">
             <div className="bg-gradient-to-r from-primary/10 to-secondary/10 rounded-xl p-6">
               <h2 className="text-2xl font-bold mb-2">52-Week Complete Learning Journey</h2>
-              <p className="text-muted-foreground mb-4">
+              <p className="text-muted-foreground mb-6">
                 A comprehensive year-long plan covering all mathematical concepts from foundations to advanced problem-solving,
                 culminating in complete exam readiness.
               </p>
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
-                <div className="bg-background/50 rounded-lg p-3">
-                  <div className="font-semibold text-primary">Weeks 1-36</div>
-                  <div className="text-muted-foreground">Core Curriculum</div>
+              
+              {/* Journey Overview Cards */}
+              <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+                <div className="bg-background/80 backdrop-blur rounded-lg p-4 border border-primary/20">
+                  <div className="text-lg font-bold text-primary mb-1">Weeks 1-36</div>
+                  <div className="text-sm text-muted-foreground">Core Curriculum</div>
+                  <div className="text-xs text-primary mt-1">Foundation Building</div>
                 </div>
-                <div className="bg-background/50 rounded-lg p-3">
-                  <div className="font-semibold text-secondary">Weeks 37-46</div>
-                  <div className="text-muted-foreground">Review & Practice</div>
+                <div className="bg-background/80 backdrop-blur rounded-lg p-4 border border-secondary/20">
+                  <div className="text-lg font-bold text-secondary mb-1">Weeks 37-46</div>
+                  <div className="text-sm text-muted-foreground">Review & Practice</div>
+                  <div className="text-xs text-secondary mt-1">Skills Reinforcement</div>
                 </div>
-                <div className="bg-background/50 rounded-lg p-3">
-                  <div className="font-semibold text-accent">Weeks 47-50</div>
-                  <div className="text-muted-foreground">Final Review</div>
+                <div className="bg-background/80 backdrop-blur rounded-lg p-4 border border-accent/20">
+                  <div className="text-lg font-bold text-accent mb-1">Weeks 47-50</div>
+                  <div className="text-sm text-muted-foreground">Final Review</div>
+                  <div className="text-xs text-accent mt-1">Pre-Exam Prep</div>
                 </div>
-                <div className="bg-background/50 rounded-lg p-3">
-                  <div className="font-semibold text-warning">Weeks 51-52</div>
-                  <div className="text-muted-foreground">Exam Ready</div>
+                <div className="bg-background/80 backdrop-blur rounded-lg p-4 border border-warning/20">
+                  <div className="text-lg font-bold text-warning mb-1">Weeks 51-52</div>
+                  <div className="text-sm text-muted-foreground">Exam Ready</div>
+                  <div className="text-xs text-warning mt-1">Assessment Focus</div>
                 </div>
+              </div>
+              
+              {/* Progress Overview */}
+              <div className="bg-background/50 rounded-lg p-4 border">
+                <div className="flex items-center justify-between mb-2">
+                  <span className="text-sm font-medium">Overall Progress</span>
+                  <span className="text-sm text-muted-foreground">
+                    {weeklyPlan.filter(w => getWeekStatus(w.week) === 'completed').length} / {weeklyPlan.length} weeks completed
+                  </span>
+                </div>
+                <Progress 
+                  value={(weeklyPlan.filter(w => getWeekStatus(w.week) === 'completed').length / weeklyPlan.length) * 100} 
+                  className="h-2"
+                />
               </div>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-              {weeklyPlan.map(week => {
-                const weekStatus = getWeekStatus(week.week);
-                const cardStyle = getWeekCardStyle(week.week);
-                const buttonText = getWeekButtonText(week);
-                const buttonStyle = getWeekButtonStyle(week.week);
-                const progress = weekProgress[week.week] || 0;
-                
-                return (
-                  <Card 
-                    key={week.week} 
-                    className={`hover:shadow-md transition-all duration-200 ${cardStyle}`}
-                  >
-                    <CardHeader className="pb-3">
-                      <div className="flex items-center justify-between">
-                        <Badge 
-                          variant="outline" 
-                          className={`text-xs ${
-                            weekStatus === 'completed' ? 'border-green-500 text-green-700 bg-green-50' :
-                            weekStatus === 'started' ? 'border-blue-500 text-blue-700 bg-blue-50' :
-                            weekStatus === 'current' ? 'border-blue-500 text-blue-700 bg-blue-50' :
-                            'text-xs'
-                          }`}
-                        >
-                          Week {week.week}
-                        </Badge>
-                        <Badge className={getDifficultyColor(week.difficulty)} variant="secondary">
-                          {week.difficulty}
-                        </Badge>
+            {/* Collapsible Sections by Phase */}
+            <div className="space-y-4">
+              {/* Core Curriculum Phase */}
+              <Collapsible defaultOpen className="space-y-3">
+                <CollapsibleTrigger asChild>
+                  <Button variant="ghost" className="w-full justify-between p-4 h-auto border rounded-lg hover:bg-muted/50">
+                    <div className="flex items-center gap-3">
+                      <div className="w-3 h-3 bg-primary rounded-full"></div>
+                      <div className="text-left">
+                        <div className="text-lg font-semibold">Core Curriculum (Weeks 1-36)</div>
+                        <div className="text-sm text-muted-foreground">Foundation building and essential concepts</div>
                       </div>
-                      <CardTitle 
-                        className={`text-lg leading-tight ${
-                          weekStatus === 'locked' ? 'text-muted-foreground' : ''
-                        }`}
-                      >
-                        {week.title}
-                      </CardTitle>
-                      <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                        <span>{week.module}</span>
-                        <span>•</span>
-                        <span>{week.focus}</span>
+                    </div>
+                    <ChevronDown className="h-4 w-4" />
+                  </Button>
+                </CollapsibleTrigger>
+                <CollapsibleContent className="space-y-3">
+                  <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 pl-4">
+                    {weeklyPlan.filter(w => w.week <= 36).map(week => renderWeekCard(week))}
+                  </div>
+                </CollapsibleContent>
+              </Collapsible>
+
+              {/* Review & Practice Phase */}
+              <Collapsible className="space-y-3">
+                <CollapsibleTrigger asChild>
+                  <Button variant="ghost" className="w-full justify-between p-4 h-auto border rounded-lg hover:bg-muted/50">
+                    <div className="flex items-center gap-3">
+                      <div className="w-3 h-3 bg-secondary rounded-full"></div>
+                      <div className="text-left">
+                        <div className="text-lg font-semibold">Review & Practice (Weeks 37-46)</div>
+                        <div className="text-sm text-muted-foreground">Skills reinforcement and mastery</div>
                       </div>
-                      
-                      {/* Week Progress Bar */}
-                      {progress > 0 && (
-                        <div className="space-y-1">
-                          <div className="flex items-center justify-between text-xs">
-                            <span className="text-muted-foreground">Progress</span>
-                            <span className={
-                              weekStatus === 'completed' ? 'text-green-600' :
-                              weekStatus === 'started' ? 'text-blue-600' :
-                              weekStatus === 'current' ? 'text-blue-600' :
-                              'text-muted-foreground'
-                            }>
-                              {Math.round(progress)}%
-                            </span>
-                          </div>
-                          <Progress 
-                            value={progress} 
-                            className={`h-1.5 ${
-                              weekStatus === 'completed' ? '[&>div]:bg-green-500' :
-                              weekStatus === 'started' ? '[&>div]:bg-blue-500' :
-                              weekStatus === 'current' ? '[&>div]:bg-blue-500' :
-                              ''
-                            }`}
-                          />
-                        </div>
-                      )}
-                    </CardHeader>
-                    <CardContent className="pt-0">
-                      <div className="space-y-2">
-                        <h6 className="text-sm font-medium text-muted-foreground">This week covers:</h6>
-                        <div className="space-y-1">
-                          {week.topics.map((topic, idx) => (
-                            <div key={idx} className="flex items-center gap-2 text-sm">
-                              <CheckCircle className={`h-3 w-3 ${
-                                weekStatus === 'completed' ? 'text-green-500' :
-                                weekStatus === 'started' ? 'text-blue-500' :
-                                weekStatus === 'current' ? 'text-blue-500' :
-                                'text-muted-foreground'
-                              }`} />
-                              <span className={weekStatus === 'locked' ? 'text-muted-foreground' : ''}>
-                                {topic}
-                              </span>
-                            </div>
-                          ))}
-                        </div>
+                    </div>
+                    <ChevronDown className="h-4 w-4" />
+                  </Button>
+                </CollapsibleTrigger>
+                <CollapsibleContent className="space-y-3">
+                  <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 pl-4">
+                    {weeklyPlan.filter(w => w.week >= 37 && w.week <= 46).map(week => renderWeekCard(week))}
+                  </div>
+                </CollapsibleContent>
+              </Collapsible>
+
+              {/* Final Review Phase */}
+              <Collapsible className="space-y-3">
+                <CollapsibleTrigger asChild>
+                  <Button variant="ghost" className="w-full justify-between p-4 h-auto border rounded-lg hover:bg-muted/50">
+                    <div className="flex items-center gap-3">
+                      <div className="w-3 h-3 bg-accent rounded-full"></div>
+                      <div className="text-left">
+                        <div className="text-lg font-semibold">Final Review (Weeks 47-50)</div>
+                        <div className="text-sm text-muted-foreground">Pre-exam preparation</div>
                       </div>
-                      <Button 
-                        variant={weekStatus === 'completed' || weekStatus === 'current' || weekStatus === 'started' ? undefined : "outline"}
-                        size="sm" 
-                        className={`w-full mt-4 ${
-                          weekStatus === 'completed' ? 'bg-green-600 hover:bg-green-700 text-white border-green-600' :
-                          weekStatus === 'started' ? 'bg-blue-600 hover:bg-blue-700 text-white border-blue-600' :
-                          weekStatus === 'current' ? 'bg-blue-600 hover:bg-blue-700 text-white border-blue-600' :
-                          ''
-                        }`}
-                        onClick={() => handleWeekClick(week)}
-                      >
-                        {weekStatus === 'completed' ? (
-                          <>
-                            <CheckCircle className="h-3 w-3 mr-2" />
-                            Complete
-                          </>
-                        ) : (
-                          <>
-                            <Play className="h-3 w-3 mr-2" />
-                            {buttonText}
-                          </>
-                        )}
-                      </Button>
-                    </CardContent>
-                  </Card>
-                );
-              })}
+                    </div>
+                    <ChevronDown className="h-4 w-4" />
+                  </Button>
+                </CollapsibleTrigger>
+                <CollapsibleContent className="space-y-3">
+                  <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 pl-4">
+                    {weeklyPlan.filter(w => w.week >= 47 && w.week <= 50).map(week => renderWeekCard(week))}
+                  </div>
+                </CollapsibleContent>
+              </Collapsible>
+
+              {/* Exam Ready Phase */}
+              <Collapsible className="space-y-3">
+                <CollapsibleTrigger asChild>
+                  <Button variant="ghost" className="w-full justify-between p-4 h-auto border rounded-lg hover:bg-muted/50">
+                    <div className="flex items-center gap-3">
+                      <div className="w-3 h-3 bg-warning rounded-full"></div>
+                      <div className="text-left">
+                        <div className="text-lg font-semibold">Exam Ready (Weeks 51-52)</div>
+                        <div className="text-sm text-muted-foreground">Final assessment focus</div>
+                      </div>
+                    </div>
+                    <ChevronDown className="h-4 w-4" />
+                  </Button>
+                </CollapsibleTrigger>
+                <CollapsibleContent className="space-y-3">
+                  <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 pl-4">
+                    {weeklyPlan.filter(w => w.week >= 51).map(week => renderWeekCard(week))}
+                  </div>
+                </CollapsibleContent>
+              </Collapsible>
             </div>
           </div>
         </TabsContent>
