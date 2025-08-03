@@ -7,6 +7,7 @@ import { Badge } from '@/components/ui/badge';
 import { CheckCircle, Crown, Zap, ExternalLink, Settings, Clock, ArrowUpRight } from 'lucide-react';
 import { toast } from 'sonner';
 import { useNavigate } from 'react-router-dom';
+import { SubscriptionThankYou } from '@/components/SubscriptionThankYou';
 interface TrialResult {
   success: boolean;
   message: string;
@@ -36,11 +37,15 @@ const Pricing = () => {
   const [checkingOut, setCheckingOut] = useState<string | null>(null);
   const [startingTrial, setStartingTrial] = useState<string | null>(null);
   const [isAnnual, setIsAnnual] = useState(false);
+  const [showThankYou, setShowThankYou] = useState(false);
+  const [subscribedPlan, setSubscribedPlan] = useState<'pass' | 'pass_plus'>('pass_plus');
+
   useEffect(() => {
     // Check for success/cancel parameters
     const urlParams = new URLSearchParams(window.location.search);
     if (urlParams.get('success')) {
-      toast.success('Payment successful! Checking subscription status...');
+      // Show thank you component instead of toast
+      setShowThankYou(true);
       refetch();
       // Clean up URL parameters
       window.history.replaceState({}, document.title, window.location.pathname);
@@ -134,6 +139,12 @@ const Pricing = () => {
         </div>
       </div>;
   }
+
+  // Show thank you component after successful payment
+  if (showThankYou) {
+    return <SubscriptionThankYou planType={subscribedPlan} />;
+  }
+
   return <div className="min-h-screen bg-gradient-to-br from-background via-background to-primary/5">
       <div className="container mx-auto px-4 py-12">
         <div className="text-center mb-12">
