@@ -152,7 +152,7 @@ export default function Pricing() {
                 {/* Premium Badge */}
                 <div className="absolute top-4 left-4">
                   <Badge className="bg-primary/10 text-primary border-primary/20 px-3 py-1 text-xs font-medium">
-                    Premium
+                    30 Day Free Trial
                   </Badge>
                 </div>
 
