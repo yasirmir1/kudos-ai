@@ -226,11 +226,7 @@ export default function Pricing() {
         })}
         </div>
 
-        <div className="text-center bg-muted/30 rounded-lg p-6 max-w-2xl mx-auto">
-          <p className="text-sm text-muted-foreground">
-            All plans include access to our core features. No hidden fees. Cancel anytime.
-          </p>
-        </div>
+        
       </div>
     </div>;
 }
