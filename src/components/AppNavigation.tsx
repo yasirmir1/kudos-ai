@@ -162,14 +162,6 @@ export const AppNavigation: React.FC<AppNavigationProps> = ({
                 <span>{isTrialExpired ? 'Upgrade Now' : 'Upgrade to Plus'}</span>
               </Button>}
 
-            {/* Plan Status Indicator */}
-            <div className="hidden md:flex items-start space-x-2 mr-4">
-              <span className="text-base text-slate-700 font-semibold">Plan:</span>
-              <Badge variant={planDisplay.variant} className="flex items-center space-x-1 px-3 py-1">
-                <planDisplay.icon className="h-3 w-3" />
-                <span className="text-xs font-medium">{planDisplay.text}</span>
-              </Badge>
-            </div>
 
             {/* System Mode Buttons */}
             <div className="hidden md:flex items-center space-x-4 mr-6">
@@ -195,6 +187,15 @@ export const AppNavigation: React.FC<AppNavigationProps> = ({
                   </Button>;
             })}
               
+              {/* Plan Status Indicator */}
+              <div className="flex items-center space-x-2">
+                <span className="text-base text-slate-700 font-semibold">Plan:</span>
+                <Badge variant={planDisplay.variant} className="flex items-center space-x-1 px-3 py-1">
+                  <planDisplay.icon className="h-3 w-3" />
+                  <span className="text-xs font-medium">{planDisplay.text}</span>
+                </Badge>
+              </div>
+
               {/* Logout Button - Icon only */}
               <Button variant="ghost" size="sm" onClick={handleLogout} className="flex items-center justify-center px-3 py-2 w-auto" title="Logout">
                 <LogOut className="h-4 w-4" />
