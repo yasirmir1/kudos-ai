@@ -753,7 +753,7 @@ export type Database = {
           question_id: string
           question_text: string
           question_type: Database["public"]["Enums"]["question_type"]
-          subtopic_id: string | null
+          subtopic_name: string | null
           success_rate: number | null
           time_seconds: number
           topic_id: string
@@ -781,7 +781,7 @@ export type Database = {
           question_id: string
           question_text: string
           question_type: Database["public"]["Enums"]["question_type"]
-          subtopic_id?: string | null
+          subtopic_name?: string | null
           success_rate?: number | null
           time_seconds?: number
           topic_id: string
@@ -809,7 +809,7 @@ export type Database = {
           question_id?: string
           question_text?: string
           question_type?: Database["public"]["Enums"]["question_type"]
-          subtopic_id?: string | null
+          subtopic_name?: string | null
           success_rate?: number | null
           time_seconds?: number
           topic_id?: string
