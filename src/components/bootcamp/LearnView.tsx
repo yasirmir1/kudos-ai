@@ -58,6 +58,7 @@ export const LearnView: React.FC = () => {
   const [subtopics, setSubtopics] = useState<Subtopic[]>([]);
   const [curriculum, setCurriculum] = useState<CurriculumItem[]>([]);
   const [weeklyPlan, setWeeklyPlan] = useState<WeeklyPlan[]>([]);
+  const [weekProgress, setWeekProgress] = useState<Record<number, number>>({});
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [selectedModule, setSelectedModule] = useState<string | null>(null);
@@ -71,6 +72,106 @@ export const LearnView: React.FC = () => {
   useEffect(() => {
     loadLearningContent();
   }, []);
+
+  useEffect(() => {
+    if (progress.length > 0 && weeklyPlan.length > 0 && topics.length > 0) {
+      calculateWeekProgress();
+    }
+  }, [progress, weeklyPlan, topics]);
+
+  const calculateWeekProgress = () => {
+    const weekProgressMap: Record<number, number> = {};
+    
+    weeklyPlan.forEach(week => {
+      const weekTopics = topics.filter(topic => 
+        week.topics.some(weekTopic => 
+          topic.name.toLowerCase().includes(weekTopic.toLowerCase()) ||
+          weekTopic.toLowerCase().includes(topic.name.toLowerCase())
+        )
+      );
+      
+      if (weekTopics.length > 0) {
+        const completedTopics = weekTopics.filter(topic => {
+          const topicProgress = progress.find(p => p.topic_id === topic.id);
+          return topicProgress && (topicProgress.status === 'mastered' || topicProgress.status === 'completed');
+        });
+        
+        weekProgressMap[week.week] = (completedTopics.length / weekTopics.length) * 100;
+      } else {
+        weekProgressMap[week.week] = 0;
+      }
+    });
+    
+    setWeekProgress(weekProgressMap);
+  };
+
+  const getCurrentWeek = (): number => {
+    // Find the first week that isn't 100% complete
+    for (let week = 1; week <= 52; week++) {
+      const progress = weekProgress[week] || 0;
+      if (progress < 100) {
+        return week;
+      }
+    }
+    return 52; // All weeks completed
+  };
+
+  const getWeekStatus = (weekNumber: number) => {
+    const progress = weekProgress[weekNumber] || 0;
+    const currentWeek = getCurrentWeek();
+    
+    if (progress >= 100) {
+      return 'completed';
+    } else if (weekNumber === currentWeek) {
+      return 'current';
+    } else if (weekNumber < currentWeek) {
+      return 'available';
+    } else {
+      return 'locked';
+    }
+  };
+
+  const getWeekCardStyle = (weekNumber: number) => {
+    const status = getWeekStatus(weekNumber);
+    
+    switch (status) {
+      case 'completed':
+        return 'border-green-500 bg-green-50 shadow-green-100';
+      case 'current':
+        return 'border-blue-500 bg-blue-50 shadow-blue-100 ring-2 ring-blue-200';
+      case 'available':
+        return 'opacity-70 hover:opacity-100';
+      case 'locked':
+        return 'opacity-40 pointer-events-none';
+      default:
+        return '';
+    }
+  };
+
+  const getWeekButtonText = (week: WeeklyPlan) => {
+    const status = getWeekStatus(week.week);
+    
+    if (status === 'completed') {
+      return 'Complete';
+    } else if (status === 'current') {
+      return week.week <= 36 ? 'Start Learning' : week.week <= 46 ? 'Practice' : week.week <= 50 ? 'Review' : 'Final Prep';
+    } else {
+      return week.week <= 36 ? 'Start Learning' : week.week <= 46 ? 'Practice' : week.week <= 50 ? 'Review' : 'Final Prep';
+    }
+  };
+
+  const getWeekButtonStyle = (weekNumber: number) => {
+    const status = getWeekStatus(weekNumber);
+    
+    switch (status) {
+      case 'completed':
+        return 'bg-green-600 hover:bg-green-700 text-white border-green-600';
+      case 'current':
+        return 'bg-blue-600 hover:bg-blue-700 text-white border-blue-600';
+      default:
+        return 'variant-outline';
+    }
+  };
   const loadLearningContent = async () => {
     try {
       setLoading(true);
@@ -413,44 +514,116 @@ export const LearnView: React.FC = () => {
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-              {weeklyPlan.map(week => <Card key={week.week} className="hover:shadow-md transition-shadow">
-                  <CardHeader className="pb-3">
-                    <div className="flex items-center justify-between">
-                      <Badge variant="outline" className="text-xs">
-                        Week {week.week}
-                      </Badge>
-                      <Badge className={getDifficultyColor(week.difficulty)} variant="secondary">
-                        {week.difficulty}
-                      </Badge>
-                    </div>
-                    <CardTitle className="text-lg leading-tight">{week.title}</CardTitle>
-                    <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                      <span>{week.module}</span>
-                      <span>•</span>
-                      <span>{week.focus}</span>
-                    </div>
-                  </CardHeader>
-                  <CardContent className="pt-0">
-                    <div className="space-y-2">
-                      <h6 className="text-sm font-medium text-muted-foreground">This week covers:</h6>
-                      <div className="space-y-1">
-                        {week.topics.map((topic, idx) => <div key={idx} className="flex items-center gap-2 text-sm">
-                            <CheckCircle className="h-3 w-3 text-muted-foreground" />
-                            <span>{topic}</span>
-                          </div>)}
+              {weeklyPlan.map(week => {
+                const weekStatus = getWeekStatus(week.week);
+                const cardStyle = getWeekCardStyle(week.week);
+                const buttonText = getWeekButtonText(week);
+                const buttonStyle = getWeekButtonStyle(week.week);
+                const progress = weekProgress[week.week] || 0;
+                
+                return (
+                  <Card 
+                    key={week.week} 
+                    className={`hover:shadow-md transition-all duration-200 ${cardStyle}`}
+                  >
+                    <CardHeader className="pb-3">
+                      <div className="flex items-center justify-between">
+                        <Badge 
+                          variant="outline" 
+                          className={`text-xs ${
+                            weekStatus === 'completed' ? 'border-green-500 text-green-700 bg-green-50' :
+                            weekStatus === 'current' ? 'border-blue-500 text-blue-700 bg-blue-50' :
+                            'text-xs'
+                          }`}
+                        >
+                          Week {week.week}
+                        </Badge>
+                        <Badge className={getDifficultyColor(week.difficulty)} variant="secondary">
+                          {week.difficulty}
+                        </Badge>
                       </div>
-                    </div>
-                    <Button 
-                      variant="outline" 
-                      size="sm" 
-                      className="w-full mt-4" 
-                      onClick={() => handleWeekClick(week)}
-                    >
-                      <Play className="h-3 w-3 mr-2" />
-                      {week.week <= 36 ? 'Start Learning' : week.week <= 46 ? 'Practice' : week.week <= 50 ? 'Review' : 'Final Prep'}
-                    </Button>
-                  </CardContent>
-                </Card>)}
+                      <CardTitle 
+                        className={`text-lg leading-tight ${
+                          weekStatus === 'locked' ? 'text-muted-foreground' : ''
+                        }`}
+                      >
+                        {week.title}
+                      </CardTitle>
+                      <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                        <span>{week.module}</span>
+                        <span>•</span>
+                        <span>{week.focus}</span>
+                      </div>
+                      
+                      {/* Week Progress Bar */}
+                      {progress > 0 && (
+                        <div className="space-y-1">
+                          <div className="flex items-center justify-between text-xs">
+                            <span className="text-muted-foreground">Progress</span>
+                            <span className={
+                              weekStatus === 'completed' ? 'text-green-600' :
+                              weekStatus === 'current' ? 'text-blue-600' :
+                              'text-muted-foreground'
+                            }>
+                              {Math.round(progress)}%
+                            </span>
+                          </div>
+                          <Progress 
+                            value={progress} 
+                            className={`h-1.5 ${
+                              weekStatus === 'completed' ? '[&>div]:bg-green-500' :
+                              weekStatus === 'current' ? '[&>div]:bg-blue-500' :
+                              ''
+                            }`}
+                          />
+                        </div>
+                      )}
+                    </CardHeader>
+                    <CardContent className="pt-0">
+                      <div className="space-y-2">
+                        <h6 className="text-sm font-medium text-muted-foreground">This week covers:</h6>
+                        <div className="space-y-1">
+                          {week.topics.map((topic, idx) => (
+                            <div key={idx} className="flex items-center gap-2 text-sm">
+                              <CheckCircle className={`h-3 w-3 ${
+                                weekStatus === 'completed' ? 'text-green-500' :
+                                weekStatus === 'current' ? 'text-blue-500' :
+                                'text-muted-foreground'
+                              }`} />
+                              <span className={weekStatus === 'locked' ? 'text-muted-foreground' : ''}>
+                                {topic}
+                              </span>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                      <Button 
+                        variant={weekStatus === 'completed' || weekStatus === 'current' ? undefined : "outline"}
+                        size="sm" 
+                        className={`w-full mt-4 ${
+                          weekStatus === 'completed' ? 'bg-green-600 hover:bg-green-700 text-white border-green-600' :
+                          weekStatus === 'current' ? 'bg-blue-600 hover:bg-blue-700 text-white border-blue-600' :
+                          weekStatus === 'locked' ? 'opacity-50 cursor-not-allowed' : ''
+                        }`}
+                        onClick={() => handleWeekClick(week)}
+                        disabled={weekStatus === 'locked'}
+                      >
+                        {weekStatus === 'completed' ? (
+                          <>
+                            <CheckCircle className="h-3 w-3 mr-2" />
+                            Complete
+                          </>
+                        ) : (
+                          <>
+                            <Play className="h-3 w-3 mr-2" />
+                            {week.week <= 36 ? 'Start Learning' : week.week <= 46 ? 'Practice' : week.week <= 50 ? 'Review' : 'Final Prep'}
+                          </>
+                        )}
+                      </Button>
+                    </CardContent>
+                  </Card>
+                );
+              })}
             </div>
           </div>
         </TabsContent>
