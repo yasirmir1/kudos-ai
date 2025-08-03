@@ -175,7 +175,7 @@ const Pricing = () => {
           </div>
           
           {/* Angled savings text below toggle */}
-          <span className="text-sm transform -rotate-25 block text-orange-600 font-normal">save up to 63% with Annual</span>
+          <span className="text-sm transform -rotate-25 block text-orange-600 font-normal -mt-2">save up to 63% with Annual</span>
         </div>
 
         {/* Subscription Status */}
