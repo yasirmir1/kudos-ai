@@ -131,10 +131,10 @@ export default function Pricing() {
             Pricing
           </h1>
           <p className="text-muted-foreground text-xl max-w-3xl mx-auto leading-relaxed">
-            Flexible plans that scale <span className="text-primary font-semibold">with you</span>
+            Flexible plans that scale <span className="text-primary font-semibold">free trial</span>
           </p>
           <p className="text-muted-foreground text-lg mt-2">
-            <span className="text-primary font-semibold">No</span> hidden fees. Cancel anytime.
+            <span className="text-primary font-semibold">No credit card needed, No hidden fees.</span> hidden fees. Cancel anytime.
           </p>
         </div>
 
