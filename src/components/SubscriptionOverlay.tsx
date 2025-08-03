@@ -104,31 +104,105 @@ export const SubscriptionOverlay: React.FC<SubscriptionOverlayProps> = ({
           
           {/* Center upgrade button */}
           <div className="absolute top-[130px] left-1/2 transform -translate-x-1/2">
-            <div className="bg-card/95 backdrop-blur-sm rounded-lg p-6 shadow-xl border text-center max-w-md">
-              <Crown className="h-10 w-10 text-primary mx-auto mb-3" />
-              <h3 className="text-xl font-semibold text-foreground mb-2">
+            <div className="bg-card border-2 border-border/50 hover:border-primary/50 rounded-lg p-8 shadow-xl max-w-lg transition-all duration-300">
+              {/* Badge */}
+              <div className="flex justify-center mb-4">
+                <Badge className="bg-accent/20 text-accent-foreground px-4 py-2 text-sm font-medium">
+                  Free 30 day trial
+                </Badge>
+              </div>
+              
+              {/* Title */}
+              <h3 className="text-4xl font-bold text-foreground mb-4 text-center">
                 {userState === 'expired' 
-                  ? 'Trial Expired' 
+                  ? 'Pass Plus' 
                   : userState === 'pass' && requiredFeature === 'bootcamp'
-                    ? 'Bootcamp Access Required'
-                    : 'Upgrade to Continue'
+                    ? 'Pass Plus'
+                    : requiredFeature === 'bootcamp' ? 'Pass Plus' : 'Pass'
                 }
               </h3>
-              <p className="text-sm text-muted-foreground mb-4">
-                {userState === 'expired' 
-                  ? 'Your free trial has ended. Upgrade to continue learning.'
-                  : userState === 'pass' && requiredFeature === 'bootcamp'
-                    ? 'Upgrade to Pass Plus to access Bootcamp features.'
-                    : 'Get full access to all features and content.'
-                }
-              </p>
+              
+              {/* Pricing */}
+              <div className="text-center mb-6">
+                <div className="text-3xl font-bold text-foreground">
+                  Free for 30 days
+                </div>
+                <div className="text-lg text-muted-foreground">
+                  {requiredFeature === 'bootcamp' ? '£15/month after' : '£8/month after'}
+                </div>
+                <div className="text-sm text-muted-foreground">
+                  {requiredFeature === 'bootcamp' 
+                    ? 'Or £99/year (save £81)' 
+                    : 'Or £59/year (save £37)'
+                  }
+                </div>
+              </div>
+
+              {/* Key Features */}
+              <div className="space-y-3 mb-8">
+                {requiredFeature === 'bootcamp' ? (
+                  <>
+                    <div className="flex items-start">
+                      <div className="w-2 h-2 rounded-full bg-primary mt-2 mr-3 flex-shrink-0" />
+                      <div className="text-sm text-foreground font-medium">
+                        The 52-Week Bootcamp
+                      </div>
+                    </div>
+                    <div className="flex items-start">
+                      <div className="w-2 h-2 rounded-full bg-primary mt-2 mr-3 flex-shrink-0" />
+                      <div className="text-sm text-foreground font-medium">
+                        Realistic Mock Exams
+                      </div>
+                    </div>
+                    <div className="flex items-start">
+                      <div className="w-2 h-2 rounded-full bg-primary mt-2 mr-3 flex-shrink-0" />
+                      <div className="text-sm text-foreground font-medium">
+                        Weekly Performance Monitoring
+                      </div>
+                    </div>
+                  </>
+                ) : (
+                  <>
+                    <div className="flex items-start">
+                      <div className="w-2 h-2 rounded-full bg-primary mt-2 mr-3 flex-shrink-0" />
+                      <div className="text-sm text-foreground font-medium">
+                        Daily Performance Snapshots
+                      </div>
+                    </div>
+                    <div className="flex items-start">
+                      <div className="w-2 h-2 rounded-full bg-primary mt-2 mr-3 flex-shrink-0" />
+                      <div className="text-sm text-foreground font-medium">
+                        Personalized Progress Analytics
+                      </div>
+                    </div>
+                    <div className="flex items-start">
+                      <div className="w-2 h-2 rounded-full bg-primary mt-2 mr-3 flex-shrink-0" />
+                      <div className="text-sm text-foreground font-medium">
+                        Customized Worksheets
+                      </div>
+                    </div>
+                  </>
+                )}
+              </div>
+              
+              {/* CTA Button */}
               <Button 
                 size="lg" 
-                className="font-semibold"
+                className="w-full py-4 font-semibold text-lg rounded-full transition-all duration-200 hover:scale-[1.02]"
               >
-                <Crown className="h-4 w-4 mr-2" />
-                {userState === 'expired' ? 'Upgrade Now' : 'View Plans'}
+                {userState === 'expired' || userState === 'no_access' 
+                  ? 'Start trial now, no credit card needed' 
+                  : 'Upgrade to Pass Plus'
+                }
               </Button>
+              
+              {/* Small print */}
+              <p className="text-xs text-muted-foreground text-center leading-relaxed pt-4">
+                Free 30 day trial, then {requiredFeature === 'bootcamp' ? '£15' : '£8'} per month after. 
+                <span className="underline cursor-pointer hover:text-foreground transition-colors ml-1">
+                  Terms apply.
+                </span>
+              </p>
             </div>
           </div>
         </div>
