@@ -137,12 +137,12 @@ export const useBootcampData = () => {
           setProgress(progressData || []);
         }
 
-        // Fetch responses data from multiple sources for comprehensive stats
+        // Fetch unified response data for comprehensive stats
         const thirtyDaysAgo = new Date();
         thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
 
-        // Fetch from bootcamp_student_responses
-        const { data: responsesData, error: responsesError } = await supabase
+        console.log('🔍 Fetching unified response data...');
+        const { data: allResponsesData, error: responsesError } = await supabase
           .from('bootcamp_student_responses')
           .select('*')
           .eq('student_id', studentId)
@@ -150,27 +150,33 @@ export const useBootcampData = () => {
           .order('responded_at', { ascending: false });
 
         if (responsesError) {
-          console.error('Error fetching responses:', responsesError);
+          console.error('❌ Error fetching unified responses:', responsesError);
+          setResponses([]);
         } else {
-          console.log('Fetched bootcamp responses:', responsesData);
+          console.log('✅ Fetched unified responses:', allResponsesData?.length, 'total');
+          console.log('📊 Activity breakdown:', {
+            practice: allResponsesData?.filter(r => r.activity_source === 'practice').length,
+            learning_session: allResponsesData?.filter(r => r.activity_source === 'learning_session').length,
+            mock_test: allResponsesData?.filter(r => r.activity_source === 'mock_test').length
+          });
+          
+          // Convert to unified format
+          const unifiedResponses = (allResponsesData || []).map(response => ({
+            response_id: response.response_id,
+            question_id: response.question_id,
+            is_correct: response.is_correct,
+            time_taken: response.time_taken || 0,
+            responded_at: response.responded_at,
+            misconception_detected: response.misconception_detected,
+            activity_source: response.activity_source
+          }));
+
+          setResponses(unifiedResponses);
         }
 
-        // Fetch from learning_results (additional practice data)
-        const { data: learningData, error: learningError } = await supabase
-          .from('learning_results')
-          .select('*')
-          .eq('student_id', studentId)
-          .gte('responded_at', thirtyDaysAgo.toISOString())
-          .order('responded_at', { ascending: false });
-
-        if (learningError) {
-          console.error('Error fetching learning results:', learningError);
-        } else {
-          console.log('Fetched learning results:', learningData);
-        }
-
-        // Fetch from bootcamp_mock_test_sessions for additional activity data
-        const { data: mockTestData, error: mockTestError } = await supabase
+        // For mock test sessions, we still get session metadata for achievements and detailed analysis
+        console.log('🔍 Fetching mock test session metadata...');
+        const { data: mockTestSessions, error: mockTestError } = await supabase
           .from('bootcamp_mock_test_sessions')
           .select('*')
           .eq('student_id', studentId)
@@ -178,29 +184,14 @@ export const useBootcampData = () => {
           .order('started_at', { ascending: false });
 
         if (mockTestError) {
-          console.error('Error fetching mock test sessions:', mockTestError);
+          console.error('❌ Error fetching mock test sessions:', mockTestError);
         } else {
-          console.log('Fetched mock test sessions:', mockTestData);
+          console.log('✅ Fetched mock test sessions:', mockTestSessions?.length);
         }
 
-        // Combine all response data
-        const allResponses = [
-          ...(responsesData || []),
-          ...(learningData || []).map(lr => ({
-            response_id: lr.id,
-            question_id: lr.question_id,
-            is_correct: lr.is_correct,
-            time_taken: lr.time_taken_seconds || 0,
-            responded_at: lr.responded_at,
-            misconception_detected: undefined
-          }))
-        ];
-
-        console.log('Combined responses:', allResponses);
-        setResponses(allResponses);
-
-        // Calculate stats with all data sources
-        calculateStats(allResponses, progressData || [], mockTestData || []);
+        // Calculate stats with unified data
+        const mockTestData = mockTestSessions || [];
+        calculateStats(allResponsesData || [], progressData || [], mockTestData);
       }
     } catch (err) {
       console.error('Error fetching bootcamp data:', err);

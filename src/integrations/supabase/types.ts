@@ -856,6 +856,7 @@ export type Database = {
       }
       bootcamp_student_responses: {
         Row: {
+          activity_source: string | null
           attempt_number: number | null
           confidence_rating: number | null
           created_at: string | null
@@ -872,6 +873,7 @@ export type Database = {
           time_taken: number
         }
         Insert: {
+          activity_source?: string | null
           attempt_number?: number | null
           confidence_rating?: number | null
           created_at?: string | null
@@ -888,6 +890,7 @@ export type Database = {
           time_taken: number
         }
         Update: {
+          activity_source?: string | null
           attempt_number?: number | null
           confidence_rating?: number | null
           created_at?: string | null

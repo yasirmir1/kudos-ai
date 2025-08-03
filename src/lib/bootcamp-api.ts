@@ -127,7 +127,7 @@ export class BootcampAPI {
 
   static async getStudentProgress(studentId: string) {
     try {
-      // Get actual calculated progress from responses rather than stored progress
+      // Get unified response data including activity source
       const { data, error } = await supabase
         .from('bootcamp_student_responses')
         .select(`
@@ -139,17 +139,18 @@ export class BootcampAPI {
 
       if (error) throw error;
 
-      // Calculate actual accuracy by topic from responses
+      // Calculate actual accuracy by topic from all unified responses
       const topicStats = new Map();
       
       data?.forEach(response => {
         const topicId = response.bootcamp_questions.topic_id;
         if (!topicStats.has(topicId)) {
-          topicStats.set(topicId, { correct: 0, total: 0 });
+          topicStats.set(topicId, { correct: 0, total: 0, activityTypes: new Set() });
         }
         const stats = topicStats.get(topicId);
         stats.total++;
         if (response.is_correct) stats.correct++;
+        stats.activityTypes.add(response.activity_source || 'practice');
       });
 
       // Convert to array format expected by the UI
@@ -162,7 +163,8 @@ export class BootcampAPI {
                   accuracy >= 0.9 ? 'mastered' :
                   accuracy >= 0.7 ? 'completed' : 'in_progress',
           last_activity: new Date().toISOString(),
-          mastery_score: accuracy
+          mastery_score: accuracy,
+          activity_types: Array.from(stats.activityTypes) // Include activity sources
         };
       });
 
