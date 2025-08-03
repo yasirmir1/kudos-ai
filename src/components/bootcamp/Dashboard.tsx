@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Brain, Target, Shield, Award, Play, RefreshCw, ChevronRight, TrendingUp, AlertCircle, Loader2, Clock } from 'lucide-react';
 import { WeeklyProgressChart } from './WeeklyProgressChart';
+import { SkillDevelopmentCard } from './SkillDevelopmentCard';
 import { useAuth } from '../../hooks/useAuth';
 import { BootcampAPI } from '../../lib/bootcamp-api';
 import { supabase } from '@/integrations/supabase/client';
@@ -38,6 +39,15 @@ export const Dashboard: React.FC<DashboardProps> = ({
   } = useAuth();
   const [recentTopics, setRecentTopics] = useState<RecentTopic[]>([]);
   const [loading, setLoading] = useState(true);
+
+  // Sample skill development data - this would come from your analytics
+  const skillDevelopmentData = [
+    { skill: 'Understanding Fractions', accuracy: 57 },
+    { skill: 'Multiplication Tables', accuracy: 20 },
+    { skill: 'Column Subtraction', accuracy: 50 },
+    { skill: 'Column Addition', accuracy: 0 },
+    { skill: 'Mental Addition and Subtraction', accuracy: 40 }
+  ];
   useEffect(() => {
     if (authUser) {
       loadProgressData();
@@ -160,7 +170,7 @@ export const Dashboard: React.FC<DashboardProps> = ({
           </div>)}
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <div className="bg-card rounded-xl shadow-sm border p-6">
           <h2 className="text-lg font-semibold text-foreground mb-4">Quick Practice</h2>
           <div className="space-y-3">
@@ -188,10 +198,13 @@ export const Dashboard: React.FC<DashboardProps> = ({
           </div>
         </div>
 
+        <SkillDevelopmentCard skills={skillDevelopmentData} />
+
         <div className="bg-card rounded-xl shadow-sm border p-6">
           <h2 className="text-lg font-semibold text-foreground mb-4">Recent Topics</h2>
           <div className="space-y-3">
-            {recentTopics.map((topic, index) => <div key={index} className="flex items-center justify-between p-3 rounded-lg hover:bg-muted/50">
+            {recentTopics.map((topic, index) => (
+              <div key={index} className="flex items-center justify-between p-3 rounded-lg hover:bg-muted/50">
                 <div>
                   <p className="font-medium text-foreground">{topic.name}</p>
                   <p className="text-sm text-muted-foreground">{topic.questions} questions</p>
@@ -203,7 +216,8 @@ export const Dashboard: React.FC<DashboardProps> = ({
                   {topic.status === 'improving' && <TrendingUp className="h-4 w-4 text-success" />}
                   {topic.status === 'needs-work' && <AlertCircle className="h-4 w-4 text-warning" />}
                 </div>
-              </div>)}
+              </div>
+            ))}
           </div>
         </div>
       </div>
