@@ -32,9 +32,10 @@ interface QuickPracticeModalProps {
   } | null;
   isOpen: boolean;
   onClose: () => void;
+  onComplete?: () => void; // Optional callback to return to originating modal
 }
 
-export function QuickPracticeModal({ topic, isOpen, onClose }: QuickPracticeModalProps) {
+export function QuickPracticeModal({ topic, isOpen, onClose, onComplete }: QuickPracticeModalProps) {
   const [questions, setQuestions] = useState<BootcampQuestion[]>([]);
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [selectedAnswers, setSelectedAnswers] = useState<{ [key: number]: string }>({});
@@ -251,7 +252,7 @@ export function QuickPracticeModal({ topic, isOpen, onClose }: QuickPracticeModa
                       <RotateCcw className="h-4 w-4 mr-2" />
                       Try Again
                     </Button>
-                    <Button onClick={onClose}>
+                    <Button onClick={onComplete || onClose}>
                       Continue Learning
                     </Button>
                   </div>
