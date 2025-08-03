@@ -48,7 +48,25 @@ export const useSubscriptionState = () => {
         return;
       }
 
-      // Load user subscriptions
+      // First check Stripe subscription status via edge function
+      const { data: stripeData, error: stripeError } = await supabase.functions.invoke('check-subscription');
+      
+      if (!stripeError && stripeData?.subscribed) {
+        // User has active Stripe subscription
+        setIsTrialActive(false);
+        setTrialDaysRemaining(0);
+        
+        if (stripeData.subscription_tier === 'Pass') {
+          setUserState('pass');
+        } else if (stripeData.subscription_tier === 'Pass Plus') {
+          setUserState('pass_plus');
+        } else {
+          setUserState('pass'); // Default to pass for any Stripe subscription
+        }
+        return;
+      }
+
+      // If no Stripe subscription, check local trial subscriptions
       const { data: subscriptionsData } = await supabase
         .from('user_subscriptions')
         .select('*')
@@ -62,52 +80,35 @@ export const useSubscriptionState = () => {
         return;
       }
 
-      // Find active subscription
+      // Find active trial subscription
       const now = new Date();
-      const activeSubscription = subscriptionsData.find(sub => {
-        if (sub.is_trial) {
-          return sub.trial_end_date && new Date(sub.trial_end_date) > now;
-        } else {
-          return sub.status === 'active' && 
-                 sub.subscription_end_date && 
-                 new Date(sub.subscription_end_date) > now;
-        }
-      });
+      const activeTrialSubscription = subscriptionsData.find(sub => 
+        sub.is_trial && 
+        sub.trial_end_date && 
+        new Date(sub.trial_end_date) > now
+      );
 
-      if (!activeSubscription) {
-        // Check if user has expired trial
-        const expiredTrial = subscriptionsData.find(sub => 
-          sub.is_trial && 
-          sub.trial_end_date && 
-          new Date(sub.trial_end_date) <= now
-        );
-        
-        setUserState(expiredTrial ? 'expired' : 'no_access');
-        setIsTrialActive(false);
-        setTrialDaysRemaining(0);
-        return;
-      }
-
-      // Calculate trial days remaining if active trial
-      if (activeSubscription.is_trial && activeSubscription.trial_end_date) {
-        const endDate = new Date(activeSubscription.trial_end_date);
+      if (activeTrialSubscription) {
+        // Active trial found
+        const endDate = new Date(activeTrialSubscription.trial_end_date);
         const diffTime = endDate.getTime() - now.getTime();
         const daysLeft = Math.max(0, Math.ceil(diffTime / (1000 * 60 * 60 * 24)));
         setTrialDaysRemaining(daysLeft);
         setIsTrialActive(true);
         setUserState('trial');
-      } else {
-        setIsTrialActive(false);
-        setTrialDaysRemaining(0);
-        
-        if (activeSubscription.plan_id === 'pass') {
-          setUserState('pass');
-        } else if (activeSubscription.plan_id === 'pass_plus') {
-          setUserState('pass_plus');
-        } else {
-          setUserState('no_access');
-        }
+        return;
       }
+
+      // Check if user has expired trial
+      const expiredTrial = subscriptionsData.find(sub => 
+        sub.is_trial && 
+        sub.trial_end_date && 
+        new Date(sub.trial_end_date) <= now
+      );
+      
+      setUserState(expiredTrial ? 'expired' : 'no_access');
+      setIsTrialActive(false);
+      setTrialDaysRemaining(0);
 
     } catch (error) {
       console.error('Error loading subscription data:', error);
