@@ -181,15 +181,15 @@ export const ProgressView: React.FC = () => {
         </div>
       </div>
 
-      <div className="bg-card rounded-xl shadow-sm border p-6">
-        <h2 className="text-lg font-semibold text-foreground mb-6">Performance Overview</h2>
-        <PerformanceChart />
-      </div>
-
       {/* Mock Test and Weekly Test Performance Containers */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <MockTestPerformanceContainer />
         <WeeklyTestPerformanceContainer />
+      </div>
+
+      <div className="bg-card rounded-xl shadow-sm border p-6">
+        <h2 className="text-lg font-semibold text-foreground mb-6">Performance Overview</h2>
+        <PerformanceChart />
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
