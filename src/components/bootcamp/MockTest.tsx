@@ -93,7 +93,7 @@ export const MockTest: React.FC = () => {
         
         // Load questions for this session
         const { data: sessionQuestions } = await supabase
-          .from('bootcamp_mock_test_questions')
+          .from('bootcamp_mock_test_answers' as any)
           .select(`
             question_id,
             question_order,
@@ -104,7 +104,7 @@ export const MockTest: React.FC = () => {
 
         if (sessionQuestions && sessionQuestions.length > 0) {
           // Get the questions from the mock_test_questions table
-          const questionIds = sessionQuestions.map(q => q.question_id);
+          const questionIds = (sessionQuestions as any[]).map((q: any) => q.question_id);
           const { data: questions } = await supabase
             .from('mock_test_questions')
             .select('*')
@@ -114,7 +114,7 @@ export const MockTest: React.FC = () => {
           if (questions) {
             const answers: Record<number, string> = {};
             
-            sessionQuestions.forEach((q, index) => {
+            (sessionQuestions as any[]).forEach((q: any, index: number) => {
               if (q.student_answer) {
                 answers[index] = q.student_answer;
               }
@@ -162,7 +162,7 @@ export const MockTest: React.FC = () => {
         if (isCorrect) correctCount++;
 
         await supabase
-          .from('bootcamp_mock_test_questions')
+          .from('bootcamp_mock_test_answers' as any)
           .update({
             student_answer: response.student_answer,
             answered_at: response.answered_at,
@@ -279,7 +279,7 @@ export const MockTest: React.FC = () => {
       // Update individual question responses
       Object.entries(currentState.answers).forEach(async ([questionIndex, answer]) => {
         await supabase
-          .from('bootcamp_mock_test_questions')
+          .from('bootcamp_mock_test_answers' as any)
           .update({
             student_answer: answer
           })
@@ -344,7 +344,7 @@ export const MockTest: React.FC = () => {
       }));
 
       const { error: assignmentError } = await supabase
-        .from('bootcamp_mock_test_questions')
+        .from('bootcamp_mock_test_answers' as any)
         .insert(questionAssignments);
 
       if (assignmentError) throw assignmentError;
