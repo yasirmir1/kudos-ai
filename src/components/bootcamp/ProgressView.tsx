@@ -186,9 +186,9 @@ export const ProgressView: React.FC = () => {
         <PerformanceChart />
       </div>
 
-      {/* Weekly Performance Containers */}
+      {/* Mock Test and Weekly Test Performance Containers */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <WeeklyTestPerformanceContainer />
+        <MockTestPerformanceContainer />
         <WeeklyTestPerformanceContainer />
       </div>
 
