@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Bell, User, Shield, Volume2, FileText, Sun, Users, Target, Download, Trash2, CreditCard, ChevronRight, Gem, Check } from 'lucide-react';
+import { useAccessibility } from '@/contexts/AccessibilityContext';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Switch } from '@/components/ui/switch';
@@ -282,6 +283,8 @@ const NotificationSettings: React.FC<{ settings: any; updateSetting: any }> = ({
 };
 
 const LearningSettings: React.FC<{ settings: any; updateSetting: any }> = ({ settings, updateSetting }) => {
+  const { settings: accessibilitySettings, updateSetting: updateAccessibilitySetting } = useAccessibility();
+  
   return (
     <Card>
       <CardHeader>
@@ -354,7 +357,10 @@ const LearningSettings: React.FC<{ settings: any; updateSetting: any }> = ({ set
           
           <div className="space-y-2">
             <Label>Font Size</Label>
-            <Select value={settings.fontSize} onValueChange={(value) => updateSetting('learning', 'fontSize', value)}>
+            <Select 
+              value={accessibilitySettings.fontSize} 
+              onValueChange={(value: any) => updateAccessibilitySetting('fontSize', value)}
+            >
               <SelectTrigger>
                 <SelectValue />
               </SelectTrigger>
@@ -373,8 +379,8 @@ const LearningSettings: React.FC<{ settings: any; updateSetting: any }> = ({ set
               <p className="text-sm text-muted-foreground">Use OpenDyslexic font for better readability</p>
             </div>
             <Switch
-              checked={settings.dyslexiaFont}
-              onCheckedChange={(checked) => updateSetting('learning', 'dyslexiaFont', checked)}
+              checked={accessibilitySettings.dyslexiaFont}
+              onCheckedChange={(checked) => updateAccessibilitySetting('dyslexiaFont', checked)}
             />
           </div>
 
@@ -384,8 +390,8 @@ const LearningSettings: React.FC<{ settings: any; updateSetting: any }> = ({ set
               <p className="text-sm text-muted-foreground">Increase contrast for better visibility</p>
             </div>
             <Switch
-              checked={settings.highContrast}
-              onCheckedChange={(checked) => updateSetting('learning', 'highContrast', checked)}
+              checked={accessibilitySettings.highContrast}
+              onCheckedChange={(checked) => updateAccessibilitySetting('highContrast', checked)}
             />
           </div>
         </div>

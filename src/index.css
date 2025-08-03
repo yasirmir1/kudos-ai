@@ -120,6 +120,59 @@ All colors MUST be HSL.
   }
 }
 
+/* Font Size Utilities */
+.font-small {
+  font-size: 14px;
+}
+
+.font-medium {
+  font-size: 16px;
+}
+
+.font-large {
+  font-size: 18px;
+}
+
+.font-extra-large {
+  font-size: 20px;
+}
+
+/* Dyslexia Font */
+.dyslexia-font {
+  font-family: 'OpenDyslexic', sans-serif !important;
+}
+
+.dyslexia-font * {
+  font-family: 'OpenDyslexic', sans-serif !important;
+}
+
+/* High Contrast Mode */
+.high-contrast {
+  --background: 0 0% 0%;
+  --foreground: 0 0% 100%;
+  --card: 0 0% 5%;
+  --card-foreground: 0 0% 100%;
+  --popover: 0 0% 5%;
+  --popover-foreground: 0 0% 100%;
+  --primary: 60 100% 50%;
+  --primary-foreground: 0 0% 0%;
+  --secondary: 0 0% 15%;
+  --secondary-foreground: 0 0% 100%;
+  --muted: 0 0% 15%;
+  --muted-foreground: 0 0% 85%;
+  --accent: 0 0% 20%;
+  --accent-foreground: 0 0% 100%;
+  --destructive: 0 84% 60%;
+  --destructive-foreground: 0 0% 100%;
+  --border: 0 0% 25%;
+  --input: 0 0% 25%;
+  --ring: 60 100% 50%;
+}
+
+.high-contrast .text-muted-foreground {
+  color: hsl(0 0% 85%);
+}
+
 @layer base {
   * {
     @apply border-border;

@@ -5,6 +5,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
 import { AuthProvider } from "./hooks/useAuth";
 import { AgeGroupProvider } from "./contexts/AgeGroupContext";
+import { AccessibilityProvider } from "./contexts/AccessibilityContext";
 import { AppNavigation } from "./components/AppNavigation";
 import Index from "./pages/Index";
 import Auth from "./pages/Auth";
@@ -38,23 +39,25 @@ const App = () => (
     <TooltipProvider>
       <AuthProvider>
         <AgeGroupProvider>
-          <Toaster />
-          <Sonner />
-          <BrowserRouter>
-            <Layout>
-              <Routes>
-                <Route path="/" element={<Index />} />
-                <Route path="/auth" element={<Auth />} />
-                <Route path="/dashboard" element={<Dashboard />} />
-                <Route path="/profile" element={<Profile />} />
-                <Route path="/report" element={<Report />} />
-                <Route path="/bootcamp" element={<Bootcamp />} />
-                
-                {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-                <Route path="*" element={<NotFound />} />
-              </Routes>
-            </Layout>
-          </BrowserRouter>
+          <AccessibilityProvider>
+            <Toaster />
+            <Sonner />
+            <BrowserRouter>
+              <Layout>
+                <Routes>
+                  <Route path="/" element={<Index />} />
+                  <Route path="/auth" element={<Auth />} />
+                  <Route path="/dashboard" element={<Dashboard />} />
+                  <Route path="/profile" element={<Profile />} />
+                  <Route path="/report" element={<Report />} />
+                  <Route path="/bootcamp" element={<Bootcamp />} />
+                  
+                  {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+                  <Route path="*" element={<NotFound />} />
+                </Routes>
+              </Layout>
+            </BrowserRouter>
+          </AccessibilityProvider>
         </AgeGroupProvider>
       </AuthProvider>
     </TooltipProvider>
