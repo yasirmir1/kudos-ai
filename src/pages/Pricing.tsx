@@ -247,7 +247,7 @@ export default function Pricing() {
                             {startingTrial === plan.id ? <div className="flex items-center">
                                 <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-current mr-2"></div>
                                 Starting Trial...
-                              </div> : `Start free 30 day trial`}
+                              </div> : `Start trial now, no credit card needed`}
                           </Button>}
                         
                         {(!plan.trial_days || hasUsedTrialForPlan) && <Button className="w-full py-4 font-semibold text-lg rounded-full transition-all duration-200 hover:scale-[1.02]" variant="outline" onClick={() => toast.info('Subscription flow coming soon!')}>
