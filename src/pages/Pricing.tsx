@@ -148,124 +148,157 @@ export default function Pricing() {
   }
 
   return (
-    <div className="container mx-auto px-4 py-8">
-      <div className="text-center mb-12">
-        <h1 className="text-4xl font-bold mb-4">Choose Your Plan</h1>
-        <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
-          Start with a free trial and get access to our powerful learning platform. 
-          No credit card required for trials.
-        </p>
-      </div>
+    <div className="min-h-screen bg-gradient-to-br from-background via-background to-primary/5">
+      <div className="container mx-auto px-4 py-12">
+        <div className="text-center mb-16">
+          <h1 className="text-5xl font-bold mb-6 bg-gradient-to-r from-primary to-primary-glow bg-clip-text text-transparent">
+            Choose Your Plan
+          </h1>
+          <p className="text-muted-foreground text-xl max-w-3xl mx-auto leading-relaxed">
+            Start with a free trial and get access to our powerful learning platform. 
+            No credit card required for trials.
+          </p>
+        </div>
 
-      <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
-        {plans.map((plan) => {
-          const userSub = getUserSubscriptionForPlan(plan.id);
-          const isCurrentPlan = !!userSub;
-          const isTrialActivePlan = userSub && isTrialActive(userSub);
-          const hasUsedTrialForPlan = hasUsedTrial(plan.id);
-          const isPlusPlan = plan.id === 'pass_plus';
+        <div className="grid lg:grid-cols-2 gap-8 max-w-5xl mx-auto mb-16">
+          {plans.map((plan) => {
+            const userSub = getUserSubscriptionForPlan(plan.id);
+            const isCurrentPlan = !!userSub;
+            const isTrialActivePlan = userSub && isTrialActive(userSub);
+            const hasUsedTrialForPlan = hasUsedTrial(plan.id);
+            const isPlusPlan = plan.id === 'pass_plus';
 
-          return (
-            <Card key={plan.id} className={`relative ${isPlusPlan ? 'border-primary shadow-lg' : ''}`}>
-              {isPlusPlan && (
-                <Badge className="absolute -top-3 left-1/2 transform -translate-x-1/2 bg-primary">
-                  <Star className="w-3 h-3 mr-1" />
-                  Most Popular
-                </Badge>
-              )}
-              
-              <CardHeader className="text-center pb-4">
-                <CardTitle className="text-2xl">{plan.name}</CardTitle>
-                <CardDescription className="text-base">{plan.description}</CardDescription>
-                <div className="mt-4">
-                  {plan.trial_days > 0 ? (
-                    <div className="space-y-1">
-                      <div className="text-4xl font-bold text-primary">£0</div>
-                      <div className="text-lg text-muted-foreground">
-                        <span className="line-through">£{plan.id === 'pass' ? '7.99' : '14.99'}</span>
-                        <span className="ml-2">for {plan.trial_days} days</span>
+            return (
+              <Card 
+                key={plan.id} 
+                className={`relative transition-all duration-300 hover:shadow-lg ${
+                  isPlusPlan 
+                    ? 'border-primary shadow-md bg-gradient-to-br from-card via-card to-primary/5' 
+                    : 'hover:shadow-md'
+                }`}
+              >
+                {isPlusPlan && (
+                  <Badge className="absolute -top-3 left-1/2 transform -translate-x-1/2 bg-primary hover:bg-primary/90 shadow-lg">
+                    <Star className="w-3 h-3 mr-1" />
+                    Most Popular
+                  </Badge>
+                )}
+                
+                <CardHeader className="text-center pb-6 pt-8">
+                  <CardTitle className="text-3xl font-bold text-foreground mb-2">
+                    {plan.name}
+                  </CardTitle>
+                  <CardDescription className="text-lg text-muted-foreground mb-6">
+                    {plan.description}
+                  </CardDescription>
+                  
+                  <div className="space-y-2">
+                    {plan.trial_days > 0 ? (
+                      <div className="space-y-2">
+                        <div className="text-5xl font-bold text-primary">£0</div>
+                        <div className="text-lg text-muted-foreground space-x-2">
+                          <span className="line-through decoration-2">
+                            £{plan.id === 'pass' ? '7.99' : '14.99'}
+                          </span>
+                          <span>for {plan.trial_days} days</span>
+                        </div>
+                        <div className="text-sm text-muted-foreground">
+                          Then £{plan.id === 'pass' ? '7.99' : '14.99'}/month
+                        </div>
                       </div>
-                      <div className="text-sm text-muted-foreground">
-                        Then £{plan.id === 'pass' ? '7.99' : '14.99'}/month
+                    ) : (
+                      <div>
+                        <span className="text-5xl font-bold text-foreground">
+                          £{plan.id === 'pass' ? '7.99' : '14.99'}
+                        </span>
+                        <span className="text-muted-foreground text-lg">/month</span>
                       </div>
-                    </div>
-                  ) : (
-                    <div>
-                      <span className="text-4xl font-bold">£{plan.id === 'pass' ? '7.99' : '14.99'}</span>
-                      <span className="text-muted-foreground">/month</span>
+                    )}
+                  </div>
+                  
+                  {plan.trial_days > 0 && (
+                    <div className="flex items-center justify-center text-sm text-primary mt-4 font-semibold bg-primary/10 rounded-full px-4 py-2">
+                      <Clock className="w-4 h-4 mr-2" />
+                      {plan.trial_days}-day FREE trial
                     </div>
                   )}
-                </div>
-                {plan.trial_days > 0 && (
-                  <div className="flex items-center justify-center text-sm text-primary mt-2 font-medium">
-                    <Clock className="w-4 h-4 mr-1" />
-                    {plan.trial_days}-day FREE trial
-                  </div>
-                )}
-              </CardHeader>
+                </CardHeader>
 
-              <CardContent className="space-y-4">
-                <div className="space-y-3">
-                  {plan.features.map((feature, index) => (
-                    <div key={index} className="flex items-center">
-                      <Check className="w-5 h-5 text-primary mr-3 flex-shrink-0" />
-                      <span className="text-sm">{feature}</span>
-                    </div>
-                  ))}
-                </div>
+                <CardContent className="space-y-6 pb-8">
+                  <div className="space-y-4">
+                    {plan.features.map((feature, index) => (
+                      <div key={index} className="flex items-start">
+                        <Check className="w-5 h-5 text-primary mr-3 flex-shrink-0 mt-0.5" />
+                        <span className="text-sm text-foreground leading-relaxed">{feature}</span>
+                      </div>
+                    ))}
+                  </div>
 
-                {isCurrentPlan ? (
-                  <div className="space-y-2">
-                    <Badge variant="secondary" className="w-full justify-center py-2">
-                      {isTrialActivePlan ? 'Trial Active' : 'Current Plan'}
-                    </Badge>
-                    {isTrialActivePlan && userSub?.trial_end_date && (
-                      <p className="text-xs text-center text-muted-foreground">
-                        Trial ends {formatDate(userSub.trial_end_date)}
-                      </p>
-                    )}
-                    {!isTrialActivePlan && userSub?.subscription_end_date && (
-                      <p className="text-xs text-center text-muted-foreground">
-                        Renews {formatDate(userSub.subscription_end_date)}
-                      </p>
+                  <div className="pt-4">
+                    {isCurrentPlan ? (
+                      <div className="space-y-3">
+                        <Badge 
+                          variant="secondary" 
+                          className="w-full justify-center py-3 text-sm font-medium bg-primary/10 text-primary border-primary/20"
+                        >
+                          {isTrialActivePlan ? 'Trial Active' : 'Current Plan'}
+                        </Badge>
+                        {isTrialActivePlan && userSub?.trial_end_date && (
+                          <p className="text-xs text-center text-muted-foreground">
+                            Trial ends {formatDate(userSub.trial_end_date)}
+                          </p>
+                        )}
+                        {!isTrialActivePlan && userSub?.subscription_end_date && (
+                          <p className="text-xs text-center text-muted-foreground">
+                            Renews {formatDate(userSub.subscription_end_date)}
+                          </p>
+                        )}
+                      </div>
+                    ) : (
+                      <div className="space-y-3">
+                        {plan.trial_days > 0 && !hasUsedTrialForPlan && (
+                          <Button
+                            className="w-full py-3 font-semibold transition-all duration-200 hover:scale-[1.02]"
+                            variant={isPlusPlan ? "default" : "outline"}
+                            onClick={() => startTrial(plan.id)}
+                            disabled={startingTrial === plan.id}
+                          >
+                            {startingTrial === plan.id ? (
+                              <div className="flex items-center">
+                                <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-current mr-2"></div>
+                                Starting Trial...
+                              </div>
+                            ) : (
+                              `Start ${plan.trial_days}-Day Free Trial`
+                            )}
+                          </Button>
+                        )}
+                        <Button
+                          className="w-full py-3 font-semibold transition-all duration-200 hover:scale-[1.02]"
+                          variant={isPlusPlan && plan.trial_days === 0 ? "default" : "secondary"}
+                          onClick={() => toast.info('Subscription flow coming soon!')}
+                        >
+                          Subscribe Now
+                        </Button>
+                        {hasUsedTrialForPlan && (
+                          <p className="text-xs text-center text-muted-foreground bg-muted/50 rounded-md py-2 px-3">
+                            Trial already used for this plan
+                          </p>
+                        )}
+                      </div>
                     )}
                   </div>
-                ) : (
-                  <div className="space-y-2">
-                    {plan.trial_days > 0 && !hasUsedTrialForPlan && (
-                      <Button
-                        className="w-full"
-                        variant={isPlusPlan ? "default" : "outline"}
-                        onClick={() => startTrial(plan.id)}
-                        disabled={startingTrial === plan.id}
-                      >
-                        {startingTrial === plan.id ? 'Starting Trial...' : `Start ${plan.trial_days}-Day Free Trial`}
-                      </Button>
-                    )}
-                    <Button
-                      className="w-full"
-                      variant={isPlusPlan && plan.trial_days === 0 ? "default" : "secondary"}
-                      onClick={() => toast.info('Subscription flow coming soon!')}
-                    >
-                      Subscribe Now
-                    </Button>
-                    {hasUsedTrialForPlan && (
-                      <p className="text-xs text-center text-muted-foreground">
-                        Trial already used for this plan
-                      </p>
-                    )}
-                  </div>
-                )}
-              </CardContent>
-            </Card>
-          );
-        })}
-      </div>
+                </CardContent>
+              </Card>
+            );
+          })}
+        </div>
 
-      <div className="mt-12 text-center">
-        <p className="text-sm text-muted-foreground">
-          All plans include access to our core features. No hidden fees. Cancel anytime.
-        </p>
+        <div className="text-center bg-muted/30 rounded-lg p-6 max-w-2xl mx-auto">
+          <p className="text-sm text-muted-foreground">
+            All plans include access to our core features. No hidden fees. Cancel anytime.
+          </p>
+        </div>
       </div>
     </div>
   );
