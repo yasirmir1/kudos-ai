@@ -26,11 +26,9 @@ export const updateAgeGroupFromProfile = (ageGroup: AgeGroup) => {
 };
 
 export const AgeGroupProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [selectedAgeGroup, setSelectedAgeGroup] = useState<AgeGroup>('year 4-5');
+  const [selectedAgeGroup, setSelectedAgeGroup] = useState<AgeGroup>('11+');
 
   const ageGroups = [
-    { label: 'Year 2-3 (Ages 7-8)', value: 'year 2-3' as AgeGroup },
-    { label: 'Year 4-5 (Ages 9-10)', value: 'year 4-5' as AgeGroup },
     { label: '11+ Preparation', value: '11+' as AgeGroup },
   ];
 
@@ -39,6 +37,10 @@ export const AgeGroupProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     const stored = localStorage.getItem('selectedAgeGroup');
     if (stored && ageGroups.some(group => group.value === stored)) {
       setSelectedAgeGroup(stored as AgeGroup);
+    } else {
+      // If no stored value or stored value is not in available options, default to '11+'
+      setSelectedAgeGroup('11+');
+      localStorage.setItem('selectedAgeGroup', '11+');
     }
   }, []);
 
