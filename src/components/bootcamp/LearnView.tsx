@@ -10,6 +10,7 @@ import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Loader2 } from 'lucide-react';
 import { LearningExperience } from './LearningExperience';
 import { TopicLearningModal } from './TopicLearningModal';
+import { WeeklyLearningModal } from './WeeklyLearningModal';
 import { QuickPracticeModal } from './QuickPracticeModal';
 import { useBootcampData } from '@/hooks/useBootcampData';
 import { Target } from 'lucide-react';
@@ -65,6 +66,8 @@ export const LearnView: React.FC = () => {
   const [isTopicModalOpen, setIsTopicModalOpen] = useState(false);
   const [showQuickPractice, setShowQuickPractice] = useState(false);
   const [practiceSelectedTopic, setPracticeSelectedTopic] = useState<Topic | null>(null);
+  const [selectedWeekPlan, setSelectedWeekPlan] = useState<WeeklyPlan | null>(null);
+  const [isWeeklyModalOpen, setIsWeeklyModalOpen] = useState(false);
   useEffect(() => {
     loadLearningContent();
   }, []);
@@ -322,6 +325,11 @@ export const LearnView: React.FC = () => {
         };
     }
   };
+  const handleWeekClick = (week: WeeklyPlan) => {
+    setSelectedWeekPlan(week);
+    setIsWeeklyModalOpen(true);
+  };
+
   const handleTopicClick = (topic: Topic) => {
     setSelectedTopic(topic);
     setIsTopicModalOpen(true);
@@ -432,8 +440,12 @@ export const LearnView: React.FC = () => {
                           </div>)}
                       </div>
                     </div>
-                    <Button variant="outline" size="sm" className="w-full mt-4" disabled={false} // Placeholder for week unlocking logic
-                onClick={() => setShowLearningExperience(true)}>
+                    <Button 
+                      variant="outline" 
+                      size="sm" 
+                      className="w-full mt-4" 
+                      onClick={() => handleWeekClick(week)}
+                    >
                       <Play className="h-3 w-3 mr-2" />
                       {week.week <= 36 ? 'Start Learning' : week.week <= 46 ? 'Practice' : week.week <= 50 ? 'Review' : 'Final Prep'}
                     </Button>
@@ -604,6 +616,15 @@ export const LearnView: React.FC = () => {
         onClose={() => {
           setShowQuickPractice(false);
           setPracticeSelectedTopic(null);
+        }} 
+      />
+
+      <WeeklyLearningModal 
+        weekPlan={selectedWeekPlan} 
+        isOpen={isWeeklyModalOpen} 
+        onClose={() => {
+          setIsWeeklyModalOpen(false);
+          setSelectedWeekPlan(null);
         }} 
       />
     </div>;

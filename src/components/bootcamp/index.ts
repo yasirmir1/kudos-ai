@@ -1,4 +1,5 @@
 // Bootcamp components - Core infrastructure components
+export { WeeklyLearningModal } from './WeeklyLearningModal';
 export { Dashboard } from './Dashboard';
 export { Navigation } from './Navigation';
 export { EnhancedPracticeSession } from './EnhancedPracticeSession';
