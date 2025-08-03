@@ -5,13 +5,14 @@ import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-
 interface Achievement {
   id: string;
   title: string;
   description: string;
   category: 'practice' | 'accuracy' | 'streak' | 'special';
-  icon: React.ComponentType<{ className?: string }>;
+  icon: React.ComponentType<{
+    className?: string;
+  }>;
   unlocked: boolean;
   progress?: number;
   maxProgress?: number;
@@ -22,59 +23,63 @@ interface Achievement {
     value: number | string;
   };
 }
-
-const achievements: Achievement[] = [
-  {
-    id: 'first-steps',
-    title: 'First Steps',
-    description: 'Complete your first practice session',
-    category: 'practice',
-    icon: Target,
-    unlocked: true,
-    unlockedAt: '2024-01-10',
-    rarity: 'common',
-    reward: { type: 'points', value: 50 }
-  },
-  {
-    id: 'perfect-ten',
-    title: 'Perfect Ten',
-    description: 'Get 10 questions correct in a row',
-    category: 'accuracy',
-    icon: Star,
-    unlocked: true,
-    unlockedAt: '2024-01-12',
-    rarity: 'rare',
-    reward: { type: 'points', value: 200 }
-  },
-  {
-    id: 'week-warrior',
-    title: 'Week Warrior',
-    description: 'Practice for 7 days in a row',
-    category: 'streak',
-    icon: Calendar,
-    unlocked: false,
-    progress: 4,
-    maxProgress: 7,
-    rarity: 'epic',
-    reward: { type: 'badge', value: 'Dedicated Learner' }
-  },
-  {
-    id: 'math-master',
-    title: 'Math Master',
-    description: 'Complete all topic modules',
-    category: 'special',
-    icon: Crown,
-    unlocked: false,
-    progress: 8,
-    maxProgress: 12,
-    rarity: 'legendary',
-    reward: { type: 'unlock', value: 'Advanced Practice Mode' }
+const achievements: Achievement[] = [{
+  id: 'first-steps',
+  title: 'First Steps',
+  description: 'Complete your first practice session',
+  category: 'practice',
+  icon: Target,
+  unlocked: true,
+  unlockedAt: '2024-01-10',
+  rarity: 'common',
+  reward: {
+    type: 'points',
+    value: 50
   }
-];
-
+}, {
+  id: 'perfect-ten',
+  title: 'Perfect Ten',
+  description: 'Get 10 questions correct in a row',
+  category: 'accuracy',
+  icon: Star,
+  unlocked: true,
+  unlockedAt: '2024-01-12',
+  rarity: 'rare',
+  reward: {
+    type: 'points',
+    value: 200
+  }
+}, {
+  id: 'week-warrior',
+  title: 'Week Warrior',
+  description: 'Practice for 7 days in a row',
+  category: 'streak',
+  icon: Calendar,
+  unlocked: false,
+  progress: 4,
+  maxProgress: 7,
+  rarity: 'epic',
+  reward: {
+    type: 'badge',
+    value: 'Dedicated Learner'
+  }
+}, {
+  id: 'math-master',
+  title: 'Math Master',
+  description: 'Complete all topic modules',
+  category: 'special',
+  icon: Crown,
+  unlocked: false,
+  progress: 8,
+  maxProgress: 12,
+  rarity: 'legendary',
+  reward: {
+    type: 'unlock',
+    value: 'Advanced Practice Mode'
+  }
+}];
 const AchievementCenter: React.FC = () => {
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
-
   const getRarityStyle = (rarity: Achievement['rarity']) => {
     switch (rarity) {
       case 'common':
@@ -89,16 +94,10 @@ const AchievementCenter: React.FC = () => {
         return 'bg-muted text-muted-foreground';
     }
   };
-
-  const filteredAchievements = achievements.filter(
-    achievement => selectedCategory === 'all' || achievement.category === selectedCategory
-  );
-
+  const filteredAchievements = achievements.filter(achievement => selectedCategory === 'all' || achievement.category === selectedCategory);
   const unlockedCount = achievements.filter(a => a.unlocked).length;
   const totalCount = achievements.length;
-
-  return (
-    <div className="max-w-6xl mx-auto p-6">
+  return <div className="max-w-6xl mx-auto p-6">
       <div className="mb-8">
         <h1 className="text-3xl font-bold text-foreground mb-4">Achievement Center</h1>
         <div className="flex items-center justify-between">
@@ -108,13 +107,10 @@ const AchievementCenter: React.FC = () => {
               <p className="text-lg font-semibold text-foreground">
                 {unlockedCount} of {totalCount} Unlocked
               </p>
-              <Progress value={(unlockedCount / totalCount) * 100} className="w-48 mt-1" />
+              <Progress value={unlockedCount / totalCount * 100} className="w-48 mt-1" />
             </div>
           </div>
-          <Button variant="outline" className="flex items-center space-x-2">
-            <Gift className="h-4 w-4" />
-            <span>Claim Rewards</span>
-          </Button>
+          
         </div>
       </div>
 
@@ -129,23 +125,25 @@ const AchievementCenter: React.FC = () => {
 
         <TabsContent value={selectedCategory} className="mt-6">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {filteredAchievements.map((achievement) => (
-              <AchievementCard key={achievement.id} achievement={achievement} />
-            ))}
+            {filteredAchievements.map(achievement => <AchievementCard key={achievement.id} achievement={achievement} />)}
           </div>
         </TabsContent>
       </Tabs>
-    </div>
-  );
+    </div>;
 };
-
 interface AchievementCardProps {
   achievement: Achievement;
 }
-
-const AchievementCard: React.FC<AchievementCardProps> = ({ achievement }) => {
-  const { icon: Icon, unlocked, progress, maxProgress, rarity } = achievement;
-
+const AchievementCard: React.FC<AchievementCardProps> = ({
+  achievement
+}) => {
+  const {
+    icon: Icon,
+    unlocked,
+    progress,
+    maxProgress,
+    rarity
+  } = achievement;
   const getRarityStyle = (rarity: Achievement['rarity']) => {
     switch (rarity) {
       case 'common':
@@ -160,11 +158,7 @@ const AchievementCard: React.FC<AchievementCardProps> = ({ achievement }) => {
         return 'bg-muted text-muted-foreground';
     }
   };
-
-  return (
-    <Card className={`relative overflow-hidden transition-all duration-300 hover:shadow-lg ${
-      unlocked ? 'bg-card' : 'bg-muted/30'
-    }`}>
+  return <Card className={`relative overflow-hidden transition-all duration-300 hover:shadow-lg ${unlocked ? 'bg-card' : 'bg-muted/30'}`}>
       <CardHeader className="pb-3">
         <div className="flex items-center justify-between">
           <div className={`p-3 rounded-lg ${unlocked ? 'bg-primary/10' : 'bg-muted'}`}>
@@ -184,41 +178,31 @@ const AchievementCard: React.FC<AchievementCardProps> = ({ achievement }) => {
           {achievement.description}
         </p>
 
-        {!unlocked && progress !== undefined && maxProgress && (
-          <div className="mb-4">
+        {!unlocked && progress !== undefined && maxProgress && <div className="mb-4">
             <div className="flex justify-between text-sm text-muted-foreground mb-1">
               <span>Progress</span>
               <span>{progress}/{maxProgress}</span>
             </div>
-            <Progress value={(progress / maxProgress) * 100} className="h-2" />
-          </div>
-        )}
+            <Progress value={progress / maxProgress * 100} className="h-2" />
+          </div>}
 
-        {unlocked && achievement.unlockedAt && (
-          <p className="text-xs text-muted-foreground mb-3">
+        {unlocked && achievement.unlockedAt && <p className="text-xs text-muted-foreground mb-3">
             Unlocked on {new Date(achievement.unlockedAt).toLocaleDateString()}
-          </p>
-        )}
+          </p>}
 
-        {achievement.reward && (
-          <div className="bg-accent rounded-lg p-3">
+        {achievement.reward && <div className="bg-accent rounded-lg p-3">
             <p className="text-sm font-medium text-accent-foreground">Reward:</p>
             <p className="text-sm text-accent-foreground/80">
               {achievement.reward.type === 'points' && `${achievement.reward.value} points`}
               {achievement.reward.type === 'badge' && achievement.reward.value}
               {achievement.reward.type === 'unlock' && achievement.reward.value}
             </p>
-          </div>
-        )}
+          </div>}
 
-        {!unlocked && (
-          <div className="absolute inset-0 bg-background/50 flex items-center justify-center">
+        {!unlocked && <div className="absolute inset-0 bg-background/50 flex items-center justify-center">
             <Lock className="h-8 w-8 text-muted-foreground" />
-          </div>
-        )}
+          </div>}
       </CardContent>
-    </Card>
-  );
+    </Card>;
 };
-
 export default AchievementCenter;
