@@ -178,16 +178,40 @@ export default function Pricing() {
                 </CardHeader>
 
                 <CardContent className="px-8 pb-8">
-                  <div className="space-y-4 mb-8">
+                  <div className="space-y-6 mb-8">
                     {(plan.id === 'pass' ? [
-                      "Daily Performance Snapshots: 'Daily Mode' gives you a quick, clear view of your child's skills and understanding, so you always know where they stand.",
-                      "Personalized Progress Analytics: Stop guessing which topics to focus on. Our insights show you exactly where your child is improving and which areas need a little more practice.",
-                      "Customized Worksheets: Never run out of practice material. Generate unlimited worksheets tailored to your child's specific needs in seconds.",
-                      ...plan.features
-                    ] : plan.features).map((feature, index) => <div key={index} className="flex items-start">
+                      {
+                        title: "Daily Performance Snapshots",
+                        description: "'Daily Mode' gives you a quick, clear view of your child's skills and understanding, so you always know where they stand."
+                      },
+                      {
+                        title: "Personalized Progress Analytics", 
+                        description: "Stop guessing which topics to focus on. Our insights show you exactly where your child is improving and which areas need a little more practice."
+                      },
+                      {
+                        title: "Customized Worksheets",
+                        description: "Never run out of practice material. Generate unlimited worksheets tailored to your child's specific needs in seconds."
+                      },
+                      ...plan.features.filter(feature => 
+                        !feature.toLowerCase().includes('daily practice mode') && 
+                        !feature.toLowerCase().includes('progress tracking') && 
+                        !feature.toLowerCase().includes('basic analytics')
+                      ).map(feature => ({ title: feature }))
+                    ] : plan.features.map(feature => ({ title: feature }))).map((feature, index) => 
+                      <div key={index} className="flex items-start">
                         <div className="w-2 h-2 rounded-full bg-primary mt-2 mr-3 flex-shrink-0" />
-                        <span className="text-sm text-foreground leading-relaxed">{feature}</span>
-                      </div>)}
+                        <div className="flex-1">
+                          <div className="font-medium text-foreground text-sm leading-relaxed">
+                            {feature.title}
+                          </div>
+                          {feature.description && (
+                            <div className="text-xs text-muted-foreground mt-1 leading-relaxed">
+                              {feature.description}
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    )}
                   </div>
 
                   <div className="space-y-4">
