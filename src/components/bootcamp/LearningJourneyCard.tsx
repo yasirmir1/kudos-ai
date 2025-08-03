@@ -82,7 +82,7 @@ export const LearningJourneyCard: React.FC<LearningJourneyCardProps> = ({
             </div>
           </div>
 
-          <div className="mb-6">
+          <div className="mb-8">
             <h4 className="text-sm font-medium text-foreground mb-3">This week covers:</h4>
             <div className="grid grid-cols-1 gap-2">
               {weekData.covers.map((item, index) => (
