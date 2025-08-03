@@ -65,51 +65,59 @@ export const useBootcampData = () => {
       setIsLoading(true);
       setError(null);
 
-      // Get student profile from unified_profiles
-      const { data: studentData, error: studentError } = await supabase
-        .from('unified_profiles')
+      if (!user?.id) {
+        console.log('No user ID available');
+        return;
+      }
+
+      // First, get or create bootcamp student profile
+      let studentProfile;
+      const { data: existingStudent, error: studentError } = await supabase
+        .from('bootcamp_students')
         .select('*')
-        .eq('id', user?.id)
+        .eq('user_id', user.id)
         .maybeSingle();
 
-      if (studentError) throw studentError;
+      if (studentError) {
+        console.error('Error fetching student profile:', studentError);
+        throw studentError;
+      }
 
-      if (!studentData) {
-        // Create unified profile if it doesn't exist
+      if (!existingStudent) {
+        // Create new bootcamp student profile
         const { data: newStudent, error: createError } = await supabase
-          .from('unified_profiles')
+          .from('bootcamp_students')
           .insert({
-            id: user?.id,
-            username: user?.email?.split('@')[0] || 'Student',
-            email: user?.email || '',
+            user_id: user.id,
+            username: user.email?.split('@')[0] || 'Student',
+            email: user.email || '',
             school_year: 7
           })
           .select()
           .single();
 
-        if (createError) throw createError;
-        setStudent({
-          student_id: newStudent.id,
-          username: newStudent.username || 'Student',
-          email: newStudent.email,
-          school_year: newStudent.school_year || 7,
-          created_at: newStudent.created_at,
-          last_active: newStudent.last_active,
-          subscription_tier: newStudent.subscription_tier || 'free'
-        });
+        if (createError) {
+          console.error('Error creating student profile:', createError);
+          throw createError;
+        }
+        studentProfile = newStudent;
       } else {
-        setStudent({
-          student_id: studentData.id,
-          username: studentData.username || 'Student',
-          email: studentData.email,
-          school_year: studentData.school_year || 7,
-          created_at: studentData.created_at,
-          last_active: studentData.last_active,
-          subscription_tier: studentData.subscription_tier || 'free'
-        });
+        studentProfile = existingStudent;
       }
 
-      const studentId = user?.id;
+      // Set student data
+      setStudent({
+        student_id: studentProfile.student_id,
+        username: studentProfile.username || 'Student',
+        email: studentProfile.email,
+        school_year: studentProfile.school_year || 7,
+        created_at: studentProfile.created_at,
+        last_active: studentProfile.last_active,
+        subscription_tier: studentProfile.subscription_tier || 'free'
+      });
+
+      const studentId = studentProfile.student_id;
+      console.log('Using student_id for data queries:', studentId);
 
       if (studentId) {
         // Fetch actual progress data from bootcamp_student_progress
@@ -122,6 +130,7 @@ export const useBootcampData = () => {
           console.error('Error fetching progress:', progressError);
           setProgress([]);
         } else {
+          console.log('Fetched progress data:', progressData);
           setProgress(progressData || []);
         }
 
@@ -139,6 +148,8 @@ export const useBootcampData = () => {
 
         if (responsesError) {
           console.error('Error fetching responses:', responsesError);
+        } else {
+          console.log('Fetched bootcamp responses:', responsesData);
         }
 
         // Fetch from learning_results (additional practice data)
@@ -151,6 +162,8 @@ export const useBootcampData = () => {
 
         if (learningError) {
           console.error('Error fetching learning results:', learningError);
+        } else {
+          console.log('Fetched learning results:', learningData);
         }
 
         // Fetch from bootcamp_mock_test_sessions for additional activity data
@@ -163,6 +176,8 @@ export const useBootcampData = () => {
 
         if (mockTestError) {
           console.error('Error fetching mock test sessions:', mockTestError);
+        } else {
+          console.log('Fetched mock test sessions:', mockTestData);
         }
 
         // Combine all response data
