@@ -1,7 +1,7 @@
 import React from 'react';
 import { Button } from '@/components/ui/button';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { BookOpen, BarChart3, User, GraduationCap, FileText, Play, Target, Calendar, CreditCard } from 'lucide-react';
+import { BookOpen, BarChart3, User, GraduationCap, FileText, Play, Target, Calendar, CreditCard, LogOut } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
 import { cn } from '@/lib/utils';
 interface AppNavigationProps {
@@ -21,8 +21,16 @@ export const AppNavigation: React.FC<AppNavigationProps> = ({
   const navigate = useNavigate();
   const location = useLocation();
   const {
-    user
+    user,
+    signOut
   } = useAuth();
+  
+  const handleLogout = async () => {
+    const { error } = await signOut();
+    if (!error) {
+      navigate('/auth');
+    }
+  };
   // Determine which navigation items to show based on current route
   const isBootcampRoute = location.pathname.startsWith('/bootcamp');
   
@@ -118,14 +126,37 @@ export const AppNavigation: React.FC<AppNavigationProps> = ({
                     <span className="hidden lg:inline">{item.label}</span>
                   </Button>;
             })}
+              {/* Logout Button */}
+              <Button 
+                variant="ghost" 
+                size="sm" 
+                onClick={handleLogout}
+                className="flex items-center justify-start space-x-1 flex-1 max-w-32 pr-4"
+              >
+                <LogOut className="h-4 w-4" />
+                <span className="hidden lg:inline">Logout</span>
+              </Button>
             </nav>
 
             {/* Mobile Navigation Dropdown */}
             <div className="md:hidden">
-              <select value={location.pathname} onChange={e => navigate(e.target.value)} className="px-3 py-2 text-sm border rounded-md bg-background">
-                {navigationItems.map(item => <option key={item.path} value={item.path}>
+              <select 
+                value={location.pathname} 
+                onChange={(e) => {
+                  if (e.target.value === 'logout') {
+                    handleLogout();
+                  } else {
+                    navigate(e.target.value);
+                  }
+                }} 
+                className="px-3 py-2 text-sm border rounded-md bg-background"
+              >
+                {navigationItems.map(item => (
+                  <option key={item.path} value={item.path}>
                     {item.label}
-                  </option>)}
+                  </option>
+                ))}
+                <option value="logout">Logout</option>
               </select>
             </div>
 
