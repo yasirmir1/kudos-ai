@@ -82,12 +82,12 @@ export const AppNavigation: React.FC<AppNavigationProps> = ({
           {/* Right section - Navigation and Age Group Selector */}
           <div className="flex items-center space-x-4 mx-0">
             {/* System Mode Buttons */}
-            <div className="hidden md:flex items-center gap-2">
+            <div className="hidden md:flex items-center gap-3">
               <Button 
                 variant={!isBootcampRoute ? "default" : "ghost"} 
                 size="sm" 
                 onClick={() => navigate('/dashboard')}
-                className={cn("flex items-center justify-start space-x-1 flex-1 max-w-32 pr-4", !isBootcampRoute && "bg-primary text-primary-foreground")}
+                className={cn("flex items-center justify-center space-x-2 px-4 py-2 min-w-[110px]", !isBootcampRoute && "bg-primary text-primary-foreground")}
               >
                 <Calendar className="h-4 w-4" />
                 <span className="hidden lg:inline">Daily Mode</span>
@@ -96,7 +96,7 @@ export const AppNavigation: React.FC<AppNavigationProps> = ({
                 variant={isBootcampRoute ? "default" : "ghost"} 
                 size="sm" 
                 onClick={() => navigate('/bootcamp')}
-                className={cn("flex items-center justify-start space-x-1 flex-1 max-w-32 pr-4", isBootcampRoute && "bg-primary text-primary-foreground")}
+                className={cn("flex items-center justify-center space-x-2 px-4 py-2 min-w-[110px]", isBootcampRoute && "bg-primary text-primary-foreground")}
               >
                 <Target className="h-4 w-4" />
                 <span className="hidden lg:inline">Bootcamp</span>
