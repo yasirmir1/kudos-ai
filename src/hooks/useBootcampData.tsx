@@ -65,21 +65,21 @@ export const useBootcampData = () => {
       setIsLoading(true);
       setError(null);
 
-      // Get student profile
+      // Get student profile from unified_profiles
       const { data: studentData, error: studentError } = await supabase
-        .from('bootcamp_students')
+        .from('unified_profiles')
         .select('*')
-        .eq('user_id', user?.id)
+        .eq('id', user?.id)
         .maybeSingle();
 
       if (studentError) throw studentError;
 
       if (!studentData) {
-        // Create student profile if it doesn't exist
+        // Create unified profile if it doesn't exist
         const { data: newStudent, error: createError } = await supabase
-          .from('bootcamp_students')
+          .from('unified_profiles')
           .insert({
-            user_id: user?.id,
+            id: user?.id,
             username: user?.email?.split('@')[0] || 'Student',
             email: user?.email || '',
             school_year: 7
@@ -88,12 +88,28 @@ export const useBootcampData = () => {
           .single();
 
         if (createError) throw createError;
-        setStudent(newStudent);
+        setStudent({
+          student_id: newStudent.id,
+          username: newStudent.username || 'Student',
+          email: newStudent.email,
+          school_year: newStudent.school_year || 7,
+          created_at: newStudent.created_at,
+          last_active: newStudent.last_active,
+          subscription_tier: newStudent.subscription_tier || 'free'
+        });
       } else {
-        setStudent(studentData);
+        setStudent({
+          student_id: studentData.id,
+          username: studentData.username || 'Student',
+          email: studentData.email,
+          school_year: studentData.school_year || 7,
+          created_at: studentData.created_at,
+          last_active: studentData.last_active,
+          subscription_tier: studentData.subscription_tier || 'free'
+        });
       }
 
-      const studentId = studentData?.student_id || (await getStudentId());
+      const studentId = user?.id;
 
       if (studentId) {
         // Fetch actual progress data from bootcamp_student_progress
@@ -136,8 +152,7 @@ export const useBootcampData = () => {
   };
 
   const getStudentId = async () => {
-    const { data } = await supabase.rpc('get_current_student_id');
-    return data;
+    return user?.id;
   };
 
   const calculateStats = (responses: StudentResponse[], progress: StudentProgress[]) => {

@@ -1476,8 +1476,113 @@ export type Database = {
         }
         Relationships: []
       }
+      unified_profiles: {
+        Row: {
+          age_group: Database["public"]["Enums"]["age_group"] | null
+          created_at: string | null
+          current_level: string | null
+          date_of_birth: string | null
+          email: string
+          exam_boards: string[] | null
+          id: string
+          is_admin: boolean | null
+          last_active: string | null
+          school_year: number | null
+          subscription_tier: string | null
+          success_rate: number | null
+          target_exam_date: string | null
+          updated_at: string | null
+          usage_count: number | null
+          username: string | null
+        }
+        Insert: {
+          age_group?: Database["public"]["Enums"]["age_group"] | null
+          created_at?: string | null
+          current_level?: string | null
+          date_of_birth?: string | null
+          email: string
+          exam_boards?: string[] | null
+          id: string
+          is_admin?: boolean | null
+          last_active?: string | null
+          school_year?: number | null
+          subscription_tier?: string | null
+          success_rate?: number | null
+          target_exam_date?: string | null
+          updated_at?: string | null
+          usage_count?: number | null
+          username?: string | null
+        }
+        Update: {
+          age_group?: Database["public"]["Enums"]["age_group"] | null
+          created_at?: string | null
+          current_level?: string | null
+          date_of_birth?: string | null
+          email?: string
+          exam_boards?: string[] | null
+          id?: string
+          is_admin?: boolean | null
+          last_active?: string | null
+          school_year?: number | null
+          subscription_tier?: string | null
+          success_rate?: number | null
+          target_exam_date?: string | null
+          updated_at?: string | null
+          usage_count?: number | null
+          username?: string | null
+        }
+        Relationships: []
+      }
     }
     Views: {
+      bootcamp_students_view: {
+        Row: {
+          created_at: string | null
+          date_of_birth: string | null
+          email: string | null
+          exam_boards: string[] | null
+          last_active: string | null
+          school_year: number | null
+          student_id: string | null
+          subscription_tier: string | null
+          success_rate: number | null
+          target_exam_date: string | null
+          usage_count: number | null
+          user_id: string | null
+          username: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          date_of_birth?: string | null
+          email?: string | null
+          exam_boards?: string[] | null
+          last_active?: string | null
+          school_year?: number | null
+          student_id?: string | null
+          subscription_tier?: string | null
+          success_rate?: number | null
+          target_exam_date?: string | null
+          usage_count?: number | null
+          user_id?: string | null
+          username?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          date_of_birth?: string | null
+          email?: string | null
+          exam_boards?: string[] | null
+          last_active?: string | null
+          school_year?: number | null
+          student_id?: string | null
+          subscription_tier?: string | null
+          success_rate?: number | null
+          target_exam_date?: string | null
+          usage_count?: number | null
+          user_id?: string | null
+          username?: string | null
+        }
+        Relationships: []
+      }
       bootcamp_topics_with_subtopics: {
         Row: {
           difficulty: string | null
@@ -1596,6 +1701,10 @@ export type Database = {
           frequency: number
           topics: string[]
         }[]
+      }
+      get_unified_student_id: {
+        Args: Record<PropertyKey, never>
+        Returns: string
       }
       get_weak_topics: {
         Args: { p_student_id: string }

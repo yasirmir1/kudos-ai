@@ -106,8 +106,8 @@ export const AnalyticsDashboard: React.FC = () => {
           `)
           .order('created_at', { ascending: false }),
         
-        // Student profiles
-        supabase.from('bootcamp_students')
+        // Unified profiles
+        supabase.from('unified_profiles')
           .select('*'),
         
         // Curricula
