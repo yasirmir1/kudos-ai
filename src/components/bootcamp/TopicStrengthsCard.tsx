@@ -1,9 +1,14 @@
 import React from 'react';
 import { CheckCircle, AlertCircle } from 'lucide-react';
 
+interface TopicAccuracy {
+  topic: string;
+  accuracy: number;
+}
+
 interface TopicStrengthsCardProps {
-  strongTopics: string[];
-  weakTopics: string[];
+  strongTopics: TopicAccuracy[];
+  weakTopics: TopicAccuracy[];
 }
 
 export const TopicStrengthsCard: React.FC<TopicStrengthsCardProps> = ({ 
@@ -20,10 +25,10 @@ export const TopicStrengthsCard: React.FC<TopicStrengthsCardProps> = ({
           Strong Areas
         </h4>
         <div className="space-y-2">
-          {strongTopics.map((topic, index) => (
+          {strongTopics.map((topicData, index) => (
             <div key={index} className="flex items-center justify-between p-2 bg-success/10 rounded">
-              <span className="text-sm text-foreground">{topic}</span>
-              <span className="text-sm font-medium text-success">85%+</span>
+              <span className="text-sm text-foreground">{topicData.topic}</span>
+              <span className="text-sm font-medium text-success">{Math.round(topicData.accuracy)}%</span>
             </div>
           ))}
         </div>
@@ -35,12 +40,15 @@ export const TopicStrengthsCard: React.FC<TopicStrengthsCardProps> = ({
           Needs Practice
         </h4>
         <div className="space-y-2">
-          {weakTopics.map((topic, index) => (
+          {weakTopics.map((topicData, index) => (
             <div key={index} className="flex items-center justify-between p-2 bg-warning/10 rounded">
-              <span className="text-sm text-foreground">{topic}</span>
-              <button className="text-xs font-medium text-warning hover:text-warning/80 transition-colors">
-                Practice →
-              </button>
+              <span className="text-sm text-foreground">{topicData.topic}</span>
+              <div className="flex items-center gap-2">
+                <span className="text-xs text-muted-foreground">{Math.round(topicData.accuracy)}%</span>
+                <button className="text-xs font-medium text-warning hover:text-warning/80 transition-colors">
+                  Practice →
+                </button>
+              </div>
             </div>
           ))}
         </div>

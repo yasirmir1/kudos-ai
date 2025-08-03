@@ -11,6 +11,7 @@ interface User {
   totalPoints: number;
   accuracy: number;
   questionsToday: number;
+  weeklyGoal?: number;
 }
 interface DashboardProps {
   user: User;
@@ -119,7 +120,7 @@ export const Dashboard: React.FC<DashboardProps> = ({
     color: 'secondary'
   }, {
     label: 'Weekly Goal',
-    value: '85%',
+    value: `${user.weeklyGoal || 85}%`,
     icon: Award,
     color: 'warning'
   }];
