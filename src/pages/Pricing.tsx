@@ -178,13 +178,28 @@ export default function Pricing() {
                 <CardTitle className="text-2xl">{plan.name}</CardTitle>
                 <CardDescription className="text-base">{plan.description}</CardDescription>
                 <div className="mt-4">
-                  <span className="text-4xl font-bold">${plan.price_monthly}</span>
-                  <span className="text-muted-foreground">/month</span>
+                  {plan.trial_days > 0 ? (
+                    <div className="space-y-1">
+                      <div className="text-4xl font-bold text-primary">£0</div>
+                      <div className="text-lg text-muted-foreground">
+                        <span className="line-through">£{plan.id === 'pass' ? '7.99' : '14.99'}</span>
+                        <span className="ml-2">for {plan.trial_days} days</span>
+                      </div>
+                      <div className="text-sm text-muted-foreground">
+                        Then £{plan.id === 'pass' ? '7.99' : '14.99'}/month
+                      </div>
+                    </div>
+                  ) : (
+                    <div>
+                      <span className="text-4xl font-bold">£{plan.id === 'pass' ? '7.99' : '14.99'}</span>
+                      <span className="text-muted-foreground">/month</span>
+                    </div>
+                  )}
                 </div>
                 {plan.trial_days > 0 && (
-                  <div className="flex items-center justify-center text-sm text-primary mt-2">
+                  <div className="flex items-center justify-center text-sm text-primary mt-2 font-medium">
                     <Clock className="w-4 h-4 mr-1" />
-                    {plan.trial_days}-day free trial
+                    {plan.trial_days}-day FREE trial
                   </div>
                 )}
               </CardHeader>
