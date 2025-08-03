@@ -185,7 +185,7 @@ const Pricing = () => {
         )}
 
         {/* Billing Toggle */}
-        <div className="flex items-center justify-center mb-8">
+        <div className="flex flex-col items-center justify-center mb-8 space-y-4">
           <div className="bg-muted rounded-lg p-1 flex items-center">
             <button
               className={`px-4 py-2 rounded-md text-sm font-medium transition-all ${
@@ -206,11 +206,19 @@ const Pricing = () => {
               onClick={() => setIsAnnual(true)}
             >
               Annual
-              <span className="ml-1 text-xs bg-primary text-primary-foreground px-1.5 py-0.5 rounded">
-                Save up to 63%
-              </span>
             </button>
           </div>
+          
+          {isAnnual && (
+            <div className="flex items-center space-x-2 animate-in fade-in duration-300">
+              <div className="bg-gradient-to-r from-green-500/10 to-emerald-500/10 border border-green-500/20 rounded-full px-4 py-2 flex items-center space-x-2">
+                <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+                <span className="text-sm font-semibold bg-gradient-to-r from-green-600 to-emerald-600 bg-clip-text text-transparent">
+                  Save up to £81 per year
+                </span>
+              </div>
+            </div>
+          )}
         </div>
 
         {/* Subscription Status */}
