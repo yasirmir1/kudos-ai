@@ -117,13 +117,10 @@ const Practice = () => {
 
       console.log('📚 Student ID:', student.student_id);
 
-      // Call the bootcamp question manager edge function
-      const { data: questionsData, error } = await supabase.functions.invoke('bootcamp-question-manager', {
-        body: { 
-          action: 'get_adaptive_questions',
-          studentId: student.student_id,
-          questionCount: questionCount
-        }
+      // Use the main app's adaptive questions function (not bootcamp)
+      const { data: questionsData, error } = await supabase.rpc('get_adaptive_questions_enhanced', {
+        p_student_id: user.id, // Use user.id directly, not student profile
+        p_count: questionCount
       });
 
       console.log('🔍 Questions response:', { questionsData, error });
@@ -138,22 +135,27 @@ const Practice = () => {
         return;
       }
 
-      if (questionsData?.questions && questionsData.questions.length > 0) {
-        const questions: Question[] = questionsData.questions.map((q: any) => ({
-          question_id: q.question_id,
-          topic: q.topic_id || 'General',
-          subtopic: q.subtopic_id || 'Practice',
-          example_question: q.question_text,
-          question_type: q.question_type || 'multiple_choice',
-          options: [q.option_a, q.option_b, q.option_c, q.option_d].filter(Boolean),
-          correct_answer: q.correct_answer,
-          difficulty: q.difficulty,
-          red_herring_tag: null,
-          red_herring_explanation: null,
-          pedagogical_notes: q.explanation
-        }));
+      if (questionsData && questionsData.length > 0) {
+        const questions: Question[] = questionsData.map((item: any) => {
+          // Parse the question_data field which contains the actual question
+          const q = typeof item.question_data === 'string' ? JSON.parse(item.question_data) : item.question_data;
+          
+          return {
+            question_id: q.question_id,
+            topic: q.topic || 'General',
+            subtopic: q.subtopic || 'Practice',
+            example_question: q.example_question,
+            question_type: q.question_type || 'multiple_choice',
+            options: Array.isArray(q.options) ? q.options : typeof q.options === 'string' ? JSON.parse(q.options) : Object.values(q.options || {}),
+            correct_answer: q.correct_answer,
+            difficulty: q.difficulty,
+            red_herring_tag: q.red_herring_tag,
+            red_herring_explanation: q.red_herring_explanation,
+            pedagogical_notes: q.pedagogical_notes
+          };
+        });
         
-        console.log(`✅ Loaded ${questions.length} bootcamp questions`);
+        console.log(`✅ Loaded ${questions.length} adaptive questions`);
         console.log('📊 Question breakdown:', {
           topics: [...new Set(questions.map(q => q.topic))],
           difficulties: [...new Set(questions.map(q => q.difficulty))]
@@ -161,12 +163,9 @@ const Practice = () => {
         
         setQuestions(questions);
       } else {
-        console.log('⚠️ No bootcamp questions returned');
-        toast({
-          title: "No questions available",
-          description: "No practice questions are currently available. Please try again later.",
-          variant: "destructive",
-        });
+        console.log('⚠️ No adaptive questions returned, falling back to random questions');
+        // Fall back to random question selection
+        await loadRandomQuestions(selectedAgeGroup, questionCount, difficulty);
       }
     } catch (error) {
       console.error('❌ Error loading bootcamp questions:', error);
