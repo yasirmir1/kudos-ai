@@ -84,33 +84,10 @@ export const WeeklyTestPerformanceCard: React.FC<WeeklyTestPerformanceCardProps>
         </div>
       </div>
 
-      {/* Recent Weeks */}
-      <div>
-        <h3 className="text-sm font-medium text-foreground mb-3">Recent Weeks</h3>
-        <div className="space-y-3">
-          {recentWeeks.map((week, index) => (
-            <div key={index} className="p-3 rounded-lg bg-muted/30 hover:bg-muted/50 transition-colors">
-              <div className="flex items-center justify-between mb-1">
-                <span className="font-medium text-foreground">Week {week.weekNumber}</span>
-                <span className={`text-lg font-bold ${getStatusColor(week.status)}`}>
-                  {week.accuracy}%
-                </span>
-              </div>
-              <p className="text-xs text-muted-foreground mb-2">
-                {week.dateRange} • {week.correct}/{week.total} correct
-              </p>
-              <span className={`text-xs px-2 py-1 rounded-full ${getStatusBadgeColor(week.status)}`}>
-                {week.status}
-              </span>
-            </div>
-          ))}
-        </div>
-      </div>
-
       {/* Start Weekly Challenge Button */}
       {onStartWeeklyChallenge && (
-        <div className="mt-6 pt-4 border-t border-muted">
-          <button 
+        <div className="pt-4 border-t border-muted">
+          <button
             onClick={onStartWeeklyChallenge} 
             className="w-full bg-gradient-to-r from-primary to-primary/80 text-primary-foreground rounded-lg p-4 flex items-center justify-between hover:from-primary/90 hover:to-primary/70 transition-colors"
           >

@@ -85,33 +85,10 @@ export const MockTestPerformanceCard: React.FC<MockTestPerformanceCardProps> = (
         </div>
       </div>
 
-      {/* Recent Tests */}
-      <div>
-        <h3 className="text-sm font-medium text-foreground mb-3">Recent Tests</h3>
-        <div className="space-y-3">
-          {recentTests.map((test, index) => (
-            <div key={index} className="p-3 rounded-lg bg-muted/30 hover:bg-muted/50 transition-colors">
-              <div className="flex items-center justify-between mb-1">
-                <span className="font-medium text-foreground">Test {test.testNumber}</span>
-                <span className={`text-lg font-bold ${getStatusColor(test.status)}`}>
-                  {test.score}%
-                </span>
-              </div>
-              <p className="text-xs text-muted-foreground mb-2">
-                {test.date} • {test.correctAnswers}/{test.totalQuestions} correct • {test.timeSpent}
-              </p>
-              <span className={`text-xs px-2 py-1 rounded-full ${getStatusBadgeColor(test.status)}`}>
-                {test.status}
-              </span>
-            </div>
-          ))}
-        </div>
-      </div>
-
       {/* Start Mock Test Button */}
       {onStartMockTest && (
-        <div className="mt-6 pt-4 border-t border-muted">
-          <button 
+        <div className="pt-4 border-t border-muted">
+          <button
             onClick={onStartMockTest} 
             className="w-full bg-gradient-to-r from-orange-500 to-orange-600 text-white rounded-lg p-4 flex items-center justify-between hover:from-orange-600 hover:to-orange-700 transition-colors"
           >
