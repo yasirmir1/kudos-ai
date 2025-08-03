@@ -481,7 +481,7 @@ export type Database = {
         }
         Relationships: []
       }
-      bootcamp_mock_test_questions: {
+      bootcamp_mock_test_answers: {
         Row: {
           answered_at: string | null
           assignment_id: string
