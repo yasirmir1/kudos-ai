@@ -352,11 +352,16 @@ export function QuickPracticeModal({ topic, isOpen, onClose }: QuickPracticeModa
                     className="bg-green-600 hover:bg-green-700"
                   >
                     <CheckCircle className="h-4 w-4 mr-2" />
-                    Submit Practice
+                    Complete Practice
                   </Button>
                 ) : (
                   <Button
-                    onClick={handleNextQuestion}
+                    onClick={() => {
+                      // Auto-advance to next question after selection
+                      if (selectedAnswers[currentQuestionIndex]) {
+                        handleNextQuestion();
+                      }
+                    }}
                     disabled={!selectedAnswers[currentQuestionIndex]}
                   >
                     Next

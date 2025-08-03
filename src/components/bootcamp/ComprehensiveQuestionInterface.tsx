@@ -565,8 +565,9 @@ export const ComprehensiveQuestionInterface: React.FC<ComprehensiveQuestionInter
                   onClick={handleWrittenAnswerSubmit}
                   disabled={!writtenAnswer.trim() || isSubmitting}
                   className="w-full"
+                  variant="outline"
                 >
-                  Submit Answer
+                  Submit Answer (Optional)
                 </Button>
               )}
             </div>
@@ -585,8 +586,9 @@ export const ComprehensiveQuestionInterface: React.FC<ComprehensiveQuestionInter
                   onClick={handleWrittenAnswerSubmit}
                   disabled={!writtenAnswer.trim() || isSubmitting}
                   className="w-full"
+                  variant="outline"
                 >
-                  Submit Answer
+                  Submit Answer (Optional)
                 </Button>
               )}
             </div>
@@ -640,8 +642,8 @@ export const ComprehensiveQuestionInterface: React.FC<ComprehensiveQuestionInter
               </div>
 
               {!isAnswered && dragItems.every(item => item.zone) && (
-                <Button onClick={handleDragDrop} disabled={isSubmitting} className="w-full">
-                  Submit Answer
+                <Button onClick={handleDragDrop} disabled={isSubmitting} className="w-full" variant="outline">
+                  Submit Answer (Optional)
                 </Button>
               )}
             </div>
