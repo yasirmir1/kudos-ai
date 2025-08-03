@@ -136,20 +136,22 @@ const Pricing = () => {
   }
   return <div className="min-h-screen bg-gradient-to-br from-background via-background to-primary/5">
       <div className="container mx-auto px-4 py-12">
-        <div className="text-center mb-16">
-          <h1 className="text-5xl font-bold mb-3 text-foreground">
+        <div className="text-center mb-12">
+          <h1 className="text-6xl font-bold mb-6 text-foreground tracking-tight">
             Pricing
           </h1>
-          <p className="max-w-3xl mx-auto leading-relaxed text-lg text-slate-800">
-            Start your free trial now, <span className="text-primary font-semibold text-lg">no credit card needed</span>
-          </p>
-          <p className="text-muted-foreground mt-2 font-medium text-base my-[2px]">
-            <span className="text-base text-slate-800 font-medium">No hidden fees, cancel anytime.</span>
-          </p>
+          <div className="space-y-3 max-w-2xl mx-auto">
+            <p className="text-xl text-foreground leading-relaxed">
+              Start your free trial now, <span className="text-primary font-semibold">no credit card needed</span>
+            </p>
+            <p className="text-muted-foreground font-medium">
+              No hidden fees, cancel anytime.
+            </p>
+          </div>
         </div>
 
         {/* Trial Warning */}
-        {user && isTrialActive() && getTrialDaysRemaining() <= 3 && <div className="bg-warning/10 border-warning border-l-4 p-4 mb-8 max-w-4xl mx-auto rounded">
+        {user && isTrialActive() && getTrialDaysRemaining() <= 3 && <div className="bg-warning/10 border-warning border-l-4 p-4 mb-12 max-w-4xl mx-auto rounded">
             <div className="flex items-center">
               <Clock className="w-5 h-5 text-warning mr-2" />
               <div className="flex-1">
@@ -164,18 +166,22 @@ const Pricing = () => {
           </div>}
 
         {/* Billing Toggle */}
-        <div className="flex flex-col items-center justify-center mb-8 space-y-4">
-          <div className="bg-muted rounded-lg p-1 flex items-center">
-            <button className={`px-4 py-2 rounded-md text-sm font-medium transition-all ${!isAnnual ? 'bg-background text-foreground shadow-sm' : 'text-muted-foreground hover:text-foreground'}`} onClick={() => setIsAnnual(false)}>
+        <div className="flex flex-col items-center justify-center mb-12 space-y-6">
+          <div className="bg-muted/80 rounded-xl p-1.5 flex items-center border border-border/50 shadow-sm">
+            <button className={`px-6 py-3 rounded-lg text-sm font-semibold transition-all duration-200 ${!isAnnual ? 'bg-background text-foreground shadow-md border border-border/50' : 'text-muted-foreground hover:text-foreground'}`} onClick={() => setIsAnnual(false)}>
               Monthly
             </button>
-            <button className={`px-4 py-2 rounded-md text-sm font-medium transition-all ${isAnnual ? 'bg-background text-foreground shadow-sm' : 'text-muted-foreground hover:text-foreground'}`} onClick={() => setIsAnnual(true)}>
+            <button className={`px-6 py-3 rounded-lg text-sm font-semibold transition-all duration-200 ${isAnnual ? 'bg-background text-foreground shadow-md border border-border/50' : 'text-muted-foreground hover:text-foreground'}`} onClick={() => setIsAnnual(true)}>
               Annual
             </button>
           </div>
           
-          {/* Angled savings text below toggle */}
-          <span className="text-sm transform -rotate-25 block text-orange-600 font-normal -mt-2">save up to 63% with Annual</span>
+          {/* Savings text below toggle */}
+          <div className="relative">
+            <span className="text-sm font-medium text-orange-600 bg-orange-50 px-3 py-1.5 rounded-full border border-orange-200">
+              💰 Save up to 63% with Annual
+            </span>
+          </div>
         </div>
 
         {/* Subscription Status */}
