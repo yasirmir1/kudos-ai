@@ -162,9 +162,7 @@ export default function Pricing() {
                   
                   <div className="space-y-2 mb-6">
                     {plan.trial_days > 0 ? <div className="space-y-1">
-                        <div className="text-lg text-muted-foreground line-through">
-                          £{plan.id === 'pass' ? '7.99' : '14.99'}/User
-                        </div>
+                        
                         <div className="text-4xl font-bold text-primary">£0*</div>
                         <div className="text-sm text-muted-foreground">
                           *For the first {plan.trial_days} days
