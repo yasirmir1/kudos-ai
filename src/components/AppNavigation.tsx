@@ -185,13 +185,12 @@ export const AppNavigation: React.FC<AppNavigationProps> = ({
             </div>
 
             {/* System Mode Buttons */}
-            <div className="hidden md:flex items-center space-x-2">
+            <div className="hidden md:flex items-center space-x-2 mr-6">
               <Button 
                 variant={!isBootcampRoute ? "default" : "ghost"} 
                 size="sm" 
                 onClick={() => navigate('/dashboard')}
                 className={cn("flex items-center space-x-2 px-4 py-2 min-w-[120px] justify-center", !isBootcampRoute && "bg-primary text-primary-foreground")}
-                disabled={!hasAccessTo('daily_mode')}
               >
                 <Calendar className="h-4 w-4" />
                 <span className="hidden lg:inline">Daily Mode</span>
@@ -201,7 +200,6 @@ export const AppNavigation: React.FC<AppNavigationProps> = ({
                 size="sm" 
                 onClick={() => navigate('/bootcamp')}
                 className={cn("flex items-center space-x-2 px-4 py-2 min-w-[120px] justify-center", isBootcampRoute && "bg-primary text-primary-foreground")}
-                disabled={!hasAccessTo('bootcamp')}
               >
                 <Target className="h-4 w-4" />
                 <span className="hidden lg:inline">Bootcamp</span>
