@@ -42,6 +42,17 @@ export const Dashboard: React.FC<DashboardProps> = ({
       loadProgressData();
     }
   }, [authUser]);
+
+  // Auto-refresh data every 30 seconds to catch new session updates
+  useEffect(() => {
+    if (!authUser) return;
+    
+    const interval = setInterval(() => {
+      loadProgressData();
+    }, 30000);
+
+    return () => clearInterval(interval);
+  }, [authUser]);
   const loadProgressData = async () => {
     if (!authUser) return;
     setLoading(true);
@@ -133,10 +144,22 @@ export const Dashboard: React.FC<DashboardProps> = ({
   };
   return <div className="space-y-6">
       <div className="bg-card rounded-xl shadow-sm border p-6">
-        <h1 className="text-2xl font-bold text-foreground mb-2">
-          Welcome back, {user.name}! 🎯
-        </h1>
-        <p className="text-muted-foreground">You're making great progress. Keep up the momentum!</p>
+        <div className="flex items-center justify-between">
+          <div>
+            <h1 className="text-2xl font-bold text-foreground mb-2">
+              Welcome back, {user.name}! 🎯
+            </h1>
+            <p className="text-muted-foreground">You're making great progress. Keep up the momentum!</p>
+          </div>
+          <button
+            onClick={loadProgressData}
+            disabled={loading}
+            className="flex items-center space-x-2 px-4 py-2 rounded-lg bg-primary text-primary-foreground hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+          >
+            <RefreshCw className={`h-4 w-4 ${loading ? 'animate-spin' : ''}`} />
+            <span className="text-sm font-medium">Refresh</span>
+          </button>
+        </div>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">

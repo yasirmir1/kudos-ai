@@ -31,6 +31,17 @@ export const ProgressView: React.FC = () => {
     }
   }, [user, student, stats]);
 
+  // Auto-refresh data every 30 seconds to catch new session updates
+  useEffect(() => {
+    if (!user) return;
+    
+    const interval = setInterval(() => {
+      loadProgressData();
+    }, 30000);
+
+    return () => clearInterval(interval);
+  }, [user]);
+
   const loadProgressData = async () => {
     if (!user) return;
     
