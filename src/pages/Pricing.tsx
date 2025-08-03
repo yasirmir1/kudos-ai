@@ -179,7 +179,12 @@ export default function Pricing() {
 
                 <CardContent className="px-8 pb-8">
                   <div className="space-y-4 mb-8">
-                    {plan.features.map((feature, index) => <div key={index} className="flex items-start">
+                    {(plan.id === 'pass' ? [
+                      "Daily Performance Snapshots: 'Daily Mode' gives you a quick, clear view of your child's skills and understanding, so you always know where they stand.",
+                      "Personalized Progress Analytics: Stop guessing which topics to focus on. Our insights show you exactly where your child is improving and which areas need a little more practice.",
+                      "Customized Worksheets: Never run out of practice material. Generate unlimited worksheets tailored to your child's specific needs in seconds.",
+                      ...plan.features
+                    ] : plan.features).map((feature, index) => <div key={index} className="flex items-start">
                         <div className="w-2 h-2 rounded-full bg-primary mt-2 mr-3 flex-shrink-0" />
                         <span className="text-sm text-foreground leading-relaxed">{feature}</span>
                       </div>)}
