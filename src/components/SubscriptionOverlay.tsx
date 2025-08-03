@@ -105,13 +105,6 @@ export const SubscriptionOverlay: React.FC<SubscriptionOverlayProps> = ({
           {/* Center upgrade button */}
           <div className="absolute top-[130px] left-1/2 transform -translate-x-1/2">
             <div className="bg-card border-2 border-border/50 hover:border-primary/50 rounded-lg p-8 shadow-xl max-w-lg transition-all duration-300">
-              {/* Badge */}
-              <div className="flex justify-center mb-4">
-                <Badge className="bg-accent/20 text-accent-foreground px-4 py-2 text-sm font-medium">
-                  Free 30 day trial
-                </Badge>
-              </div>
-              
               {/* Title */}
               <h3 className="text-4xl font-bold text-foreground mb-4 text-center">
                 {userState === 'expired' 
@@ -125,10 +118,7 @@ export const SubscriptionOverlay: React.FC<SubscriptionOverlayProps> = ({
               {/* Pricing */}
               <div className="text-center mb-6">
                 <div className="text-3xl font-bold text-foreground">
-                  Free for 30 days
-                </div>
-                <div className="text-lg text-muted-foreground">
-                  {requiredFeature === 'bootcamp' ? '£15/month after' : '£8/month after'}
+                  {requiredFeature === 'bootcamp' ? '£15/month' : '£8/month'}
                 </div>
                 <div className="text-sm text-muted-foreground">
                   {requiredFeature === 'bootcamp' 
@@ -190,15 +180,12 @@ export const SubscriptionOverlay: React.FC<SubscriptionOverlayProps> = ({
                 size="lg" 
                 className="w-full py-4 font-semibold text-lg rounded-full transition-all duration-200 hover:scale-[1.02]"
               >
-                {userState === 'expired' || userState === 'no_access' 
-                  ? 'Start trial now, no credit card needed' 
-                  : 'Upgrade to Pass Plus'
-                }
+                Subscribe Now
               </Button>
               
               {/* Small print */}
               <p className="text-xs text-muted-foreground text-center leading-relaxed pt-4">
-                Free 30 day trial, then {requiredFeature === 'bootcamp' ? '£15' : '£8'} per month after. 
+                {requiredFeature === 'bootcamp' ? '£15' : '£8'} per month, billed monthly or annually.
                 <span className="underline cursor-pointer hover:text-foreground transition-colors ml-1">
                   Terms apply.
                 </span>
