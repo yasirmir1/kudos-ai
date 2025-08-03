@@ -1,0 +1,257 @@
+import { useState, useEffect } from 'react';
+import { useAuth } from '@/hooks/useAuth';
+import { supabase } from '@/integrations/supabase/client';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import { Check, Star, Clock } from 'lucide-react';
+import { toast } from 'sonner';
+import { useNavigate } from 'react-router-dom';
+
+interface SubscriptionPlan {
+  id: string;
+  name: string;
+  description: string;
+  price_monthly: number;
+  features: any;
+  trial_days: number;
+  allows_daily_mode: boolean;
+  allows_bootcamp: boolean;
+}
+
+interface TrialResult {
+  success: boolean;
+  message: string;
+  trial_days?: number;
+  trial_end_date?: string;
+}
+
+interface UserSubscription {
+  id: string;
+  plan_id: string;
+  status: string;
+  is_trial: boolean;
+  trial_end_date: string | null;
+  subscription_end_date: string | null;
+}
+
+export default function Pricing() {
+  const { user } = useAuth();
+  const navigate = useNavigate();
+  const [plans, setPlans] = useState<SubscriptionPlan[]>([]);
+  const [userSubscriptions, setUserSubscriptions] = useState<UserSubscription[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [startingTrial, setStartingTrial] = useState<string | null>(null);
+
+  useEffect(() => {
+    fetchPlans();
+    if (user) {
+      fetchUserSubscriptions();
+    }
+  }, [user]);
+
+  const fetchPlans = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('subscription_plans')
+        .select('*')
+        .order('price_monthly');
+
+      if (error) throw error;
+      setPlans(data || []);
+    } catch (error) {
+      console.error('Error fetching plans:', error);
+      toast.error('Failed to load pricing plans');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const fetchUserSubscriptions = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('user_subscriptions')
+        .select('*')
+        .eq('user_id', user?.id);
+
+      if (error) throw error;
+      setUserSubscriptions(data || []);
+    } catch (error) {
+      console.error('Error fetching user subscriptions:', error);
+    }
+  };
+
+  const startTrial = async (planId: string) => {
+    if (!user) {
+      navigate('/auth');
+      return;
+    }
+
+    setStartingTrial(planId);
+    try {
+      const { data, error } = await supabase.rpc('start_trial', {
+        plan_id_param: planId
+      });
+
+      if (error) throw error;
+
+      const result = data as unknown as TrialResult;
+      if (result.success) {
+        toast.success(`${result.trial_days}-day trial started successfully!`);
+        fetchUserSubscriptions();
+      } else {
+        toast.error(result.message);
+      }
+    } catch (error) {
+      console.error('Error starting trial:', error);
+      toast.error('Failed to start trial');
+    } finally {
+      setStartingTrial(null);
+    }
+  };
+
+  const getUserSubscriptionForPlan = (planId: string) => {
+    return userSubscriptions.find(sub => 
+      sub.plan_id === planId && 
+      (sub.status === 'active' || sub.status === 'trial')
+    );
+  };
+
+  const isTrialActive = (subscription: UserSubscription) => {
+    if (!subscription?.is_trial || !subscription.trial_end_date) return false;
+    return new Date(subscription.trial_end_date) > new Date();
+  };
+
+  const hasUsedTrial = (planId: string) => {
+    return userSubscriptions.some(sub => 
+      sub.plan_id === planId && sub.is_trial
+    );
+  };
+
+  const formatDate = (dateString: string) => {
+    return new Date(dateString).toLocaleDateString();
+  };
+
+  if (loading) {
+    return (
+      <div className="container mx-auto px-4 py-8">
+        <div className="animate-pulse space-y-8">
+          <div className="h-8 bg-muted rounded w-64 mx-auto" />
+          <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
+            {[1, 2].map(i => (
+              <div key={i} className="h-96 bg-muted rounded-lg" />
+            ))}
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="container mx-auto px-4 py-8">
+      <div className="text-center mb-12">
+        <h1 className="text-4xl font-bold mb-4">Choose Your Plan</h1>
+        <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
+          Start with a free trial and get access to our powerful learning platform. 
+          No credit card required for trials.
+        </p>
+      </div>
+
+      <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
+        {plans.map((plan) => {
+          const userSub = getUserSubscriptionForPlan(plan.id);
+          const isCurrentPlan = !!userSub;
+          const isTrialActivePlan = userSub && isTrialActive(userSub);
+          const hasUsedTrialForPlan = hasUsedTrial(plan.id);
+          const isPlusPlan = plan.id === 'pass_plus';
+
+          return (
+            <Card key={plan.id} className={`relative ${isPlusPlan ? 'border-primary shadow-lg' : ''}`}>
+              {isPlusPlan && (
+                <Badge className="absolute -top-3 left-1/2 transform -translate-x-1/2 bg-primary">
+                  <Star className="w-3 h-3 mr-1" />
+                  Most Popular
+                </Badge>
+              )}
+              
+              <CardHeader className="text-center pb-4">
+                <CardTitle className="text-2xl">{plan.name}</CardTitle>
+                <CardDescription className="text-base">{plan.description}</CardDescription>
+                <div className="mt-4">
+                  <span className="text-4xl font-bold">${plan.price_monthly}</span>
+                  <span className="text-muted-foreground">/month</span>
+                </div>
+                {plan.trial_days > 0 && (
+                  <div className="flex items-center justify-center text-sm text-primary mt-2">
+                    <Clock className="w-4 h-4 mr-1" />
+                    {plan.trial_days}-day free trial
+                  </div>
+                )}
+              </CardHeader>
+
+              <CardContent className="space-y-4">
+                <div className="space-y-3">
+                  {plan.features.map((feature, index) => (
+                    <div key={index} className="flex items-center">
+                      <Check className="w-5 h-5 text-primary mr-3 flex-shrink-0" />
+                      <span className="text-sm">{feature}</span>
+                    </div>
+                  ))}
+                </div>
+
+                {isCurrentPlan ? (
+                  <div className="space-y-2">
+                    <Badge variant="secondary" className="w-full justify-center py-2">
+                      {isTrialActivePlan ? 'Trial Active' : 'Current Plan'}
+                    </Badge>
+                    {isTrialActivePlan && userSub?.trial_end_date && (
+                      <p className="text-xs text-center text-muted-foreground">
+                        Trial ends {formatDate(userSub.trial_end_date)}
+                      </p>
+                    )}
+                    {!isTrialActivePlan && userSub?.subscription_end_date && (
+                      <p className="text-xs text-center text-muted-foreground">
+                        Renews {formatDate(userSub.subscription_end_date)}
+                      </p>
+                    )}
+                  </div>
+                ) : (
+                  <div className="space-y-2">
+                    {plan.trial_days > 0 && !hasUsedTrialForPlan && (
+                      <Button
+                        className="w-full"
+                        variant={isPlusPlan ? "default" : "outline"}
+                        onClick={() => startTrial(plan.id)}
+                        disabled={startingTrial === plan.id}
+                      >
+                        {startingTrial === plan.id ? 'Starting Trial...' : `Start ${plan.trial_days}-Day Free Trial`}
+                      </Button>
+                    )}
+                    <Button
+                      className="w-full"
+                      variant={isPlusPlan && plan.trial_days === 0 ? "default" : "secondary"}
+                      onClick={() => toast.info('Subscription flow coming soon!')}
+                    >
+                      Subscribe Now
+                    </Button>
+                    {hasUsedTrialForPlan && (
+                      <p className="text-xs text-center text-muted-foreground">
+                        Trial already used for this plan
+                      </p>
+                    )}
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+          );
+        })}
+      </div>
+
+      <div className="mt-12 text-center">
+        <p className="text-sm text-muted-foreground">
+          All plans include access to our core features. No hidden fees. Cancel anytime.
+        </p>
+      </div>
+    </div>
+  );
+}

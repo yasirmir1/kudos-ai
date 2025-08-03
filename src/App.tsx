@@ -12,6 +12,7 @@ import Auth from "./pages/Auth";
 import Dashboard from "./pages/Dashboard";
 import Practice from "./pages/Practice";
 import Profile from "./pages/Profile";
+import Pricing from "./pages/Pricing";
 import Analytics from "./pages/Analytics";
 import Curriculum from "./pages/Curriculum";
 import Report from "./pages/Report";
@@ -50,6 +51,7 @@ const App = () => (
                   <Route path="/auth" element={<Auth />} />
                   <Route path="/dashboard" element={<Dashboard />} />
                   <Route path="/profile" element={<Profile />} />
+                  <Route path="/pricing" element={<Pricing />} />
                   <Route path="/report" element={<Report />} />
                   
                   <Route path="/bootcamp" element={<Bootcamp />} />

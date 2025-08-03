@@ -1476,6 +1476,78 @@ export type Database = {
         }
         Relationships: []
       }
+      subscription_exemptions: {
+        Row: {
+          created_at: string | null
+          created_by: string | null
+          email: string | null
+          exemption_type: string
+          expires_at: string | null
+          id: string
+          is_active: boolean | null
+          reason: string | null
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          created_by?: string | null
+          email?: string | null
+          exemption_type: string
+          expires_at?: string | null
+          id?: string
+          is_active?: boolean | null
+          reason?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          created_by?: string | null
+          email?: string | null
+          exemption_type?: string
+          expires_at?: string | null
+          id?: string
+          is_active?: boolean | null
+          reason?: string | null
+          user_id?: string | null
+        }
+        Relationships: []
+      }
+      subscription_plans: {
+        Row: {
+          allows_bootcamp: boolean | null
+          allows_daily_mode: boolean | null
+          created_at: string | null
+          description: string | null
+          features: Json
+          id: string
+          name: string
+          price_monthly: number
+          trial_days: number | null
+        }
+        Insert: {
+          allows_bootcamp?: boolean | null
+          allows_daily_mode?: boolean | null
+          created_at?: string | null
+          description?: string | null
+          features?: Json
+          id: string
+          name: string
+          price_monthly: number
+          trial_days?: number | null
+        }
+        Update: {
+          allows_bootcamp?: boolean | null
+          allows_daily_mode?: boolean | null
+          created_at?: string | null
+          description?: string | null
+          features?: Json
+          id?: string
+          name?: string
+          price_monthly?: number
+          trial_days?: number | null
+        }
+        Relationships: []
+      }
       unified_profiles: {
         Row: {
           age_group: Database["public"]["Enums"]["age_group"] | null
@@ -1532,6 +1604,56 @@ export type Database = {
           username?: string | null
         }
         Relationships: []
+      }
+      user_subscriptions: {
+        Row: {
+          created_at: string | null
+          id: string
+          is_trial: boolean | null
+          plan_id: string
+          status: string
+          subscription_end_date: string | null
+          subscription_start_date: string | null
+          trial_end_date: string | null
+          trial_start_date: string | null
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          is_trial?: boolean | null
+          plan_id: string
+          status?: string
+          subscription_end_date?: string | null
+          subscription_start_date?: string | null
+          trial_end_date?: string | null
+          trial_start_date?: string | null
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          is_trial?: boolean | null
+          plan_id?: string
+          status?: string
+          subscription_end_date?: string | null
+          subscription_start_date?: string | null
+          trial_end_date?: string | null
+          trial_start_date?: string | null
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_subscriptions_plan_id_fkey"
+            columns: ["plan_id"]
+            isOneToOne: false
+            referencedRelation: "subscription_plans"
+            referencedColumns: ["id"]
+          },
+        ]
       }
     }
     Views: {
@@ -1729,6 +1851,14 @@ export type Database = {
       import_mock_test_questions: {
         Args: { questions_data: Json }
         Returns: string
+      }
+      start_trial: {
+        Args: { plan_id_param: string }
+        Returns: Json
+      }
+      user_has_feature_access: {
+        Args: { feature_type: string }
+        Returns: boolean
       }
     }
     Enums: {
