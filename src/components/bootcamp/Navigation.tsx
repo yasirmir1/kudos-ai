@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { BarChart3, Brain, TrendingUp, Zap, Star, Plus, GraduationCap, Settings, Trophy, HelpCircle, Medal } from 'lucide-react';
+import { BarChart3, Brain, TrendingUp, Zap, Star, Plus, GraduationCap, Settings, Trophy, HelpCircle, Medal, PieChart } from 'lucide-react';
 
 interface NavItem {
   id: string;
@@ -58,6 +58,11 @@ export const Navigation: React.FC<NavigationProps> = ({
       id: 'achievements',
       label: 'Achievements',
       icon: Trophy
+    },
+    {
+      id: 'analytics',
+      label: 'Analytics',
+      icon: PieChart
     },
   ];
   return (
