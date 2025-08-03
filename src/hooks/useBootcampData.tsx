@@ -125,10 +125,11 @@ export const useBootcampData = () => {
           setProgress(progressData || []);
         }
 
-        // Fetch responses data for last 30 days
+        // Fetch responses data from multiple sources for comprehensive stats
         const thirtyDaysAgo = new Date();
         thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
 
+        // Fetch from bootcamp_student_responses
         const { data: responsesData, error: responsesError } = await supabase
           .from('bootcamp_student_responses')
           .select('*')
@@ -136,12 +137,52 @@ export const useBootcampData = () => {
           .gte('responded_at', thirtyDaysAgo.toISOString())
           .order('responded_at', { ascending: false });
 
-        if (responsesError) throw responsesError;
-        console.log('Fetched responses:', responsesData);
-        setResponses(responsesData || []);
+        if (responsesError) {
+          console.error('Error fetching responses:', responsesError);
+        }
 
-        // Calculate stats
-        calculateStats(responsesData || [], progressData || []);
+        // Fetch from learning_results (additional practice data)
+        const { data: learningData, error: learningError } = await supabase
+          .from('learning_results')
+          .select('*')
+          .eq('student_id', studentId)
+          .gte('responded_at', thirtyDaysAgo.toISOString())
+          .order('responded_at', { ascending: false });
+
+        if (learningError) {
+          console.error('Error fetching learning results:', learningError);
+        }
+
+        // Fetch from bootcamp_mock_test_sessions for additional activity data
+        const { data: mockTestData, error: mockTestError } = await supabase
+          .from('bootcamp_mock_test_sessions')
+          .select('*')
+          .eq('student_id', studentId)
+          .gte('started_at', thirtyDaysAgo.toISOString())
+          .order('started_at', { ascending: false });
+
+        if (mockTestError) {
+          console.error('Error fetching mock test sessions:', mockTestError);
+        }
+
+        // Combine all response data
+        const allResponses = [
+          ...(responsesData || []),
+          ...(learningData || []).map(lr => ({
+            response_id: lr.id,
+            question_id: lr.question_id,
+            is_correct: lr.is_correct,
+            time_taken: lr.time_taken_seconds || 0,
+            responded_at: lr.responded_at,
+            misconception_detected: undefined
+          }))
+        ];
+
+        console.log('Combined responses:', allResponses);
+        setResponses(allResponses);
+
+        // Calculate stats with all data sources
+        calculateStats(allResponses, progressData || [], mockTestData || []);
       }
     } catch (err) {
       console.error('Error fetching bootcamp data:', err);
@@ -155,7 +196,13 @@ export const useBootcampData = () => {
     return user?.id;
   };
 
-  const calculateStats = (responses: StudentResponse[], progress: StudentProgress[]) => {
+  const calculateStats = (responses: StudentResponse[], progress: StudentProgress[], mockTestSessions: any[] = []) => {
+    console.log('Calculating stats with:', {
+      responsesCount: responses.length,
+      progressCount: progress.length,
+      mockTestSessionsCount: mockTestSessions.length
+    });
+
     const today = new Date().toDateString();
     const todayResponses = responses.filter(r => {
       const responseDate = new Date(r.responded_at);
@@ -166,31 +213,32 @@ export const useBootcampData = () => {
     const accuracy = responses.length > 0 ? 
       Math.round((correctResponses.length / responses.length) * 100) : 0;
 
-    // Calculate streak (simplified - consecutive days with activity)
-    const uniqueDays = [...new Set(responses.map(r => 
-      new Date(r.responded_at).toDateString()
-    ))].sort();
+    // Enhanced streak calculation including mock test sessions for activity tracking
+    const allActivityDates = [
+      ...responses.map(r => new Date(r.responded_at).toDateString()),
+      ...mockTestSessions.map(s => new Date(s.started_at).toDateString())
+    ];
+    
+    const uniqueDays = [...new Set(allActivityDates)].sort();
     
     let streakDays = 0;
     const today_str = new Date().toDateString();
     
-    if (uniqueDays.includes(today_str)) {
-      streakDays = 1;
-      for (let i = uniqueDays.length - 2; i >= 0; i--) {
-        const currentDay = new Date(uniqueDays[i + 1]);
-        const prevDay = new Date(uniqueDays[i]);
-        const dayDiff = (currentDay.getTime() - prevDay.getTime()) / (1000 * 60 * 60 * 24);
-        
-        if (dayDiff === 1) {
-          streakDays++;
-        } else {
-          break;
-        }
+    // Calculate consecutive day streak from today backwards
+    let currentDate = new Date();
+    while (true) {
+      const dateStr = currentDate.toDateString();
+      if (uniqueDays.includes(dateStr)) {
+        streakDays++;
+        currentDate.setDate(currentDate.getDate() - 1);
+      } else {
+        break;
       }
     }
 
-    // Simple points calculation
-    const totalPoints = correctResponses.length * 10 + streakDays * 50;
+    // Simple points calculation including mock test bonuses
+    const mockTestBonus = mockTestSessions.length * 25;
+    const totalPoints = correctResponses.length * 10 + streakDays * 50 + mockTestBonus;
 
     // Determine level based on total questions and accuracy
     let level = 'Beginner';
@@ -200,14 +248,17 @@ export const useBootcampData = () => {
       level = 'Intermediate';
     }
 
-    setStats({
+    const calculatedStats = {
       totalQuestions: responses.length,
       questionsToday: todayResponses.length,
       accuracy,
       streakDays,
       totalPoints,
       level
-    });
+    };
+
+    console.log('Calculated stats:', calculatedStats);
+    setStats(calculatedStats);
   };
 
   const generateSampleQuestions = async () => {
