@@ -207,9 +207,9 @@ export const useBootcampData = () => {
   };
 
   const calculateStats = (responses: StudentResponse[], progress: StudentProgress[], mockTestSessions: any[] = []) => {
-    // Filter responses to only include mock test and weekly sessions for progress tracking
+    // Filter responses to include practice and mock test activity types
     const progressResponses = responses.filter(r => 
-      r.activity_source === 'mock_test' || r.activity_source === 'weekly_test'
+      r.activity_source === 'practice' || r.activity_source === 'mock_test'
     );
     
     console.log('Calculating stats with:', {
@@ -230,7 +230,7 @@ export const useBootcampData = () => {
     const progressAccuracy = progressResponses.length > 0 ? 
       Math.round((correctProgressResponses.length / progressResponses.length) * 100) : 0;
 
-    // Enhanced streak calculation using only mock test and weekly sessions
+    // Enhanced streak calculation using practice and mock test sessions
     const progressActivityDates = [
       ...progressResponses.map(r => new Date(r.responded_at).toDateString()),
       ...mockTestSessions.map(s => new Date(s.started_at).toDateString())
@@ -266,7 +266,7 @@ export const useBootcampData = () => {
     }
 
     const calculatedStats = {
-      totalQuestions: progressResponses.length, // Only mock test and weekly sessions
+      totalQuestions: progressResponses.length, // Practice and mock test sessions
       questionsToday: todayProgressResponses.length,
       accuracy: progressAccuracy,
       streakDays,
@@ -274,7 +274,7 @@ export const useBootcampData = () => {
       level
     };
 
-    console.log('Progress-focused stats (mock/weekly only):', calculatedStats);
+    console.log('Progress-focused stats (practice/mock only):', calculatedStats);
     console.log('Excluded learning sessions from progress tracking');
     setStats(calculatedStats);
   };
