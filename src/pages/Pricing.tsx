@@ -4,23 +4,37 @@ import { useSubscription } from '@/hooks/useSubscription';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { CheckCircle, Crown, Zap, ExternalLink, Settings } from 'lucide-react';
+import { CheckCircle, Crown, Zap, ExternalLink, Settings, Clock } from 'lucide-react';
 import { toast } from 'sonner';
 import { useNavigate } from 'react-router-dom';
+
+interface TrialResult {
+  success: boolean;
+  message: string;
+  trial_days?: number;
+  trial_end_date?: string;
+}
 
 const Pricing = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
   const { 
-    subscriber, 
+    subscriber,
+    subscriptions,
     loading, 
-    hasActiveSubscription, 
-    getSubscriptionTier, 
+    hasActiveSubscription,
+    hasActiveStripeSubscription,
+    isTrialActive,
+    getSubscriptionTier,
+    getTrialDaysRemaining,
+    hasUsedTrial,
     createCheckoutSession, 
     openCustomerPortal,
+    startTrial,
     refetch 
   } = useSubscription();
   const [checkingOut, setCheckingOut] = useState<string | null>(null);
+  const [startingTrial, setStartingTrial] = useState<string | null>(null);
 
   useEffect(() => {
     // Check for success/cancel parameters
@@ -56,6 +70,28 @@ const Pricing = () => {
     }
   };
 
+  const handleStartTrial = async (planId: string) => {
+    if (!user) {
+      navigate('/auth');
+      return;
+    }
+
+    setStartingTrial(planId);
+    try {
+      const result = await startTrial(planId) as unknown as TrialResult;
+      if (result.success) {
+        toast.success(`${result.trial_days}-day trial started successfully!`);
+      } else {
+        toast.error(result.message);
+      }
+    } catch (error) {
+      console.error('Error starting trial:', error);
+      toast.error('Failed to start trial');
+    } finally {
+      setStartingTrial(null);
+    }
+  };
+
   const handleManageSubscription = async () => {
     try {
       const { url } = await openCustomerPortal();
@@ -86,6 +122,18 @@ const Pricing = () => {
     return new Date(dateString).toLocaleDateString();
   };
 
+  const getUserSubscriptionForPlan = (planId: string) => {
+    return subscriptions.find(sub => 
+      sub.plan_id === planId && 
+      (sub.status === 'active' || sub.status === 'trial')
+    );
+  };
+
+  const isTrialActivePlan = (planId: string) => {
+    const userSub = getUserSubscriptionForPlan(planId);
+    return userSub?.is_trial && userSub.trial_end_date && new Date(userSub.trial_end_date) > new Date();
+  };
+
   if (loading) {
     return (
       <div className="container mx-auto px-4 py-8">
@@ -109,12 +157,29 @@ const Pricing = () => {
             Pricing
           </h1>
           <p className="max-w-3xl mx-auto leading-relaxed text-lg text-slate-800">
-            Start your subscription now with <span className="text-primary font-semibold text-lg">secure Stripe payments</span>
+            Start your free trial now, <span className="text-primary font-semibold text-lg">no credit card needed</span>
           </p>
           <p className="text-muted-foreground mt-2 font-medium text-base my-[2px]">
             <span className="text-base text-slate-800 font-medium">No hidden fees, cancel anytime.</span>
           </p>
         </div>
+
+        {/* Trial Warning */}
+        {user && isTrialActive() && getTrialDaysRemaining() <= 3 && (
+          <div className="bg-warning/10 border-warning border-l-4 p-4 mb-8 max-w-4xl mx-auto rounded">
+            <div className="flex items-center">
+              <Clock className="w-5 h-5 text-warning mr-2" />
+              <div className="flex-1">
+                <p className="text-sm font-medium text-warning">
+                  Trial Ending Soon
+                </p>
+                <p className="text-sm text-muted-foreground">
+                  Your trial ends in {getTrialDaysRemaining()} day(s). Upgrade now to continue access.
+                </p>
+              </div>
+            </div>
+          </div>
+        )}
 
         {/* Subscription Status */}
         {user && hasActiveSubscription() && (
@@ -123,26 +188,32 @@ const Pricing = () => {
               <Crown className="w-5 h-5 text-primary" />
               <span className="font-medium text-primary">
                 Current Plan: {getSubscriptionTier()}
+                {isTrialActive() && ' (Trial)'}
               </span>
             </div>
-            <Button 
-              variant="outline" 
-              size="sm" 
-              className="mt-3 w-full"
-              onClick={handleManageSubscription}
-            >
-              <Settings className="w-4 h-4 mr-2" />
-              Manage Subscription
-              <ExternalLink className="w-3 h-3 ml-1" />
-            </Button>
+            {hasActiveStripeSubscription() && (
+              <Button 
+                variant="outline" 
+                size="sm" 
+                className="mt-3 w-full"
+                onClick={handleManageSubscription}
+              >
+                <Settings className="w-4 h-4 mr-2" />
+                Manage Subscription
+                <ExternalLink className="w-3 h-3 ml-1" />
+              </Button>
+            )}
           </div>
         )}
 
         <div className="grid lg:grid-cols-2 gap-8 max-w-5xl mx-auto mb-16 mt-8">
           {plans.map(plan => {
-            const isCurrentPlan = hasActiveSubscription() && getSubscriptionTier() === plan.name;
+            const userSub = getUserSubscriptionForPlan(plan.id);
+            const isCurrentPlan = !!userSub;
+            const isCurrentTrialActive = isTrialActivePlan(plan.id);
+            const hasUsedTrialForPlan = hasUsedTrial(plan.id);
             const isPlusPlan = plan.id === 'pass_plus';
-            const planDisplayName = plan.id === 'pass' ? 'Pass' : 'Pass Plus';
+            const planDisplayName = plan.displayName;
             const monthlyPrice = plan.monthlyPrice;
             
             return (
@@ -156,6 +227,13 @@ const Pricing = () => {
                     {plan.id === 'pass' ? 'Basic' : 'Premium'}
                   </Badge>
                 </div>
+
+                {/* Trial Badge */}
+                <div className="absolute top-4 left-4">
+                  <Badge className="bg-accent/20 text-accent-foreground px-3 py-1 text-xs font-medium">
+                    Free 30 day trial
+                  </Badge>
+                </div>
                 
                 <CardHeader className="pt-14 pb-6 px-8">
                   <CardTitle className="text-4xl font-bold text-foreground mb-4">
@@ -164,10 +242,10 @@ const Pricing = () => {
                   
                   <div className="space-y-2">
                     <div className="text-3xl font-bold text-foreground">
-                      £{monthlyPrice}/month
+                      £0 for 30 days
                     </div>
                     <div className="text-lg text-muted-foreground">
-                      Billed monthly
+                      £{monthlyPrice}/month after
                     </div>
                   </div>
                 </CardHeader>
@@ -225,22 +303,65 @@ const Pricing = () => {
                     {isCurrentPlan ? (
                       <div className="space-y-3">
                         <Badge variant="secondary" className="w-full justify-center py-3 text-sm font-medium bg-primary/10 text-primary border-primary/20">
-                          Current Plan
+                          {isCurrentTrialActive ? 'Trial Active' : 'Current Plan'}
                         </Badge>
-                        <Button 
-                          variant="outline" 
-                          className="w-full py-3"
-                          onClick={handleManageSubscription}
-                        >
-                          <Settings className="w-4 h-4 mr-2" />
-                          Manage Subscription
-                        </Button>
+                        {isCurrentTrialActive && userSub?.trial_end_date && (
+                          <p className="text-xs text-center text-muted-foreground">
+                            Trial ends {formatDate(userSub.trial_end_date)}
+                          </p>
+                        )}
+                        {!isCurrentTrialActive && userSub?.subscription_end_date && (
+                          <p className="text-xs text-center text-muted-foreground">
+                            Renews {formatDate(userSub.subscription_end_date)}
+                          </p>
+                        )}
+                        {/* Show upgrade option for trial users */}
+                        {isCurrentTrialActive && (
+                          <Button 
+                            className="w-full py-3 font-semibold text-sm rounded-full transition-all duration-200 hover:scale-[1.02]" 
+                            variant="outline"
+                            onClick={() => handleGetStarted(plan.id)} 
+                            disabled={checkingOut === plan.id}
+                          >
+                            {checkingOut === plan.id ? (
+                              <div className="flex items-center">
+                                <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-current mr-2"></div>
+                                Upgrading...
+                              </div>
+                            ) : (
+                              <>
+                                Upgrade to Paid Plan
+                                <ExternalLink className="w-4 h-4 ml-2" />
+                              </>
+                            )}
+                          </Button>
+                        )}
                       </div>
                     ) : (
                       <div className="space-y-4">
+                        {/* Trial button */}
+                        {!hasUsedTrialForPlan && (
+                          <Button 
+                            className="w-full py-4 font-semibold text-lg rounded-full transition-all duration-200 hover:scale-[1.02]" 
+                            variant="default" 
+                            onClick={() => handleStartTrial(plan.id)} 
+                            disabled={startingTrial === plan.id}
+                          >
+                            {startingTrial === plan.id ? (
+                              <div className="flex items-center">
+                                <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-current mr-2"></div>
+                                Starting Trial...
+                              </div>
+                            ) : (
+                              'Start trial now, no credit card needed'
+                            )}
+                          </Button>
+                        )}
+                        
+                        {/* Paid subscription button */}
                         <Button 
                           className="w-full py-4 font-semibold text-lg rounded-full transition-all duration-200 hover:scale-[1.02]" 
-                          variant="default" 
+                          variant={hasUsedTrialForPlan ? "default" : "outline"}
                           onClick={() => handleGetStarted(plan.id)} 
                           disabled={checkingOut === plan.id}
                         >
@@ -251,17 +372,23 @@ const Pricing = () => {
                             </div>
                           ) : (
                             <>
-                              Get Started
+                              {hasUsedTrialForPlan ? 'Subscribe Now' : 'Or Subscribe Directly'}
                               <ExternalLink className="w-4 h-4 ml-2" />
                             </>
                           )}
                         </Button>
+                        
+                        {hasUsedTrialForPlan && (
+                          <p className="text-xs text-center text-muted-foreground bg-muted/50 rounded-md py-2 px-3">
+                            Trial already used for this plan
+                          </p>
+                        )}
                       </div>
                     )}
                     
                     {/* Small print */}
                     <p className="text-xs text-muted-foreground text-center leading-relaxed pt-4">
-                      £{monthlyPrice} per month, cancel anytime. Secure payments via Stripe.{' '}
+                      Free 30 day trial, then £{monthlyPrice} per month after. Offer only available if you haven't tried Premium before.{' '}
                       <span className="underline cursor-pointer hover:text-foreground transition-colors">
                         Terms apply.
                       </span>
