@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { TrendingUp, Zap, Target, Award, Loader2 } from 'lucide-react';
 import { PerformanceChart } from './PerformanceChart';
+import { MockTestPerformanceContainer } from './MockTestPerformanceContainer';
+import { WeeklyTestPerformanceContainer } from './WeeklyTestPerformanceContainer';
 import { useAuth } from '../../hooks/useAuth';
 import { useBootcampData } from '../../hooks/useBootcampData';
 import { BootcampAPI } from '../../lib/bootcamp-api';
@@ -182,6 +184,12 @@ export const ProgressView: React.FC = () => {
       <div className="bg-card rounded-xl shadow-sm border p-6">
         <h2 className="text-lg font-semibold text-foreground mb-6">Performance Overview</h2>
         <PerformanceChart />
+      </div>
+
+      {/* Mock Test and Weekly Test Performance Containers */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <MockTestPerformanceContainer />
+        <WeeklyTestPerformanceContainer />
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
