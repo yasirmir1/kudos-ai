@@ -68,7 +68,6 @@ export { MockExamInterface } from './MockExamInterface';
 // PracticeSession removed - use EnhancedPracticeSession instead
 
 // Settings and Support
-export { default as SettingsPage } from './SettingsPage';
 export { default as HelpCenter } from './HelpCenter';
 export { default as PracticeReport } from './PracticeReport';
 

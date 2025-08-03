@@ -5,6 +5,7 @@ interface NavItem {
   id: string;
   label: string;
   icon: React.ComponentType<any>;
+  href?: string;
 }
 
 interface User {
@@ -71,7 +72,8 @@ export const Navigation: React.FC<NavigationProps> = ({
     {
       id: 'settings',
       label: 'Settings',
-      icon: Settings
+      icon: Settings,
+      href: '/settings'
     },
     {
       id: 'help',
@@ -88,7 +90,13 @@ export const Navigation: React.FC<NavigationProps> = ({
               {navItems.slice(0, 8).map(item => (
                 <button 
                   key={item.id} 
-                  onClick={() => setCurrentView(item.id)} 
+                  onClick={() => {
+                    if (item.href) {
+                      window.location.href = item.href;
+                    } else {
+                      setCurrentView(item.id);
+                    }
+                  }}
                   className={`flex items-center space-x-1 px-3 py-2 rounded-md text-sm font-medium transition-colors ${
                     currentView === item.id 
                       ? 'bg-primary/10 text-primary' 
@@ -134,7 +142,13 @@ export const Navigation: React.FC<NavigationProps> = ({
               {navItems.slice(8).map(item => (
                 <button 
                   key={item.id} 
-                  onClick={() => setCurrentView(item.id)} 
+                  onClick={() => {
+                    if (item.href) {
+                      window.location.href = item.href;
+                    } else {
+                      setCurrentView(item.id);
+                    }
+                  }}
                   className={`p-2 rounded-md transition-colors ${
                     currentView === item.id 
                       ? 'bg-primary/10 text-primary' 

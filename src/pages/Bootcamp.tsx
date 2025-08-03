@@ -11,7 +11,7 @@ import {
   AnalyticsDashboard,
   Navigation,
   AchievementCenter,
-  SettingsPage,
+  
   HelpCenter,
   PracticeReport,
   MockTest,
@@ -82,7 +82,7 @@ const Bootcamp = () => {
         {currentView === 'analytics' && <AnalyticsDashboard />}
         {currentView === 'questions' && <QuestionManager />}
         {currentView === 'generate' && <BulkCurriculumGenerator />}
-        {currentView === 'settings' && <SettingsPage />}
+        {currentView === 'settings' && (window.location.href = '/settings')}
         {currentView === 'help' && <HelpCenter />}
         {currentView === 'report' && <PracticeReport />}
       </main>
