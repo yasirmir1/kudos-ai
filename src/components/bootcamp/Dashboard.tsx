@@ -38,16 +38,8 @@ export const Dashboard: React.FC<DashboardProps> = ({
     user: authUser
   } = useAuth();
   const [recentTopics, setRecentTopics] = useState<RecentTopic[]>([]);
+  const [skillDevelopmentData, setSkillDevelopmentData] = useState<{ skill: string; accuracy: number }[]>([]);
   const [loading, setLoading] = useState(true);
-
-  // Sample skill development data - this would come from your analytics
-  const skillDevelopmentData = [
-    { skill: 'Understanding Fractions', accuracy: 57 },
-    { skill: 'Multiplication Tables', accuracy: 20 },
-    { skill: 'Column Subtraction', accuracy: 50 },
-    { skill: 'Column Addition', accuracy: 0 },
-    { skill: 'Mental Addition and Subtraction', accuracy: 40 }
-  ];
   useEffect(() => {
     if (authUser) {
       loadProgressData();
@@ -68,7 +60,10 @@ export const Dashboard: React.FC<DashboardProps> = ({
     try {
       const studentProfile = await BootcampAPI.getStudentProfile(authUser.id);
       if (studentProfile) {
-        const [progress, topics] = await Promise.all([BootcampAPI.getStudentProgress(studentProfile.student_id), supabase.from('bootcamp_topics').select('id, name').order('topic_order')]);
+        const [progress, topics] = await Promise.all([
+          BootcampAPI.getStudentProgress(studentProfile.student_id), 
+          supabase.from('bootcamp_topics').select('id, name').order('topic_order')
+        ]);
 
         // Create topic name mapping
         const topicNameMap = new Map();
@@ -78,25 +73,74 @@ export const Dashboard: React.FC<DashboardProps> = ({
           });
         }
 
-        // Get actual question counts per topic from responses
-        const {
-          data: responseCounts
-        } = await supabase.from('bootcamp_student_responses').select(`
-            bootcamp_questions!inner(topic_id)
-          `).eq('student_id', studentProfile.student_id);
+        // Get topic performance data from both sources
+        const [responseCounts, mockTestCounts] = await Promise.all([
+          // Regular practice responses
+          supabase
+            .from('bootcamp_student_responses')
+            .select(`
+              is_correct,
+              bootcamp_questions!inner(topic_id)
+            `)
+            .eq('student_id', studentProfile.student_id),
+          
+          // Mock test answers  
+          supabase
+            .from('bootcamp_mock_test_answers')
+            .select(`
+              is_correct,
+              bootcamp_mock_test_sessions!inner(student_id),
+              mock_test_questions!inner(topic)
+            `)
+            .eq('bootcamp_mock_test_sessions.student_id', studentProfile.student_id)
+        ]);
 
-        // Count questions per topic
-        const questionCounts = new Map();
-        responseCounts?.forEach((response: any) => {
+        // Calculate topic performance from both sources
+        const topicStats = new Map<string, { correct: number; total: number }>();
+
+        // Process regular responses
+        responseCounts.data?.forEach((response: any) => {
           const topicId = response.bootcamp_questions.topic_id;
-          questionCounts.set(topicId, (questionCounts.get(topicId) || 0) + 1);
+          const current = topicStats.get(topicId) || { correct: 0, total: 0 };
+          current.total++;
+          if (response.is_correct) current.correct++;
+          topicStats.set(topicId, current);
         });
+
+        // Process mock test answers
+        mockTestCounts.data?.forEach((answer: any) => {
+          const topicName = answer.mock_test_questions.topic;
+          // Find topic ID by name
+          const topicId = Array.from(topicNameMap.entries())
+            .find(([_, name]) => name.toLowerCase().includes(topicName.toLowerCase()))?.[0];
+          
+          if (topicId) {
+            const current = topicStats.get(topicId) || { correct: 0, total: 0 };
+            current.total++;
+            if (answer.is_correct) current.correct++;
+            topicStats.set(topicId, current);
+          }
+        });
+
+        // Convert to skill development data
+        const skillsData = Array.from(topicStats.entries())
+          .map(([topicId, stats]) => ({
+            skill: topicNameMap.get(topicId) || topicId,
+            accuracy: stats.total > 0 ? Math.round((stats.correct / stats.total) * 100) : 0
+          }))
+          .filter(skill => skill.skill) // Only include named topics
+          .sort((a, b) => b.accuracy - a.accuracy); // Sort by accuracy descending
+
+        setSkillDevelopmentData(skillsData);
+
+        // Recent topics for the other card
         const topicsData: RecentTopic[] = progress.map((p: any) => ({
           name: topicNameMap.get(p.topic_id) || p.topic_id,
           accuracy: Math.round(p.accuracy_percentage || 0),
-          questions: questionCounts.get(p.topic_id) || 0,
+          questions: topicStats.get(p.topic_id)?.total || 0,
           status: (p.accuracy_percentage >= 80 ? 'improving' : p.accuracy_percentage >= 70 ? 'stable' : 'needs-work') as 'improving' | 'stable' | 'needs-work'
         })).slice(0, 3);
+        
         setRecentTopics(topicsData);
       }
     } catch (error) {
