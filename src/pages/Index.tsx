@@ -212,7 +212,7 @@ const Index = () => {
               <p className="text-muted-foreground leading-relaxed">With a further 220 sub topics, keeping track of them is a nightmare</p>
             </div>
             <div className="text-center space-y-4">
-              <div className="text-6xl md:text-7xl font-bold bg-gradient-to-r from-primary to-primary-glow bg-clip-text text-transparent">1 shot</div>
+              <div className="text-6xl md:text-7xl font-bold bg-gradient-to-r from-primary to-primary-glow bg-clip-text text-transparent">4 hrs</div>
               <h3 className="text-2xl font-bold">No second chances</h3>
               <p className="text-muted-foreground leading-relaxed">The 11+ happens once. Get it right or wait another year.</p>
             </div>
