@@ -113,8 +113,8 @@ export const PricingSection = () => {
     {
       planId: annual ? 'pass_annual' : 'pass_monthly',
       name: 'Pass',
-      price: annual ? '£79.99' : '£7.99',
-      originalPrice: annual ? '£95.88' : undefined,
+      price: annual ? '£59' : '£8',
+      originalPrice: annual ? '£96' : undefined,
       description: 'Perfect for focused practice',
       trialDays: 30,
       isAnnual: annual,
@@ -130,8 +130,8 @@ export const PricingSection = () => {
     {
       planId: annual ? 'pass_plus_annual' : 'pass_plus_monthly',
       name: 'Pass Plus',
-      price: annual ? '£149.99' : '£14.99',
-      originalPrice: annual ? '£179.88' : undefined,
+      price: annual ? '£99' : '£15',
+      originalPrice: annual ? '£180' : undefined,
       description: 'Complete 11+ preparation',
       trialDays: 30,
       isPopular: true,
