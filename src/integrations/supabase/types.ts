@@ -687,6 +687,7 @@ export type Database = {
           usage_count: number | null
           visual_aid: string | null
           visual_aid_url: string | null
+          visual_data: Json | null
         }
         Insert: {
           cognitive_level: Database["public"]["Enums"]["cognitive_level"]
@@ -715,6 +716,7 @@ export type Database = {
           usage_count?: number | null
           visual_aid?: string | null
           visual_aid_url?: string | null
+          visual_data?: Json | null
         }
         Update: {
           cognitive_level?: Database["public"]["Enums"]["cognitive_level"]
@@ -743,6 +745,7 @@ export type Database = {
           usage_count?: number | null
           visual_aid?: string | null
           visual_aid_url?: string | null
+          visual_data?: Json | null
         }
         Relationships: []
       }
@@ -1975,7 +1978,13 @@ export type Database = {
         | "evaluation"
       difficulty_level: "foundation" | "intermediate" | "advanced"
       question_category: "arithmetic" | "reasoning" | "mixed"
-      question_type: "multiple_choice" | "numeric_entry" | "multi_step"
+      question_type:
+        | "multiple_choice"
+        | "numeric_entry"
+        | "multi_step"
+        | "fraction_visual"
+        | "number_line"
+        | "geometry"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -2116,7 +2125,14 @@ export const Constants = {
       ],
       difficulty_level: ["foundation", "intermediate", "advanced"],
       question_category: ["arithmetic", "reasoning", "mixed"],
-      question_type: ["multiple_choice", "numeric_entry", "multi_step"],
+      question_type: [
+        "multiple_choice",
+        "numeric_entry",
+        "multi_step",
+        "fraction_visual",
+        "number_line",
+        "geometry",
+      ],
     },
   },
 } as const
