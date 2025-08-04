@@ -146,11 +146,9 @@ export const SubscriptionOverlay: React.FC<SubscriptionOverlayProps> = ({
                   Start 30-Day Free Trial
                 </Button>
                 
-                <p className="text-muted-foreground mb-6 text-center font-medium text-sm">
-                  No credit card required
-                </p>
+                
 
-                <div className="space-y-3 text-left">
+                <div className="space-y-3 text-left mx-0">
                   {requiredFeature === 'bootcamp' ? <>
                       <div className="flex items-start gap-3">
                         <Check className="h-5 w-5 text-primary mt-0.5 flex-shrink-0" />
