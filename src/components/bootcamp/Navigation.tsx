@@ -54,11 +54,6 @@ export const Navigation: React.FC<NavigationProps> = ({
       label: 'Progress',
       icon: TrendingUp
     },
-    {
-      id: 'achievements',
-      label: 'Achievements',
-      icon: Trophy
-    },
   ];
   return (
     <nav className="bg-card shadow-sm border-b sticky top-0 z-50">
