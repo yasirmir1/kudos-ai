@@ -208,7 +208,7 @@ const Index = () => {
             </div>
             <div className="text-center space-y-4">
               <div className="text-6xl md:text-7xl font-bold bg-gradient-to-r from-orange-500 to-orange-600 bg-clip-text text-transparent">56</div>
-              <h3 className="text-2xl font-bold">Wasted on tutoring</h3>
+              <h3 className="text-2xl font-bold">11+ topics</h3>
               <p className="text-muted-foreground leading-relaxed">56 11+ curriculum topics, 220 sub topics, keeping track of them is a nightmare</p>
             </div>
             <div className="text-center space-y-4">
