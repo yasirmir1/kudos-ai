@@ -213,7 +213,7 @@ const Index = () => {
             </div>
             <div className="text-center space-y-4">
               <div className="text-6xl md:text-7xl font-bold bg-gradient-to-r from-primary to-primary-glow bg-clip-text text-transparent">4 hrs</div>
-              <h3 className="text-2xl font-bold">No second chances</h3>
+              <h3 className="text-2xl font-bold">spent marking papers</h3>
               <p className="text-muted-foreground leading-relaxed">The 11+ happens once. Get it right or wait another year.</p>
             </div>
           </div>
