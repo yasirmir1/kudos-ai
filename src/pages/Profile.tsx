@@ -16,6 +16,7 @@ import { ResetProgressModal } from '@/components/ResetProgressModal';
 import { useAgeGroup, updateAgeGroupFromProfile } from '@/contexts/AgeGroupContext';
 import { AgeGroupSelector } from '@/components/AgeGroupSelector';
 import { useAccessibility } from '@/contexts/AccessibilityContext';
+import { useSubscriptionState } from '@/hooks/useSubscriptionState';
 type AgeGroup = '11+';
 type DatabaseAgeGroup = 'year 2-3' | 'year 4-5' | '11+';
 interface Profile {
@@ -38,6 +39,14 @@ const Profile = () => {
     settings: accessibilitySettings,
     updateSetting: updateAccessibilitySetting
   } = useAccessibility();
+  const {
+    userState,
+    loading: subscriptionLoading,
+    isTrialActive,
+    trialDaysRemaining,
+    openCustomerPortal,
+    createCheckoutSession
+  } = useSubscriptionState();
   const navigate = useNavigate();
   const {
     toast
@@ -76,11 +85,86 @@ const Profile = () => {
     shareProgress: 'parents',
     allowChallenges: true
   });
-  const subscription = {
-    plan: 'Premium',
-    price: '£9.99/month',
-    nextBilling: '2024-02-15',
-    features: ['Unlimited practice questions', 'Detailed progress analytics', 'Video tutorials', 'Parent dashboard', 'Priority support']
+  // Get subscription info based on current state
+  const getSubscriptionInfo = () => {
+    switch (userState) {
+      case 'trial':
+        return {
+          plan: 'Pass Plus (Trial)',
+          price: `${trialDaysRemaining} days remaining`,
+          status: 'Trial Active',
+          features: ['All features included', 'Unlimited bootcamp access', 'Daily practice mode', 'Progress analytics', 'Priority support']
+        };
+      case 'pass':
+        return {
+          plan: 'Pass',
+          price: '£7.99/month',
+          status: 'Active',
+          features: ['Daily practice mode', 'Progress tracking', 'Basic analytics', 'Email support']
+        };
+      case 'pass_plus':
+        return {
+          plan: 'Pass Plus',
+          price: '£14.99/month', 
+          status: 'Active',
+          features: ['All Pass features', 'Unlimited bootcamp access', 'Advanced analytics', 'Priority support', 'Mock tests']
+        };
+      case 'expired':
+        return {
+          plan: 'Trial Expired',
+          price: 'Upgrade needed',
+          status: 'Expired',
+          features: ['Trial has ended', 'Limited access only']
+        };
+      default:
+        return {
+          plan: 'Free',
+          price: 'No subscription',
+          status: 'No Access',
+          features: ['Limited features only', 'Upgrade to unlock full access']
+        };
+    }
+  };
+
+  const subscription = getSubscriptionInfo();
+
+  const handleManageSubscription = async () => {
+    if (userState === 'no_access' || userState === 'expired') {
+      // Redirect to pricing for new subscriptions
+      navigate('/pricing');
+      return;
+    }
+
+    // Open customer portal for existing subscribers
+    const result = await openCustomerPortal();
+    if (result.url) {
+      window.open(result.url, '_blank');
+    } else {
+      toast({
+        title: "Error",
+        description: result.error || "Failed to open subscription management",
+        variant: "destructive"
+      });
+    }
+  };
+
+  const handleUpgradePlan = async () => {
+    if (userState === 'pass') {
+      // Upgrade from Pass to Pass Plus
+      const result = await createCheckoutSession('pass_plus');
+      if (result.url) {
+        window.open(result.url, '_blank');
+      } else {
+        toast({
+          title: "Error", 
+          description: result.error || "Failed to create checkout session",
+          variant: "destructive"
+        });
+      }
+    } else {
+      // Redirect to pricing for other cases
+      navigate('/pricing');
+    }
   };
   useEffect(() => {
     if (user) {
@@ -552,46 +636,96 @@ const Profile = () => {
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-6">
-              <div className="bg-gradient-to-r from-primary/10 to-primary-glow/10 rounded-lg p-6 border border-primary/20">
-                <div className="flex items-center justify-between mb-4">
-                  <div>
-                    <h4 className="text-lg font-semibold text-foreground">{subscription.plan} Plan</h4>
-                    <p className="text-primary">{subscription.price}</p>
-                  </div>
-                  <div className="flex items-center space-x-2 text-green-600">
-                    <Check className="h-4 w-4" />
-                    <span className="text-sm font-medium">Active</span>
-                  </div>
+              {subscriptionLoading ? (
+                <div className="text-center py-8">
+                  <CreditCard className="h-8 w-8 mx-auto animate-pulse text-primary mb-2" />
+                  <p className="text-muted-foreground">Loading subscription details...</p>
                 </div>
-                
-                <div className="space-y-3">
-                  <p className="text-sm text-muted-foreground">Next billing: {subscription.nextBilling}</p>
+              ) : (
+                <div className="bg-gradient-to-r from-primary/10 to-primary-glow/10 rounded-lg p-6 border border-primary/20">
+                  <div className="flex items-center justify-between mb-4">
+                    <div>
+                      <h4 className="text-lg font-semibold text-foreground">{subscription.plan}</h4>
+                      <p className="text-primary">{subscription.price}</p>
+                    </div>
+                    <div className={`flex items-center space-x-2 ${
+                      userState === 'trial' || userState === 'pass' || userState === 'pass_plus' 
+                        ? 'text-green-600' 
+                        : userState === 'expired' 
+                          ? 'text-orange-600'
+                          : 'text-muted-foreground'
+                    }`}>
+                      <Check className="h-4 w-4" />
+                      <span className="text-sm font-medium">{subscription.status}</span>
+                    </div>
+                  </div>
                   
-                  <div className="space-y-2">
-                    <h5 className="font-medium text-foreground">Plan Features:</h5>
-                    <ul className="space-y-1">
-                      {subscription.features.map((feature, index) => <li key={index} className="flex items-center space-x-2 text-sm">
-                          <Check className="h-3 w-3 text-green-600" />
-                          <span>{feature}</span>
-                        </li>)}
-                    </ul>
+                  <div className="space-y-3">
+                    {isTrialActive && (
+                      <div className="bg-orange-50 border border-orange-200 rounded-lg p-3">
+                        <p className="text-sm text-orange-800">
+                          Your trial expires in {trialDaysRemaining} day{trialDaysRemaining !== 1 ? 's' : ''}. 
+                          Upgrade now to continue enjoying full access.
+                        </p>
+                      </div>
+                    )}
+                    
+                    <div className="space-y-2">
+                      <h5 className="font-medium text-foreground">Plan Features:</h5>
+                      <ul className="space-y-1">
+                        {subscription.features.map((feature, index) => (
+                          <li key={index} className="flex items-center space-x-2 text-sm">
+                            <Check className="h-3 w-3 text-green-600" />
+                            <span>{feature}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
                   </div>
                 </div>
-              </div>
+              )}
 
               <div className="flex flex-wrap gap-3">
-                <Button variant="outline" className="flex items-center space-x-2">
-                  <span>Manage Subscription</span>
+                <Button 
+                  variant="outline" 
+                  className="flex items-center space-x-2"
+                  onClick={handleManageSubscription}
+                  disabled={subscriptionLoading}
+                >
+                  <span>
+                    {userState === 'no_access' || userState === 'expired' 
+                      ? 'Get Subscription' 
+                      : 'Manage Subscription'
+                    }
+                  </span>
                   <ChevronRight className="h-4 w-4" />
                 </Button>
-                <Button variant="outline" className="flex items-center space-x-2">
-                  <span>Billing History</span>
-                  <ChevronRight className="h-4 w-4" />
-                </Button>
-                <Button variant="outline" className="flex items-center space-x-2">
-                  <Gem className="h-4 w-4" />
-                  <span>Upgrade Plan</span>
-                </Button>
+                
+                {(userState === 'pass' || userState === 'pass_plus' || userState === 'trial') && (
+                  <Button 
+                    variant="outline" 
+                    className="flex items-center space-x-2"
+                    onClick={handleManageSubscription}
+                    disabled={subscriptionLoading}
+                  >
+                    <span>Billing History</span>
+                    <ChevronRight className="h-4 w-4" />
+                  </Button>
+                )}
+                
+                {(userState === 'pass' || userState === 'no_access' || userState === 'expired') && (
+                  <Button 
+                    variant="outline" 
+                    className="flex items-center space-x-2"
+                    onClick={handleUpgradePlan}
+                    disabled={subscriptionLoading}
+                  >
+                    <Gem className="h-4 w-4" />
+                    <span>
+                      {userState === 'pass' ? 'Upgrade to Pass Plus' : 'View Plans'}
+                    </span>
+                  </Button>
+                )}
               </div>
             </CardContent>
           </Card>
