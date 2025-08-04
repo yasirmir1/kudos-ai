@@ -80,8 +80,9 @@ export const AppNavigation: React.FC<AppNavigationProps> = ({
   const getPlanDisplay = () => {
     // Check if user is in trial period
     if (isTrialActive) {
+      const daysText = trialDaysRemaining === 1 ? 'day' : 'days';
       return {
-        text: 'Trial',
+        text: `Trial: ${trialDaysRemaining} ${daysText} left`,
         variant: 'secondary' as const,
         icon: Clock
       };
