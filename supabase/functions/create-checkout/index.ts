@@ -61,10 +61,10 @@ serve(async (req) => {
 
     // Define plan pricing using actual Stripe price IDs
     const planPricing = {
-      'pass_monthly': { priceId: 'price_1QTjPyAAKOvMKCnNiY7Hj3nQ', name: 'Pass - Monthly' },
-      'pass_annual': { priceId: 'price_1QTjQEAAKOvMKCnNSTqvJWvI', name: 'Pass - Annual' },
-      'pass_plus_monthly': { priceId: 'price_1QTjQgAAKOvMKCnNGZwYHh7k', name: 'Pass Plus - Monthly' },
-      'pass_plus_annual': { priceId: 'price_1QTjR2AAKOvMKCnNgJ8xxFRO', name: 'Pass Plus - Annual' }
+      'pass_monthly': { priceId: 'price_1RsWecPE5mUXGgJ8sVtRCunD', name: 'Pass - Monthly' },
+      'pass_annual': { priceId: 'price_1RsWfZPE5mUXGgJ8UGXZjxsi', name: 'Pass - Annual' },
+      'pass_plus_monthly': { priceId: 'price_1RsWeuPE5mUXGgJ8TBgTmjS3', name: 'Pass Plus - Monthly' },
+      'pass_plus_annual': { priceId: 'price_1RsWfIPE5mUXGgJ8vnVWdNz8', name: 'Pass Plus - Annual' }
     };
 
     const selectedPlan = planPricing[planId as keyof typeof planPricing];
