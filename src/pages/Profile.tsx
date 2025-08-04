@@ -609,15 +609,15 @@ const Profile = () => {
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="space-y-2">
-                <h4 className="font-medium text-foreground my-0 text-lg">Data & Account</h4>
+                <h4 className="text-foreground text-xl mx-0 my-0 font-medium">Data & Account</h4>
                 <div className="flex gap-3">
-                  <Button variant="outline" className="flex items-center space-x-2">
+                  <Button variant="outline" className="flex items-center space-x-2 my-[20px]">
                     <Download className="h-4 w-4" />
-                    <span>Download My Data</span>
+                    <span className="mx-[10px]">Download My Data</span>
                   </Button>
-                  <Button variant="destructive" className="flex items-center space-x-2">
+                  <Button variant="destructive" className="flex items-center space-x-2 my-[20px] mx-[20px]">
                     <Trash2 className="h-4 w-4" />
-                    <span>Delete Account</span>
+                    <span className="mx-[10px]">Delete Account</span>
                   </Button>
                 </div>
               </div>
