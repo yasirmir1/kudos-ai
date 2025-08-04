@@ -146,7 +146,7 @@ export const SubscriptionOverlay: React.FC<SubscriptionOverlayProps> = ({
                   Start 30-Day Free Trial
                 </Button>
                 
-                <p className="text-sm text-muted-foreground mb-6 text-center font-medium">
+                <p className="text-muted-foreground mb-6 text-center font-medium text-sm">
                   No credit card required
                 </p>
 
