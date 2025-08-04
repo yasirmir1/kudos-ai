@@ -82,22 +82,22 @@ const Index = () => {
         <div className="container mx-auto text-center max-w-5xl">
           <div className="inline-flex items-center gap-2 bg-success/10 text-success px-4 py-2 rounded-full text-sm font-medium mb-6">
             <Target className="h-4 w-4" />
-            2,487 students passed their 11+ with Kudos
+            2,487 students achieved their target schools with Kudos
           </div>
           
           <h1 className="text-5xl md:text-7xl font-bold leading-tight mb-6">
             <span className="bg-gradient-to-b from-foreground to-muted-foreground bg-clip-text text-transparent">
-              Know exactly where
+              Turn 11+ stress into
             </span>
             <br />
-            <span className="bg-gradient-to-b from-foreground to-muted-foreground bg-clip-text text-transparent">
-              your child stands.
+            <span className="bg-gradient-to-r from-primary to-primary-glow bg-clip-text text-transparent">
+              confident success
             </span>
           </h1>
           
           <p className="text-xl md:text-2xl text-muted-foreground max-w-4xl mx-auto leading-relaxed mb-10">
-            Real-time insights into your child's learning. See strengths, identify gaps, 
-            track progress. No more guessing. No more marking.
+            Stop wondering if your child is ready. Get instant insights into their strengths, 
+            pinpoint exactly where they need help, and watch their confidence soar as they master each topic.
           </p>
 
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
@@ -196,25 +196,25 @@ const Index = () => {
       <section className="py-20 px-6 bg-muted/20">
         <div className="container mx-auto max-w-5xl">
           <div className="text-center mb-20">
-            <h2 className="text-4xl md:text-5xl font-bold mb-6">The 11+ Challenge</h2>
-            <p className="text-xl md:text-2xl text-muted-foreground">One exam. One chance. Are you prepared?</p>
+            <h2 className="text-4xl md:text-5xl font-bold mb-6">The 11+ reality check</h2>
+            <p className="text-xl md:text-2xl text-muted-foreground">Most families are flying blind. Here's why that's risky.</p>
           </div>
           
           <div className="grid grid-cols-1 md:grid-cols-3 gap-16 fade-on-scroll">
             <div className="text-center space-y-4">
-              <div className="text-6xl md:text-7xl font-bold bg-gradient-to-r from-primary to-primary-glow bg-clip-text text-transparent">73%</div>
-              <h3 className="text-2xl font-bold">Don't know gaps</h3>
-              <p className="text-muted-foreground leading-relaxed">Of parents can't identify their child's specific learning gaps</p>
+              <div className="text-6xl md:text-7xl font-bold bg-gradient-to-r from-red-500 to-red-600 bg-clip-text text-transparent">73%</div>
+              <h3 className="text-2xl font-bold">Can't spot the gaps</h3>
+              <p className="text-muted-foreground leading-relaxed">Of parents have no idea which specific topics their child struggles with</p>
             </div>
             <div className="text-center space-y-4">
-              <div className="text-6xl md:text-7xl font-bold bg-gradient-to-r from-primary to-primary-glow bg-clip-text text-transparent">4hrs</div>
-              <h3 className="text-2xl font-bold">Weekly marking</h3>
-              <p className="text-muted-foreground leading-relaxed">Average time parents spend marking worksheets</p>
+              <div className="text-6xl md:text-7xl font-bold bg-gradient-to-r from-orange-500 to-orange-600 bg-clip-text text-transparent">£3k+</div>
+              <h3 className="text-2xl font-bold">Wasted on tutoring</h3>
+              <p className="text-muted-foreground leading-relaxed">Average spent on tutors who work on the wrong topics</p>
             </div>
             <div className="text-center space-y-4">
-              <div className="text-6xl md:text-7xl font-bold bg-gradient-to-r from-primary to-primary-glow bg-clip-text text-transparent">1 year</div>
-              <h3 className="text-2xl font-bold">Preparation needed</h3>
-              <p className="text-muted-foreground leading-relaxed">Minimum recommended 11+ preparation time</p>
+              <div className="text-6xl md:text-7xl font-bold bg-gradient-to-r from-primary to-primary-glow bg-clip-text text-transparent">1 shot</div>
+              <h3 className="text-2xl font-bold">No second chances</h3>
+              <p className="text-muted-foreground leading-relaxed">The 11+ happens once. Get it right or wait another year.</p>
             </div>
           </div>
         </div>
@@ -224,8 +224,8 @@ const Index = () => {
       <section id="features" className="py-20 px-6 bg-background">
         <div className="container mx-auto max-w-6xl">
           <div className="text-center mb-16">
-            <h2 className="text-4xl md:text-5xl font-bold mb-6">Designed for 11+ success</h2>
-            <p className="text-xl md:text-2xl text-muted-foreground">Four powerful features that transform learning</p>
+            <h2 className="text-4xl md:text-5xl font-bold mb-6">Finally, 11+ prep that actually works</h2>
+            <p className="text-xl md:text-2xl text-muted-foreground">Stop guessing. Start knowing. See results in days, not months.</p>
           </div>
           
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
@@ -233,9 +233,9 @@ const Index = () => {
               <div className="p-4 bg-gradient-to-br from-primary/10 to-primary-glow/10 rounded-2xl w-fit mx-auto mb-6 text-primary group-hover:scale-110 transition-transform duration-300">
                 <Brain className="h-10 w-10" />
               </div>
-              <h3 className="text-2xl font-bold mb-4 text-center">Adaptive Learning</h3>
+              <h3 className="text-2xl font-bold mb-4 text-center">Laser-focused practice</h3>
               <p className="text-muted-foreground leading-relaxed text-center">
-                Our AI adjusts to your child's level in real-time, matching every question to their ability for an optimal challenge without frustration.
+                No more random worksheets. Our AI finds exactly what your child doesn't know and gives them targeted practice until they master it.
               </p>
             </div>
 
@@ -243,9 +243,9 @@ const Index = () => {
               <div className="p-4 bg-gradient-to-br from-primary/10 to-primary-glow/10 rounded-2xl w-fit mx-auto mb-6 text-primary group-hover:scale-110 transition-transform duration-300">
                 <Target className="h-10 w-10" />
               </div>
-              <h3 className="text-2xl font-bold mb-4 text-center">Targeted Practice</h3>
+              <h3 className="text-2xl font-bold mb-4 text-center">Instant gap detection</h3>
               <p className="text-muted-foreground leading-relaxed text-center">
-                Our system identifies knowledge gaps and provides focused practice to strengthen weak areas efficiently.
+                Within minutes, see exactly which topics need work. No more wondering if they're ready for fractions or struggling with times tables.
               </p>
             </div>
 
@@ -253,9 +253,9 @@ const Index = () => {
               <div className="p-4 bg-gradient-to-br from-primary/10 to-primary-glow/10 rounded-2xl w-fit mx-auto mb-6 text-primary group-hover:scale-110 transition-transform duration-300">
                 <TrendingUp className="h-10 w-10" />
               </div>
-              <h3 className="text-2xl font-bold mb-4 text-center">Progress Tracking</h3>
+              <h3 className="text-2xl font-bold mb-4 text-center">Parent peace of mind</h3>
               <p className="text-muted-foreground leading-relaxed text-center">
-                Get clear visibility into your child's learning progress. See improvements by topic and know exactly where to focus next.
+                Check progress anytime on your phone. Get weekly reports showing exactly how your child is improving and what to focus on next.
               </p>
             </div>
 
@@ -263,9 +263,9 @@ const Index = () => {
               <div className="p-4 bg-gradient-to-br from-primary/10 to-primary-glow/10 rounded-2xl w-fit mx-auto mb-6 text-primary group-hover:scale-110 transition-transform duration-300">
                 <BarChart3 className="h-10 w-10" />
               </div>
-              <h3 className="text-2xl font-bold mb-4 text-center">Real-time Dashboard</h3>
+              <h3 className="text-2xl font-bold mb-4 text-center">Confidence that grows</h3>
               <p className="text-muted-foreground leading-relaxed text-center">
-                Our dashboard updates after every question, showing you exactly where your child excels and needs support.
+                Watch your child transform from anxious to excited about maths. Our system builds understanding step-by-step, celebrating every win.
               </p>
             </div>
           </div>
@@ -276,28 +276,28 @@ const Index = () => {
       <section id="how-it-works" className="py-20 px-6 bg-muted/30">
         <div className="container mx-auto max-w-5xl">
           <div className="text-center mb-20">
-            <h2 className="text-4xl md:text-5xl font-bold mb-6">From confusion to confidence in 3 steps</h2>
-            <p className="text-xl md:text-2xl text-muted-foreground">See results from day one</p>
+            <h2 className="text-4xl md:text-5xl font-bold mb-6">How it works (it's surprisingly simple)</h2>
+            <p className="text-xl md:text-2xl text-muted-foreground">Three steps to transform your child's 11+ preparation</p>
           </div>
           
           
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {[{
             step: "1",
-            title: "Quick Setup",
-            description: "Sign up in 30 seconds. Your child takes a fun 15-minute assessment. Their personalized learning profile is created instantly.",
+            title: "5-minute setup",
+            description: "Sign up, add your child, and they take a quick assessment. We instantly know their current level and create their personalized learning plan.",
             icon: Clock
           }, {
             step: "2",
-            title: "Smart Practice",
-            description: "AI selects perfect questions for their level. Real-time feedback shows exactly where they went wrong. Just 15-20 minutes daily.",
+            title: "Daily smart practice", 
+            description: "Just 15 minutes daily. Our AI serves up the perfect questions for their level. They practice, we track everything, you see instant progress.",
             icon: Brain
           }, {
             step: "3",
-            title: "Clear Insights",
-            description: "Check progress anytime on your phone. See improvements by topic. Know exactly how to help. Watch their confidence grow.",
-            icon: Smartphone
-          }].map((item, index) => 
+            title: "Watch them succeed",
+            description: "Check their dashboard anytime. See confidence grow as gaps disappear. Get weekly insights on exactly how to help them improve.",
+            icon: TrendingUp
+          }].map((item, index) =>
             <div key={index} className="fade-on-scroll text-center">
               <div className="bg-muted rounded-2xl p-2 text-center h-32 w-32 mx-auto flex items-center justify-center mb-6">
                 <item.icon className="h-12 w-12 text-primary" />
@@ -317,29 +317,33 @@ const Index = () => {
       <section id="testimonials" className="py-20 px-6 bg-muted/40">
         <div className="container mx-auto max-w-6xl">
           <div className="text-center mb-20">
-            <h2 className="text-4xl md:text-5xl font-bold mb-6">Join 5,000+ successful parents</h2>
-            <p className="text-xl md:text-2xl text-muted-foreground">Real stories from real families</p>
+            <h2 className="text-4xl md:text-5xl font-bold mb-6">Real families, real results</h2>
+            <p className="text-xl md:text-2xl text-muted-foreground">Stories from parents who stopped worrying and started celebrating</p>
           </div>
           
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {[{
-            quote: "I finally understood why Oliver kept getting fraction questions wrong. It wasn't the maths - he didn't understand the notation! Two weeks later, he'd mastered it.",
+            quote: "I finally understood why Oliver kept getting fraction questions wrong. It wasn't the maths - he didn't understand the notation! Within two weeks of targeted practice, he'd completely mastered fractions.",
             author: "Sarah Mitchell",
-            role: "Mother of Year 5 student"
+            role: "Mother of Year 5 student",
+            result: "Fractions: 45% → 95% in 2 weeks"
           }, {
-            quote: "The dashboard is brilliant. I can check Aisha's progress on my phone during lunch break. No more Sunday marking sessions!",
-            author: "James Chen",
-            role: "Father of twins, Year 6"
+            quote: "The dashboard is brilliant. I can check Aisha's progress during lunch break at work. No more Sunday afternoons spent marking worksheets! I actually know what's happening with her learning now.",
+            author: "James Chen", 
+            role: "Father of twins, Year 6",
+            result: "Saved 4 hours weekly, twins both improved 30%"
           }, {
-            quote: "Emma passed the 11+ for our first choice school! Kudos showed us she was brilliant at maths but needed help with comprehension. We knew exactly what to focus on.",
+            quote: "Emma got into our first choice grammar school! Kudos showed us she was brilliant at problem-solving but needed help with calculation speed. We knew exactly what to focus on in the final months.",
             author: "Priya Patel",
-            role: "Mother, Grammar school success"
+            role: "Grammar school success story",
+            result: "Achieved top 10% in 11+ exam"
           }].map((testimonial, index) => <div key={index} className="fade-on-scroll bg-card p-8 rounded-2xl relative shadow-card hover:shadow-learning transition-all duration-300">
                 <div className="text-6xl text-primary opacity-20 absolute top-4 left-6">"</div>
                 <p className="text-lg leading-relaxed mb-6 relative z-10">{testimonial.quote}</p>
-                <div>
+                <div className="space-y-2">
                   <div className="font-semibold">{testimonial.author}</div>
                   <div className="text-sm text-muted-foreground">{testimonial.role}</div>
+                  <div className="text-sm font-medium text-success">{testimonial.result}</div>
                 </div>
               </div>)}
           </div>
@@ -349,9 +353,8 @@ const Index = () => {
       {/* CTA Section */}
       <section className="py-32 px-6 bg-gradient-to-r from-primary via-primary-glow to-primary text-primary-foreground text-center">
         <div className="container mx-auto max-w-4xl">
-          <h2 className="text-4xl md:text-6xl font-bold mb-6">Work Smarter not Harder
-  with Kudos</h2>
-          <p className="text-xl md:text-2xl mb-10 opacity-90">Join happy parents who've stopped guessing and started knowing.</p>
+          <h2 className="text-4xl md:text-6xl font-bold mb-6">Ready to stop worrying and start celebrating?</h2>
+          <p className="text-xl md:text-2xl mb-10 opacity-90">Join thousands of parents who've transformed their child's 11+ journey.</p>
           <Button asChild size="lg" className="bg-background text-primary hover:bg-background/90 font-semibold px-12 py-6 text-xl shadow-learning hover:shadow-glow transition-all duration-300 hover:scale-105">
             <a href="/auth">Sign Up Free</a>
           </Button>
