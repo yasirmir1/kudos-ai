@@ -115,7 +115,7 @@ const Index = () => {
       </section>
 
       {/* Dashboard Preview */}
-      <section className="py-16 px-6">
+      <section className="py-16 px-6 bg-muted/30">
         <div className="container mx-auto max-w-5xl">
           <div className="fade-on-scroll bg-background p-6 rounded-3xl shadow-card border border-border hover:shadow-learning hover:border-primary/20 transition-all duration-500 transform hover:-translate-y-2 hover:scale-105 group">
             <svg viewBox="0 0 800 500" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-full h-auto">
@@ -193,7 +193,7 @@ const Index = () => {
       </section>
 
       {/* Problem Section */}
-      <section className="py-20 px-6 bg-gradient-to-b from-background to-muted/20">
+      <section className="py-20 px-6 bg-muted/20">
         <div className="container mx-auto max-w-5xl">
           <div className="text-center mb-20">
             <h2 className="text-4xl md:text-5xl font-bold mb-6">The 11+ Challenge</h2>
@@ -221,7 +221,7 @@ const Index = () => {
       </section>
 
       {/* Core Features - The 4 Tiles */}
-      <section id="features" className="py-20 px-6">
+      <section id="features" className="py-20 px-6 bg-background">
         <div className="container mx-auto max-w-6xl">
           <div className="text-center mb-16">
             <h2 className="text-4xl md:text-5xl font-bold mb-6">Designed for 11+ success</h2>
@@ -273,7 +273,7 @@ const Index = () => {
       </section>
 
       {/* How It Works */}
-      <section id="how-it-works" className="py-20 px-6">
+      <section id="how-it-works" className="py-20 px-6 bg-muted/30">
         <div className="container mx-auto max-w-5xl">
           <div className="text-center mb-20">
             <h2 className="text-4xl md:text-5xl font-bold mb-6">From confusion to confidence in 3 steps</h2>
@@ -314,7 +314,7 @@ const Index = () => {
       <PricingSection />
 
       {/* Testimonials */}
-      <section id="testimonials" className="py-20 px-6 bg-muted/20">
+      <section id="testimonials" className="py-20 px-6 bg-muted/40">
         <div className="container mx-auto max-w-6xl">
           <div className="text-center mb-20">
             <h2 className="text-4xl md:text-5xl font-bold mb-6">Join 5,000+ successful parents</h2>
@@ -360,7 +360,7 @@ const Index = () => {
       </section>
 
       {/* Footer */}
-      <footer className="bg-card border-t border-border py-16 px-6">
+      <footer className="bg-muted/50 border-t border-border py-16 px-6">
         <div className="container mx-auto max-w-6xl">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8 mb-12">
             <div>
