@@ -607,15 +607,7 @@ const Profile = () => {
                 Control your privacy and data sharing preferences
               </CardDescription>
             </CardHeader>
-            <CardContent className="space-y-6">
-              
-
-              <div className="space-y-4">
-                
-              </div>
-
-              
-
+            <CardContent className="space-y-4">
               <div className="space-y-2">
                 <h4 className="font-medium text-foreground my-0 text-lg">Data & Account</h4>
                 <div className="flex gap-3">
