@@ -58,12 +58,7 @@ const Index = () => {
       <nav className={`fixed top-0 w-full z-50 transition-all duration-300 ${isScrolled ? 'bg-background/95 backdrop-blur-xl border-b border-border shadow-card' : 'bg-background/80 backdrop-blur-xl'}`}>
         <div className="container mx-auto px-6 h-16 flex items-center justify-between">
           <div className="flex items-center space-x-3">
-            <div className="p-2 bg-gradient-to-br from-primary to-primary-glow rounded-xl shadow-lg">
-              <img src="/lovable-uploads/409330f0-2245-4147-b837-ff553d303814.png" alt="Kudos Academy" className="h-6 w-6" />
-            </div>
-            <span className="font-bold text-xl bg-gradient-to-r from-primary via-primary-glow to-primary bg-clip-text text-transparent">
-              Kudos Academy
-            </span>
+            <img src="/lovable-uploads/41b9c44a-9030-4543-bfaa-e8cfde4832aa.png" alt="Kudos" className="h-8" />
           </div>
           <div className="hidden md:flex items-center space-x-8">
             <a href="#features" className="text-sm font-medium text-foreground hover:text-primary transition-colors">Features</a>
