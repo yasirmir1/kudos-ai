@@ -139,7 +139,7 @@ export const SubscriptionOverlay: React.FC<SubscriptionOverlayProps> = ({
                     </span>
                     <span className="text-muted-foreground">/{isAnnual ? 'year' : 'month'}</span>
                   </div>
-                  <p className="text-sm text-primary font-medium mt-2">Annual: £59/year (save 37%)</p>
+                  <p className="text-sm text-primary font-medium mt-2">Switch to Annual, save 37%</p>
                 </div>
 
                 <Button onClick={handleSubscribeClick} className="w-full mb-3 bg-primary hover:bg-primary/90 text-primary-foreground" size="lg">
