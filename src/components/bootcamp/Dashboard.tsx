@@ -4,6 +4,7 @@ import { WeeklyProgressChart } from './WeeklyProgressChart';
 import { WeeklyTestPerformanceCard } from './WeeklyTestPerformanceCard';
 import { MockTestPerformanceCard } from './MockTestPerformanceCard';
 import { LearningJourneyCard } from './LearningJourneyCard';
+import { ReviewMistakesModal } from './ReviewMistakesModal';
 import { useAuth } from '../../hooks/useAuth';
 import { BootcampAPI } from '../../lib/bootcamp-api';
 import { supabase } from '@/integrations/supabase/client';
@@ -43,6 +44,8 @@ export const Dashboard: React.FC<DashboardProps> = ({
   } = useAuth();
   const [recentTopics, setRecentTopics] = useState<RecentTopic[]>([]);
   const [loading, setLoading] = useState(true);
+  const [reviewMistakesOpen, setReviewMistakesOpen] = useState(false);
+  const [reviewMistakesTab, setReviewMistakesTab] = useState<'practice' | 'mock_test'>('practice');
 
   // Sample data for Weekly Test Performance
   const weeklyTestData = {
@@ -270,12 +273,33 @@ export const Dashboard: React.FC<DashboardProps> = ({
 
       {/* Top Performance Cards */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
-        <WeeklyTestPerformanceCard {...weeklyTestData} onStartWeeklyChallenge={() => setCurrentView('practice')} />
-        <MockTestPerformanceCard {...mockTestData} onStartMockTest={() => setCurrentView('mocktest')} />
+        <WeeklyTestPerformanceCard 
+          {...weeklyTestData} 
+          onStartWeeklyChallenge={() => setCurrentView('practice')} 
+          onReviewMistakes={() => {
+            setReviewMistakesTab('practice');
+            setReviewMistakesOpen(true);
+          }}
+        />
+        <MockTestPerformanceCard 
+          {...mockTestData} 
+          onStartMockTest={() => setCurrentView('mocktest')} 
+          onReviewMistakes={() => {
+            setReviewMistakesTab('mock_test');
+            setReviewMistakesOpen(true);
+          }}
+        />
       </div>
 
 
 
       <WeeklyProgressChart />
+
+      {/* Review Mistakes Modal */}
+      <ReviewMistakesModal 
+        open={reviewMistakesOpen}
+        onOpenChange={setReviewMistakesOpen}
+        initialTab={reviewMistakesTab}
+      />
     </div>;
 };
