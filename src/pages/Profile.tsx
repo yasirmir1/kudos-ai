@@ -611,11 +611,11 @@ const Profile = () => {
               <div className="space-y-2">
                 <h4 className="text-foreground text-xl mx-0 my-0 font-medium">Data & Account</h4>
                 <div className="flex gap-3">
-                  <Button variant="outline" className="flex items-center space-x-2 my-[20px]">
+                  <Button variant="outline" className="flex items-center space-x-2 my-[10px]">
                     <Download className="h-4 w-4" />
                     <span className="mx-[10px]">Download My Data</span>
                   </Button>
-                  <Button variant="destructive" className="flex items-center space-x-2 my-[20px] mx-[20px]">
+                  <Button variant="destructive" className="flex items-center space-x-2 mx-[20px] my-[10px]">
                     <Trash2 className="h-4 w-4" />
                     <span className="mx-[10px]">Delete Account</span>
                   </Button>
