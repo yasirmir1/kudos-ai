@@ -83,7 +83,7 @@ const PricingCard = ({ planId, name, price, originalPrice, description, features
         <Button 
           onClick={handleSubscribe}
           disabled={loading}
-          className={`w-full mb-6 ${
+          className={`w-full mb-3 ${
             isPopular 
               ? 'bg-primary hover:bg-primary/90 text-primary-foreground' 
               : 'bg-background border-2 border-primary text-primary hover:bg-primary hover:text-primary-foreground'
@@ -92,6 +92,10 @@ const PricingCard = ({ planId, name, price, originalPrice, description, features
         >
           {loading ? 'Starting...' : `Start ${trialDays}-Day Free Trial`}
         </Button>
+        
+        <p className="text-xs text-muted-foreground mb-6 text-center">
+          No credit card needed
+        </p>
 
         <div className="space-y-3 text-left">
           {features.map((feature, index) => (
