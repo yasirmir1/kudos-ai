@@ -102,7 +102,7 @@ export const SubscriptionOverlay: React.FC<SubscriptionOverlayProps> = ({
           
           {/* Center upgrade button */}
           <div className="absolute top-[80px] left-1/2 transform -translate-x-1/2 mx-[25px]">
-            <div className="relative bg-card rounded-2xl border border-primary shadow-learning scale-105 p-8 w-[532px] min-h-[500px] transition-all duration-300 hover:shadow-learning hover:-translate-y-1">
+            <div className="relative bg-card rounded-2xl border border-primary shadow-learning scale-105 p-8 w-[532px] min-h-[500px] transition-all duration-300 hover:shadow-learning hover:-translate-y-1 px-[32px]">
               
               
               <div className="text-center">
@@ -139,14 +139,14 @@ export const SubscriptionOverlay: React.FC<SubscriptionOverlayProps> = ({
                     </span>
                     <span className="text-muted-foreground">/{isAnnual ? 'year' : 'month'}</span>
                   </div>
-                  <p className="text-sm text-primary font-medium mt-2">Switch to Annual, save 37%</p>
+                  <p className="text-primary font-medium mt-2 text-xs">Switch to Annual, save 37%</p>
                 </div>
 
                 <Button onClick={handleSubscribeClick} className="w-full mb-3 bg-primary hover:bg-primary/90 text-primary-foreground" size="lg">
                   Start 30-Day Free Trial
                 </Button>
                 
-                <p className="text-sm text-muted-foreground mb-6 text-center">
+                <p className="text-sm text-muted-foreground mb-6 text-center font-medium">
                   No credit card required
                 </p>
 
@@ -154,35 +154,35 @@ export const SubscriptionOverlay: React.FC<SubscriptionOverlayProps> = ({
                   {requiredFeature === 'bootcamp' ? <>
                       <div className="flex items-start gap-3">
                         <Check className="h-5 w-5 text-primary mt-0.5 flex-shrink-0" />
-                        <span className="text-sm text-muted-foreground">Everything in Pass</span>
+                        <span className="text-muted-foreground text-base">Everything in Pass</span>
                       </div>
                       <div className="flex items-start gap-3">
                         <Check className="h-5 w-5 text-primary mt-0.5 flex-shrink-0" />
-                        <span className="text-sm text-muted-foreground">Full bootcamp curriculum</span>
+                        <span className="text-muted-foreground text-base">Full bootcamp curriculum</span>
                       </div>
                       <div className="flex items-start gap-3">
                         <Check className="h-5 w-5 text-primary mt-0.5 flex-shrink-0" />
-                        <span className="text-sm text-muted-foreground">Mock exam simulations</span>
+                        <span className="text-muted-foreground text-base">Mock exam simulations</span>
                       </div>
                       <div className="flex items-start gap-3">
                         <Check className="h-5 w-5 text-primary mt-0.5 flex-shrink-0" />
-                        <span className="text-sm text-muted-foreground">Advanced analytics & reports</span>
+                        <span className="text-muted-foreground text-base">Advanced analytics & reports</span>
                       </div>
                       <div className="flex items-start gap-3">
                         <Check className="h-5 w-5 text-primary mt-0.5 flex-shrink-0" />
-                        <span className="text-sm text-muted-foreground">Personalized study plans</span>
+                        <span className="text-muted-foreground text-base">Personalized study plans</span>
                       </div>
                       <div className="flex items-start gap-3">
                         <Check className="h-5 w-5 text-primary mt-0.5 flex-shrink-0" />
-                        <span className="text-sm text-muted-foreground">Priority support</span>
+                        <span className="text-muted-foreground text-base">Priority support</span>
                       </div>
                       <div className="flex items-start gap-3">
                         <Check className="h-5 w-5 text-primary mt-0.5 flex-shrink-0" />
-                        <span className="text-sm text-muted-foreground">Offline practice worksheets</span>
+                        <span className="text-muted-foreground text-base">Offline practice worksheets</span>
                       </div>
                       <div className="flex items-start gap-3">
                         <Check className="h-5 w-5 text-primary mt-0.5 flex-shrink-0" />
-                        <span className="text-sm text-muted-foreground">Achievement badges & rewards</span>
+                        <span className="text-muted-foreground text-base">Achievement badges & rewards</span>
                       </div>
                     </> : <>
                       <div className="flex items-start gap-3">
