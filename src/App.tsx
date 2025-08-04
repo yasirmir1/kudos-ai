@@ -1,9 +1,10 @@
+import { useEffect } from "react";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
-import { AuthProvider } from "./hooks/useAuth";
+import { AuthProvider, useAuth } from "./hooks/useAuth";
 import { AgeGroupProvider } from "./contexts/AgeGroupContext";
 import { AccessibilityProvider } from "./contexts/AccessibilityContext";
 import { PricingModalProvider, usePricingModal } from "./contexts/PricingModalContext";
@@ -24,6 +25,25 @@ import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
 
+// Session persistence tracker component
+const SessionTracker = () => {
+  const { user, session, loading } = useAuth();
+  
+  useEffect(() => {
+    // Add global data attributes to track auth state
+    const isAuthenticated = !!(user && session && !loading);
+    document.documentElement.setAttribute('data-user-authenticated', isAuthenticated.toString());
+    
+    if (user) {
+      document.documentElement.setAttribute('data-user-id', user.id);
+    } else {
+      document.documentElement.removeAttribute('data-user-id');
+    }
+  }, [user, session, loading]);
+  
+  return null;
+};
+
 // Layout component that conditionally shows navigation
 const Layout = ({ children }: { children: React.ReactNode }) => {
   const location = useLocation();
@@ -31,6 +51,7 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
   
   return (
     <div className="min-h-screen bg-gradient-to-br from-background via-background to-secondary/10">
+      <SessionTracker />
       {showNavigation && <AppNavigation />}
       {children}
       <PricingModalManager />

@@ -13,7 +13,10 @@ export const useSubscriptionState = () => {
 
   useEffect(() => {
     if (user) {
-      loadSubscriptionData();
+      // Defer subscription data loading to prevent deadlocks
+      setTimeout(() => {
+        loadSubscriptionData();
+      }, 100);
     } else {
       // Only reset state if we're truly logged out (not just a temporary state change)
       const timeoutId = setTimeout(() => {
@@ -23,7 +26,7 @@ export const useSubscriptionState = () => {
           setTrialDaysRemaining(0);
           setLoading(false);
         }
-      }, 100); // Small delay to prevent state reset during navigation
+      }, 500); // Increased delay to prevent premature resets during navigation
       
       return () => clearTimeout(timeoutId);
     }
