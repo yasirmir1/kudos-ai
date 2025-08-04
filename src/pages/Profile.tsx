@@ -16,10 +16,8 @@ import { ResetProgressModal } from '@/components/ResetProgressModal';
 import { useAgeGroup, updateAgeGroupFromProfile } from '@/contexts/AgeGroupContext';
 import { AgeGroupSelector } from '@/components/AgeGroupSelector';
 import { useAccessibility } from '@/contexts/AccessibilityContext';
-
 type AgeGroup = '11+';
 type DatabaseAgeGroup = 'year 2-3' | 'year 4-5' | '11+';
-
 interface Profile {
   id: string;
   email: string;
@@ -28,14 +26,22 @@ interface Profile {
   target_exam_date: string | null;
   created_at: string;
 }
-
 const Profile = () => {
-  const { user, signOut } = useAuth();
-  const { selectedAgeGroup } = useAgeGroup();
-  const { settings: accessibilitySettings, updateSetting: updateAccessibilitySetting } = useAccessibility();
+  const {
+    user,
+    signOut
+  } = useAuth();
+  const {
+    selectedAgeGroup
+  } = useAgeGroup();
+  const {
+    settings: accessibilitySettings,
+    updateSetting: updateAccessibilitySetting
+  } = useAccessibility();
   const navigate = useNavigate();
-  const { toast } = useToast();
-  
+  const {
+    toast
+  } = useToast();
   const [profile, setProfile] = useState<Profile | null>(null);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -66,25 +72,16 @@ const Profile = () => {
     emailUpdates: true,
     reminderTime: '16:00'
   });
-
   const [privacySettings, setPrivacySettings] = useState({
     shareProgress: 'parents',
     allowChallenges: true
   });
-
   const subscription = {
     plan: 'Premium',
     price: '£9.99/month',
     nextBilling: '2024-02-15',
-    features: [
-      'Unlimited practice questions',
-      'Detailed progress analytics',
-      'Video tutorials',
-      'Parent dashboard',
-      'Priority support'
-    ]
+    features: ['Unlimited practice questions', 'Detailed progress analytics', 'Video tutorials', 'Parent dashboard', 'Priority support']
   };
-
   useEffect(() => {
     if (user) {
       loadProfile();
@@ -94,23 +91,22 @@ const Profile = () => {
   // Sync with age group context
   useEffect(() => {
     if (selectedAgeGroup && formData.age_group !== selectedAgeGroup) {
-      setFormData(prev => ({ ...prev, age_group: selectedAgeGroup as AgeGroup }));
+      setFormData(prev => ({
+        ...prev,
+        age_group: selectedAgeGroup as AgeGroup
+      }));
     }
   }, [selectedAgeGroup]);
-
   const loadProfile = async () => {
     try {
-      const { data, error } = await supabase
-        .from('student_profiles')
-        .select('*')
-        .eq('id', user?.id)
-        .maybeSingle();
-
+      const {
+        data,
+        error
+      } = await supabase.from('student_profiles').select('*').eq('id', user?.id).maybeSingle();
       if (error && error.code !== 'PGRST116') {
         console.error('Error loading profile:', error);
         return;
       }
-
       if (data) {
         setProfile(data);
         setFormData({
@@ -120,16 +116,14 @@ const Profile = () => {
         });
       } else {
         // Create profile if it doesn't exist
-        const { data: newProfile, error: createError } = await supabase
-          .from('student_profiles')
-          .insert({
-            id: user?.id,
-            email: user?.email || '',
-            current_level: 'beginner'
-          })
-          .select()
-          .single();
-
+        const {
+          data: newProfile,
+          error: createError
+        } = await supabase.from('student_profiles').insert({
+          id: user?.id,
+          email: user?.email || '',
+          current_level: 'beginner'
+        }).select().single();
         if (createError) {
           console.error('Error creating profile:', createError);
         } else {
@@ -142,21 +136,17 @@ const Profile = () => {
       setLoading(false);
     }
   };
-
   const handleSaveProfile = async () => {
     if (!user || !profile) return;
-
     setSaving(true);
     try {
-      const { error } = await supabase
-        .from('student_profiles')
-        .update({
-          current_level: formData.current_level,
-          age_group: formData.age_group,
-          target_exam_date: formData.target_exam_date || null
-        })
-        .eq('id', user.id);
-
+      const {
+        error
+      } = await supabase.from('student_profiles').update({
+        current_level: formData.current_level,
+        age_group: formData.age_group,
+        target_exam_date: formData.target_exam_date || null
+      }).eq('id', user.id);
       if (error) {
         throw error;
       }
@@ -165,10 +155,9 @@ const Profile = () => {
       if (formData.age_group !== profile.age_group) {
         updateAgeGroupFromProfile(formData.age_group);
       }
-
       toast({
         title: "Profile updated",
-        description: "Your profile has been saved successfully.",
+        description: "Your profile has been saved successfully."
       });
 
       // Reload profile to get updated data
@@ -178,31 +167,25 @@ const Profile = () => {
       toast({
         title: "Error",
         description: "Failed to save profile. Please try again.",
-        variant: "destructive",
+        variant: "destructive"
       });
     } finally {
       setSaving(false);
     }
   };
-
   const handleSignOut = async () => {
     await signOut();
     navigate('/auth');
   };
-
   if (loading) {
-    return (
-      <div className="min-h-screen bg-background flex items-center justify-center">
+    return <div className="min-h-screen bg-background flex items-center justify-center">
         <div className="text-center space-y-2">
           <User className="h-8 w-8 mx-auto animate-pulse text-primary" />
           <p className="text-muted-foreground">Loading profile...</p>
         </div>
-      </div>
-    );
+      </div>;
   }
-
-  return (
-    <div className="min-h-screen bg-background">
+  return <div className="min-h-screen bg-background">
       {/* Header with Sign Out Button */}
       <div className="border-b bg-card">
         <div className="container mx-auto px-4 py-4">
@@ -255,13 +238,7 @@ const Profile = () => {
               <CardContent className="space-y-4">
                 <div className="space-y-2">
                   <Label htmlFor="email">Email Address</Label>
-                  <Input
-                    id="email"
-                    type="email"
-                    value={user?.email || ''}
-                    disabled
-                    className="bg-muted"
-                  />
+                  <Input id="email" type="email" value={user?.email || ''} disabled className="bg-muted" />
                   <p className="text-xs text-muted-foreground">
                     Email cannot be changed from this interface
                   </p>
@@ -269,10 +246,10 @@ const Profile = () => {
 
                 <div className="space-y-2">
                   <Label htmlFor="level">Current Level</Label>
-                  <Select 
-                    value={formData.current_level} 
-                    onValueChange={(value) => setFormData(prev => ({ ...prev, current_level: value }))}
-                  >
+                  <Select value={formData.current_level} onValueChange={value => setFormData(prev => ({
+                  ...prev,
+                  current_level: value
+                }))}>
                     <SelectTrigger>
                       <SelectValue placeholder="Select your current level" />
                     </SelectTrigger>
@@ -304,12 +281,10 @@ const Profile = () => {
 
                 <div className="space-y-2">
                   <Label htmlFor="exam-date">Target Exam Date</Label>
-                  <Input
-                    id="exam-date"
-                    type="date"
-                    value={formData.target_exam_date}
-                    onChange={(e) => setFormData(prev => ({ ...prev, target_exam_date: e.target.value }))}
-                  />
+                  <Input id="exam-date" type="date" value={formData.target_exam_date} onChange={e => setFormData(prev => ({
+                  ...prev,
+                  target_exam_date: e.target.value
+                }))} />
                   <p className="text-xs text-muted-foreground">
                     Optional: Set your target exam date to help personalize your learning plan
                   </p>
@@ -336,10 +311,10 @@ const Profile = () => {
                   <span className="text-muted-foreground">Member since</span>
                   <span className="font-medium">
                     {user?.created_at ? new Date(user.created_at).toLocaleDateString('en-GB', {
-                      year: 'numeric',
-                      month: 'long',
-                      day: 'numeric'
-                    }) : 'N/A'}
+                    year: 'numeric',
+                    month: 'long',
+                    day: 'numeric'
+                  }) : 'N/A'}
                   </span>
                 </div>
                 <div className="flex justify-between py-2 border-b">
@@ -391,7 +366,10 @@ const Profile = () => {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="space-y-2">
                     <Label>Difficulty Level</Label>
-                    <Select value={learningSettings.difficultyLevel} onValueChange={(value) => setLearningSettings(prev => ({ ...prev, difficultyLevel: value }))}>
+                    <Select value={learningSettings.difficultyLevel} onValueChange={value => setLearningSettings(prev => ({
+                    ...prev,
+                    difficultyLevel: value
+                  }))}>
                       <SelectTrigger>
                         <SelectValue />
                       </SelectTrigger>
@@ -406,7 +384,10 @@ const Profile = () => {
 
                   <div className="space-y-2">
                     <Label>Daily Practice Goal</Label>
-                    <Select value={learningSettings.practiceGoal.toString()} onValueChange={(value) => setLearningSettings(prev => ({ ...prev, practiceGoal: parseInt(value) }))}>
+                    <Select value={learningSettings.practiceGoal.toString()} onValueChange={value => setLearningSettings(prev => ({
+                    ...prev,
+                    practiceGoal: parseInt(value)
+                  }))}>
                       <SelectTrigger>
                         <SelectValue />
                       </SelectTrigger>
@@ -426,10 +407,10 @@ const Profile = () => {
                       <Label>Show Hints</Label>
                       <p className="text-sm text-muted-foreground">Get helpful hints when you're stuck</p>
                     </div>
-                    <Switch
-                      checked={learningSettings.showHints}
-                      onCheckedChange={(checked) => setLearningSettings(prev => ({ ...prev, showHints: checked }))}
-                    />
+                    <Switch checked={learningSettings.showHints} onCheckedChange={checked => setLearningSettings(prev => ({
+                    ...prev,
+                    showHints: checked
+                  }))} />
                   </div>
 
                   <div className="flex items-center justify-between">
@@ -437,10 +418,10 @@ const Profile = () => {
                       <Label>Audio Feedback</Label>
                       <p className="text-sm text-muted-foreground">Play sounds for correct/incorrect answers</p>
                     </div>
-                    <Switch
-                      checked={learningSettings.audioFeedback}
-                      onCheckedChange={(checked) => setLearningSettings(prev => ({ ...prev, audioFeedback: checked }))}
-                    />
+                    <Switch checked={learningSettings.audioFeedback} onCheckedChange={checked => setLearningSettings(prev => ({
+                    ...prev,
+                    audioFeedback: checked
+                  }))} />
                   </div>
                 </div>
 
@@ -451,10 +432,7 @@ const Profile = () => {
                   
                   <div className="space-y-2">
                     <Label>Font Size</Label>
-                    <Select 
-                      value={accessibilitySettings.fontSize} 
-                      onValueChange={(value: any) => updateAccessibilitySetting('fontSize', value)}
-                    >
+                    <Select value={accessibilitySettings.fontSize} onValueChange={(value: any) => updateAccessibilitySetting('fontSize', value)}>
                       <SelectTrigger>
                         <SelectValue />
                       </SelectTrigger>
@@ -472,10 +450,7 @@ const Profile = () => {
                       <Label>Dyslexia-Friendly Font</Label>
                       <p className="text-sm text-muted-foreground">Use OpenDyslexic font for better readability</p>
                     </div>
-                    <Switch
-                      checked={accessibilitySettings.dyslexiaFont}
-                      onCheckedChange={(checked) => updateAccessibilitySetting('dyslexiaFont', checked)}
-                    />
+                    <Switch checked={accessibilitySettings.dyslexiaFont} onCheckedChange={checked => updateAccessibilitySetting('dyslexiaFont', checked)} />
                   </div>
 
                   <div className="flex items-center justify-between">
@@ -483,10 +458,7 @@ const Profile = () => {
                       <Label>High Contrast Mode</Label>
                       <p className="text-sm text-muted-foreground">Increase contrast for better visibility</p>
                     </div>
-                    <Switch
-                      checked={accessibilitySettings.highContrast}
-                      onCheckedChange={(checked) => updateAccessibilitySetting('highContrast', checked)}
-                    />
+                    <Switch checked={accessibilitySettings.highContrast} onCheckedChange={checked => updateAccessibilitySetting('highContrast', checked)} />
                   </div>
                 </div>
               </CardContent>
@@ -510,10 +482,10 @@ const Profile = () => {
                   <Label>Practice Reminders</Label>
                   <p className="text-sm text-muted-foreground">Get notified when it's time to practice</p>
                 </div>
-                <Switch
-                  checked={learningSettings.practiceReminders}
-                  onCheckedChange={(checked) => setLearningSettings(prev => ({ ...prev, practiceReminders: checked }))}
-                />
+                <Switch checked={learningSettings.practiceReminders} onCheckedChange={checked => setLearningSettings(prev => ({
+                  ...prev,
+                  practiceReminders: checked
+                }))} />
               </div>
 
               <div className="flex items-center justify-between">
@@ -521,10 +493,10 @@ const Profile = () => {
                   <Label>Achievement Alerts</Label>
                   <p className="text-sm text-muted-foreground">Celebrate when you unlock achievements</p>
                 </div>
-                <Switch
-                  checked={learningSettings.achievementAlerts}
-                  onCheckedChange={(checked) => setLearningSettings(prev => ({ ...prev, achievementAlerts: checked }))}
-                />
+                <Switch checked={learningSettings.achievementAlerts} onCheckedChange={checked => setLearningSettings(prev => ({
+                  ...prev,
+                  achievementAlerts: checked
+                }))} />
               </div>
 
               <div className="flex items-center justify-between">
@@ -532,10 +504,10 @@ const Profile = () => {
                   <Label>Weekly Reports</Label>
                   <p className="text-sm text-muted-foreground">Summary of your weekly progress</p>
                 </div>
-                <Switch
-                  checked={learningSettings.weeklyReports}
-                  onCheckedChange={(checked) => setLearningSettings(prev => ({ ...prev, weeklyReports: checked }))}
-                />
+                <Switch checked={learningSettings.weeklyReports} onCheckedChange={checked => setLearningSettings(prev => ({
+                  ...prev,
+                  weeklyReports: checked
+                }))} />
               </div>
 
               <div className="flex items-center justify-between">
@@ -543,29 +515,26 @@ const Profile = () => {
                   <Label>Email Updates</Label>
                   <p className="text-sm text-muted-foreground">Important updates via email</p>
                 </div>
-                <Switch
-                  checked={learningSettings.emailUpdates}
-                  onCheckedChange={(checked) => setLearningSettings(prev => ({ ...prev, emailUpdates: checked }))}
-                />
+                <Switch checked={learningSettings.emailUpdates} onCheckedChange={checked => setLearningSettings(prev => ({
+                  ...prev,
+                  emailUpdates: checked
+                }))} />
               </div>
 
-              {learningSettings.practiceReminders && (
-                <>
+              {learningSettings.practiceReminders && <>
                   <Separator />
                   <div className="space-y-4">
                     <h4 className="font-medium text-foreground">Reminder Schedule</h4>
                     
                     <div className="space-y-2">
                       <Label>Reminder Time</Label>
-                      <Input
-                        type="time"
-                        value={learningSettings.reminderTime}
-                        onChange={(e) => setLearningSettings(prev => ({ ...prev, reminderTime: e.target.value }))}
-                      />
+                      <Input type="time" value={learningSettings.reminderTime} onChange={e => setLearningSettings(prev => ({
+                      ...prev,
+                      reminderTime: e.target.value
+                    }))} />
                     </div>
                   </div>
-                </>
-              )}
+                </>}
             </CardContent>
             </Card>
           </TabsContent>
@@ -601,12 +570,10 @@ const Profile = () => {
                   <div className="space-y-2">
                     <h5 className="font-medium text-foreground">Plan Features:</h5>
                     <ul className="space-y-1">
-                      {subscription.features.map((feature, index) => (
-                        <li key={index} className="flex items-center space-x-2 text-sm">
+                      {subscription.features.map((feature, index) => <li key={index} className="flex items-center space-x-2 text-sm">
                           <Check className="h-3 w-3 text-green-600" />
                           <span>{feature}</span>
-                        </li>
-                      ))}
+                        </li>)}
                     </ul>
                   </div>
                 </div>
@@ -641,38 +608,16 @@ const Profile = () => {
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-6">
-              <div className="space-y-2">
-                <Label>Share Progress With</Label>
-                <Select value={privacySettings.shareProgress} onValueChange={(value) => setPrivacySettings(prev => ({ ...prev, shareProgress: value }))}>
-                  <SelectTrigger>
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="none">No One</SelectItem>
-                    <SelectItem value="parents">Parents Only</SelectItem>
-                    <SelectItem value="friends">Friends</SelectItem>
-                    <SelectItem value="everyone">Everyone</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
+              
 
               <div className="space-y-4">
-                <div className="flex items-center justify-between">
-                  <div className="space-y-0.5">
-                    <Label>Allow Challenges</Label>
-                    <p className="text-sm text-muted-foreground">Let friends challenge you to practice battles</p>
-                  </div>
-                  <Switch
-                    checked={privacySettings.allowChallenges}
-                    onCheckedChange={(checked) => setPrivacySettings(prev => ({ ...prev, allowChallenges: checked }))}
-                  />
-                </div>
+                
               </div>
 
-              <Separator />
+              
 
               <div className="space-y-4">
-                <h4 className="font-medium text-foreground">Data & Account</h4>
+                <h4 className="font-medium text-foreground my-0 text-lg">Data & Account</h4>
                 <div className="space-y-3">
                   <Button variant="outline" className="flex items-center space-x-2">
                     <Download className="h-4 w-4" />
@@ -700,8 +645,6 @@ const Profile = () => {
           </TabsContent>
         </Tabs>
       </div>
-    </div>
-  );
+    </div>;
 };
-
 export default Profile;
