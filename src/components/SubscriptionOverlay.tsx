@@ -1,6 +1,7 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
+import { Switch } from '@/components/ui/switch';
 import { useSubscriptionState } from '@/hooks/useSubscriptionState';
 import { usePricingModal } from '@/contexts/PricingModalContext';
 import { Clock, Crown, Check, Star } from 'lucide-react';
@@ -15,6 +16,8 @@ export const SubscriptionOverlay: React.FC<SubscriptionOverlayProps> = ({
   children, 
   requiredFeature 
 }) => {
+  const [isAnnual, setIsAnnual] = useState(false);
+  
   const { 
     userState, 
     loading, 
@@ -30,7 +33,9 @@ export const SubscriptionOverlay: React.FC<SubscriptionOverlayProps> = ({
     e.stopPropagation(); // Prevent the overlay click from triggering
     
     try {
-      const planId = requiredFeature === 'bootcamp' ? 'pass_plus_monthly' : 'pass_monthly';
+      const planId = requiredFeature === 'bootcamp' 
+        ? (isAnnual ? 'pass_plus_annual' : 'pass_plus_monthly')
+        : (isAnnual ? 'pass_annual' : 'pass_monthly');
       const { url, error } = await createCheckoutSession(planId);
       
       if (error) {
@@ -120,7 +125,7 @@ export const SubscriptionOverlay: React.FC<SubscriptionOverlayProps> = ({
           
           {/* Center upgrade button */}
           <div className="absolute top-[80px] left-1/2 transform -translate-x-1/2">
-            <div className="relative bg-card rounded-2xl border border-primary shadow-learning scale-105 p-12 max-w-2xl w-[800px] min-h-[600px] transition-all duration-300 hover:shadow-learning hover:-translate-y-1">
+            <div className="relative bg-card rounded-2xl border border-primary shadow-learning scale-105 p-8 max-w-lg min-h-[500px] transition-all duration-300 hover:shadow-learning hover:-translate-y-1">
               <Badge className="absolute -top-3 left-1/2 transform -translate-x-1/2 bg-primary text-primary-foreground px-4 py-1">
                 <Star className="h-3 w-3 mr-1" />
                 {requiredFeature === 'bootcamp' ? 'Most Popular' : 'Upgrade Required'}
@@ -139,10 +144,42 @@ export const SubscriptionOverlay: React.FC<SubscriptionOverlayProps> = ({
                   {requiredFeature === 'bootcamp' ? 'Complete 11+ preparation' : 'Perfect for focused practice'}
                 </p>
                 
+                <div className="flex items-center justify-center gap-4 mb-4">
+                  <span className={`text-sm font-medium ${!isAnnual ? 'text-foreground' : 'text-muted-foreground'}`}>
+                    Monthly
+                  </span>
+                  <Switch
+                    checked={isAnnual}
+                    onCheckedChange={setIsAnnual}
+                    className="data-[state=checked]:bg-primary"
+                  />
+                  <span className={`text-sm font-medium ${isAnnual ? 'text-foreground' : 'text-muted-foreground'}`}>
+                    Annual
+                  </span>
+                </div>
+                
+                {isAnnual && (
+                  <div className="flex justify-center mb-2">
+                    <Badge variant="secondary" className="bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200">
+                      Save up to 45%
+                    </Badge>
+                  </div>
+                )}
+                
                 <div className="mb-6">
                   <div className="flex items-baseline justify-center gap-2">
-                    <span className="text-4xl font-bold">£{requiredFeature === 'bootcamp' ? '15' : '8'}</span>
-                    <span className="text-muted-foreground">/month</span>
+                    {isAnnual && (
+                      <span className="text-lg text-muted-foreground line-through">
+                        £{requiredFeature === 'bootcamp' ? '180' : '96'}
+                      </span>
+                    )}
+                    <span className="text-4xl font-bold">
+                      £{isAnnual 
+                        ? (requiredFeature === 'bootcamp' ? '99' : '59') 
+                        : (requiredFeature === 'bootcamp' ? '15' : '8')
+                      }
+                    </span>
+                    <span className="text-muted-foreground">/{isAnnual ? 'year' : 'month'}</span>
                   </div>
                   <p className="text-sm text-primary font-medium mt-2">
                     30-day free trial
