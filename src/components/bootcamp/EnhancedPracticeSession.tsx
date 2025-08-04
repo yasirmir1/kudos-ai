@@ -249,6 +249,7 @@ export const EnhancedPracticeSession: React.FC = () => {
     }
   }, [currentQuestion, question]);
 
+
   const submitResponse = async (questionId: string, selectedOption: string, timeTaken: number) => {
     if (!user || !sessionData) return;
     
@@ -383,6 +384,20 @@ export const EnhancedPracticeSession: React.FC = () => {
     if (option.id === selectedAnswer && !option.isCorrect) return 'border-destructive bg-destructive/10';
     return 'border-border';
   };
+
+  // Handle keyboard navigation - Enter to go to next question
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      // Only handle Enter key when feedback is shown (ready to move to next)
+      if (e.key === 'Enter' && showFeedback) {
+        e.preventDefault();
+        handleNext();
+      }
+    };
+
+    document.addEventListener('keydown', handleKeyDown);
+    return () => document.removeEventListener('keydown', handleKeyDown);
+  }, [showFeedback, handleNext]);
 
   if (loading) {
     return (
