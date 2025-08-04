@@ -616,9 +616,9 @@ const Profile = () => {
 
               
 
-              <div className="space-y-4">
+              <div className="space-y-2">
                 <h4 className="font-medium text-foreground my-0 text-lg">Data & Account</h4>
-                <div className="space-y-3">
+                <div className="flex gap-3">
                   <Button variant="outline" className="flex items-center space-x-2">
                     <Download className="h-4 w-4" />
                     <span>Download My Data</span>
