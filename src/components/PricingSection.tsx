@@ -178,7 +178,7 @@ export const PricingSection = () => {
           
           <div className="flex justify-center mb-8">
             <Badge variant="secondary" className="bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200">
-              Save upto 45%
+              Save up to 45% with Annual
             </Badge>
           </div>
           
