@@ -15,10 +15,17 @@ export const useSubscriptionState = () => {
     if (user) {
       loadSubscriptionData();
     } else {
-      setUserState('no_access');
-      setIsTrialActive(false);
-      setTrialDaysRemaining(0);
-      setLoading(false);
+      // Only reset state if we're truly logged out (not just a temporary state change)
+      const timeoutId = setTimeout(() => {
+        if (!user) {
+          setUserState('no_access');
+          setIsTrialActive(false);
+          setTrialDaysRemaining(0);
+          setLoading(false);
+        }
+      }, 100); // Small delay to prevent state reset during navigation
+      
+      return () => clearTimeout(timeoutId);
     }
   }, [user]);
 
