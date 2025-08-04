@@ -162,7 +162,7 @@ export const PricingSection = () => {
             Start your 30-day free trial today. No credit card required.
           </p>
           
-          <div className="flex items-center justify-center gap-4 mb-8">
+          <div className="flex items-center justify-center gap-4 mb-4">
             <span className={`text-sm font-medium ${!isAnnual ? 'text-foreground' : 'text-muted-foreground'}`}>
               Monthly
             </span>
@@ -174,11 +174,12 @@ export const PricingSection = () => {
             <span className={`text-sm font-medium ${isAnnual ? 'text-foreground' : 'text-muted-foreground'}`}>
               Annual
             </span>
-            {isAnnual && (
-              <Badge variant="secondary" className="ml-2 bg-success/10 text-success">
-                Save upto 45%
-              </Badge>
-            )}
+          </div>
+          
+          <div className="flex justify-center mb-8">
+            <Badge variant="secondary" className="bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200">
+              Save upto 45%
+            </Badge>
           </div>
           
           <div className="inline-flex items-center gap-2 bg-success/10 text-success px-4 py-2 rounded-full text-sm font-medium">
