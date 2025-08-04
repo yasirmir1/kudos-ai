@@ -7,10 +7,9 @@ const corsHeaders = {
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
 };
 
-// Helper logging function for enhanced debugging
 const logStep = (step: string, details?: any) => {
   const detailsStr = details ? ` - ${JSON.stringify(details)}` : '';
-  console.log(`[CREATE-CHECKOUT] ${step}${detailsStr}`);
+  console.log(`[CREATE-SETUP-INTENT] ${step}${detailsStr}`);
 };
 
 serve(async (req) => {
@@ -18,7 +17,6 @@ serve(async (req) => {
     return new Response(null, { headers: corsHeaders });
   }
 
-  // Create a Supabase client using the anon key for authentication
   const supabaseClient = createClient(
     Deno.env.get("SUPABASE_URL") ?? "",
     Deno.env.get("SUPABASE_ANON_KEY") ?? ""
@@ -42,11 +40,6 @@ serve(async (req) => {
     if (!user?.email) throw new Error("User not authenticated or email not available");
     logStep("User authenticated", { userId: user.id, email: user.email });
 
-    // Parse request body to get plan details
-    const { planId } = await req.json();
-    if (!planId) throw new Error("Plan ID is required");
-    logStep("Plan ID received", { planId });
-
     const stripe = new Stripe(stripeKey, { apiVersion: "2023-10-16" });
     
     // Check if customer exists
@@ -56,57 +49,36 @@ serve(async (req) => {
       customerId = customers.data[0].id;
       logStep("Found existing customer", { customerId });
     } else {
-      logStep("No existing customer found");
+      // Create customer if doesn't exist
+      const customer = await stripe.customers.create({
+        email: user.email,
+        metadata: {
+          user_id: user.id
+        }
+      });
+      customerId = customer.id;
+      logStep("Created new customer", { customerId });
     }
 
-    // Define plan pricing
-    const planPricing = {
-      'pass': { amount: 799, name: 'Pass - Monthly' },
-      'pass_plus': { amount: 1499, name: 'Pass Plus - Monthly' }
-    };
-
-    const selectedPlan = planPricing[planId as keyof typeof planPricing];
-    if (!selectedPlan) throw new Error("Invalid plan ID");
-    logStep("Plan pricing determined", selectedPlan);
-
-    const origin = req.headers.get("origin") || "http://localhost:3000";
-    
-    const session = await stripe.checkout.sessions.create({
+    // Create SetupIntent for future payments
+    const setupIntent = await stripe.setupIntents.create({
       customer: customerId,
-      customer_email: customerId ? undefined : user.email,
-      line_items: [
-        {
-          price_data: {
-            currency: "gbp",
-            product_data: { name: selectedPlan.name },
-            unit_amount: selectedPlan.amount,
-            recurring: { interval: "month" },
-          },
-          quantity: 1,
-        },
-      ],
-      mode: "subscription",
-      subscription_data: {
-        trial_period_days: 14, // 14-day free trial
-        trial_settings: {
-          end_behavior: {
-            missing_payment_method: "create_invoice"
-          }
-        }
-      },
-      success_url: `${origin}/pricing?success=true`,
-      cancel_url: `${origin}/pricing?canceled=true`,
+      usage: 'off_session',
+      payment_method_types: ['card'],
     });
 
-    logStep("Checkout session created", { sessionId: session.id, url: session.url });
+    logStep("SetupIntent created", { setupIntentId: setupIntent.id, clientSecret: setupIntent.client_secret });
 
-    return new Response(JSON.stringify({ url: session.url }), {
+    return new Response(JSON.stringify({ 
+      client_secret: setupIntent.client_secret,
+      customer_id: customerId 
+    }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
       status: 200,
     });
   } catch (error) {
     const errorMessage = error instanceof Error ? error.message : String(error);
-    logStep("ERROR in create-checkout", { message: errorMessage });
+    logStep("ERROR in create-setup-intent", { message: errorMessage });
     return new Response(JSON.stringify({ error: errorMessage }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
       status: 500,
