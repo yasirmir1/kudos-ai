@@ -87,7 +87,7 @@ serve(async (req) => {
       ],
       mode: "subscription",
       subscription_data: {
-        trial_period_days: 14, // 14-day free trial
+        trial_period_days: 30, // 30-day free trial
         trial_settings: {
           end_behavior: {
             missing_payment_method: "create_invoice"
