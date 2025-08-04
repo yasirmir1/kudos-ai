@@ -74,6 +74,7 @@ serve(async (req) => {
     const session = await stripe.checkout.sessions.create({
       customer: customerId,
       customer_email: customerId ? undefined : user.email,
+      payment_method_collection: 'if_required', // Only collect payment if trial ends without payment method
       line_items: [
         {
           price_data: {
