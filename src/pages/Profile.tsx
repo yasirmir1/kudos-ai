@@ -151,7 +151,7 @@ const Profile = () => {
   const handleUpgradePlan = async () => {
     if (userState === 'pass') {
       // Upgrade from Pass to Pass Plus
-      const result = await createCheckoutSession('pass_plus');
+      const result = await createCheckoutSession('pass_plus_monthly');
       if (result.url) {
         window.open(result.url, '_blank');
       } else {

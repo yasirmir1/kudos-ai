@@ -30,7 +30,7 @@ export const SubscriptionOverlay: React.FC<SubscriptionOverlayProps> = ({
     e.stopPropagation(); // Prevent the overlay click from triggering
     
     try {
-      const planId = requiredFeature === 'bootcamp' ? 'pass_plus' : 'pass';
+      const planId = requiredFeature === 'bootcamp' ? 'pass_plus_monthly' : 'pass_monthly';
       const { url, error } = await createCheckoutSession(planId);
       
       if (error) {

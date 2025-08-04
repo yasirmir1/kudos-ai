@@ -55,16 +55,22 @@ const Pricing = () => {
       window.history.replaceState({}, document.title, window.location.pathname);
     }
   }, [refetch]);
-  const handleGetStarted = async (planId: string) => {
+  const handleGetStarted = async (planId: string, isAnnual: boolean = false) => {
     if (!user) {
       navigate('/auth');
       return;
     }
-    setCheckingOut(planId);
+    
+    // Map plan ID to include billing period
+    const actualPlanId = planId === 'pass' 
+      ? (isAnnual ? 'pass_annual' : 'pass_monthly')
+      : planId === 'pass_plus'
+        ? (isAnnual ? 'pass_plus_annual' : 'pass_plus_monthly') 
+        : planId;
+    
+    setCheckingOut(actualPlanId);
     try {
-      const {
-        url
-      } = await createCheckoutSession(planId);
+      const { url } = await createCheckoutSession(actualPlanId);
       // Open Stripe checkout in a new tab
       window.open(url, '_blank');
     } catch (error) {
@@ -74,14 +80,22 @@ const Pricing = () => {
       setCheckingOut(null);
     }
   };
-  const handleStartTrial = async (planId: string) => {
+  const handleStartTrial = async (planId: string, isAnnual: boolean = false) => {
     if (!user) {
       navigate('/auth');
       return;
     }
-    setStartingTrial(planId);
+    
+    // Map plan ID to include billing period for trial
+    const actualPlanId = planId === 'pass' 
+      ? (isAnnual ? 'pass_annual' : 'pass_monthly')
+      : planId === 'pass_plus'
+        ? (isAnnual ? 'pass_plus_annual' : 'pass_plus_monthly') 
+        : planId;
+    
+    setStartingTrial(actualPlanId);
     try {
-      const result = (await startTrial(planId)) as unknown as TrialResult;
+      const result = (await startTrial(actualPlanId)) as unknown as TrialResult;
       if (result.success) {
         toast.success(`${result.trial_days}-day trial started successfully!`);
       } else {
@@ -303,7 +317,7 @@ const Pricing = () => {
                             Renews {formatDate(userSub.subscription_end_date)}
                           </p>}
                         {/* Show upgrade option for trial users */}
-                        {isCurrentTrialActive && <Button className="w-full py-3 font-semibold text-sm rounded-full transition-all duration-200 hover:scale-[1.02]" variant="outline" onClick={() => handleGetStarted(plan.id)} disabled={checkingOut === plan.id}>
+                        {isCurrentTrialActive && <Button className="w-full py-3 font-semibold text-sm rounded-full transition-all duration-200 hover:scale-[1.02]" variant="outline" onClick={() => handleGetStarted(plan.id, isAnnual)} disabled={checkingOut === plan.id}>
                             {checkingOut === plan.id ? <div className="flex items-center">
                                 <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-current mr-2"></div>
                                 Upgrading...
@@ -314,7 +328,7 @@ const Pricing = () => {
                           </Button>}
                       </div> : <div className="space-y-4">
                         {/* Trial button */}
-                        {!hasUsedTrialForPlan && <Button className="w-full py-4 font-semibold text-lg rounded-full transition-all duration-200 hover:scale-[1.02]" variant="default" onClick={() => handleStartTrial(plan.id)} disabled={startingTrial === plan.id}>
+                        {!hasUsedTrialForPlan && <Button className="w-full py-4 font-semibold text-lg rounded-full transition-all duration-200 hover:scale-[1.02]" variant="default" onClick={() => handleStartTrial(plan.id, isAnnual)} disabled={startingTrial === plan.id}>
                             {startingTrial === plan.id ? <div className="flex items-center">
                                 <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-current mr-2"></div>
                                 Starting Trial...
@@ -322,7 +336,7 @@ const Pricing = () => {
                           </Button>}
                         
                         {/* Paid subscription button */}
-                        <Button className="w-full py-4 font-semibold text-lg rounded-full transition-all duration-200 hover:scale-[1.02]" variant={hasUsedTrialForPlan ? "default" : "outline"} onClick={() => handleGetStarted(plan.id)} disabled={checkingOut === plan.id}>
+                        <Button className="w-full py-4 font-semibold text-lg rounded-full transition-all duration-200 hover:scale-[1.02]" variant={hasUsedTrialForPlan ? "default" : "outline"} onClick={() => handleGetStarted(plan.id, isAnnual)} disabled={checkingOut === plan.id}>
                           {checkingOut === plan.id ? <div className="flex items-center">
                               <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-current mr-2"></div>
                               Opening Checkout...

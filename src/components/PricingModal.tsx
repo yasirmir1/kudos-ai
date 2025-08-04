@@ -24,9 +24,16 @@ export const PricingModal: React.FC<PricingModalProps> = ({
   const { createCheckoutSession, startTrial, userState } = useSubscriptionState();
 
   const handlePlanSelect = async (planId: string) => {
-    if (userState === 'no_access' && planId !== 'trial') {
+    // Determine actual plan ID based on annual toggle
+    const actualPlanId = planId === 'pass' 
+      ? (isAnnual ? 'pass_annual' : 'pass_monthly')
+      : planId === 'pass_plus'
+        ? (isAnnual ? 'pass_plus_annual' : 'pass_plus_monthly')
+        : planId;
+
+    if (userState === 'no_access' && actualPlanId !== 'trial') {
       // Start trial first for new users
-      const trialResult = await startTrial(planId);
+      const trialResult = await startTrial(actualPlanId);
       if (trialResult.success) {
         onClose();
         return;
@@ -34,7 +41,7 @@ export const PricingModal: React.FC<PricingModalProps> = ({
     }
 
     try {
-      const data = await createCheckoutSession(planId);
+      const data = await createCheckoutSession(actualPlanId);
       if (data?.url) {
         window.open(data.url, '_blank');
         onClose();

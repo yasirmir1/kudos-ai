@@ -48,11 +48,11 @@ export const AppNavigation: React.FC<AppNavigationProps> = ({
   const shouldShowUpgrade = isTrialExpired || (userState === 'pass' && isBootcampRoute);
 
   const handleUpgradeClick = () => {
-    const planId = isBootcampRoute ? 'pass_plus' : 'pass';
+    const planId = isBootcampRoute ? 'pass_plus_monthly' : 'pass_monthly';
     const feature = isBootcampRoute ? 'bootcamp' : 'daily_mode';
     
     openPricingModal({
-      highlightPlan: planId,
+      highlightPlan: isBootcampRoute ? 'pass_plus' : 'pass',
       requiredFeature: feature
     });
   };
