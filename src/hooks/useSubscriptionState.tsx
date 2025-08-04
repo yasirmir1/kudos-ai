@@ -56,7 +56,11 @@ export const useSubscriptionState = () => {
       }
 
       // First check Stripe subscription status via edge function
-      const { data: stripeData, error: stripeError } = await supabase.functions.invoke('check-subscription');
+      const { data: stripeData, error: stripeError } = await supabase.functions.invoke('check-subscription', {
+        headers: {
+          Authorization: `Bearer ${(await supabase.auth.getSession()).data.session?.access_token}`
+        }
+      });
       
       if (!stripeError && stripeData?.subscribed) {
         // User has active Stripe subscription
