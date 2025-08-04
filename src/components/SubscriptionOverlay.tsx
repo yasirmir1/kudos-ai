@@ -125,7 +125,7 @@ export const SubscriptionOverlay: React.FC<SubscriptionOverlayProps> = ({
           
           {/* Center upgrade button */}
           <div className="absolute top-[80px] left-1/2 transform -translate-x-1/2 mx-[25px]">
-            <div className="relative bg-card rounded-2xl border border-primary shadow-learning scale-105 p-8 max-w-lg min-h-[500px] transition-all duration-300 hover:shadow-learning hover:-translate-y-1">
+            <div className="relative bg-card rounded-2xl border border-primary shadow-learning scale-105 p-8 w-[562px] min-h-[500px] transition-all duration-300 hover:shadow-learning hover:-translate-y-1">
               <Badge className="absolute -top-3 left-1/2 transform -translate-x-1/2 bg-primary text-primary-foreground px-4 py-1">
                 <Star className="h-3 w-3 mr-1" />
                 {requiredFeature === 'bootcamp' ? 'Most Popular' : 'Upgrade Required'}
