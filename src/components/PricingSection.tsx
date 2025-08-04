@@ -93,8 +93,8 @@ const PricingCard = ({ planId, name, price, originalPrice, description, features
           {loading ? 'Starting...' : `Start ${trialDays}-Day Free Trial`}
         </Button>
         
-        <p className="text-xs text-muted-foreground mb-6 text-center">
-          No credit card needed
+        <p className="text-sm text-muted-foreground mb-6 text-center">
+          No credit card required
         </p>
 
         <div className="space-y-3 text-left">
