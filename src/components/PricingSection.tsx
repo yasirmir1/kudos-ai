@@ -2,11 +2,12 @@ import { useState } from 'react';
 import { Check, Star } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
+import { Switch } from '@/components/ui/switch';
 import { useSubscriptionState } from '@/hooks/useSubscriptionState';
 import { useToast } from '@/hooks/use-toast';
 
 interface PricingCardProps {
-  planId: 'pass' | 'pass_plus';
+  planId: string;
   name: string;
   price: string;
   originalPrice?: string;
@@ -14,9 +15,10 @@ interface PricingCardProps {
   features: string[];
   isPopular?: boolean;
   trialDays?: number;
+  isAnnual?: boolean;
 }
 
-const PricingCard = ({ planId, name, price, originalPrice, description, features, isPopular, trialDays }: PricingCardProps) => {
+const PricingCard = ({ planId, name, price, originalPrice, description, features, isPopular, trialDays, isAnnual }: PricingCardProps) => {
   const [loading, setLoading] = useState(false);
   const { createCheckoutSession } = useSubscriptionState();
   const { toast } = useToast();
@@ -69,7 +71,7 @@ const PricingCard = ({ planId, name, price, originalPrice, description, features
               <span className="text-lg text-muted-foreground line-through">{originalPrice}</span>
             )}
             <span className="text-4xl font-bold">{price}</span>
-            <span className="text-muted-foreground">/month</span>
+            <span className="text-muted-foreground">/{isAnnual ? 'year' : 'month'}</span>
           </div>
           {trialDays && (
             <p className="text-sm text-primary font-medium mt-2">
@@ -105,13 +107,17 @@ const PricingCard = ({ planId, name, price, originalPrice, description, features
 };
 
 export const PricingSection = () => {
-  const plans = [
+  const [isAnnual, setIsAnnual] = useState(false);
+
+  const getPlans = (annual: boolean) => [
     {
-      planId: 'pass' as const,
+      planId: annual ? 'pass_annual' : 'pass_monthly',
       name: 'Pass',
-      price: '£7.99',
+      price: annual ? '£79.99' : '£7.99',
+      originalPrice: annual ? '£95.88' : undefined,
       description: 'Perfect for focused practice',
       trialDays: 30,
+      isAnnual: annual,
       features: [
         'Unlimited daily practice questions',
         'Real-time progress tracking',
@@ -122,12 +128,14 @@ export const PricingSection = () => {
       ]
     },
     {
-      planId: 'pass_plus' as const,
+      planId: annual ? 'pass_plus_annual' : 'pass_plus_monthly',
       name: 'Pass Plus',
-      price: '£14.99',
+      price: annual ? '£149.99' : '£14.99',
+      originalPrice: annual ? '£179.88' : undefined,
       description: 'Complete 11+ preparation',
       trialDays: 30,
       isPopular: true,
+      isAnnual: annual,
       features: [
         'Everything in Pass',
         'Full bootcamp curriculum',
@@ -141,6 +149,8 @@ export const PricingSection = () => {
     }
   ];
 
+  const plans = getPlans(isAnnual);
+
   return (
     <section id="pricing" className="py-20 px-6 bg-gradient-to-b from-background to-muted/10">
       <div className="container mx-auto max-w-6xl">
@@ -151,6 +161,26 @@ export const PricingSection = () => {
           <p className="text-xl md:text-2xl text-muted-foreground mb-8">
             Start your 30-day free trial today. No credit card required.
           </p>
+          
+          <div className="flex items-center justify-center gap-4 mb-8">
+            <span className={`text-sm font-medium ${!isAnnual ? 'text-foreground' : 'text-muted-foreground'}`}>
+              Monthly
+            </span>
+            <Switch
+              checked={isAnnual}
+              onCheckedChange={setIsAnnual}
+              className="data-[state=checked]:bg-primary"
+            />
+            <span className={`text-sm font-medium ${isAnnual ? 'text-foreground' : 'text-muted-foreground'}`}>
+              Annual
+            </span>
+            {isAnnual && (
+              <Badge variant="secondary" className="ml-2 bg-success/10 text-success">
+                Save 16%
+              </Badge>
+            )}
+          </div>
+          
           <div className="inline-flex items-center gap-2 bg-success/10 text-success px-4 py-2 rounded-full text-sm font-medium">
             <Check className="h-4 w-4" />
             Cancel anytime • No commitment • Full access during trial

@@ -59,10 +59,12 @@ serve(async (req) => {
       logStep("No existing customer found");
     }
 
-    // Define plan pricing
+    // Define plan pricing using actual Stripe price IDs
     const planPricing = {
-      'pass': { amount: 799, name: 'Pass - Monthly' },
-      'pass_plus': { amount: 1499, name: 'Pass Plus - Monthly' }
+      'pass_monthly': { priceId: 'price_1QTjPyAAKOvMKCnNiY7Hj3nQ', name: 'Pass - Monthly' },
+      'pass_annual': { priceId: 'price_1QTjQEAAKOvMKCnNSTqvJWvI', name: 'Pass - Annual' },
+      'pass_plus_monthly': { priceId: 'price_1QTjQgAAKOvMKCnNGZwYHh7k', name: 'Pass Plus - Monthly' },
+      'pass_plus_annual': { priceId: 'price_1QTjR2AAKOvMKCnNgJ8xxFRO', name: 'Pass Plus - Annual' }
     };
 
     const selectedPlan = planPricing[planId as keyof typeof planPricing];
@@ -77,12 +79,7 @@ serve(async (req) => {
       payment_method_collection: 'if_required', // Only collect payment if trial ends without payment method
       line_items: [
         {
-          price_data: {
-            currency: "gbp",
-            product_data: { name: selectedPlan.name },
-            unit_amount: selectedPlan.amount,
-            recurring: { interval: "month" },
-          },
+          price: selectedPlan.priceId,
           quantity: 1,
         },
       ],
