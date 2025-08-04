@@ -3,7 +3,7 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { useSubscriptionState } from '@/hooks/useSubscriptionState';
 import { usePricingModal } from '@/contexts/PricingModalContext';
-import { Clock, Crown } from 'lucide-react';
+import { Clock, Crown, Check, Star } from 'lucide-react';
 import { toast } from 'sonner';
 
 interface SubscriptionOverlayProps {
@@ -120,10 +120,14 @@ export const SubscriptionOverlay: React.FC<SubscriptionOverlayProps> = ({
           
           {/* Center upgrade button */}
           <div className="absolute top-[130px] left-1/2 transform -translate-x-1/2">
-            <div className="bg-card border-2 border-border/50 hover:border-primary/50 rounded-xl p-10 shadow-2xl max-w-lg transition-all duration-300">
-              {/* Title */}
-              <div className="text-center mb-8">
-                <h3 className="text-5xl font-bold text-foreground mb-3">
+            <div className="relative bg-card rounded-2xl border border-primary shadow-learning scale-105 p-8 max-w-lg transition-all duration-300 hover:shadow-learning hover:-translate-y-1">
+              <Badge className="absolute -top-3 left-1/2 transform -translate-x-1/2 bg-primary text-primary-foreground px-4 py-1">
+                <Star className="h-3 w-3 mr-1" />
+                {requiredFeature === 'bootcamp' ? 'Most Popular' : 'Upgrade Required'}
+              </Badge>
+              
+              <div className="text-center">
+                <h3 className="text-2xl font-bold mb-2">
                   {userState === 'expired' 
                     ? 'Pass Plus' 
                     : userState === 'pass' && requiredFeature === 'bootcamp'
@@ -131,90 +135,98 @@ export const SubscriptionOverlay: React.FC<SubscriptionOverlayProps> = ({
                       : requiredFeature === 'bootcamp' ? 'Pass Plus' : 'Pass'
                   }
                 </h3>
+                <p className="text-muted-foreground mb-4">
+                  {requiredFeature === 'bootcamp' ? 'Complete 11+ preparation' : 'Perfect for focused practice'}
+                </p>
                 
-                {/* Pricing */}
-                <div className="space-y-2">
-                  <div className="text-4xl font-bold text-primary">
-                    £{requiredFeature === 'bootcamp' ? '15' : '8'}<span className="text-xl text-muted-foreground font-normal">/month</span>
+                <div className="mb-6">
+                  <div className="flex items-baseline justify-center gap-2">
+                    <span className="text-4xl font-bold">£{requiredFeature === 'bootcamp' ? '15' : '8'}</span>
+                    <span className="text-muted-foreground">/month</span>
                   </div>
-                  <div className="text-sm text-muted-foreground font-medium">
-                    Or £{requiredFeature === 'bootcamp' ? '99' : '59'}/year 
-                    <span className="text-green-600 font-semibold ml-1">
-                      (save £{requiredFeature === 'bootcamp' ? '81' : '37'})
-                    </span>
-                  </div>
+                  <p className="text-sm text-primary font-medium mt-2">
+                    30-day free trial
+                  </p>
+                </div>
+
+                <Button 
+                  onClick={handleSubscribeClick}
+                  className="w-full mb-3 bg-primary hover:bg-primary/90 text-primary-foreground"
+                  size="lg"
+                >
+                  Start 30-Day Free Trial
+                </Button>
+                
+                <p className="text-sm text-muted-foreground mb-6 text-center">
+                  No credit card required
+                </p>
+
+                <div className="space-y-3 text-left">
+                  {requiredFeature === 'bootcamp' ? (
+                    <>
+                      <div className="flex items-start gap-3">
+                        <Check className="h-5 w-5 text-primary mt-0.5 flex-shrink-0" />
+                        <span className="text-sm text-muted-foreground">Everything in Pass</span>
+                      </div>
+                      <div className="flex items-start gap-3">
+                        <Check className="h-5 w-5 text-primary mt-0.5 flex-shrink-0" />
+                        <span className="text-sm text-muted-foreground">Full bootcamp curriculum</span>
+                      </div>
+                      <div className="flex items-start gap-3">
+                        <Check className="h-5 w-5 text-primary mt-0.5 flex-shrink-0" />
+                        <span className="text-sm text-muted-foreground">Mock exam simulations</span>
+                      </div>
+                      <div className="flex items-start gap-3">
+                        <Check className="h-5 w-5 text-primary mt-0.5 flex-shrink-0" />
+                        <span className="text-sm text-muted-foreground">Advanced analytics & reports</span>
+                      </div>
+                      <div className="flex items-start gap-3">
+                        <Check className="h-5 w-5 text-primary mt-0.5 flex-shrink-0" />
+                        <span className="text-sm text-muted-foreground">Personalized study plans</span>
+                      </div>
+                      <div className="flex items-start gap-3">
+                        <Check className="h-5 w-5 text-primary mt-0.5 flex-shrink-0" />
+                        <span className="text-sm text-muted-foreground">Priority support</span>
+                      </div>
+                      <div className="flex items-start gap-3">
+                        <Check className="h-5 w-5 text-primary mt-0.5 flex-shrink-0" />
+                        <span className="text-sm text-muted-foreground">Offline practice worksheets</span>
+                      </div>
+                      <div className="flex items-start gap-3">
+                        <Check className="h-5 w-5 text-primary mt-0.5 flex-shrink-0" />
+                        <span className="text-sm text-muted-foreground">Achievement badges & rewards</span>
+                      </div>
+                    </>
+                  ) : (
+                    <>
+                      <div className="flex items-start gap-3">
+                        <Check className="h-5 w-5 text-primary mt-0.5 flex-shrink-0" />
+                        <span className="text-sm text-muted-foreground">Unlimited daily practice questions</span>
+                      </div>
+                      <div className="flex items-start gap-3">
+                        <Check className="h-5 w-5 text-primary mt-0.5 flex-shrink-0" />
+                        <span className="text-sm text-muted-foreground">Real-time progress tracking</span>
+                      </div>
+                      <div className="flex items-start gap-3">
+                        <Check className="h-5 w-5 text-primary mt-0.5 flex-shrink-0" />
+                        <span className="text-sm text-muted-foreground">Personalized learning insights</span>
+                      </div>
+                      <div className="flex items-start gap-3">
+                        <Check className="h-5 w-5 text-primary mt-0.5 flex-shrink-0" />
+                        <span className="text-sm text-muted-foreground">Topic-based analytics</span>
+                      </div>
+                      <div className="flex items-start gap-3">
+                        <Check className="h-5 w-5 text-primary mt-0.5 flex-shrink-0" />
+                        <span className="text-sm text-muted-foreground">Mobile & desktop access</span>
+                      </div>
+                      <div className="flex items-start gap-3">
+                        <Check className="h-5 w-5 text-primary mt-0.5 flex-shrink-0" />
+                        <span className="text-sm text-muted-foreground">Parent dashboard</span>
+                      </div>
+                    </>
+                  )}
                 </div>
               </div>
-
-              {/* Key Features */}
-              <div className="space-y-4 mb-10">
-                {requiredFeature === 'bootcamp' ? (
-                  <>
-                    <div className="flex items-center">
-                      <div className="w-2 h-2 rounded-full bg-primary mr-4 flex-shrink-0" />
-                      <div className="text-sm text-foreground font-semibold">
-                        The 52-Week Bootcamp
-                      </div>
-                    </div>
-                    <div className="flex items-center">
-                      <div className="w-2 h-2 rounded-full bg-primary mr-4 flex-shrink-0" />
-                      <div className="text-sm text-foreground font-semibold">
-                        Realistic Mock Exams
-                      </div>
-                    </div>
-                    <div className="flex items-center">
-                      <div className="w-2 h-2 rounded-full bg-primary mr-4 flex-shrink-0" />
-                      <div className="text-sm text-foreground font-semibold">
-                        Weekly Performance Monitoring
-                      </div>
-                    </div>
-                    <div className="flex items-center">
-                      <div className="w-2 h-2 rounded-full bg-primary mr-4 flex-shrink-0" />
-                      <div className="text-sm text-foreground font-semibold">
-                        All Pass features included
-                      </div>
-                    </div>
-                  </>
-                ) : (
-                  <>
-                    <div className="flex items-center">
-                      <div className="w-2 h-2 rounded-full bg-primary mr-4 flex-shrink-0" />
-                      <div className="text-sm text-foreground font-semibold">
-                        Daily Performance Snapshots
-                      </div>
-                    </div>
-                    <div className="flex items-center">
-                      <div className="w-2 h-2 rounded-full bg-primary mr-4 flex-shrink-0" />
-                      <div className="text-sm text-foreground font-semibold">
-                        Personalized Progress Analytics
-                      </div>
-                    </div>
-                    <div className="flex items-center">
-                      <div className="w-2 h-2 rounded-full bg-primary mr-4 flex-shrink-0" />
-                      <div className="text-sm text-foreground font-semibold">
-                        Customized Worksheets
-                      </div>
-                    </div>
-                  </>
-                )}
-              </div>
-              
-              {/* CTA Button */}
-              <Button 
-                onClick={handleSubscribeClick}
-                size="lg" 
-                className="w-full py-4 font-semibold text-lg rounded-full transition-all duration-200 hover:scale-[1.02]"
-              >
-                Subscribe Now
-              </Button>
-              
-              {/* Small print */}
-              <p className="text-xs text-muted-foreground text-center leading-relaxed pt-4">
-                {requiredFeature === 'bootcamp' ? '£15' : '£8'} per month, billed monthly or annually.
-                <span className="underline cursor-pointer hover:text-foreground transition-colors ml-1">
-                  Terms apply.
-                </span>
-              </p>
             </div>
           </div>
         </div>
