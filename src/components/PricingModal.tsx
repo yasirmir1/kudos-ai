@@ -140,7 +140,7 @@ export const PricingModal: React.FC<PricingModalProps> = ({
             </span>
             {isAnnual && (
               <Badge variant="secondary" className="ml-2 bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200">
-                Save 16%
+                Save upto 45%
               </Badge>
             )}
           </div>
