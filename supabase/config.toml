@@ -1,1 +1,10 @@
 project_id = "gqkfbxhuijpfcnjimlfj"
+
+[functions.stripe-webhook]
+verify_jwt = false
+
+[functions.create-setup-intent]
+verify_jwt = true
+
+[functions.create-checkout]
+verify_jwt = true
