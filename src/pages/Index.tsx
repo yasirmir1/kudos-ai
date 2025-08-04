@@ -3,6 +3,7 @@ import { Navigate } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
 import { Button } from '@/components/ui/button';
 import { BookOpen, Target, TrendingUp, Brain, BarChart3, Users, Zap, Smartphone, Clock } from 'lucide-react';
+import { PricingSection } from '@/components/PricingSection';
 const Index = () => {
   const {
     user,
@@ -66,6 +67,7 @@ const Index = () => {
           </div>
           <div className="hidden md:flex items-center space-x-8">
             <a href="#features" className="text-sm font-medium text-foreground hover:text-primary transition-colors">Features</a>
+            <a href="#pricing" className="text-sm font-medium text-foreground hover:text-primary transition-colors">Pricing</a>
             <a href="#how-it-works" className="text-sm font-medium text-foreground hover:text-primary transition-colors">How It Works</a>
             <a href="#testimonials" className="text-sm font-medium text-foreground hover:text-primary transition-colors">Success Stories</a>
             <Button asChild className="bg-primary hover:bg-primary/90 text-primary-foreground font-medium px-6 shadow-learning hover:shadow-glow transition-all duration-300 hover:scale-105">
@@ -307,6 +309,9 @@ const Index = () => {
           </div>
         </div>
       </section>
+
+      {/* Pricing Section */}
+      <PricingSection />
 
       {/* Testimonials */}
       <section id="testimonials" className="py-20 px-6 bg-muted/20">
