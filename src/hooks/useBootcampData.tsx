@@ -183,7 +183,8 @@ export const useBootcampData = () => {
             *,
             bootcamp_mock_test_sessions!inner(student_id)
           `)
-          .eq('bootcamp_mock_test_sessions.student_id', studentId);
+          .eq('bootcamp_mock_test_sessions.student_id', studentId)
+          .gte('answered_at', thirtyDaysAgo.toISOString());
 
         if (mockAnswersError) {
           console.error('❌ Error fetching mock test answers:', mockAnswersError);
