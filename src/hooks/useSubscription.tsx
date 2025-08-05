@@ -204,14 +204,9 @@ export const useSubscription = () => {
 
     // Check if user has active subscription (trial or paid)
     if (hasActiveSubscription()) {
-      // For trials, check the plan type
+      // For trials, allow access to both features during trial period
       if (isTrialActive()) {
-        const activeTrial = getActiveTrialSubscription();
-        if (featureType === 'daily_mode') {
-          return true; // Both plans support daily mode
-        } else if (featureType === 'bootcamp') {
-          return activeTrial?.plan_id === 'pass_plus';
-        }
+        return true; // Trial users get access to all features
       }
       
       // For paid subscriptions, check via existing RPC
