@@ -23,19 +23,24 @@ export const AppNavigation: React.FC<AppNavigationProps> = ({
 }) => {
   const navigate = useNavigate();
   const location = useLocation();
-  const { user, signOut } = useAuth();
-  const { 
+  const {
+    user,
+    signOut
+  } = useAuth();
+  const {
     userState,
-    isTrialActive, 
-    trialDaysRemaining, 
+    isTrialActive,
+    trialDaysRemaining,
     isTrialExpired,
     hasAccessTo
   } = useSubscriptionState();
-  
-  const { openPricingModal } = usePricingModal();
-  
+  const {
+    openPricingModal
+  } = usePricingModal();
   const handleLogout = async () => {
-    const { error } = await signOut();
+    const {
+      error
+    } = await signOut();
     if (!error) {
       navigate('/auth');
     }
@@ -45,33 +50,25 @@ export const AppNavigation: React.FC<AppNavigationProps> = ({
   const isBootcampRoute = location.pathname.startsWith('/bootcamp');
 
   // Check if trial is expired and require payment
-  const shouldShowUpgrade = isTrialExpired || (userState === 'pass' && isBootcampRoute);
-
+  const shouldShowUpgrade = isTrialExpired || userState === 'pass' && isBootcampRoute;
   const handleUpgradeClick = () => {
     const planId = isBootcampRoute ? 'pass_plus_monthly' : 'pass_monthly';
     const feature = isBootcampRoute ? 'bootcamp' : 'daily_mode';
-    
     openPricingModal({
       highlightPlan: isBootcampRoute ? 'pass_plus' : 'pass',
       requiredFeature: feature
     });
   };
-  
-  const mainAppItems = [
-    {
-      path: '/profile',
-      label: 'Profile',
-      icon: User
-    }
-  ];
-
-  const bootcampItems = [
-    {
-      path: '/profile',
-      label: 'Profile',
-      icon: User
-    }
-  ];
+  const mainAppItems = [{
+    path: '/profile',
+    label: 'Profile',
+    icon: User
+  }];
+  const bootcampItems = [{
+    path: '/profile',
+    label: 'Profile',
+    icon: User
+  }];
 
   // Show bootcamp items when in bootcamp, main app items otherwise
   const navigationItems = isBootcampRoute ? bootcampItems : mainAppItems;
@@ -87,7 +84,7 @@ export const AppNavigation: React.FC<AppNavigationProps> = ({
         icon: Clock
       };
     }
-    
+
     // Check subscription state from database
     switch (userState) {
       case 'pass':
@@ -117,9 +114,8 @@ export const AppNavigation: React.FC<AppNavigationProps> = ({
         };
     }
   };
-
   const planDisplay = getPlanDisplay();
-  
+
   // Add a system switcher button
   const switchToOtherSystem = () => {
     if (isBootcampRoute) {
@@ -152,40 +148,20 @@ export const AppNavigation: React.FC<AppNavigationProps> = ({
           {/* Right section - Navigation and Trial Indicator */}
           <div className="flex items-center space-x-3">
             {/* Trial Days Indicator */}
-            {isTrialActive && trialDaysRemaining > 0 && (
-              <div className="flex items-center space-x-2">
-                <Badge 
-                  variant={trialDaysRemaining <= 3 ? "destructive" : "secondary"} 
-                  className="flex items-center space-x-1 px-3 py-1"
-                >
-                  <Clock className="h-3 w-3" />
-                  <span className="text-xs font-medium">
-                    {trialDaysRemaining} {trialDaysRemaining === 1 ? 'day' : 'days'} left
-                  </span>
-                </Badge>
-              </div>
-            )}
+            {isTrialActive && trialDaysRemaining > 0 && <div className="flex items-center space-x-2">
+                
+              </div>}
 
             {/* Upgrade Button for limited access */}
-            {shouldShowUpgrade && (
-              <Button 
-                variant="destructive" 
-                size="sm" 
-                onClick={handleUpgradeClick}
-                className="flex items-center space-x-2 px-4 py-2"
-              >
+            {shouldShowUpgrade && <Button variant="destructive" size="sm" onClick={handleUpgradeClick} className="flex items-center space-x-2 px-4 py-2">
                 <CreditCard className="h-4 w-4" />
                 <span>{isTrialExpired ? 'Upgrade Now' : 'Upgrade to Plus'}</span>
-              </Button>
-            )}
+              </Button>}
 
             {/* Plan Status Indicator */}
-            <div className="hidden md:flex items-center space-x-2 mr-4">
+            <div className="hidden md:flex items-center space-x-2 mr-4 mx-0">
               <span className="text-sm text-muted-foreground font-medium">Plan:</span>
-              <Badge 
-                variant={planDisplay.variant}
-                className="flex items-center space-x-1 px-3 py-1"
-              >
+              <Badge variant={planDisplay.variant} className="flex items-center space-x-1 px-3 py-1 mx-[10px]">
                 <planDisplay.icon className="h-3 w-3" />
                 <span className="text-xs font-medium">{planDisplay.text}</span>
               </Badge>
@@ -193,21 +169,11 @@ export const AppNavigation: React.FC<AppNavigationProps> = ({
 
             {/* System Mode Buttons */}
             <div className="hidden md:flex items-center space-x-4 mr-6">
-              <Button 
-                variant={!isBootcampRoute ? "default" : "ghost"} 
-                size="sm" 
-                onClick={() => navigate('/dashboard')}
-                className={cn("flex items-center space-x-2 px-4 py-2 min-w-[120px] justify-center", !isBootcampRoute && "bg-primary text-primary-foreground")}
-              >
+              <Button variant={!isBootcampRoute ? "default" : "ghost"} size="sm" onClick={() => navigate('/dashboard')} className={cn("flex items-center space-x-2 px-4 py-2 min-w-[120px] justify-center", !isBootcampRoute && "bg-primary text-primary-foreground")}>
                 <Calendar className="h-4 w-4" />
                 <span className="hidden lg:inline">Daily Mode</span>
               </Button>
-              <Button 
-                variant={isBootcampRoute ? "default" : "ghost"} 
-                size="sm" 
-                onClick={() => navigate('/bootcamp')}
-                className={cn("flex items-center space-x-2 px-4 py-2 min-w-[120px] justify-center", isBootcampRoute && "bg-primary text-primary-foreground")}
-              >
+              <Button variant={isBootcampRoute ? "default" : "ghost"} size="sm" onClick={() => navigate('/bootcamp')} className={cn("flex items-center space-x-2 px-4 py-2 min-w-[120px] justify-center", isBootcampRoute && "bg-primary text-primary-foreground")}>
                 <Target className="h-4 w-4" />
                 <span className="hidden lg:inline">Bootcamp</span>
               </Button>
@@ -217,52 +183,32 @@ export const AppNavigation: React.FC<AppNavigationProps> = ({
             {/* Navigation Links */}
             <nav className="hidden md:flex items-center space-x-2">
               {navigationItems.map(item => {
-                const Icon = item.icon;
-                const isActive = isActivePath(item.path);
-                return (
-                  <Button 
-                    key={item.path} 
-                    variant={isActive ? "default" : "ghost"} 
-                    size="sm" 
-                    onClick={() => navigate(item.path)} 
-                    className={cn("flex items-center space-x-2 px-4 py-2 min-w-[100px] justify-center", isActive && "bg-primary text-primary-foreground")}
-                  >
+              const Icon = item.icon;
+              const isActive = isActivePath(item.path);
+              return <Button key={item.path} variant={isActive ? "default" : "ghost"} size="sm" onClick={() => navigate(item.path)} className={cn("flex items-center space-x-2 px-4 py-2 min-w-[100px] justify-center", isActive && "bg-primary text-primary-foreground")}>
                     <Icon className="h-4 w-4" />
                     <span className="hidden lg:inline">{item.label}</span>
-                  </Button>
-                );
-              })}
+                  </Button>;
+            })}
               
               {/* Logout Button - Icon only */}
-              <Button 
-                variant="ghost" 
-                size="sm" 
-                onClick={handleLogout}
-                className="flex items-center justify-center px-3 py-2 w-auto"
-                title="Logout"
-              >
+              <Button variant="ghost" size="sm" onClick={handleLogout} className="flex items-center justify-center px-3 py-2 w-auto" title="Logout">
                 <LogOut className="h-4 w-4" />
               </Button>
             </nav>
 
             {/* Mobile Navigation Dropdown */}
             <div className="md:hidden">
-              <select 
-                value={location.pathname} 
-                onChange={(e) => {
-                  if (e.target.value === 'logout') {
-                    handleLogout();
-                  } else {
-                    navigate(e.target.value);
-                  }
-                }} 
-                className="px-3 py-2 text-sm border rounded-md bg-background"
-              >
-                {navigationItems.map(item => (
-                  <option key={item.path} value={item.path}>
+              <select value={location.pathname} onChange={e => {
+              if (e.target.value === 'logout') {
+                handleLogout();
+              } else {
+                navigate(e.target.value);
+              }
+            }} className="px-3 py-2 text-sm border rounded-md bg-background">
+                {navigationItems.map(item => <option key={item.path} value={item.path}>
                     {item.label}
-                  </option>
-                ))}
+                  </option>)}
                 <option value="logout">Logout</option>
               </select>
             </div>
