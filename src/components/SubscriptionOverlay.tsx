@@ -60,8 +60,8 @@ export const SubscriptionOverlay: React.FC<SubscriptionOverlayProps> = ({
     try {
       const result = await startTrial('pass_plus');
       if (result.success) {
-        toast.success('Free trial started! You now have access to all features.');
-        window.location.reload(); // Refresh to update state
+        toast.success(result.message);
+        // The user will be redirected to Stripe, so we don't need to reload here
       } else {
         toast.error(result.message || 'Failed to start trial');
       }
@@ -71,7 +71,7 @@ export const SubscriptionOverlay: React.FC<SubscriptionOverlayProps> = ({
     }
   };
 
-  // Show trial warning for trials ending soon
+  // Show trial warning for trials ending soon (only if it's a Stripe trial)
   if (isTrialActive && trialDaysRemaining <= 3 && trialDaysRemaining > 0) {
     return <div className="relative">
         <div className="bg-gradient-to-r from-amber-50 to-orange-50 dark:from-amber-950/20 dark:to-orange-950/20 border-l-4 border-amber-400 p-4 mb-4 shadow-sm">
@@ -84,7 +84,7 @@ export const SubscriptionOverlay: React.FC<SubscriptionOverlayProps> = ({
                 </p>
                 <p className="text-sm text-amber-700 dark:text-amber-300 mt-1">
                   Your free trial expires in {trialDaysRemaining} {trialDaysRemaining === 1 ? 'day' : 'days'}. 
-                  Upgrade now to continue without interruption.
+                  Add a payment method to continue without interruption.
                 </p>
               </div>
             </div>
@@ -159,11 +159,26 @@ export const SubscriptionOverlay: React.FC<SubscriptionOverlayProps> = ({
                 </div>
 
                 {userState === 'no_access' && (
-                  <Button onClick={handleStartTrial} className="w-full mb-3 bg-green-600 hover:bg-green-700 text-white" size="lg">
-                    Start Free Trial (7 Days)
+                  <Button onClick={handleStartTrial} className="w-full mb-3 bg-blue-600 hover:bg-blue-700 text-white" size="lg">
+                    Start 7-Day Free Trial
                   </Button>
                 )}
-                <Button onClick={handleSubscribeClick} className="w-full mb-3 bg-primary hover:bg-primary/90 text-primary-foreground" size="lg">Subscribe Now</Button>
+                {userState === 'expired' && (
+                  <Button onClick={handleSubscribeClick} className="w-full mb-3 bg-primary hover:bg-primary/90 text-primary-foreground" size="lg">
+                    Subscribe Now
+                  </Button>
+                )}
+                {(userState === 'trial' || userState === 'pass') && requiredFeature === 'bootcamp' && (
+                  <Button onClick={handleSubscribeClick} className="w-full mb-3 bg-primary hover:bg-primary/90 text-primary-foreground" size="lg">
+                    Upgrade to Pass Plus
+                  </Button>
+                )}
+                
+                {userState === 'no_access' && (
+                  <p className="text-xs text-muted-foreground text-center mt-3">
+                    No payment required during trial • Cancel anytime
+                  </p>
+                )}
                 
                 
 

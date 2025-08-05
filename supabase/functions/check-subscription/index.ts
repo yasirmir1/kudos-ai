@@ -68,22 +68,46 @@ serve(async (req) => {
     const customerId = customers.data[0].id;
     logStep("Found Stripe customer", { customerId });
 
+    // Check for active subscriptions including trials
     const subscriptions = await stripe.subscriptions.list({
       customer: customerId,
-      status: "active",
-      limit: 1,
+      status: "all", // Include all statuses to catch trials
+      limit: 10,
     });
-    const hasActiveSub = subscriptions.data.length > 0;
+    
+    let hasActiveSub = false;
     let subscriptionTier = null;
     let subscriptionEnd = null;
+    let trialEndDate = null;
+    
+    // Find active subscription or active trial
+    const activeSubscription = subscriptions.data.find(sub => 
+      sub.status === "active" || sub.status === "trialing"
+    );
 
-    if (hasActiveSub) {
-      const subscription = subscriptions.data[0];
-      subscriptionEnd = new Date(subscription.current_period_end * 1000).toISOString();
-      logStep("Active subscription found", { subscriptionId: subscription.id, endDate: subscriptionEnd });
+    if (activeSubscription) {
+      if (activeSubscription.status === "trialing") {
+        // Handle trial subscription
+        trialEndDate = new Date(activeSubscription.trial_end! * 1000).toISOString();
+        subscriptionEnd = trialEndDate;
+        logStep("Active trial found", { 
+          subscriptionId: activeSubscription.id, 
+          trialEndDate,
+          status: activeSubscription.status 
+        });
+      } else {
+        // Handle active paid subscription
+        hasActiveSub = true;
+        subscriptionEnd = new Date(activeSubscription.current_period_end * 1000).toISOString();
+        logStep("Active subscription found", { 
+          subscriptionId: activeSubscription.id, 
+          endDate: subscriptionEnd,
+          status: activeSubscription.status 
+        });
+      }
       
       // Determine subscription tier from price
-      const priceId = subscription.items.data[0].price.id;
+      const priceId = activeSubscription.items.data[0].price.id;
       const price = await stripe.prices.retrieve(priceId);
       const amount = price.unit_amount || 0;
       
@@ -94,7 +118,7 @@ serve(async (req) => {
       }
       logStep("Determined subscription tier", { priceId, amount, subscriptionTier });
     } else {
-      logStep("No active subscription found");
+      logStep("No active subscription or trial found");
     }
 
     await supabaseClient.from("subscribers").upsert({
@@ -107,11 +131,12 @@ serve(async (req) => {
       updated_at: new Date().toISOString(),
     }, { onConflict: 'email' });
 
-    logStep("Updated database with subscription info", { subscribed: hasActiveSub, subscriptionTier });
+    logStep("Updated database with subscription info", { subscribed: hasActiveSub, subscriptionTier, trialEndDate });
     return new Response(JSON.stringify({
       subscribed: hasActiveSub,
       subscription_tier: subscriptionTier,
-      subscription_end: subscriptionEnd
+      subscription_end: subscriptionEnd,
+      trial_end_date: trialEndDate
     }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
       status: 200,

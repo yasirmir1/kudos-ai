@@ -43,9 +43,9 @@ serve(async (req) => {
     logStep("User authenticated", { userId: user.id, email: user.email });
 
     // Parse request body to get plan details
-    const { planId } = await req.json();
+    const { planId, trial } = await req.json();
     if (!planId) throw new Error("Plan ID is required");
-    logStep("Plan ID received", { planId });
+    logStep("Plan ID received", { planId, trial });
 
     const stripe = new Stripe(stripeKey, { apiVersion: "2023-10-16" });
     
@@ -73,10 +73,9 @@ serve(async (req) => {
 
     const origin = req.headers.get("origin") || "http://localhost:3000";
     
-    const session = await stripe.checkout.sessions.create({
+    const sessionConfig: any = {
       customer: customerId,
       customer_email: customerId ? undefined : user.email,
-      payment_method_collection: 'if_required', // Only collect payment if trial ends without payment method
       line_items: [
         {
           price: selectedPlan.priceId,
@@ -84,17 +83,26 @@ serve(async (req) => {
         },
       ],
       mode: "subscription",
-      subscription_data: {
-        trial_period_days: 30, // 30-day free trial
+      success_url: `${origin}/dashboard?success=true`,
+      cancel_url: `${origin}/pricing?canceled=true`,
+    };
+
+    // Add trial configuration if requested
+    if (trial) {
+      sessionConfig.payment_method_collection = 'if_required';
+      sessionConfig.subscription_data = {
+        trial_period_days: 7, // 7-day free trial
         trial_settings: {
           end_behavior: {
             missing_payment_method: "create_invoice"
           }
         }
-      },
-      success_url: `${origin}/pricing?success=true`,
-      cancel_url: `${origin}/pricing?canceled=true`,
-    });
+      };
+    } else {
+      sessionConfig.payment_method_collection = 'always';
+    }
+    
+    const session = await stripe.checkout.sessions.create(sessionConfig);
 
     logStep("Checkout session created", { sessionId: session.id, url: session.url });
 

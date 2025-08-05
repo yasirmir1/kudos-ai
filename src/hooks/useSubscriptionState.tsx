@@ -58,69 +58,52 @@ export const useSubscriptionState = () => {
         return;
       }
 
-      // First check Stripe subscription status via edge function
+      // Only check Stripe subscription status via edge function
       const { data: stripeData, error: stripeError } = await supabase.functions.invoke('check-subscription', {
         headers: {
           Authorization: `Bearer ${(await supabase.auth.getSession()).data.session?.access_token}`
         }
       });
       
-      if (!stripeError && stripeData?.subscribed) {
-        // User has active Stripe subscription
-        setIsTrialActive(false);
-        setTrialDaysRemaining(0);
-        
-        if (stripeData.subscription_tier === 'Pass') {
-          setUserState('pass');
-        } else if (stripeData.subscription_tier === 'Pass Plus') {
-          setUserState('pass_plus');
-        } else {
-          setUserState('pass'); // Default to pass for any Stripe subscription
+      if (!stripeError && stripeData) {
+        if (stripeData.subscribed) {
+          // User has active Stripe subscription
+          setIsTrialActive(false);
+          setTrialDaysRemaining(0);
+          
+          if (stripeData.subscription_tier === 'Pass') {
+            setUserState('pass');
+          } else if (stripeData.subscription_tier === 'Pass Plus') {
+            setUserState('pass_plus');
+          } else {
+            setUserState('pass'); // Default to pass for any Stripe subscription
+          }
+          return;
+        } else if (stripeData.trial_end_date) {
+          // User has a Stripe trial
+          const trialEndDate = new Date(stripeData.trial_end_date);
+          const now = new Date();
+          
+          if (trialEndDate > now) {
+            // Active trial
+            const diffTime = trialEndDate.getTime() - now.getTime();
+            const daysLeft = Math.max(0, Math.ceil(diffTime / (1000 * 60 * 60 * 24)));
+            setTrialDaysRemaining(daysLeft);
+            setIsTrialActive(true);
+            setUserState('trial');
+            return;
+          } else {
+            // Expired trial
+            setUserState('expired');
+            setIsTrialActive(false);
+            setTrialDaysRemaining(0);
+            return;
+          }
         }
-        return;
       }
 
-      // If no Stripe subscription, check local trial subscriptions
-      const { data: subscriptionsData } = await supabase
-        .from('user_subscriptions')
-        .select('*')
-        .eq('user_id', user.id)
-        .order('created_at', { ascending: false });
-
-      if (!subscriptionsData || subscriptionsData.length === 0) {
-        setUserState('no_access');
-        setIsTrialActive(false);
-        setTrialDaysRemaining(0);
-        return;
-      }
-
-      // Find active trial subscription
-      const now = new Date();
-      const activeTrialSubscription = subscriptionsData.find(sub => 
-        sub.is_trial && 
-        sub.trial_end_date && 
-        new Date(sub.trial_end_date) > now
-      );
-
-      if (activeTrialSubscription) {
-        // Active trial found
-        const endDate = new Date(activeTrialSubscription.trial_end_date);
-        const diffTime = endDate.getTime() - now.getTime();
-        const daysLeft = Math.max(0, Math.ceil(diffTime / (1000 * 60 * 60 * 24)));
-        setTrialDaysRemaining(daysLeft);
-        setIsTrialActive(true);
-        setUserState('trial');
-        return;
-      }
-
-      // Check if user has expired trial
-      const expiredTrial = subscriptionsData.find(sub => 
-        sub.is_trial && 
-        sub.trial_end_date && 
-        new Date(sub.trial_end_date) <= now
-      );
-      
-      setUserState(expiredTrial ? 'expired' : 'no_access');
+      // No subscription or trial found
+      setUserState('no_access');
       setIsTrialActive(false);
       setTrialDaysRemaining(0);
 
@@ -158,14 +141,23 @@ export const useSubscriptionState = () => {
     }
 
     try {
-      const { data, error } = await supabase.rpc('start_trial', {
-        plan_id_param: planId
+      // Start Stripe trial instead of local trial
+      const { data, error } = await supabase.functions.invoke('create-checkout', {
+        body: { 
+          planId: planId + '_monthly', // Default to monthly for trials
+          trial: true 
+        }
       });
 
       if (error) throw error;
       
-      await loadSubscriptionData(); // Refresh data
-      return { success: true, message: 'Trial started successfully' };
+      if (data?.url) {
+        // Open Stripe checkout for trial signup
+        window.open(data.url, '_blank');
+        return { success: true, message: 'Redirecting to Stripe for trial setup...' };
+      }
+      
+      return { success: false, message: 'Failed to create trial checkout session' };
     } catch (error) {
       console.error('Error starting trial:', error);
       return { success: false, message: 'Failed to start trial' };
