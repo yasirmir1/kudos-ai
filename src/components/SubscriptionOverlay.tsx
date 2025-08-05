@@ -21,7 +21,8 @@ export const SubscriptionOverlay: React.FC<SubscriptionOverlayProps> = ({
     hasAccessTo,
     isTrialActive,
     trialDaysRemaining,
-    createCheckoutSession
+    createCheckoutSession,
+    startTrial
   } = useSubscriptionState();
   const {
     openPricingModal
@@ -54,6 +55,21 @@ export const SubscriptionOverlay: React.FC<SubscriptionOverlayProps> = ({
         <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
       </div>;
   }
+
+  const handleStartTrial = async () => {
+    try {
+      const result = await startTrial('pass_plus');
+      if (result.success) {
+        toast.success('Free trial started! You now have access to all features.');
+        window.location.reload(); // Refresh to update state
+      } else {
+        toast.error(result.message || 'Failed to start trial');
+      }
+    } catch (error) {
+      toast.error('Error starting trial. Please try again.');
+      console.error('Error starting trial:', error);
+    }
+  };
 
   // Show trial warning for trials ending soon
   if (isTrialActive && trialDaysRemaining <= 3 && trialDaysRemaining > 0) {
@@ -142,6 +158,11 @@ export const SubscriptionOverlay: React.FC<SubscriptionOverlayProps> = ({
                   
                 </div>
 
+                {userState === 'no_access' && (
+                  <Button onClick={handleStartTrial} className="w-full mb-3 bg-green-600 hover:bg-green-700 text-white" size="lg">
+                    Start Free Trial (7 Days)
+                  </Button>
+                )}
                 <Button onClick={handleSubscribeClick} className="w-full mb-3 bg-primary hover:bg-primary/90 text-primary-foreground" size="lg">Subscribe Now</Button>
                 
                 
