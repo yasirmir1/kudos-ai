@@ -160,7 +160,7 @@ export const AppNavigation: React.FC<AppNavigationProps> = ({
 
             {/* Plan Status Indicator */}
             <div className="hidden md:flex items-center space-x-2 mr-4 mx-0">
-              <span className="text-sm text-muted-foreground font-medium">Plan:</span>
+              
               <Badge variant={planDisplay.variant} className="flex items-center space-x-1 px-3 py-1 mx-[10px]">
                 <planDisplay.icon className="h-3 w-3" />
                 <span className="text-xs font-medium">{planDisplay.text}</span>
