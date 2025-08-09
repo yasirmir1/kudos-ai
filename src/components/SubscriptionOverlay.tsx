@@ -4,8 +4,10 @@ import { Button } from '@/components/ui/button';
 import { Switch } from '@/components/ui/switch';
 import { useSubscriptionState } from '@/hooks/useSubscriptionState';
 import { usePricingModal } from '@/contexts/PricingModalContext';
+import { TrialSignupModal } from '@/components/TrialSignupModal';
 import { Clock, Crown, Check, Star } from 'lucide-react';
 import { toast } from 'sonner';
+
 interface SubscriptionOverlayProps {
   children: React.ReactNode;
   requiredFeature: 'daily_mode' | 'bootcamp';
@@ -15,6 +17,7 @@ export const SubscriptionOverlay: React.FC<SubscriptionOverlayProps> = ({
   requiredFeature
 }) => {
   const [isAnnual, setIsAnnual] = useState(false);
+  const [showTrialModal, setShowTrialModal] = useState(false);
   const {
     userState,
     loading,
@@ -57,18 +60,8 @@ export const SubscriptionOverlay: React.FC<SubscriptionOverlayProps> = ({
   }
 
   const handleStartTrial = async () => {
-    try {
-      const result = await startTrial('pass_plus');
-      if (result.success) {
-        toast.success(result.message);
-        // The user will be redirected to Stripe, so we don't need to reload here
-      } else {
-        toast.error(result.message || 'Failed to start trial');
-      }
-    } catch (error) {
-      toast.error('Error starting trial. Please try again.');
-      console.error('Error starting trial:', error);
-    }
+    // Open the trial signup modal for unauthenticated users
+    setShowTrialModal(true);
   };
 
   // Show trial warning for trials ending soon (only if it's a Stripe trial)
@@ -247,6 +240,13 @@ export const SubscriptionOverlay: React.FC<SubscriptionOverlayProps> = ({
             </div>
           </div>
         </div>
+        
+        {/* Trial Signup Modal */}
+        <TrialSignupModal 
+          isOpen={showTrialModal}
+          onClose={() => setShowTrialModal(false)}
+          planId={requiredFeature === 'bootcamp' ? 'pass_plus' : 'pass'}
+        />
       </div>;
   }
 

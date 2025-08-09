@@ -49,7 +49,7 @@ const Auth = () => {
     e.preventDefault();
     setLoading(true);
     
-    const { error } = await signUp(email, password, ageGroup);
+    const { error } = await signUp(email, password, '11+');
     
     if (error) {
       toast({
@@ -180,22 +180,8 @@ const Auth = () => {
                     />
                   </div>
                   
-                  <div className="space-y-2">
-                    <Label htmlFor="age-group">School Year</Label>
-                    <Select value={ageGroup} onValueChange={setAgeGroup}>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select your school year" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="year 2-3">Year 2-3</SelectItem>
-                        <SelectItem value="year 4-5">Year 4-5</SelectItem>
-                        <SelectItem value="11+">11+</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-                  
                   <p className="text-xs text-muted-foreground">
-                    Questions will be tailored to your school year and learning level
+                    Questions will be tailored to your learning level as you progress
                   </p>
                 </CardContent>
                 

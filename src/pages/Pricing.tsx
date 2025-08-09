@@ -8,6 +8,8 @@ import { CheckCircle, Crown, Zap, ExternalLink, Settings, Clock, ArrowUpRight } 
 import { toast } from 'sonner';
 import { useNavigate } from 'react-router-dom';
 import { SubscriptionThankYou } from '@/components/SubscriptionThankYou';
+import { TrialSignupModal } from '@/components/TrialSignupModal';
+
 interface TrialResult {
   success: boolean;
   message: string;
@@ -39,6 +41,8 @@ const Pricing = () => {
   const [isAnnual, setIsAnnual] = useState(false);
   const [showThankYou, setShowThankYou] = useState(false);
   const [subscribedPlan, setSubscribedPlan] = useState<'pass' | 'pass_plus'>('pass_plus');
+  const [showTrialModal, setShowTrialModal] = useState(false);
+  const [trialPlanId, setTrialPlanId] = useState<'pass' | 'pass_plus'>('pass_plus');
 
   useEffect(() => {
     // Check for success/cancel parameters
@@ -82,7 +86,9 @@ const Pricing = () => {
   };
   const handleStartTrial = async (planId: string, isAnnual: boolean = false) => {
     if (!user) {
-      navigate('/auth');
+      // Open modal for unauthenticated users
+      setTrialPlanId(planId as 'pass' | 'pass_plus');
+      setShowTrialModal(true);
       return;
     }
     
@@ -332,7 +338,7 @@ const Pricing = () => {
                             {startingTrial === plan.id ? <div className="flex items-center">
                                 <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-current mr-2"></div>
                                 Starting Trial...
-                              </div> : 'Start trial now, no credit card needed'}
+                              </div> : user ? 'Start trial now, no credit card needed' : 'Start Free Trial'}
                           </Button>}
                         
                         {/* Paid subscription button */}
@@ -363,6 +369,13 @@ const Pricing = () => {
               </Card>;
         })}
         </div>
+        
+        {/* Trial Signup Modal */}
+        <TrialSignupModal 
+          isOpen={showTrialModal}
+          onClose={() => setShowTrialModal(false)}
+          planId={trialPlanId}
+        />
       </div>
     </div>;
 };
