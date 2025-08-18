@@ -7,7 +7,6 @@ import { usePricingModal } from '@/contexts/PricingModalContext';
 import { TrialSignupModal } from '@/components/TrialSignupModal';
 import { Clock, Crown, Check, Star } from 'lucide-react';
 import { toast } from 'sonner';
-
 interface SubscriptionOverlayProps {
   children: React.ReactNode;
   requiredFeature: 'daily_mode' | 'bootcamp';
@@ -58,7 +57,6 @@ export const SubscriptionOverlay: React.FC<SubscriptionOverlayProps> = ({
         <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
       </div>;
   }
-
   const handleStartTrial = async () => {
     // Open the trial signup modal for unauthenticated users
     setShowTrialModal(true);
@@ -151,31 +149,23 @@ export const SubscriptionOverlay: React.FC<SubscriptionOverlayProps> = ({
                   
                 </div>
 
-                {userState === 'no_access' && (
-                  <Button onClick={handleStartTrial} className="w-full mb-3 bg-blue-600 hover:bg-blue-700 text-white" size="lg">
+                {userState === 'no_access' && <Button onClick={handleStartTrial} className="w-full mb-3 bg-blue-600 hover:bg-blue-700 text-white" size="lg">
                     Start 7-Day Free Trial
-                  </Button>
-                )}
-                {userState === 'expired' && (
-                  <Button onClick={handleSubscribeClick} className="w-full mb-3 bg-primary hover:bg-primary/90 text-primary-foreground" size="lg">
+                  </Button>}
+                {userState === 'expired' && <Button onClick={handleSubscribeClick} className="w-full mb-3 bg-primary hover:bg-primary/90 text-primary-foreground" size="lg">
                     Subscribe Now
-                  </Button>
-                )}
-                {(userState === 'trial' || userState === 'pass') && requiredFeature === 'bootcamp' && (
-                  <Button onClick={handleSubscribeClick} className="w-full mb-3 bg-primary hover:bg-primary/90 text-primary-foreground" size="lg">
+                  </Button>}
+                {(userState === 'trial' || userState === 'pass') && requiredFeature === 'bootcamp' && <Button onClick={handleSubscribeClick} className="w-full mb-3 bg-primary hover:bg-primary/90 text-primary-foreground" size="lg">
                     Upgrade to Pass Plus
-                  </Button>
-                )}
+                  </Button>}
                 
-                {userState === 'no_access' && (
-                  <p className="text-xs text-muted-foreground text-center mt-3">
+                {userState === 'no_access' && <p className="text-xs text-muted-foreground text-center mt-3 my-0 py-0">
                     No payment required during trial • Cancel anytime
-                  </p>
-                )}
+                  </p>}
                 
                 
 
-                <div className="space-y-3 text-left mx-0">
+                <div className="space-y-3 text-left mx-0 my-[20px]">
                   {requiredFeature === 'bootcamp' ? <>
                       <div className="flex items-start gap-3">
                         <Check className="h-5 w-5 text-primary mt-0.5 flex-shrink-0" />
@@ -242,11 +232,7 @@ export const SubscriptionOverlay: React.FC<SubscriptionOverlayProps> = ({
         </div>
         
         {/* Trial Signup Modal */}
-        <TrialSignupModal 
-          isOpen={showTrialModal}
-          onClose={() => setShowTrialModal(false)}
-          planId={requiredFeature === 'bootcamp' ? 'pass_plus' : 'pass'}
-        />
+        <TrialSignupModal isOpen={showTrialModal} onClose={() => setShowTrialModal(false)} planId={requiredFeature === 'bootcamp' ? 'pass_plus' : 'pass'} />
       </div>;
   }
 
