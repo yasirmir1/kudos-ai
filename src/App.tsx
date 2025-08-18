@@ -8,9 +8,11 @@ import { AuthProvider, useAuth } from "./hooks/useAuth";
 import { AgeGroupProvider } from "./contexts/AgeGroupContext";
 import { AccessibilityProvider } from "./contexts/AccessibilityContext";
 import { PricingModalProvider, usePricingModal } from "./contexts/PricingModalContext";
+import { TrialModalProvider, useTrialModal } from "./contexts/TrialModalContext";
 import { AppNavigation } from "./components/AppNavigation";
 import { SubscriptionOverlay } from "./components/SubscriptionOverlay";
 import { PricingModal } from "./components/PricingModal";
+import { UnifiedTrialModal } from "./components/UnifiedTrialModal";
 import Index from "./pages/Index";
 import Auth from "./pages/Auth";
 import Dashboard from "./pages/Dashboard";
@@ -55,6 +57,7 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
       {showNavigation && <AppNavigation />}
       {children}
       <PricingModalManager />
+      <TrialModalManager />
     </div>
   );
 };
@@ -73,13 +76,28 @@ const PricingModalManager = () => {
   );
 };
 
+const TrialModalManager = () => {
+  const { isOpen, closeTrialModal, planId, requiredFeature, mode } = useTrialModal();
+  
+  return (
+    <UnifiedTrialModal 
+      isOpen={isOpen}
+      onClose={closeTrialModal}
+      planId={planId}
+      requiredFeature={requiredFeature}
+      mode={mode}
+    />
+  );
+};
+
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <TooltipProvider>
       <AuthProvider>
         <PricingModalProvider>
-          <AgeGroupProvider>
-            <AccessibilityProvider>
+          <TrialModalProvider>
+            <AgeGroupProvider>
+              <AccessibilityProvider>
             <Toaster />
             <Sonner />
             <BrowserRouter>
@@ -111,8 +129,9 @@ const App = () => (
                 </Routes>
               </Layout>
             </BrowserRouter>
-            </AccessibilityProvider>
-          </AgeGroupProvider>
+              </AccessibilityProvider>
+            </AgeGroupProvider>
+          </TrialModalProvider>
         </PricingModalProvider>
       </AuthProvider>
     </TooltipProvider>

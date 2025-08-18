@@ -8,7 +8,7 @@ import { CheckCircle, Crown, Zap, ExternalLink, Settings, Clock, ArrowUpRight } 
 import { toast } from 'sonner';
 import { useNavigate } from 'react-router-dom';
 import { SubscriptionThankYou } from '@/components/SubscriptionThankYou';
-import { TrialSignupModal } from '@/components/TrialSignupModal';
+import { useTrialModal } from '@/contexts/TrialModalContext';
 
 interface TrialResult {
   success: boolean;
@@ -41,7 +41,7 @@ const Pricing = () => {
   const [isAnnual, setIsAnnual] = useState(false);
   const [showThankYou, setShowThankYou] = useState(false);
   const [subscribedPlan, setSubscribedPlan] = useState<'pass' | 'pass_plus'>('pass_plus');
-  const [showTrialModal, setShowTrialModal] = useState(false);
+  const { openTrialModal } = useTrialModal();
   const [trialPlanId, setTrialPlanId] = useState<'pass' | 'pass_plus'>('pass_plus');
 
   useEffect(() => {
@@ -88,7 +88,7 @@ const Pricing = () => {
     if (!user) {
       // Open modal for unauthenticated users
       setTrialPlanId(planId as 'pass' | 'pass_plus');
-      setShowTrialModal(true);
+      openTrialModal({ planId: planId === 'pass_monthly' || planId === 'pass_annual' ? 'pass' : 'pass_plus' });
       return;
     }
     
@@ -370,12 +370,6 @@ const Pricing = () => {
         })}
         </div>
         
-        {/* Trial Signup Modal */}
-        <TrialSignupModal 
-          isOpen={showTrialModal}
-          onClose={() => setShowTrialModal(false)}
-          planId={trialPlanId}
-        />
       </div>
     </div>;
 };
