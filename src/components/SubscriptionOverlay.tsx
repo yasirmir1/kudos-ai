@@ -159,7 +159,7 @@ export const SubscriptionOverlay: React.FC<SubscriptionOverlayProps> = ({
                     Upgrade to Pass Plus
                   </Button>}
                 
-                {userState === 'no_access' && <p className="text-xs text-muted-foreground text-center mt-3 my-0 py-0">
+                {userState === 'no_access' && <p className="text-xs text-muted-foreground text-center mt-3 py-0 my-[2px]">
                     No payment required during trial • Cancel anytime
                   </p>}
                 
