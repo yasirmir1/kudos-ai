@@ -8,6 +8,7 @@ import { AuthProvider, useAuth } from "./hooks/useAuth";
 import { AgeGroupProvider } from "./contexts/AgeGroupContext";
 import { AccessibilityProvider } from "./contexts/AccessibilityContext";
 import { TrialModalProvider, useTrialModal } from "./contexts/TrialModalContext";
+import { SubscriptionOverlayProvider } from "./contexts/SubscriptionOverlayContext";
 import { AppNavigation } from "./components/AppNavigation";
 import { SubscriptionOverlay } from "./components/SubscriptionOverlay";
 import { UnifiedTrialModal } from "./components/UnifiedTrialModal";
@@ -77,9 +78,10 @@ const App = () => (
   <QueryClientProvider client={queryClient}>
     <TooltipProvider>
       <AuthProvider>
-        <TrialModalProvider>
-          <AgeGroupProvider>
-            <AccessibilityProvider>
+        <SubscriptionOverlayProvider>
+          <TrialModalProvider>
+            <AgeGroupProvider>
+              <AccessibilityProvider>
             <Toaster />
             <Sonner />
             <BrowserRouter>
@@ -99,6 +101,21 @@ const App = () => (
                       <Report />
                     </SubscriptionOverlay>
                   } />
+                  <Route path="/practice" element={
+                    <SubscriptionOverlay requiredFeature="daily_mode">
+                      <Practice />
+                    </SubscriptionOverlay>
+                  } />
+                  <Route path="/analytics" element={
+                    <SubscriptionOverlay requiredFeature="daily_mode">
+                      <Analytics />
+                    </SubscriptionOverlay>
+                  } />
+                  <Route path="/curriculum" element={
+                    <SubscriptionOverlay requiredFeature="daily_mode">
+                      <Curriculum />
+                    </SubscriptionOverlay>
+                  } />
                   
                   <Route path="/bootcamp" element={
                     <SubscriptionOverlay requiredFeature="bootcamp">
@@ -114,6 +131,7 @@ const App = () => (
               </AccessibilityProvider>
             </AgeGroupProvider>
           </TrialModalProvider>
+        </SubscriptionOverlayProvider>
       </AuthProvider>
     </TooltipProvider>
   </QueryClientProvider>

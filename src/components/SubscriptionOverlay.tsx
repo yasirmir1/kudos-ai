@@ -8,6 +8,7 @@ import { useAuth } from '@/hooks/useAuth';
 import { supabase } from '@/integrations/supabase/client';
 import { Clock, Crown, Check } from 'lucide-react';
 import { toast } from 'sonner';
+import { useSubscriptionOverlay } from '@/contexts/SubscriptionOverlayContext';
 
 interface SubscriptionOverlayProps {
   children: React.ReactNode;
@@ -32,6 +33,7 @@ export const SubscriptionOverlay: React.FC<SubscriptionOverlayProps> = ({
     startTrial
   } = useSubscriptionState();
   const { openTrialModal } = useTrialModal();
+  const { setIsOverlayActive } = useSubscriptionOverlay();
 
   // Check trial eligibility when component mounts for authenticated users
   useEffect(() => {
@@ -156,13 +158,17 @@ export const SubscriptionOverlay: React.FC<SubscriptionOverlayProps> = ({
 
   // If user doesn't have access, show grayed out content with conditional upgrade prompt
   if (!hasAccessTo(requiredFeature)) {
+    // Set overlay as active when blocking access
+    setIsOverlayActive(true);
     // Show loading while checking eligibility
     if (checkingEligibility) {
       return (
         <div className="relative">
-          {/* Content with full navbar interaction */}
+          {/* Content blocked except navbar when no access */}
           <div className="relative">
             {children}
+            {/* Dark overlay blocking content interaction below navbar */}
+            <div className="fixed top-20 left-0 right-0 bottom-0 bg-black/30 z-40 pointer-events-auto" />
           </div>
           
           <div className="fixed inset-0 z-50 flex items-center justify-center pointer-events-none">
@@ -177,9 +183,11 @@ export const SubscriptionOverlay: React.FC<SubscriptionOverlayProps> = ({
 
     return (
       <div className="relative">
-        {/* Content with full navbar interaction */}
+        {/* Content blocked except navbar when no access */}
         <div className="relative">
           {children}
+          {/* Dark overlay blocking content interaction below navbar */}
+          <div className="fixed top-20 left-0 right-0 bottom-0 bg-black/30 z-40 pointer-events-auto" />
         </div>
         
         {/* Conditional upgrade prompt based on trial eligibility */}
@@ -257,5 +265,7 @@ export const SubscriptionOverlay: React.FC<SubscriptionOverlayProps> = ({
   }
 
   // User has access, render children normally
+  // Clear overlay state when user has access
+  setIsOverlayActive(false);
   return <>{children}</>;
 };

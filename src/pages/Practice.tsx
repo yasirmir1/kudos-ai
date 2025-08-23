@@ -11,6 +11,7 @@ import { useToast } from '@/hooks/use-toast';
 import { useAgeGroup } from '@/contexts/AgeGroupContext';
 import { AgeGroupSelector } from '@/components/AgeGroupSelector';
 import { SessionStartModal } from '@/components/SessionStartModal';
+import { useSubscriptionOverlay } from '@/contexts/SubscriptionOverlayContext';
 interface Question {
   question_id: string;
   topic: string;
@@ -54,15 +55,23 @@ const Practice = () => {
     isCorrect: boolean;
     timeTaken: number;
   }[]>([]);
-  const [showSessionStartModal, setShowSessionStartModal] = useState(true);
+  const { isOverlayActive } = useSubscriptionOverlay();
+  const [showSessionStartModal, setShowSessionStartModal] = useState(!isOverlayActive);
   const [sessionQuestionCount, setSessionQuestionCount] = useState(10);
   const [sessionDifficulty, setSessionDifficulty] = useState<string | undefined>(undefined);
   const [sessionRecorded, setSessionRecorded] = useState(false);
   const [currentSessionId, setCurrentSessionId] = useState<string | null>(null);
   useEffect(() => {
     setSessionStartTime(new Date());
-    // Don't automatically load questions - wait for user to start session
-  }, [user, selectedAgeGroup]);
+    
+    // If overlay is active, bypass modal and start with 10 questions
+    if (isOverlayActive) {
+      setShowSessionStartModal(false);
+      setSessionQuestionCount(10);
+      setSessionDifficulty(undefined);
+      loadAdaptiveQuestions(selectedAgeGroup, 10, undefined);
+    }
+  }, [user, selectedAgeGroup, isOverlayActive]);
 
   // Record session when user leaves the practice page
   useEffect(() => {
@@ -521,6 +530,11 @@ const Practice = () => {
     setStartTime(new Date());
   };
   const createNewSession = async () => {
+    // Skip creating session if overlay is active
+    if (isOverlayActive) {
+      console.log('Skipping session creation - overlay active');
+      return;
+    }
     try {
       const { data, error } = await supabase.from('practice_sessions').insert({
         student_id: user?.id,
@@ -549,6 +563,12 @@ const Practice = () => {
   };
 
   const recordSessionResults = async (showNotification: boolean = false) => {
+    // Skip recording if overlay is active
+    if (isOverlayActive) {
+      console.log('Skipping session recording - overlay active');
+      return;
+    }
+    
     // Prevent duplicate session recordings
     if (sessionRecorded || !currentSessionId) {
       return;
