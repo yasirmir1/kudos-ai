@@ -2,7 +2,7 @@ import React from 'react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { BookOpen, BarChart3, User, GraduationCap, FileText, Play, Target, Calendar, CreditCard, LogOut, Clock, Crown } from 'lucide-react';
+import { BookOpen, BarChart3, User, GraduationCap, FileText, Play, Target, Calendar, CreditCard, LogOut, Clock, Crown, HelpCircle } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
 import { useSubscription } from '@/hooks/useSubscription';
 import { useTrialModal } from '@/contexts/TrialModalContext';
@@ -59,16 +59,30 @@ export const AppNavigation: React.FC<AppNavigationProps> = ({
       mode: 'upgrade'
     });
   };
-  const mainAppItems = [{
-    path: '/profile',
-    label: 'Profile',
-    icon: User
-  }];
-  const bootcampItems = [{
-    path: '/profile',
-    label: 'Profile',
-    icon: User
-  }];
+  const mainAppItems = [
+    {
+      path: '/tutorial',
+      label: 'Help',
+      icon: HelpCircle
+    },
+    {
+      path: '/profile',
+      label: 'Profile',
+      icon: User
+    }
+  ];
+  const bootcampItems = [
+    {
+      path: '/tutorial',
+      label: 'Help',
+      icon: HelpCircle
+    },
+    {
+      path: '/profile',
+      label: 'Profile',
+      icon: User
+    }
+  ];
 
   // Show bootcamp items when in bootcamp, main app items otherwise
   const navigationItems = isBootcampRoute ? bootcampItems : mainAppItems;

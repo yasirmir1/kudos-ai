@@ -22,6 +22,7 @@ import Analytics from "./pages/Analytics";
 import Curriculum from "./pages/Curriculum";
 import Report from "./pages/Report";
 import Bootcamp from "./pages/Bootcamp";
+import Tutorial from "./pages/Tutorial";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -122,6 +123,8 @@ const App = () => (
                       <Bootcamp />
                     </SubscriptionOverlay>
                   } />
+                  
+                  <Route path="/tutorial" element={<Tutorial />} />
                   
                   {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
                   <Route path="*" element={<NotFound />} />
