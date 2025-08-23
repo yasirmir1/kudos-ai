@@ -52,16 +52,56 @@ serve(async (req) => {
     logStep("Found Stripe customer", { customerId });
 
     const origin = req.headers.get("origin") || "http://localhost:3000";
-    const portalSession = await stripe.billingPortal.sessions.create({
-      customer: customerId,
-      return_url: `${origin}/pricing`,
-    });
-    logStep("Customer portal session created", { sessionId: portalSession.id, url: portalSession.url });
+    
+    try {
+      const portalSession = await stripe.billingPortal.sessions.create({
+        customer: customerId,
+        return_url: `${origin}/profile`,
+      });
+      logStep("Customer portal session created", { sessionId: portalSession.id, url: portalSession.url });
+      
+      return new Response(JSON.stringify({ url: portalSession.url }), {
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+        status: 200,
+      });
+    } catch (portalError: any) {
+      // If portal configuration doesn't exist, try to create one
+      if (portalError.message?.includes("No configuration provided")) {
+        logStep("Portal configuration missing, creating default configuration");
+        
+        try {
+          await stripe.billingPortal.configurations.create({
+            business_profile: {
+              privacy_policy_url: `${origin}/privacy`,
+              terms_of_service_url: `${origin}/terms`,
+            },
+            features: {
+              payment_method_update: { enabled: true },
+              subscription_cancel: { enabled: true },
+              subscription_pause: { enabled: false },
+            },
+          });
+          
+          // Retry creating the portal session
+          const portalSession = await stripe.billingPortal.sessions.create({
+            customer: customerId,
+            return_url: `${origin}/profile`,
+          });
+          logStep("Portal session created after configuration setup", { url: portalSession.url });
+          
+          return new Response(JSON.stringify({ url: portalSession.url }), {
+            headers: { ...corsHeaders, "Content-Type": "application/json" },
+            status: 200,
+          });
+        } catch (configError: any) {
+          logStep("Failed to create portal configuration", { error: configError.message });
+          throw new Error("Customer portal is not configured. Please contact support.");
+        }
+      } else {
+        throw portalError;
+      }
+    }
 
-    return new Response(JSON.stringify({ url: portalSession.url }), {
-      headers: { ...corsHeaders, "Content-Type": "application/json" },
-      status: 200,
-    });
   } catch (error) {
     const errorMessage = error instanceof Error ? error.message : String(error);
     logStep("ERROR in customer-portal", { message: errorMessage });

@@ -46,7 +46,8 @@ const Profile = () => {
     isTrialActive,
     trialDaysRemaining,
     openCustomerPortal,
-    createCheckoutSession
+    createCheckoutSession,
+    refetch: refetchSubscription
   } = useSubscriptionState();
   const navigate = useNavigate();
   const {
@@ -92,38 +93,48 @@ const Profile = () => {
     switch (userState) {
       case 'trial':
         return {
-          plan: 'Pass Plus (Trial)',
-          price: `${trialDaysRemaining} days remaining`,
-          status: 'Trial Active',
-          features: ['All features included', 'Unlimited bootcamp access', 'Daily practice mode', 'Progress analytics', 'Priority support']
+          plan: 'Pass Plus',
+          price: 'Free Trial',
+          status: `${trialDaysRemaining} days remaining`,
+          features: ['All Pass Plus features included', 'Unlimited bootcamp access', 'Daily practice mode', 'Advanced analytics', 'Priority support', 'Mock tests'],
+          isActive: true,
+          isTrial: true
         };
       case 'pass':
         return {
           plan: 'Pass',
           price: '£7.99/month',
-          status: 'Active',
-          features: ['Daily practice mode', 'Progress tracking', 'Basic analytics', 'Email support']
+          status: 'Active Subscription',
+          features: ['Daily practice mode', 'Progress tracking', 'Basic analytics', 'Email support'],
+          isActive: true,
+          isTrial: false
         };
       case 'pass_plus':
         return {
           plan: 'Pass Plus',
           price: '£14.99/month', 
-          status: 'Active',
-          features: ['All Pass features', 'Unlimited bootcamp access', 'Advanced analytics', 'Priority support', 'Mock tests']
+          status: 'Active Subscription',
+          features: ['All Pass features', 'Unlimited bootcamp access', 'Advanced analytics', 'Priority support', 'Mock tests'],
+          isActive: true,
+          isTrial: false
         };
       case 'expired':
         return {
           plan: 'Trial Expired',
           price: 'Upgrade needed',
           status: 'Expired',
-          features: ['Trial has ended', 'Limited access only']
+          features: ['Trial has ended - Limited access only'],
+          isActive: false,
+          isTrial: false
         };
       default:
         return {
-          plan: 'Free',
-          price: 'No subscription',
-          status: 'No Access',
-          features: ['Limited features only', 'Upgrade to unlock full access']
+          plan: 'No Subscription',
+          price: 'Free account',
+          status: 'Limited Access',
+          features: ['Basic features only', 'Upgrade to unlock full access'],
+          isActive: false,
+          isTrial: false
         };
     }
   };
@@ -137,14 +148,26 @@ const Profile = () => {
       return;
     }
 
-    // Open customer portal for existing subscribers
-    const result = await openCustomerPortal();
-    if (result.url) {
-      window.open(result.url, '_blank');
-    } else {
+    try {
+      // Open customer portal for existing subscribers
+      const result = await openCustomerPortal();
+      if (result.url) {
+        window.open(result.url, '_blank');
+        // Refresh subscription data when they return
+        setTimeout(() => {
+          refetchSubscription();
+        }, 5000);
+      } else {
+        toast({
+          title: "Error",
+          description: result.error || "Failed to open subscription management",
+          variant: "destructive"
+        });
+      }
+    } catch (error) {
       toast({
-        title: "Error",
-        description: result.error || "Failed to open subscription management",
+        title: "Error", 
+        description: "Unable to access subscription management. Please try again.",
         variant: "destructive"
       });
     }
@@ -648,30 +671,61 @@ const Profile = () => {
                   <p className="text-muted-foreground">Loading subscription details...</p>
                 </div>
               ) : (
-                <div className="bg-gradient-to-r from-primary/10 to-primary-glow/10 rounded-lg p-6 border border-primary/20">
+                <div className={`rounded-lg p-6 border ${
+                  subscription.isActive 
+                    ? 'bg-gradient-to-r from-primary/10 to-primary-glow/10 border-primary/20' 
+                    : 'bg-muted/50 border-muted-foreground/20'
+                }`}>
                   <div className="flex items-center justify-between mb-4">
                     <div>
                       <h4 className="text-lg font-semibold text-foreground">{subscription.plan}</h4>
-                      <p className="text-primary">{subscription.price}</p>
+                      <p className={`font-medium ${subscription.isActive ? 'text-primary' : 'text-muted-foreground'}`}>
+                        {subscription.price}
+                      </p>
                     </div>
-                    <div className={`flex items-center space-x-2 ${
-                      userState === 'trial' || userState === 'pass' || userState === 'pass_plus' 
-                        ? 'text-green-600' 
-                        : userState === 'expired' 
-                          ? 'text-orange-600'
-                          : 'text-muted-foreground'
+                    <div className={`flex items-center space-x-2 px-3 py-1 rounded-full text-sm font-medium ${
+                      subscription.isActive && !subscription.isTrial
+                        ? 'bg-green-100 text-green-800 border border-green-200'
+                        : subscription.isTrial
+                          ? 'bg-blue-100 text-blue-800 border border-blue-200'
+                          : userState === 'expired' 
+                            ? 'bg-orange-100 text-orange-800 border border-orange-200'
+                            : 'bg-gray-100 text-gray-600 border border-gray-200'
                     }`}>
-                      <Check className="h-4 w-4" />
-                      <span className="text-sm font-medium">{subscription.status}</span>
+                      <Check className="h-3 w-3" />
+                      <span>{subscription.status}</span>
                     </div>
                   </div>
                   
                   <div className="space-y-3">
                     {isTrialActive && (
-                      <div className="bg-orange-50 border border-orange-200 rounded-lg p-3">
+                      <div className="bg-gradient-to-r from-blue-50 to-primary/5 border border-blue-200 rounded-lg p-4">
+                        <div className="flex items-center space-x-2 mb-2">
+                          <div className="w-2 h-2 bg-blue-500 rounded-full animate-pulse"></div>
+                          <h5 className="font-medium text-blue-900">Free Trial Active</h5>
+                        </div>
+                        <p className="text-sm text-blue-800">
+                          {trialDaysRemaining > 1 
+                            ? `${trialDaysRemaining} days remaining` 
+                            : trialDaysRemaining === 1 
+                              ? '1 day remaining - Don\'t miss out!' 
+                              : 'Trial expires today'
+                          }
+                        </p>
+                        <p className="text-xs text-blue-700 mt-1">
+                          Upgrade anytime to continue with uninterrupted access to all features.
+                        </p>
+                      </div>
+                    )}
+                    
+                    {userState === 'expired' && (
+                      <div className="bg-gradient-to-r from-orange-50 to-red-50 border border-orange-200 rounded-lg p-4">
+                        <div className="flex items-center space-x-2 mb-2">
+                          <div className="w-2 h-2 bg-orange-500 rounded-full"></div>
+                          <h5 className="font-medium text-orange-900">Subscription Required</h5>
+                        </div>
                         <p className="text-sm text-orange-800">
-                          Your trial expires in {trialDaysRemaining} day{trialDaysRemaining !== 1 ? 's' : ''}. 
-                          Upgrade now to continue enjoying full access.
+                          Your trial has ended. Subscribe now to regain full access to all features.
                         </p>
                       </div>
                     )}
