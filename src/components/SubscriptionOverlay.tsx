@@ -165,10 +165,10 @@ export const SubscriptionOverlay: React.FC<SubscriptionOverlayProps> = ({
             {children}
             {/* Dark overlay to indicate restricted access */}
             <div className="fixed inset-0 bg-black/20 z-40" />
-            {/* Allow navbar interaction */}
-            <div className="fixed top-0 left-0 right-0 h-20 z-50 pointer-events-none">
-              <div className="h-full pointer-events-auto" />
-            </div>
+          </div>
+          
+          {/* Allow navbar interaction - higher z-index than modal */}
+          <div className="fixed top-0 left-0 right-0 h-20 z-[60] pointer-events-auto">
           </div>
           
           <div className="fixed inset-0 z-50 flex items-center justify-center pointer-events-none">
@@ -188,10 +188,10 @@ export const SubscriptionOverlay: React.FC<SubscriptionOverlayProps> = ({
           {children}
           {/* Dark overlay to indicate restricted access */}
           <div className="fixed inset-0 bg-black/20 z-40" />
-          {/* Allow navbar interaction */}
-          <div className="fixed top-0 left-0 right-0 h-20 z-50 pointer-events-none">
-            <div className="h-full pointer-events-auto" />
-          </div>
+        </div>
+        
+        {/* Allow navbar interaction - higher z-index than modal */}
+        <div className="fixed top-0 left-0 right-0 h-20 z-[60] pointer-events-auto">
         </div>
         
         {/* Conditional upgrade prompt based on trial eligibility */}
