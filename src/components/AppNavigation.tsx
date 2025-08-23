@@ -131,9 +131,12 @@ export const AppNavigation: React.FC<AppNavigationProps> = ({
           <div className="flex items-center space-x-4">
             {showBackButton ? <Button variant="ghost" onClick={() => navigate(backButtonPath)}>
                 {backButtonText}
-              </Button> : <div className="flex items-center space-x-2">
+              </Button> : <button 
+                onClick={() => navigate('/')} 
+                className="flex items-center space-x-2 hover:opacity-80 transition-opacity"
+              >
                 <img src="/lovable-uploads/343d37bc-a8af-452f-b2b9-250214aa6175.png" alt="Kudos Academy" className="h-16 w-auto" />
-              </div>}
+              </button>}
           </div>
 
           {/* Center section - Title/Subtitle if provided */}
