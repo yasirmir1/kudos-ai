@@ -3,6 +3,7 @@ import { Play, BookOpen, BarChart3, Home, FileText, Zap, Star, User } from 'luci
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import { useAuth } from '@/hooks/useAuth';
+import { useLocation } from 'react-router-dom';
 interface NavItem {
   id: string;
   label: string;
@@ -19,7 +20,12 @@ export const DashboardNavigation: React.FC<DashboardNavigationProps> = ({
   const {
     user
   } = useAuth();
-  const navItems: NavItem[] = [{
+  const location = useLocation();
+  
+  // Check if we're in bootcamp mode
+  const isBootcampRoute = location.pathname.startsWith('/bootcamp');
+  
+  const allNavItems: NavItem[] = [{
     id: 'overview',
     label: 'Overview',
     icon: Home
@@ -40,6 +46,11 @@ export const DashboardNavigation: React.FC<DashboardNavigationProps> = ({
     label: 'Report',
     icon: FileText
   }];
+
+  // Filter out curriculum tab in daily mode
+  const navItems = allNavItems.filter(item => 
+    item.id !== 'curriculum' || isBootcampRoute
+  );
 
   // Mock user stats for dashboard - in real app these would come from props or context
   const userStats = {
