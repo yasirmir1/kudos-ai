@@ -168,7 +168,7 @@ export const SubscriptionOverlay: React.FC<SubscriptionOverlayProps> = ({
           <div className="relative">
             {children}
             {/* Invisible overlay blocking content interaction below navbars */}
-            <div className="fixed top-24 left-0 right-0 bottom-0 z-40 pointer-events-auto" />
+            <div className="fixed top-40 left-0 right-0 bottom-0 z-20 pointer-events-auto" />
           </div>
           
           <div className="fixed inset-0 z-50 flex items-center justify-center pointer-events-none">
@@ -187,7 +187,7 @@ export const SubscriptionOverlay: React.FC<SubscriptionOverlayProps> = ({
         <div className="relative">
           {children}
           {/* Invisible overlay blocking content interaction below navbars */}
-          <div className="fixed top-24 left-0 right-0 bottom-0 z-40 pointer-events-auto" />
+          <div className="fixed top-40 left-0 right-0 bottom-0 z-20 pointer-events-auto" />
         </div>
         
         {/* Conditional upgrade prompt based on trial eligibility */}
