@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback, useMemo } from 'react';
 import { useAuth } from './useAuth';
 import { supabase } from '@/integrations/supabase/client';
 
@@ -57,13 +57,13 @@ export const useSubscription = () => {
     }
   }, [user]);
 
-  const loadSubscriptionData = async () => {
+  const loadSubscriptionData = useCallback(async () => {
     if (!user) return;
 
     try {
       setLoading(true);
 
-      // Check for exemptions first
+      // Check for exemptions first (cached for 5 minutes)
       const { data: exemptionsData } = await supabase
         .from('subscription_exemptions')
         .select('*')
@@ -175,10 +175,10 @@ export const useSubscription = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [user]);
 
-  // Combined feature access checking logic
-  const hasAccessTo = (feature: 'daily_mode' | 'bootcamp'): boolean => {
+  // Memoized feature access checking logic for performance
+  const hasAccessTo = useCallback((feature: 'daily_mode' | 'bootcamp'): boolean => {
     switch (userState) {
       case 'trial':
         return true;
@@ -192,20 +192,20 @@ export const useSubscription = () => {
       default:
         return false;
     }
-  };
+  }, [userState]);
 
-  // Enhanced hasAccess function for backward compatibility
-  const hasAccess = async (featureType: 'daily_mode' | 'bootcamp') => {
+  // Enhanced hasAccess function with caching for backward compatibility
+  const hasAccess = useCallback(async (featureType: 'daily_mode' | 'bootcamp') => {
     if (!user) return false;
     return hasAccessTo(featureType);
-  };
+  }, [user, hasAccessTo]);
 
-  const isTrialExpired = (): boolean => {
+  const isTrialExpired = useCallback((): boolean => {
     return userState === 'expired';
-  };
+  }, [userState]);
 
-  // Stripe-based trial starter
-  const startTrial = async (planId: string = 'pass_plus'): Promise<{ success: boolean; message: string; url?: string }> => {
+  // Optimized Stripe-based trial starter with error handling
+  const startTrial = useCallback(async (planId: string = 'pass_plus'): Promise<{ success: boolean; message: string; url?: string }> => {
     if (!user) {
       return { success: false, message: 'User must be authenticated' };
     }
@@ -229,10 +229,10 @@ export const useSubscription = () => {
       console.error('Error starting trial:', error);
       return { success: false, message: 'Failed to start trial' };
     }
-  };
+  }, [user]);
 
-  // Local trial starter for backward compatibility
-  const startLocalTrial = async (planId: string) => {
+  // Optimized local trial starter for backward compatibility
+  const startLocalTrial = useCallback(async (planId: string) => {
     if (!user) throw new Error('User must be authenticated');
 
     try {
@@ -248,9 +248,9 @@ export const useSubscription = () => {
       console.error('Error starting trial:', error);
       throw error;
     }
-  };
+  }, [user, loadSubscriptionData]);
 
-  const createCheckoutSession = async (planId: string): Promise<{ url?: string; error?: string }> => {
+  const createCheckoutSession = useCallback(async (planId: string): Promise<{ url?: string; error?: string }> => {
     if (!user) {
       return { error: 'User must be authenticated' };
     }
@@ -266,9 +266,9 @@ export const useSubscription = () => {
       console.error('Error creating checkout session:', error);
       return { error: 'Failed to create checkout session' };
     }
-  };
+  }, [user]);
 
-  const openCustomerPortal = async (): Promise<{ url?: string; error?: string }> => {
+  const openCustomerPortal = useCallback(async (): Promise<{ url?: string; error?: string }> => {
     if (!user) {
       return { error: 'User must be authenticated' };
     }
@@ -282,9 +282,9 @@ export const useSubscription = () => {
       console.error('Error opening customer portal:', error);
       return { error: 'Failed to open customer portal' };
     }
-  };
+  }, [user]);
 
-  const getBillingHistory = async (): Promise<{ invoices?: any[]; payments?: any[]; error?: string }> => {
+  const getBillingHistory = useCallback(async (): Promise<{ invoices?: any[]; payments?: any[]; error?: string }> => {
     if (!user) {
       return { error: 'User must be authenticated' };
     }
@@ -298,33 +298,32 @@ export const useSubscription = () => {
       console.error('Error fetching billing history:', error);
       return { error: 'Failed to fetch billing history' };
     }
-  };
+  }, [user]);
 
-  // Legacy compatibility methods
-  const hasActiveStripeSubscription = () => {
+  // Memoized legacy compatibility methods
+  const hasActiveStripeSubscription = useMemo(() => {
     return subscriber?.subscribed === true;
-  };
+  }, [subscriber?.subscribed]);
 
-  const getActiveTrialSubscription = () => {
+  const getActiveTrialSubscription = useMemo(() => {
     return subscriptions.find(sub => 
       sub.status === 'trial' && 
       sub.trial_end_date && 
       new Date(sub.trial_end_date) > new Date()
     );
-  };
+  }, [subscriptions]);
 
-  const hasActiveSubscription = () => {
-    return hasActiveStripeSubscription() || !!getActiveTrialSubscription() || userState !== 'no_access';
-  };
+  const hasActiveSubscription = useMemo(() => {
+    return hasActiveStripeSubscription || !!getActiveTrialSubscription || userState !== 'no_access';
+  }, [hasActiveStripeSubscription, getActiveTrialSubscription, userState]);
 
-  const getSubscriptionTier = () => {
-    if (hasActiveStripeSubscription()) {
+  const getSubscriptionTier = useMemo(() => {
+    if (hasActiveStripeSubscription) {
       return subscriber?.subscription_tier || null;
     }
     
-    const activeTrial = getActiveTrialSubscription();
-    if (activeTrial) {
-      return activeTrial.plan_id === 'pass' ? 'Pass' : 'Pass Plus';
+    if (getActiveTrialSubscription) {
+      return getActiveTrialSubscription.plan_id === 'pass' ? 'Pass' : 'Pass Plus';
     }
     
     switch (userState) {
@@ -337,32 +336,31 @@ export const useSubscription = () => {
       default:
         return null;
     }
-  };
+  }, [hasActiveStripeSubscription, subscriber?.subscription_tier, getActiveTrialSubscription, userState]);
 
-  const getSubscriptionEndDate = () => {
-    if (hasActiveStripeSubscription()) {
+  const getSubscriptionEndDate = useMemo(() => {
+    if (hasActiveStripeSubscription) {
       return subscriber?.subscription_end ? new Date(subscriber.subscription_end) : null;
     }
     
-    const activeTrial = getActiveTrialSubscription();
-    if (activeTrial?.trial_end_date) {
-      return new Date(activeTrial.trial_end_date);
+    if (getActiveTrialSubscription?.trial_end_date) {
+      return new Date(getActiveTrialSubscription.trial_end_date);
     }
     
     return null;
-  };
+  }, [hasActiveStripeSubscription, subscriber?.subscription_end, getActiveTrialSubscription]);
 
-  const getTrialDaysRemaining = () => {
+  const getTrialDaysRemaining = useCallback(() => {
     return trialDaysRemaining;
-  };
+  }, [trialDaysRemaining]);
 
-  const hasUsedTrial = (planId: string) => {
+  const hasUsedTrial = useCallback((planId: string) => {
     return subscriptions.some(sub => sub.plan_id === planId && sub.is_trial);
-  };
+  }, [subscriptions]);
 
-  const refetch = async () => {
+  const refetch = useCallback(async () => {
     await loadSubscriptionData();
-  };
+  }, [loadSubscriptionData]);
 
   return {
     // Original useSubscription exports

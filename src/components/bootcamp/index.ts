@@ -28,16 +28,15 @@ export { ComprehensiveQuestionInterface } from './ComprehensiveQuestionInterface
 export { LearningSessionModal } from './LearningSessionModal';
 export { TopicLearningModal } from './TopicLearningModal';
 
-// DEPRECATED - Replaced by ComprehensiveQuestionInterface
-// export { EnhancedQuestionInterface } from './EnhancedQuestionInterface';
-// export { DiagnosticQuestion } from './DiagnosticQuestion';
-// export { UniversalQuestion } from './UniversalQuestion';
+// Clean exports - Removed deprecated components
 
 // Learning Tools and Experiences
 export { LearningExperience } from './LearningExperience';
 export { LearningTools } from './LearningTools';
 export { LearningPathRecommendations } from './LearningPathRecommendations';
-// export { VisualMathTools } from './VisualMathTools'; // Export issue - check component
+
+// Visual Math Tools - Individual Components
+export { FractionBar, NumberLine, GeometryShape } from './VisualMathTools';
 
 // UI Components and Cards
 export { StatCard } from './StatCard';
@@ -65,15 +64,7 @@ export { StudentsList } from './StudentsList';
 
 // Mock Tests and Practice
 export { MockExamInterface } from './MockExamInterface';
-// PracticeSession removed - use EnhancedPracticeSession instead
 
 // Settings and Support
 export { default as HelpCenter } from './HelpCenter';
 export { default as PracticeReport } from './PracticeReport';
-
-// DEPRECATED - These components exist but are not integrated into active flow
-// export { MathApp } from './MathApp'; // Replaced by Bootcamp.tsx
-// export { StudentDashboard } from './StudentDashboard'; // Replaced by Dashboard.tsx
-// export { EnhancedDashboard } from './EnhancedDashboard'; // Not used in routing
-// export { TeacherDashboard } from './TeacherDashboard'; // Not used in routing  
-// export { ParentDashboard } from './ParentDashboard'; // Not used in routing
