@@ -175,7 +175,7 @@ export const SubscriptionOverlay: React.FC<SubscriptionOverlayProps> = ({
     // Use useEffect to set overlay state instead of during render
     React.useEffect(() => {
       setIsOverlayActive(true);
-    }, [setIsOverlayActive]);
+    }, []); // Empty dependency array since setIsOverlayActive is stable
     // Show loading while checking eligibility
     if (checkingEligibility) {
       return (
@@ -284,7 +284,7 @@ export const SubscriptionOverlay: React.FC<SubscriptionOverlayProps> = ({
   // Clear overlay state when user has access
   React.useEffect(() => {
     setIsOverlayActive(false);
-  }, [setIsOverlayActive]);
+  }, []); // Empty dependency array since setIsOverlayActive is stable
   
   return <>{children}</>;
 };
