@@ -161,12 +161,12 @@ export const SubscriptionOverlay: React.FC<SubscriptionOverlayProps> = ({
             {/* Conditional content based on trial eligibility and user state */}
             {userState === 'no_access' && trialEligible && (
               <>
-                <h3 className="text-xl font-bold mb-2">Premium Access Required</h3>
+                <h3 className="text-xl font-bold mb-2">Start Your Free Trial</h3>
                 <p className="text-muted-foreground mb-6">
-                  Start your free trial to unlock this feature.
+                  Get instant access to all premium features with a 7-day free trial.
                 </p>
                 <Button onClick={handleStartTrial} className="w-full mb-3" size="lg">
-                  Start Free Trial
+                  Start 7-Day Free Trial
                 </Button>
                 <p className="text-xs text-muted-foreground">
                   No credit card required • Cancel anytime
@@ -176,7 +176,7 @@ export const SubscriptionOverlay: React.FC<SubscriptionOverlayProps> = ({
             
             {userState === 'no_access' && trialEligible === false && (
               <>
-                <h3 className="text-xl font-bold mb-2">Premium Access Required</h3>
+                <h3 className="text-xl font-bold mb-2">Trial Already Used</h3>
                 <p className="text-muted-foreground mb-6">
                   You've already used your free trial. Subscribe to continue accessing premium features.
                 </p>
@@ -192,11 +192,9 @@ export const SubscriptionOverlay: React.FC<SubscriptionOverlayProps> = ({
             
             {userState === 'expired' && (
               <>
-                <h3 className="text-xl font-bold mb-2">
-                  {requiredFeature === 'bootcamp' ? 'Bootcamp Access Required' : 'Premium Access Required'}
-                </h3>
+                <h3 className="text-xl font-bold mb-2">Trial Expired</h3>
                 <p className="text-muted-foreground mb-6">
-                  Your trial has expired. Subscribe to continue.
+                  Your 7-day free trial has ended. Subscribe to continue using premium features.
                 </p>
                 <Button onClick={() => openTrialModal({ 
                   planId: requiredFeature === 'bootcamp' ? 'pass_plus' : 'pass', 
@@ -210,9 +208,9 @@ export const SubscriptionOverlay: React.FC<SubscriptionOverlayProps> = ({
             
             {(userState === 'trial' || userState === 'pass') && requiredFeature === 'bootcamp' && (
               <>
-                <h3 className="text-xl font-bold mb-2">Bootcamp Access Required</h3>
+                <h3 className="text-xl font-bold mb-2">Upgrade Required</h3>
                 <p className="text-muted-foreground mb-6">
-                  Upgrade to Pass Plus for full bootcamp access.
+                  This bootcamp feature requires Pass Plus. Upgrade to unlock the full learning experience.
                 </p>
                 <Button onClick={() => openTrialModal({ 
                   planId: 'pass_plus', 

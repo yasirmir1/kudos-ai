@@ -315,95 +315,40 @@ export const UnifiedTrialModal: React.FC<UnifiedTrialModalProps> = ({
   // Show signup flow for new users
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
+      <DialogContent className="max-w-md mx-auto">
         <DialogHeader>
           <DialogTitle className="text-2xl font-bold text-center">
-            Choose Your Plan & Start Free Trial
+            Start Your Free Trial
           </DialogTitle>
+          <p className="text-center text-muted-foreground mt-2">
+            Get 7 days free access to {planId === 'pass_plus' ? 'Pass Plus' : 'Pass'} features
+          </p>
         </DialogHeader>
 
-        <div className="grid lg:grid-cols-3 gap-6">
-          {/* Pass Plan */}
-          <Card 
-            className={`border-2 transition-all cursor-pointer ${planId === 'pass' ? 'border-primary bg-primary/5' : 'border-border hover:border-primary/50'}`}
-            onClick={() => setPlanId('pass')}
-          >
-            <CardHeader className="pb-4">
-              <div className="flex items-center justify-between">
-                <CardTitle className="text-xl">Pass</CardTitle>
-                <Badge variant="outline">
-                  Essential
-                </Badge>
-              </div>
-              <div className="space-y-1">
-                <div className="text-2xl font-bold">Free for 7 days</div>
-                <div className="text-sm text-muted-foreground">then £8/month after</div>
-              </div>
-            </CardHeader>
-            <CardContent className="space-y-3">
-              {planDetails.pass.features.map((feature, index) => (
-                <div key={index} className="flex items-start gap-2">
-                  <Check className="w-4 h-4 text-primary mt-0.5 flex-shrink-0" />
-                  <span className="text-sm">{feature}</span>
+        <div className="space-y-6">
+          {/* Trial Benefits */}
+          <Card className="border-primary/20 bg-primary/5">
+            <CardContent className="pt-6">
+              <div className="flex items-center gap-3 mb-4">
+                <Crown className="w-6 h-6 text-primary" />
+                <div>
+                  <h3 className="font-semibold">{planId === 'pass_plus' ? 'Pass Plus' : 'Pass'} Trial</h3>
+                  <p className="text-sm text-muted-foreground">7 days free, then {planId === 'pass_plus' ? '£15' : '£8'}/month</p>
                 </div>
-              ))}
-            </CardContent>
-          </Card>
-
-          {/* Pass Plus Plan - Highlighted */}
-          <Card 
-            className={`border-2 transition-all relative cursor-pointer ${planId === 'pass_plus' ? 'border-primary bg-primary/5' : 'border-primary/50 hover:border-primary'}`}
-            onClick={() => setPlanId('pass_plus')}
-          >
-            <div className="absolute -top-3 left-1/2 transform -translate-x-1/2">
-              <Badge className="bg-primary text-primary-foreground">
-                <Crown className="w-3 h-3 mr-1" />
-                Most Popular
-              </Badge>
-            </div>
-            <CardHeader className="pb-4 pt-6">
-              <div className="flex items-center justify-between">
-                <CardTitle className="text-xl">Pass Plus</CardTitle>
-                <Badge className="bg-gradient-to-r from-primary to-primary/80 text-primary-foreground">
-                  Premium
-                </Badge>
               </div>
-              <div className="space-y-1">
-                <div className="text-2xl font-bold">Free for 7 days</div>
-                <div className="text-sm text-muted-foreground">then £15/month after</div>
+              <div className="space-y-2">
+                {(planId === 'pass_plus' ? planDetails.pass_plus : planDetails.pass).features.slice(0, 4).map((feature, index) => (
+                  <div key={index} className="flex items-start gap-2">
+                    <Check className="w-4 h-4 text-primary mt-0.5 flex-shrink-0" />
+                    <span className="text-sm">{feature}</span>
+                  </div>
+                ))}
               </div>
-            </CardHeader>
-            <CardContent className="space-y-3">
-              {planDetails.pass_plus.features.map((feature, index) => (
-                <div key={index} className="flex items-start gap-2">
-                  <Check className="w-4 h-4 text-primary mt-0.5 flex-shrink-0" />
-                  <span className="text-sm">{feature}</span>
-                </div>
-              ))}
             </CardContent>
           </Card>
 
           {/* Account Creation Form */}
           <div className="space-y-4">
-            <div className="text-center mb-6">
-              <h3 className="text-lg font-semibold mb-2">Selected Plan: {planId === 'pass' ? 'Pass' : 'Pass Plus'}</h3>
-              <div className="flex justify-center gap-2 mb-4">
-                <Button
-                  variant={planId === 'pass' ? 'default' : 'outline'}
-                  onClick={() => setPlanId('pass')}
-                  size="sm"
-                >
-                  Pass - £8/mo
-                </Button>
-                <Button
-                  variant={planId === 'pass_plus' ? 'default' : 'outline'}
-                  onClick={() => setPlanId('pass_plus')}
-                  size="sm"
-                >
-                  Pass Plus - £15/mo
-                </Button>
-              </div>
-            </div>
 
             <div className="space-y-3">
               <div>
