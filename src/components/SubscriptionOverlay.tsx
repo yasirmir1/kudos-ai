@@ -160,11 +160,11 @@ export const SubscriptionOverlay: React.FC<SubscriptionOverlayProps> = ({
     if (checkingEligibility) {
       return (
         <div className="relative">
-          <div className="filter grayscale opacity-50 pointer-events-none select-none">
-            {children}
-          </div>
-          <div className="absolute inset-0 z-50 flex items-center justify-center bg-background/10 backdrop-blur-sm">
-            <div className="bg-card rounded-2xl border border-primary shadow-lg p-8 max-w-sm text-center animate-scale-in">
+          {/* Fully visible and interactive content */}
+          {children}
+          
+          <div className="fixed inset-0 z-50 flex items-center justify-center pointer-events-none">
+            <div className="bg-card rounded-2xl border border-primary shadow-lg p-8 max-w-sm text-center animate-scale-in pointer-events-auto">
               <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-4"></div>
               <p className="text-muted-foreground">Checking eligibility...</p>
             </div>
@@ -175,14 +175,12 @@ export const SubscriptionOverlay: React.FC<SubscriptionOverlayProps> = ({
 
     return (
       <div className="relative">
-        {/* Grayed out content */}
-        <div className="filter grayscale opacity-50 pointer-events-none select-none">
-          {children}
-        </div>
+        {/* Fully visible and interactive content */}
+        {children}
         
         {/* Conditional upgrade prompt based on trial eligibility */}
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-background/10 backdrop-blur-sm">
-          <div className="bg-card rounded-2xl border border-primary shadow-lg p-8 max-w-sm text-center animate-scale-in">
+        <div className="fixed inset-0 z-50 flex items-center justify-center pointer-events-none">
+          <div className="bg-card rounded-2xl border border-primary shadow-lg p-8 max-w-sm text-center animate-scale-in pointer-events-auto">
             <Crown className="h-12 w-12 text-primary mx-auto mb-4" />
             
             {/* Conditional content based on trial eligibility and user state */}
