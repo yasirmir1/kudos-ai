@@ -120,7 +120,7 @@ export const PricingSection = () => {
       price: annual ? '£59' : '£8',
       originalPrice: annual ? '£96' : undefined,
       description: 'Perfect for focused practice',
-      trialDays: 30,
+      trialDays: 7,
       isAnnual: annual,
       features: [
         'Unlimited daily practice questions',
@@ -137,7 +137,7 @@ export const PricingSection = () => {
       price: annual ? '£99' : '£15',
       originalPrice: annual ? '£180' : undefined,
       description: 'Complete 11+ preparation',
-      trialDays: 30,
+      trialDays: 7,
       isPopular: true,
       isAnnual: annual,
       features: [
@@ -163,7 +163,7 @@ export const PricingSection = () => {
             Simple, transparent pricing
           </h2>
           <p className="text-xl md:text-2xl text-muted-foreground mb-8">
-            Start your 30-day free trial today. No credit card required.
+            Start your 7-day free trial today. No credit card required.
           </p>
           
           <div className="flex items-center justify-center gap-4 mb-4">

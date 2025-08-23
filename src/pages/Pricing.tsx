@@ -219,7 +219,7 @@ const Pricing = () => {
                 {/* Trial Badge */}
                 <div className="absolute top-4 left-4">
                   <Badge className="bg-accent/20 text-accent-foreground px-3 py-1 text-xs font-medium">
-                    Free 30 day trial
+                    Free 7 day trial
                   </Badge>
                 </div>
                 
@@ -228,9 +228,9 @@ const Pricing = () => {
                     {planDisplayName}
                   </CardTitle>
                   
-                   <div className="space-y-2">
+                    <div className="space-y-2">
                      <div className="text-3xl font-bold text-foreground">
-                       {isAnnual ? 'Free for 30 days' : 'Free for 30 days'}
+                       {isAnnual ? 'Free for 7 days' : 'Free for 7 days'}
                      </div>
                      <div className="text-lg text-muted-foreground">
                        {isAnnual ? <>£{currentPrice}/year (£{monthlyEquivalent}/month)</> : <>£{currentPrice}/{billingPeriod} after</>}
@@ -326,7 +326,7 @@ const Pricing = () => {
                     
                      {/* Small print */}
                      <p className="text-xs text-muted-foreground text-center leading-relaxed pt-4">
-                       Free 30 day trial, then £{currentPrice} per {billingPeriod} after. Offer only available if you haven't tried Premium before.{' '}
+                       Free 7 day trial, then £{currentPrice} per {billingPeriod} after. Offer only available if you haven't tried Premium before.{' '}
                        <span className="underline cursor-pointer hover:text-foreground transition-colors">
                          Terms apply.
                        </span>

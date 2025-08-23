@@ -7,7 +7,7 @@ export type Json =
   | Json[]
 
 export type Database = {
-  // Allows to automatically instanciate createClient with right options
+  // Allows to automatically instantiate createClient with right options
   // instead of createClient<Database, { PostgrestVersion: 'XX' }>(URL, KEY)
   __InternalSupabase: {
     PostgrestVersion: "12.2.3 (519615d)"
@@ -1868,24 +1868,24 @@ export type Database = {
     Functions: {
       award_points: {
         Args: {
-          p_student_id: string
+          p_description?: string
           p_points: number
           p_points_type: string
           p_source_id?: string
-          p_description?: string
+          p_student_id: string
         }
         Returns: undefined
       }
       bootcamp_generate_adaptive_practice_set: {
-        Args: { p_student_id: string; p_question_count?: number }
+        Args: { p_question_count?: number; p_student_id: string }
         Returns: {
+          priority: number
           question_id: string
           reason: string
-          priority: number
         }[]
       }
       bootcamp_update_student_misconceptions: {
-        Args: { p_student_id: string; p_response_id: string }
+        Args: { p_response_id: string; p_student_id: string }
         Returns: undefined
       }
       bootcamp_update_student_progress: {
@@ -1893,24 +1893,24 @@ export type Database = {
         Returns: undefined
       }
       bootcamp_update_student_skill_proficiency: {
-        Args: { p_student_id: string; p_skill_name: string }
+        Args: { p_skill_name: string; p_student_id: string }
         Returns: undefined
       }
       generate_standardized_question_ids: {
         Args: Record<PropertyKey, never>
         Returns: {
-          old_id: string
           new_id: string
+          old_id: string
         }[]
       }
       get_adaptive_questions: {
-        Args: { p_student_id: string; p_count?: number }
+        Args: { p_count?: number; p_student_id: string }
         Returns: {
           question: Json
         }[]
       }
       get_adaptive_questions_enhanced: {
-        Args: { p_student_id: string; p_count?: number }
+        Args: { p_count?: number; p_student_id: string }
         Returns: {
           question_data: Json
         }[]
@@ -1922,8 +1922,8 @@ export type Database = {
       get_student_misconceptions: {
         Args: { p_student_id: string }
         Returns: {
-          red_herring: string
           frequency: number
+          red_herring: string
           topics: string[]
         }[]
       }
@@ -1934,9 +1934,9 @@ export type Database = {
       get_weak_topics: {
         Args: { p_student_id: string }
         Returns: {
-          topic: string
           accuracy: number
           attempts: number
+          topic: string
         }[]
       }
       import_complete_curriculum_content: {
