@@ -190,61 +190,123 @@ export const UnifiedTrialModal: React.FC<UnifiedTrialModalProps> = ({
   if (mode === 'upgrade' || user) {
     return (
       <Dialog open={isOpen} onOpenChange={onClose}>
-        <DialogContent className="max-w-md">
+        <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle className="text-2xl font-bold text-center">
-              {userState === 'expired' ? 'Reactivate Your Subscription' : 'Upgrade Your Plan'}
+              {userState === 'expired' ? 'Choose Plan & Reactivate' : 'Choose Your Plan'}
             </DialogTitle>
           </DialogHeader>
 
-          <Card className="border-primary/20">
-            <CardHeader className="pb-4">
-              <div className="flex items-center justify-between">
-                <CardTitle className="text-xl">{plan.name}</CardTitle>
+          <div className="grid md:grid-cols-2 gap-6">
+            {/* Pass Plan */}
+            <Card 
+              className={`border-2 transition-all cursor-pointer ${planId === 'pass' ? 'border-primary bg-primary/5' : 'border-border hover:border-primary/50'}`}
+              onClick={() => setPlanId('pass')}
+            >
+              <CardHeader className="pb-4">
+                <div className="flex items-center justify-between">
+                  <CardTitle className="text-xl">Pass</CardTitle>
+                  <Badge variant="outline">Essential</Badge>
+                </div>
+                
+                <div className="flex items-center justify-center gap-4 mt-4">
+                  <span className={`text-sm font-medium ${!isAnnual ? 'text-foreground' : 'text-muted-foreground'}`}>
+                    Monthly
+                  </span>
+                  <Switch checked={isAnnual} onCheckedChange={setIsAnnual} />
+                  <span className={`text-sm font-medium ${isAnnual ? 'text-foreground' : 'text-muted-foreground'}`}>
+                    Annual
+                  </span>
+                </div>
+
+                <div className="text-center mt-4">
+                  <div className="text-2xl font-bold">
+                    £{isAnnual ? planDetails.pass.annualPrice : planDetails.pass.monthlyPrice}
+                  </div>
+                  <div className="text-sm text-muted-foreground">per {isAnnual ? 'year' : 'month'}</div>
+                  {isAnnual && (
+                    <Badge variant="secondary" className="mt-2 bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200">
+                      Save £{planDetails.pass.monthlyPrice * 12 - planDetails.pass.annualPrice}
+                    </Badge>
+                  )}
+                </div>
+              </CardHeader>
+              
+              <CardContent className="space-y-3">
+                {planDetails.pass.features.map((feature, index) => (
+                  <div key={index} className="flex items-start gap-2">
+                    <Check className="w-4 h-4 text-primary mt-0.5 flex-shrink-0" />
+                    <span className="text-sm">{feature}</span>
+                  </div>
+                ))}
+              </CardContent>
+            </Card>
+
+            {/* Pass Plus Plan */}
+            <Card 
+              className={`border-2 transition-all cursor-pointer relative ${planId === 'pass_plus' ? 'border-primary bg-primary/5' : 'border-primary/50 hover:border-primary'}`}
+              onClick={() => setPlanId('pass_plus')}
+            >
+              <div className="absolute -top-3 left-1/2 transform -translate-x-1/2">
                 <Badge className="bg-primary text-primary-foreground">
                   <Crown className="w-3 h-3 mr-1" />
-                  Premium
+                  Most Popular
                 </Badge>
               </div>
-              
-              <div className="flex items-center justify-center gap-4 mt-4">
-                <span className={`text-sm font-medium ${!isAnnual ? 'text-foreground' : 'text-muted-foreground'}`}>
-                  Monthly
-                </span>
-                <Switch checked={isAnnual} onCheckedChange={setIsAnnual} />
-                <span className={`text-sm font-medium ${isAnnual ? 'text-foreground' : 'text-muted-foreground'}`}>
-                  Annual
-                </span>
-              </div>
-
-              <div className="text-center mt-4">
-                <div className="text-2xl font-bold">£{currentPrice}</div>
-                <div className="text-sm text-muted-foreground">per {billingPeriod}</div>
-                {isAnnual && (
-                  <Badge variant="secondary" className="mt-2 bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200">
-                    Save £{plan.monthlyPrice * 12 - plan.annualPrice}
+              <CardHeader className="pb-4 pt-6">
+                <div className="flex items-center justify-between">
+                  <CardTitle className="text-xl">Pass Plus</CardTitle>
+                  <Badge className="bg-gradient-to-r from-primary to-primary/80 text-primary-foreground">
+                    Premium
                   </Badge>
-                )}
-              </div>
-            </CardHeader>
-            
-            <CardContent className="space-y-3">
-              {plan.features.map((feature, index) => (
-                <div key={index} className="flex items-start gap-2">
-                  <Check className="w-4 h-4 text-primary mt-0.5 flex-shrink-0" />
-                  <span className="text-sm">{feature}</span>
                 </div>
-              ))}
+                
+                <div className="flex items-center justify-center gap-4 mt-4">
+                  <span className={`text-sm font-medium ${!isAnnual ? 'text-foreground' : 'text-muted-foreground'}`}>
+                    Monthly
+                  </span>
+                  <Switch checked={isAnnual} onCheckedChange={setIsAnnual} />
+                  <span className={`text-sm font-medium ${isAnnual ? 'text-foreground' : 'text-muted-foreground'}`}>
+                    Annual
+                  </span>
+                </div>
+
+                <div className="text-center mt-4">
+                  <div className="text-2xl font-bold">
+                    £{isAnnual ? planDetails.pass_plus.annualPrice : planDetails.pass_plus.monthlyPrice}
+                  </div>
+                  <div className="text-sm text-muted-foreground">per {isAnnual ? 'year' : 'month'}</div>
+                  {isAnnual && (
+                    <Badge variant="secondary" className="mt-2 bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200">
+                      Save £{planDetails.pass_plus.monthlyPrice * 12 - planDetails.pass_plus.annualPrice}
+                    </Badge>
+                  )}
+                </div>
+              </CardHeader>
               
-              <Button
-                onClick={handleSubscribeClick}
-                className="w-full mt-4"
-                size="lg"
-              >
-                {userState === 'expired' ? 'Reactivate Now' : 'Upgrade Now'}
-              </Button>
-            </CardContent>
-          </Card>
+              <CardContent className="space-y-3">
+                {planDetails.pass_plus.features.map((feature, index) => (
+                  <div key={index} className="flex items-start gap-2">
+                    <Check className="w-4 h-4 text-primary mt-0.5 flex-shrink-0" />
+                    <span className="text-sm">{feature}</span>
+                  </div>
+                ))}
+              </CardContent>
+            </Card>
+          </div>
+
+          <div className="flex justify-center mt-6">
+            <Button
+              onClick={handleSubscribeClick}
+              className="px-8"
+              size="lg"
+            >
+              {userState === 'expired' 
+                ? `Reactivate ${planId === 'pass' ? 'Pass' : 'Pass Plus'} Now` 
+                : `Subscribe to ${planId === 'pass' ? 'Pass' : 'Pass Plus'}`
+              }
+            </Button>
+          </div>
         </DialogContent>
       </Dialog>
     );
