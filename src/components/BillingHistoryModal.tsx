@@ -112,6 +112,12 @@ const BillingHistoryModal: React.FC<BillingHistoryModalProps> = ({ isOpen, onClo
             <Receipt className="h-5 w-5" />
             <span>Billing History</span>
           </DialogTitle>
+          <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 mt-2">
+            <p className="text-sm text-blue-800">
+              📝 <strong>Development Mode:</strong> This shows test data from Stripe's test environment. 
+              In production, you'll see your actual billing history.
+            </p>
+          </div>
         </DialogHeader>
 
         <div className="space-y-6">
