@@ -1,9 +1,11 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Switch } from '@/components/ui/switch';
 import { useSubscriptionState } from '@/hooks/useSubscriptionState';
 import { useTrialModal } from '@/contexts/TrialModalContext';
+import { useAuth } from '@/hooks/useAuth';
+import { supabase } from '@/integrations/supabase/client';
 import { Clock, Crown, Check } from 'lucide-react';
 import { toast } from 'sonner';
 
@@ -17,6 +19,9 @@ export const SubscriptionOverlay: React.FC<SubscriptionOverlayProps> = ({
   requiredFeature
 }) => {
   const [isAnnual, setIsAnnual] = useState(false);
+  const [trialEligible, setTrialEligible] = useState<boolean | null>(null);
+  const [checkingEligibility, setCheckingEligibility] = useState(false);
+  const { user } = useAuth();
   const {
     userState,
     loading,
@@ -26,6 +31,34 @@ export const SubscriptionOverlay: React.FC<SubscriptionOverlayProps> = ({
     createCheckoutSession
   } = useSubscriptionState();
   const { openTrialModal } = useTrialModal();
+
+  // Check trial eligibility when component mounts for authenticated users
+  useEffect(() => {
+    const checkTrialEligibility = async () => {
+      if (!user?.email || userState !== 'no_access') return;
+      
+      setCheckingEligibility(true);
+      try {
+        const { data, error } = await supabase.functions.invoke('check-trial-eligibility', {
+          body: { email: user.email }
+        });
+        
+        if (error) {
+          console.error('Error checking trial eligibility:', error);
+          setTrialEligible(true); // Default to eligible if check fails
+        } else {
+          setTrialEligible(data?.eligible ?? true);
+        }
+      } catch (error) {
+        console.error('Error checking trial eligibility:', error);
+        setTrialEligible(true); // Default to eligible if check fails
+      } finally {
+        setCheckingEligibility(false);
+      }
+    };
+
+    checkTrialEligibility();
+  }, [user?.email, userState]);
 
   const handleSubscribeClick = async (e: React.MouseEvent) => {
     e.stopPropagation();
@@ -94,8 +127,25 @@ export const SubscriptionOverlay: React.FC<SubscriptionOverlayProps> = ({
     );
   }
 
-  // If user doesn't have access, show grayed out content with simple upgrade prompt
+  // If user doesn't have access, show grayed out content with conditional upgrade prompt
   if (!hasAccessTo(requiredFeature)) {
+    // Show loading while checking eligibility
+    if (checkingEligibility) {
+      return (
+        <div className="relative">
+          <div className="filter grayscale opacity-50 pointer-events-none select-none">
+            {children}
+          </div>
+          <div className="absolute inset-0 z-50 flex items-center justify-center bg-background/10">
+            <div className="bg-card rounded-2xl border border-primary shadow-lg p-8 max-w-sm text-center">
+              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-4"></div>
+              <p className="text-muted-foreground">Checking eligibility...</p>
+            </div>
+          </div>
+        </div>
+      );
+    }
+
     return (
       <div className="relative">
         {/* Grayed out content */}
@@ -103,37 +153,75 @@ export const SubscriptionOverlay: React.FC<SubscriptionOverlayProps> = ({
           {children}
         </div>
         
-        {/* Simple upgrade prompt that opens modal */}
+        {/* Conditional upgrade prompt based on trial eligibility */}
         <div className="absolute inset-0 z-50 flex items-center justify-center bg-background/10">
           <div className="bg-card rounded-2xl border border-primary shadow-lg p-8 max-w-sm text-center">
             <Crown className="h-12 w-12 text-primary mx-auto mb-4" />
-            <h3 className="text-xl font-bold mb-2">
-              {requiredFeature === 'bootcamp' ? 'Bootcamp Access Required' : 'Premium Access Required'}
-            </h3>
-            <p className="text-muted-foreground mb-6">
-              {userState === 'expired' 
-                ? 'Your trial has expired. Subscribe to continue.' 
-                : userState === 'pass' && requiredFeature === 'bootcamp'
-                ? 'Upgrade to Pass Plus for full bootcamp access.'
-                : 'Start your free trial to unlock this feature.'}
-            </p>
             
-            {userState === 'no_access' && (
-              <Button onClick={handleStartTrial} className="w-full mb-3" size="lg">
-                Start Free Trial
-              </Button>
+            {/* Conditional content based on trial eligibility and user state */}
+            {userState === 'no_access' && trialEligible && (
+              <>
+                <h3 className="text-xl font-bold mb-2">Premium Access Required</h3>
+                <p className="text-muted-foreground mb-6">
+                  Start your free trial to unlock this feature.
+                </p>
+                <Button onClick={handleStartTrial} className="w-full mb-3" size="lg">
+                  Start Free Trial
+                </Button>
+                <p className="text-xs text-muted-foreground">
+                  No credit card required • Cancel anytime
+                </p>
+              </>
+            )}
+            
+            {userState === 'no_access' && trialEligible === false && (
+              <>
+                <h3 className="text-xl font-bold mb-2">Premium Access Required</h3>
+                <p className="text-muted-foreground mb-6">
+                  You've already used your free trial. Subscribe to continue accessing premium features.
+                </p>
+                <Button onClick={() => openTrialModal({ 
+                  planId: requiredFeature === 'bootcamp' ? 'pass_plus' : 'pass', 
+                  requiredFeature, 
+                  mode: 'upgrade' 
+                })} className="w-full mb-3" size="lg">
+                  Subscribe Now
+                </Button>
+              </>
             )}
             
             {userState === 'expired' && (
-              <Button onClick={() => openTrialModal({ planId: requiredFeature === 'bootcamp' ? 'pass_plus' : 'pass', requiredFeature, mode: 'upgrade' })} className="w-full mb-3" size="lg">
-                Subscribe Now
-              </Button>
+              <>
+                <h3 className="text-xl font-bold mb-2">
+                  {requiredFeature === 'bootcamp' ? 'Bootcamp Access Required' : 'Premium Access Required'}
+                </h3>
+                <p className="text-muted-foreground mb-6">
+                  Your trial has expired. Subscribe to continue.
+                </p>
+                <Button onClick={() => openTrialModal({ 
+                  planId: requiredFeature === 'bootcamp' ? 'pass_plus' : 'pass', 
+                  requiredFeature, 
+                  mode: 'upgrade' 
+                })} className="w-full mb-3" size="lg">
+                  Subscribe Now
+                </Button>
+              </>
             )}
             
             {(userState === 'trial' || userState === 'pass') && requiredFeature === 'bootcamp' && (
-              <Button onClick={() => openTrialModal({ planId: 'pass_plus', requiredFeature, mode: 'upgrade' })} className="w-full mb-3" size="lg">
-                Upgrade to Pass Plus
-              </Button>
+              <>
+                <h3 className="text-xl font-bold mb-2">Bootcamp Access Required</h3>
+                <p className="text-muted-foreground mb-6">
+                  Upgrade to Pass Plus for full bootcamp access.
+                </p>
+                <Button onClick={() => openTrialModal({ 
+                  planId: 'pass_plus', 
+                  requiredFeature, 
+                  mode: 'upgrade' 
+                })} className="w-full mb-3" size="lg">
+                  Upgrade to Pass Plus
+                </Button>
+              </>
             )}
           </div>
         </div>
