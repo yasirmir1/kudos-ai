@@ -160,11 +160,9 @@ export const SubscriptionOverlay: React.FC<SubscriptionOverlayProps> = ({
     if (checkingEligibility) {
       return (
         <div className="relative">
-          {/* Content with restricted interaction */}
+          {/* Content with full navbar interaction */}
           <div className="relative">
             {children}
-            {/* Dark overlay to indicate restricted access but exclude navbar */}
-            <div className="fixed inset-0 bg-black/20 z-40" style={{ clipPath: 'inset(80px 0 0 0)' }} />
           </div>
           
           <div className="fixed inset-0 z-50 flex items-center justify-center pointer-events-none">
@@ -179,11 +177,9 @@ export const SubscriptionOverlay: React.FC<SubscriptionOverlayProps> = ({
 
     return (
       <div className="relative">
-        {/* Content with restricted interaction */}
+        {/* Content with full navbar interaction */}
         <div className="relative">
           {children}
-          {/* Dark overlay to indicate restricted access but exclude navbar */}
-          <div className="fixed inset-0 bg-black/20 z-40" style={{ clipPath: 'inset(80px 0 0 0)' }} />
         </div>
         
         {/* Conditional upgrade prompt based on trial eligibility */}
