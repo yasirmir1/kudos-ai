@@ -262,7 +262,10 @@ export const UnifiedTrialModal: React.FC<UnifiedTrialModalProps> = ({
 
         <div className="grid lg:grid-cols-3 gap-6">
           {/* Pass Plan */}
-          <Card className={`border-2 transition-all ${planId === 'pass' ? 'border-primary bg-primary/5' : 'border-border hover:border-primary/50'}`}>
+          <Card 
+            className={`border-2 transition-all cursor-pointer ${planId === 'pass' ? 'border-primary bg-primary/5' : 'border-border hover:border-primary/50'}`}
+            onClick={() => setPlanId('pass')}
+          >
             <CardHeader className="pb-4">
               <div className="flex items-center justify-between">
                 <CardTitle className="text-xl">Pass</CardTitle>
@@ -286,7 +289,10 @@ export const UnifiedTrialModal: React.FC<UnifiedTrialModalProps> = ({
           </Card>
 
           {/* Pass Plus Plan - Highlighted */}
-          <Card className={`border-2 transition-all relative ${planId === 'pass_plus' ? 'border-primary bg-primary/5' : 'border-primary/50 hover:border-primary'}`}>
+          <Card 
+            className={`border-2 transition-all relative cursor-pointer ${planId === 'pass_plus' ? 'border-primary bg-primary/5' : 'border-primary/50 hover:border-primary'}`}
+            onClick={() => setPlanId('pass_plus')}
+          >
             <div className="absolute -top-3 left-1/2 transform -translate-x-1/2">
               <Badge className="bg-primary text-primary-foreground">
                 <Crown className="w-3 h-3 mr-1" />
