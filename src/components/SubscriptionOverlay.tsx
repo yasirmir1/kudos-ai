@@ -28,7 +28,8 @@ export const SubscriptionOverlay: React.FC<SubscriptionOverlayProps> = ({
     hasAccessTo,
     isTrialActive,
     trialDaysRemaining,
-    createCheckoutSession
+    createCheckoutSession,
+    startTrial
   } = useSubscriptionState();
   const { openTrialModal } = useTrialModal();
 
@@ -81,12 +82,38 @@ export const SubscriptionOverlay: React.FC<SubscriptionOverlayProps> = ({
     }
   };
 
-  const handleStartTrial = () => {
-    openTrialModal({
-      planId: requiredFeature === 'bootcamp' ? 'pass_plus' : 'pass',
-      requiredFeature,
-      mode: 'signup'
-    });
+  const handleStartTrial = async () => {
+    try {
+      const planId = requiredFeature === 'bootcamp' ? 'pass_plus' : 'pass';
+      
+      if (user) {
+        // User is logged in - use the existing startTrial method
+        const result = await startTrial(planId);
+        if (!result.success) {
+          toast.error(result.message);
+        }
+      } else {
+        // User not logged in - call create-checkout directly for trial
+        const { data, error } = await supabase.functions.invoke('create-checkout', {
+          body: { 
+            planId: planId + '_monthly',
+            trial: true,
+            unauthenticated: true
+          }
+        });
+
+        if (error) {
+          toast.error('Failed to start trial. Please try again.');
+          return;
+        }
+        
+        if (data?.url) {
+          window.open(data.url, '_blank');
+        }
+      }
+    } catch (error) {
+      toast.error('An error occurred. Please try again.');
+    }
   };
 
   // Show loading state

@@ -31,32 +31,43 @@ serve(async (req) => {
     if (!stripeKey) throw new Error("STRIPE_SECRET_KEY is not set");
     logStep("Stripe key verified");
 
-    const authHeader = req.headers.get("Authorization");
-    if (!authHeader) throw new Error("No authorization header provided");
-    logStep("Authorization header found");
-
-    const token = authHeader.replace("Bearer ", "");
-    const { data: userData, error: userError } = await supabaseClient.auth.getUser(token);
-    if (userError) throw new Error(`Authentication error: ${userError.message}`);
-    const user = userData.user;
-    if (!user?.email) throw new Error("User not authenticated or email not available");
-    logStep("User authenticated", { userId: user.id, email: user.email });
-
     // Parse request body to get plan details
-    const { planId, trial } = await req.json();
+    const { planId, trial, unauthenticated } = await req.json();
+    
+    let user = null;
+    
+    // Only require authentication if not an unauthenticated trial request
+    if (!unauthenticated || !trial) {
+      const authHeader = req.headers.get("Authorization");
+      if (!authHeader) throw new Error("No authorization header provided");
+      logStep("Authorization header found");
+
+      const token = authHeader.replace("Bearer ", "");
+      const { data: userData, error: userError } = await supabaseClient.auth.getUser(token);
+      if (userError) throw new Error(`Authentication error: ${userError.message}`);
+      user = userData.user;
+      if (!user?.email) throw new Error("User not authenticated or email not available");
+      logStep("User authenticated", { userId: user.id, email: user.email });
+    } else {
+      logStep("Unauthenticated trial request");
+    }
     if (!planId) throw new Error("Plan ID is required");
     logStep("Plan ID received", { planId, trial });
 
     const stripe = new Stripe(stripeKey, { apiVersion: "2023-10-16" });
     
-    // Check if customer exists
-    const customers = await stripe.customers.list({ email: user.email, limit: 1 });
+    // Check if customer exists (only if user is authenticated)
     let customerId;
-    if (customers.data.length > 0) {
-      customerId = customers.data[0].id;
-      logStep("Found existing customer", { customerId });
+    if (user?.email) {
+      const customers = await stripe.customers.list({ email: user.email, limit: 1 });
+      if (customers.data.length > 0) {
+        customerId = customers.data[0].id;
+        logStep("Found existing customer", { customerId });
+      } else {
+        logStep("No existing customer found");
+      }
     } else {
-      logStep("No existing customer found");
+      logStep("No user email available for customer lookup");
     }
 
     // Define plan pricing using actual Stripe price IDs
@@ -75,7 +86,7 @@ serve(async (req) => {
     
     const sessionConfig: any = {
       customer: customerId,
-      customer_email: customerId ? undefined : user.email,
+      customer_email: customerId ? undefined : user?.email,
       line_items: [
         {
           price: selectedPlan.priceId,
