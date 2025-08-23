@@ -35,6 +35,15 @@ export const SubscriptionOverlay: React.FC<SubscriptionOverlayProps> = ({
   const { openTrialModal } = useTrialModal();
   const { setIsOverlayActive } = useSubscriptionOverlay();
 
+  // Handle overlay state changes - must be at top level to follow Rules of Hooks
+  useEffect(() => {
+    if (!hasAccessTo(requiredFeature)) {
+      setIsOverlayActive(true);
+    } else {
+      setIsOverlayActive(false);
+    }
+  }, [hasAccessTo, requiredFeature, setIsOverlayActive]);
+
   // Check trial eligibility when component mounts for authenticated users
   useEffect(() => {
     const checkTrialEligibility = async () => {
@@ -172,10 +181,6 @@ export const SubscriptionOverlay: React.FC<SubscriptionOverlayProps> = ({
 
   // If user doesn't have access, show grayed out content with conditional upgrade prompt
   if (!hasAccessTo(requiredFeature)) {
-    // Use useEffect to set overlay state instead of during render
-    React.useEffect(() => {
-      setIsOverlayActive(true);
-    }, []); // Empty dependency array since setIsOverlayActive is stable
     // Show loading while checking eligibility
     if (checkingEligibility) {
       return (
@@ -281,10 +286,5 @@ export const SubscriptionOverlay: React.FC<SubscriptionOverlayProps> = ({
   }
 
   // User has access, render children normally
-  // Clear overlay state when user has access
-  React.useEffect(() => {
-    setIsOverlayActive(false);
-  }, []); // Empty dependency array since setIsOverlayActive is stable
-  
   return <>{children}</>;
 };
