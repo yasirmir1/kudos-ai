@@ -135,41 +135,34 @@ export const UnifiedTrialModal: React.FC<UnifiedTrialModalProps> = ({
     setIsLoading(true);
     
     try {
-      let currentUser = user;
-      
-      if (!currentUser) {
-        if (hasExistingAccount) {
-          const { error: signInError } = await signIn(email, password);
-          if (signInError) {
-            toast.error('Invalid email or password');
-            setIsLoading(false);
-            return;
-          }
-        } else {
-          const { error: signUpError } = await signUp(email, password, '11+');
-          if (signUpError) {
-            if (signUpError.message?.includes('already registered')) {
-              setHasExistingAccount(true);
-              toast.error('Account already exists. Please sign in instead.');
-              setIsLoading(false);
-              return;
-            }
-            toast.error(signUpError.message || 'Failed to create account');
-            setIsLoading(false);
-            return;
-          }
+      if (hasExistingAccount) {
+        const { error: signInError } = await signIn(email, password);
+        if (signInError) {
+          toast.error('Invalid email or password');
+          setIsLoading(false);
+          return;
         }
-        
-        await new Promise(resolve => setTimeout(resolve, 1000));
+      } else {
+        const { error: signUpError } = await signUp(email, password, '11+');
+        if (signUpError) {
+          if (signUpError.message?.includes('already registered')) {
+            setHasExistingAccount(true);
+            toast.error('Account already exists. Please sign in instead.');
+            setIsLoading(false);
+            return;
+          }
+          toast.error(signUpError.message || 'Failed to create account');
+          setIsLoading(false);
+          return;
+        }
       }
+      
+      // Wait for auth state to update
+      await new Promise(resolve => setTimeout(resolve, 1500));
 
-      const { data, error } = await supabase.functions.invoke('create-checkout-public', {
-        body: {
-          email,
-          planId: `${planId}_monthly`,
-          trial: true
-        }
-      });
+      // Use the unified checkout function with trial
+      const actualPlanId = `${planId}_monthly`;
+      const { url, error } = await createCheckoutSession(actualPlanId);
 
       if (error) {
         toast.error('Failed to start trial. Please try again.');
@@ -177,9 +170,9 @@ export const UnifiedTrialModal: React.FC<UnifiedTrialModalProps> = ({
         return;
       }
 
-      if (data?.url) {
+      if (url) {
         onClose();
-        window.open(data.url, '_blank');
+        window.open(url, '_blank');
         toast.success('Redirecting to secure checkout...');
       } else {
         toast.error('Failed to create checkout session');
@@ -192,8 +185,8 @@ export const UnifiedTrialModal: React.FC<UnifiedTrialModalProps> = ({
     }
   };
 
-  // Show upgrade flow for existing users
-  if (mode === 'upgrade' || (user && userState !== 'no_access')) {
+  // Show upgrade flow for existing authenticated users
+  if (mode === 'upgrade' || user) {
     return (
       <Dialog open={isOpen} onOpenChange={onClose}>
         <DialogContent className="max-w-md">
@@ -311,10 +304,11 @@ export const UnifiedTrialModal: React.FC<UnifiedTrialModalProps> = ({
                 <Input
                   id="email"
                   type="email"
-                  value={email}
+                  value={email || user?.email || ''}
                   onChange={handleEmailChange}
                   placeholder="Enter your email"
                   className="mt-1"
+                  disabled={!!user?.email}
                 />
                 {trialEligible === false && (
                   <p className="text-xs text-amber-600 mt-1">
