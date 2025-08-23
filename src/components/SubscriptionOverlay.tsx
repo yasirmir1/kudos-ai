@@ -160,8 +160,16 @@ export const SubscriptionOverlay: React.FC<SubscriptionOverlayProps> = ({
     if (checkingEligibility) {
       return (
         <div className="relative">
-          {/* Fully visible and interactive content */}
-          {children}
+          {/* Content with restricted interaction */}
+          <div className="relative">
+            {children}
+            {/* Dark overlay to indicate restricted access */}
+            <div className="fixed inset-0 bg-black/20 z-40" />
+            {/* Allow navbar interaction */}
+            <div className="fixed top-0 left-0 right-0 h-16 z-50 pointer-events-none">
+              <div className="h-full pointer-events-auto" />
+            </div>
+          </div>
           
           <div className="fixed inset-0 z-50 flex items-center justify-center pointer-events-none">
             <div className="bg-card rounded-2xl border border-primary shadow-lg p-8 max-w-sm text-center animate-scale-in pointer-events-auto">
@@ -175,8 +183,16 @@ export const SubscriptionOverlay: React.FC<SubscriptionOverlayProps> = ({
 
     return (
       <div className="relative">
-        {/* Fully visible and interactive content */}
-        {children}
+        {/* Content with restricted interaction */}
+        <div className="relative">
+          {children}
+          {/* Dark overlay to indicate restricted access */}
+          <div className="fixed inset-0 bg-black/20 z-40" />
+          {/* Allow navbar interaction */}
+          <div className="fixed top-0 left-0 right-0 h-16 z-50 pointer-events-none">
+            <div className="h-full pointer-events-auto" />
+          </div>
+        </div>
         
         {/* Conditional upgrade prompt based on trial eligibility */}
         <div className="fixed inset-0 z-50 flex items-center justify-center pointer-events-none">
