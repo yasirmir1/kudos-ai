@@ -24,7 +24,7 @@ interface UnifiedTrialModalProps {
 export const UnifiedTrialModal: React.FC<UnifiedTrialModalProps> = ({
   isOpen,
   onClose,
-  planId = 'pass_plus',
+  planId: initialPlanId = 'pass_plus',
   requiredFeature,
   mode = 'signup'
 }) => {
@@ -37,6 +37,7 @@ export const UnifiedTrialModal: React.FC<UnifiedTrialModalProps> = ({
   const [hasExistingAccount, setHasExistingAccount] = useState(false);
   const [trialEligible, setTrialEligible] = useState<boolean | null>(null);
   const [isAnnual, setIsAnnual] = useState(false);
+  const [planId, setPlanId] = useState<'pass' | 'pass_plus'>(initialPlanId);
 
   const planDetails = {
     pass: {
@@ -252,52 +253,90 @@ export const UnifiedTrialModal: React.FC<UnifiedTrialModalProps> = ({
   // Show signup flow for new users
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+      <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle className="text-2xl font-bold text-center">
-            Start Your Free Trial
+            Choose Your Plan & Start Free Trial
           </DialogTitle>
         </DialogHeader>
 
-        <div className="grid md:grid-cols-2 gap-6">
-          <Card className="border-primary/20">
+        <div className="grid lg:grid-cols-3 gap-6">
+          {/* Pass Plan */}
+          <Card className={`border-2 transition-all ${planId === 'pass' ? 'border-primary bg-primary/5' : 'border-border hover:border-primary/50'}`}>
             <CardHeader className="pb-4">
               <div className="flex items-center justify-between">
-                <CardTitle className="text-xl">{plan.name}</CardTitle>
-                <Badge className="bg-primary text-primary-foreground">
-                  <Crown className="w-3 h-3 mr-1" />
+                <CardTitle className="text-xl">Pass</CardTitle>
+                <Badge variant="outline">
+                  Essential
+                </Badge>
+              </div>
+              <div className="space-y-1">
+                <div className="text-2xl font-bold">Free for 7 days</div>
+                <div className="text-sm text-muted-foreground">then £8/month after</div>
+              </div>
+            </CardHeader>
+            <CardContent className="space-y-3">
+              {planDetails.pass.features.map((feature, index) => (
+                <div key={index} className="flex items-start gap-2">
+                  <Check className="w-4 h-4 text-primary mt-0.5 flex-shrink-0" />
+                  <span className="text-sm">{feature}</span>
+                </div>
+              ))}
+            </CardContent>
+          </Card>
+
+          {/* Pass Plus Plan - Highlighted */}
+          <Card className={`border-2 transition-all relative ${planId === 'pass_plus' ? 'border-primary bg-primary/5' : 'border-primary/50 hover:border-primary'}`}>
+            <div className="absolute -top-3 left-1/2 transform -translate-x-1/2">
+              <Badge className="bg-primary text-primary-foreground">
+                <Crown className="w-3 h-3 mr-1" />
+                Most Popular
+              </Badge>
+            </div>
+            <CardHeader className="pb-4 pt-6">
+              <div className="flex items-center justify-between">
+                <CardTitle className="text-xl">Pass Plus</CardTitle>
+                <Badge className="bg-gradient-to-r from-primary to-primary/80 text-primary-foreground">
                   Premium
                 </Badge>
               </div>
               <div className="space-y-1">
                 <div className="text-2xl font-bold">Free for 7 days</div>
-                <div className="text-sm text-muted-foreground">then £{plan.monthlyPrice}/month after</div>
+                <div className="text-sm text-muted-foreground">then £15/month after</div>
               </div>
             </CardHeader>
             <CardContent className="space-y-3">
-              {plan.features.map((feature, index) => (
+              {planDetails.pass_plus.features.map((feature, index) => (
                 <div key={index} className="flex items-start gap-2">
-                  <CheckCircle className="w-4 h-4 text-primary mt-0.5 flex-shrink-0" />
+                  <Check className="w-4 h-4 text-primary mt-0.5 flex-shrink-0" />
                   <span className="text-sm">{feature}</span>
                 </div>
               ))}
-              
-              <Separator className="my-4" />
-              
-              <div className="space-y-2 text-xs text-muted-foreground">
-                <div className="flex items-center gap-2">
-                  <Star className="w-3 h-3" />
-                  <span>No credit card required for trial</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <Zap className="w-3 h-3" />
-                  <span>Cancel anytime during trial</span>
-                </div>
-              </div>
             </CardContent>
           </Card>
 
+          {/* Account Creation Form */}
           <div className="space-y-4">
+            <div className="text-center mb-6">
+              <h3 className="text-lg font-semibold mb-2">Selected Plan: {planId === 'pass' ? 'Pass' : 'Pass Plus'}</h3>
+              <div className="flex justify-center gap-2 mb-4">
+                <Button
+                  variant={planId === 'pass' ? 'default' : 'outline'}
+                  onClick={() => setPlanId('pass')}
+                  size="sm"
+                >
+                  Pass - £8/mo
+                </Button>
+                <Button
+                  variant={planId === 'pass_plus' ? 'default' : 'outline'}
+                  onClick={() => setPlanId('pass_plus')}
+                  size="sm"
+                >
+                  Pass Plus - £15/mo
+                </Button>
+              </div>
+            </div>
+
             <div className="space-y-3">
               <div>
                 <Label htmlFor="email">Email address</Label>
@@ -362,23 +401,35 @@ export const UnifiedTrialModal: React.FC<UnifiedTrialModalProps> = ({
               ) : (
                 <>
                   {trialEligible === false 
-                    ? 'Subscribe Now' 
+                    ? `Subscribe to ${planId === 'pass' ? 'Pass' : 'Pass Plus'} Now` 
                     : hasExistingAccount 
-                      ? 'Sign In & Start Trial'
-                      : 'Create Account & Start Trial'
+                      ? `Sign In & Start ${planId === 'pass' ? 'Pass' : 'Pass Plus'} Trial`
+                      : `Start ${planId === 'pass' ? 'Pass' : 'Pass Plus'} Free Trial`
                   }
                 </>
               )}
             </Button>
 
-            <p className="text-xs text-muted-foreground text-center">
-              By continuing, you agree to our Terms of Service and Privacy Policy.
-              {trialEligible !== false && (
-                <span className="block mt-1">
-                  Your trial will automatically start after account creation.
-                </span>
-              )}
-            </p>
+            <div className="space-y-2 text-xs text-muted-foreground text-center">
+              <div className="flex items-center justify-center gap-4">
+                <div className="flex items-center gap-2">
+                  <Star className="w-3 h-3" />
+                  <span>No credit card required for trial</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <Zap className="w-3 h-3" />
+                  <span>Cancel anytime during trial</span>
+                </div>
+              </div>
+              <p>
+                By continuing, you agree to our Terms of Service and Privacy Policy.
+                {trialEligible !== false && (
+                  <span className="block mt-1">
+                    Your trial will automatically start after account creation.
+                  </span>
+                )}
+              </p>
+            </div>
           </div>
         </div>
       </DialogContent>
