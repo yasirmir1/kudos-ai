@@ -166,7 +166,7 @@ export const SubscriptionOverlay: React.FC<SubscriptionOverlayProps> = ({
             {/* Dark overlay to indicate restricted access */}
             <div className="fixed inset-0 bg-black/20 z-40" />
             {/* Allow navbar interaction */}
-            <div className="fixed top-0 left-0 right-0 h-16 z-50 pointer-events-none">
+            <div className="fixed top-0 left-0 right-0 h-20 z-50 pointer-events-none">
               <div className="h-full pointer-events-auto" />
             </div>
           </div>
@@ -189,7 +189,7 @@ export const SubscriptionOverlay: React.FC<SubscriptionOverlayProps> = ({
           {/* Dark overlay to indicate restricted access */}
           <div className="fixed inset-0 bg-black/20 z-40" />
           {/* Allow navbar interaction */}
-          <div className="fixed top-0 left-0 right-0 h-16 z-50 pointer-events-none">
+          <div className="fixed top-0 left-0 right-0 h-20 z-50 pointer-events-none">
             <div className="h-full pointer-events-auto" />
           </div>
         </div>
