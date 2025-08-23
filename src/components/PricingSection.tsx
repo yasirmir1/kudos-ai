@@ -3,7 +3,7 @@ import { Check, Star } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Switch } from '@/components/ui/switch';
-import { useSubscriptionState } from '@/hooks/useSubscriptionState';
+import { useSubscription } from '@/hooks/useSubscription';
 import { useToast } from '@/hooks/use-toast';
 
 interface PricingCardProps {
@@ -20,7 +20,7 @@ interface PricingCardProps {
 
 const PricingCard = ({ planId, name, price, originalPrice, description, features, isPopular, trialDays, isAnnual }: PricingCardProps) => {
   const [loading, setLoading] = useState(false);
-  const { createCheckoutSession } = useSubscriptionState();
+  const { createCheckoutSession } = useSubscription();
   const { toast } = useToast();
 
   const handleSubscribe = async () => {

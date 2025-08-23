@@ -148,7 +148,7 @@ const Pricing = () => {
         </div>
 
         {/* Trial Warning */}
-        {user && isTrialActive() && getTrialDaysRemaining() <= 3 && <div className="bg-warning/10 border-warning border-l-4 p-4 mb-12 max-w-4xl mx-auto rounded">
+        {user && isTrialActive && getTrialDaysRemaining() <= 3 && <div className="bg-warning/10 border-warning border-l-4 p-4 mb-12 max-w-4xl mx-auto rounded">
             <div className="flex items-center">
               <Clock className="w-5 h-5 text-warning mr-2" />
               <div className="flex-1">
@@ -187,7 +187,7 @@ const Pricing = () => {
               <Crown className="w-5 h-5 text-primary" />
               <span className="font-medium text-primary">
                 Current Plan: {getSubscriptionTier()}
-                {isTrialActive() && ' (Trial)'}
+                {isTrialActive && ' (Trial)'}
               </span>
             </div>
             {hasActiveStripeSubscription() && <Button variant="outline" size="sm" className="mt-3 w-full" onClick={handleManageSubscription}>

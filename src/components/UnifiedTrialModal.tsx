@@ -8,7 +8,7 @@ import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
 import { Switch } from '@/components/ui/switch';
 import { useAuth } from '@/hooks/useAuth';
-import { useSubscriptionState } from '@/hooks/useSubscriptionState';
+import { useSubscription } from '@/hooks/useSubscription';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import { CheckCircle, Eye, EyeOff, Crown, Zap, Star, Check } from 'lucide-react';
@@ -29,7 +29,7 @@ export const UnifiedTrialModal: React.FC<UnifiedTrialModalProps> = ({
   mode = 'signup'
 }) => {
   const { user, signUp, signIn } = useAuth();
-  const { userState, createCheckoutSession } = useSubscriptionState();
+  const { userState, createCheckoutSession } = useSubscription();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);

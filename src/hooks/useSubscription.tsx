@@ -2,6 +2,8 @@ import { useState, useEffect } from 'react';
 import { useAuth } from './useAuth';
 import { supabase } from '@/integrations/supabase/client';
 
+export type UserState = 'trial' | 'pass' | 'pass_plus' | 'expired' | 'no_access';
+
 interface StripeSubscriber {
   id: string;
   user_id: string;
@@ -28,64 +30,230 @@ export const useSubscription = () => {
   const [subscriber, setSubscriber] = useState<StripeSubscriber | null>(null);
   const [subscriptions, setSubscriptions] = useState<UserSubscription[]>([]);
   const [loading, setLoading] = useState(true);
+  const [userState, setUserState] = useState<UserState>('no_access');
+  const [trialDaysRemaining, setTrialDaysRemaining] = useState(0);
+  const [isTrialActive, setIsTrialActive] = useState(false);
 
   useEffect(() => {
     if (user) {
-      checkSubscriptionStatus();
-      fetchTrialSubscriptions();
+      // Defer subscription data loading to prevent deadlocks
+      setTimeout(() => {
+        loadSubscriptionData();
+      }, 100);
     } else {
-      setSubscriber(null);
-      setSubscriptions([]);
-      setLoading(false);
+      // Only reset state if we're truly logged out
+      const timeoutId = setTimeout(() => {
+        if (!user) {
+          setUserState('no_access');
+          setIsTrialActive(false);
+          setTrialDaysRemaining(0);
+          setSubscriber(null);
+          setSubscriptions([]);
+          setLoading(false);
+        }
+      }, 500);
+      
+      return () => clearTimeout(timeoutId);
     }
   }, [user]);
 
-  const checkSubscriptionStatus = async () => {
+  const loadSubscriptionData = async () => {
     if (!user) return;
 
     try {
-      // Call our check-subscription edge function for Stripe subscriptions
-      const { data, error } = await supabase.functions.invoke('check-subscription');
-      
-      if (error) throw error;
+      setLoading(true);
 
-      // Also fetch the subscriber record from the database
-      const { data: subscriberData, error: subscriberError } = await supabase
-        .from('subscribers')
+      // Check for exemptions first
+      const { data: exemptionsData } = await supabase
+        .from('subscription_exemptions')
         .select('*')
-        .eq('user_id', user.id)
-        .single();
+        .or(`user_id.eq.${user.id},email.eq.${user.email}`)
+        .eq('is_active', true);
 
-      if (subscriberError && subscriberError.code !== 'PGRST116') {
-        throw subscriberError;
+      const activeExemption = exemptionsData?.find(exemption => 
+        exemption.is_active && 
+        (!exemption.expires_at || new Date(exemption.expires_at) > new Date())
+      );
+      
+      if (activeExemption) {
+        setUserState('pass_plus');
+        setIsTrialActive(false);
+        setTrialDaysRemaining(0);
+        return;
       }
 
-      setSubscriber(subscriberData);
-    } catch (error) {
-      console.error('Error checking subscription status:', error);
-    }
-  };
+      // Check Stripe subscription status
+      const { data: stripeData, error: stripeError } = await supabase.functions.invoke('check-subscription', {
+        headers: {
+          Authorization: `Bearer ${(await supabase.auth.getSession()).data.session?.access_token}`
+        }
+      });
+      
+      if (!stripeError && stripeData) {
+        if (stripeData.subscribed) {
+          setIsTrialActive(false);
+          setTrialDaysRemaining(0);
+          
+          if (stripeData.subscription_tier === 'Pass') {
+            setUserState('pass');
+          } else if (stripeData.subscription_tier === 'Pass Plus') {
+            setUserState('pass_plus');
+          } else {
+            setUserState('pass');
+          }
+          
+          // Update subscriber state
+          setSubscriber({
+            id: '',
+            user_id: user.id,
+            email: user.email || '',
+            stripe_customer_id: stripeData.stripe_customer_id || null,
+            subscribed: true,
+            subscription_tier: stripeData.subscription_tier,
+            subscription_end: stripeData.subscription_end,
+            updated_at: new Date().toISOString(),
+            created_at: new Date().toISOString()
+          });
+          return;
+        } else if (stripeData.trial_end_date) {
+          const trialEndDate = new Date(stripeData.trial_end_date);
+          const now = new Date();
+          
+          if (trialEndDate > now) {
+            const diffTime = trialEndDate.getTime() - now.getTime();
+            const daysLeft = Math.max(0, Math.ceil(diffTime / (1000 * 60 * 60 * 24)));
+            setTrialDaysRemaining(daysLeft);
+            setIsTrialActive(true);
+            setUserState('trial');
+            return;
+          } else {
+            setUserState('expired');
+            setIsTrialActive(false);
+            setTrialDaysRemaining(0);
+            return;
+          }
+        }
+      }
 
-  const fetchTrialSubscriptions = async () => {
-    if (!user) return;
-
-    try {
-      const { data, error } = await supabase
+      // Fetch trial subscriptions from user_subscriptions table
+      const { data: trialData, error: trialError } = await supabase
         .from('user_subscriptions')
         .select('*')
         .eq('user_id', user.id);
 
-      if (error) throw error;
-      setSubscriptions(data || []);
+      if (!trialError && trialData) {
+        setSubscriptions(trialData);
+        
+        // Check for active local trial
+        const activeTrial = trialData.find(sub => 
+          sub.status === 'trial' && 
+          sub.trial_end_date && 
+          new Date(sub.trial_end_date) > new Date()
+        );
+        
+        if (activeTrial) {
+          const trialEndDate = new Date(activeTrial.trial_end_date);
+          const now = new Date();
+          const diffTime = trialEndDate.getTime() - now.getTime();
+          const daysLeft = Math.max(0, Math.ceil(diffTime / (1000 * 60 * 60 * 24)));
+          
+          setTrialDaysRemaining(daysLeft);
+          setIsTrialActive(true);
+          setUserState('trial');
+          return;
+        }
+      }
+
+      // No subscription or trial found
+      setUserState('no_access');
+      setIsTrialActive(false);
+      setTrialDaysRemaining(0);
+
     } catch (error) {
-      console.error('Error fetching trial subscriptions:', error);
+      console.error('Error loading subscription data:', error);
+      setUserState('no_access');
     } finally {
       setLoading(false);
     }
   };
 
-  const createCheckoutSession = async (planId: string) => {
+  // Combined feature access checking logic
+  const hasAccessTo = (feature: 'daily_mode' | 'bootcamp'): boolean => {
+    switch (userState) {
+      case 'trial':
+        return true;
+      case 'pass':
+        return feature === 'daily_mode';
+      case 'pass_plus':
+        return true;
+      case 'expired':
+      case 'no_access':
+        return false;
+      default:
+        return false;
+    }
+  };
+
+  // Enhanced hasAccess function for backward compatibility
+  const hasAccess = async (featureType: 'daily_mode' | 'bootcamp') => {
+    if (!user) return false;
+    return hasAccessTo(featureType);
+  };
+
+  const isTrialExpired = (): boolean => {
+    return userState === 'expired';
+  };
+
+  // Stripe-based trial starter
+  const startTrial = async (planId: string = 'pass_plus'): Promise<{ success: boolean; message: string; url?: string }> => {
+    if (!user) {
+      return { success: false, message: 'User must be authenticated' };
+    }
+
+    try {
+      const { data, error } = await supabase.functions.invoke('create-checkout', {
+        body: { 
+          planId: planId + '_monthly',
+          trial: true 
+        }
+      });
+
+      if (error) throw error;
+      
+      if (data?.url) {
+        return { success: true, message: 'Redirecting to Stripe for trial setup...', url: data.url };
+      }
+      
+      return { success: false, message: 'Failed to create trial checkout session' };
+    } catch (error) {
+      console.error('Error starting trial:', error);
+      return { success: false, message: 'Failed to start trial' };
+    }
+  };
+
+  // Local trial starter for backward compatibility
+  const startLocalTrial = async (planId: string) => {
     if (!user) throw new Error('User must be authenticated');
+
+    try {
+      const { data, error } = await supabase.rpc('start_trial', {
+        plan_id_param: planId
+      });
+
+      if (error) throw error;
+      
+      await loadSubscriptionData();
+      return data;
+    } catch (error) {
+      console.error('Error starting trial:', error);
+      throw error;
+    }
+  };
+
+  const createCheckoutSession = async (planId: string): Promise<{ url?: string; error?: string }> => {
+    if (!user) {
+      return { error: 'User must be authenticated' };
+    }
 
     try {
       const { data, error } = await supabase.functions.invoke('create-checkout', {
@@ -96,12 +264,14 @@ export const useSubscription = () => {
       return data;
     } catch (error) {
       console.error('Error creating checkout session:', error);
-      throw error;
+      return { error: 'Failed to create checkout session' };
     }
   };
 
-  const openCustomerPortal = async () => {
-    if (!user) throw new Error('User must be authenticated');
+  const openCustomerPortal = async (): Promise<{ url?: string; error?: string }> => {
+    if (!user) {
+      return { error: 'User must be authenticated' };
+    }
 
     try {
       const { data, error } = await supabase.functions.invoke('customer-portal');
@@ -110,35 +280,31 @@ export const useSubscription = () => {
       return data;
     } catch (error) {
       console.error('Error opening customer portal:', error);
-      throw error;
+      return { error: 'Failed to open customer portal' };
     }
   };
 
-  const startTrial = async (planId: string) => {
-    if (!user) throw new Error('User must be authenticated');
+  const getBillingHistory = async (): Promise<{ invoices?: any[]; payments?: any[]; error?: string }> => {
+    if (!user) {
+      return { error: 'User must be authenticated' };
+    }
 
     try {
-      const { data, error } = await supabase.rpc('start_trial', {
-        plan_id_param: planId
-      });
+      const { data, error } = await supabase.functions.invoke('get-billing-history');
 
       if (error) throw error;
-      
-      // Refresh trial subscriptions after starting trial
-      await fetchTrialSubscriptions();
       return data;
     } catch (error) {
-      console.error('Error starting trial:', error);
-      throw error;
+      console.error('Error fetching billing history:', error);
+      return { error: 'Failed to fetch billing history' };
     }
   };
 
-  // Check if user has active Stripe subscription
+  // Legacy compatibility methods
   const hasActiveStripeSubscription = () => {
     return subscriber?.subscribed === true;
   };
 
-  // Check if user has active trial
   const getActiveTrialSubscription = () => {
     return subscriptions.find(sub => 
       sub.status === 'trial' && 
@@ -147,12 +313,10 @@ export const useSubscription = () => {
     );
   };
 
-  // Check if user has any active subscription (trial or paid)
   const hasActiveSubscription = () => {
-    return hasActiveStripeSubscription() || !!getActiveTrialSubscription();
+    return hasActiveStripeSubscription() || !!getActiveTrialSubscription() || userState !== 'no_access';
   };
 
-  // Get the subscription tier (from Stripe or trial)
   const getSubscriptionTier = () => {
     if (hasActiveStripeSubscription()) {
       return subscriber?.subscription_tier || null;
@@ -163,7 +327,16 @@ export const useSubscription = () => {
       return activeTrial.plan_id === 'pass' ? 'Pass' : 'Pass Plus';
     }
     
-    return null;
+    switch (userState) {
+      case 'pass':
+        return 'Pass';
+      case 'pass_plus':
+        return 'Pass Plus';
+      case 'trial':
+        return 'Trial';
+      default:
+        return null;
+    }
   };
 
   const getSubscriptionEndDate = () => {
@@ -179,63 +352,22 @@ export const useSubscription = () => {
     return null;
   };
 
-  // Trial-specific methods
-  const isTrialActive = () => {
-    return !!getActiveTrialSubscription();
-  };
-
   const getTrialDaysRemaining = () => {
-    const activeTrial = getActiveTrialSubscription();
-    if (!activeTrial?.trial_end_date) return 0;
-    
-    const endDate = new Date(activeTrial.trial_end_date);
-    const now = new Date();
-    const diffTime = endDate.getTime() - now.getTime();
-    return Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+    return trialDaysRemaining;
   };
 
   const hasUsedTrial = (planId: string) => {
     return subscriptions.some(sub => sub.plan_id === planId && sub.is_trial);
   };
 
-  // Feature access checking
-  const hasAccess = async (featureType: 'daily_mode' | 'bootcamp') => {
-    if (!user) return false;
-
-    // Check if user has active subscription (trial or paid)
-    if (hasActiveSubscription()) {
-      // For trials, allow access to both features during trial period
-      if (isTrialActive()) {
-        return true; // Trial users get access to all features
-      }
-      
-      // For paid subscriptions, check via existing RPC
-      try {
-        const { data, error } = await supabase.rpc('user_has_feature_access', {
-          feature_type: featureType
-        });
-        if (error) throw error;
-        return data;
-      } catch (error) {
-        console.error('Error checking feature access:', error);
-        return false;
-      }
-    }
-
-    return false;
-  };
-
   const refetch = async () => {
-    await Promise.all([
-      checkSubscriptionStatus(),
-      fetchTrialSubscriptions()
-    ]);
+    await loadSubscriptionData();
   };
 
   return {
+    // Original useSubscription exports
     subscriber,
     subscriptions,
-    loading,
     hasActiveSubscription,
     hasActiveStripeSubscription,
     isTrialActive,
@@ -245,8 +377,17 @@ export const useSubscription = () => {
     hasUsedTrial,
     createCheckoutSession,
     openCustomerPortal,
-    startTrial,
+    startLocalTrial, // Local trial for backward compatibility
     hasAccess,
-    refetch
+    refetch,
+    
+    // Original useSubscriptionState exports
+    userState,
+    loading,
+    isTrialExpired: isTrialExpired(),
+    trialDaysRemaining,
+    hasAccessTo,
+    startTrial, // Stripe trial (primary)
+    getBillingHistory
   };
 };

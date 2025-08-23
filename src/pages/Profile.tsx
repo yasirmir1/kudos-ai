@@ -16,7 +16,7 @@ import { ResetProgressModal } from '@/components/ResetProgressModal';
 import { useAgeGroup, updateAgeGroupFromProfile } from '@/contexts/AgeGroupContext';
 import { AgeGroupSelector } from '@/components/AgeGroupSelector';
 import { useAccessibility } from '@/contexts/AccessibilityContext';
-import { useSubscriptionState } from '@/hooks/useSubscriptionState';
+import { useSubscription } from '@/hooks/useSubscription';
 import BillingHistoryModal from '@/components/BillingHistoryModal';
 type AgeGroup = '11+';
 type DatabaseAgeGroup = 'year 2-3' | 'year 4-5' | '11+';
@@ -48,7 +48,7 @@ const Profile = () => {
     openCustomerPortal,
     createCheckoutSession,
     refetch: refetchSubscription
-  } = useSubscriptionState();
+  } = useSubscription();
   const navigate = useNavigate();
   const {
     toast

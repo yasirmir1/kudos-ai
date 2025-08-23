@@ -4,7 +4,7 @@ import { Badge } from '@/components/ui/badge';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { BookOpen, BarChart3, User, GraduationCap, FileText, Play, Target, Calendar, CreditCard, LogOut, Clock, Crown } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
-import { useSubscriptionState } from '@/hooks/useSubscriptionState';
+import { useSubscription } from '@/hooks/useSubscription';
 import { useTrialModal } from '@/contexts/TrialModalContext';
 import { cn } from '@/lib/utils';
 interface AppNavigationProps {
@@ -29,11 +29,12 @@ export const AppNavigation: React.FC<AppNavigationProps> = ({
   } = useAuth();
   const {
     userState,
+    loading,
     isTrialActive,
     trialDaysRemaining,
     isTrialExpired,
     hasAccessTo
-  } = useSubscriptionState();
+  } = useSubscription();
   const { openTrialModal } = useTrialModal();
   const handleLogout = async () => {
     const {

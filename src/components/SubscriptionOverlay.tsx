@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Switch } from '@/components/ui/switch';
-import { useSubscriptionState } from '@/hooks/useSubscriptionState';
+import { useSubscription } from '@/hooks/useSubscription';
 import { useTrialModal } from '@/contexts/TrialModalContext';
 import { useAuth } from '@/hooks/useAuth';
 import { supabase } from '@/integrations/supabase/client';
@@ -31,7 +31,7 @@ export const SubscriptionOverlay: React.FC<SubscriptionOverlayProps> = ({
     trialDaysRemaining,
     createCheckoutSession,
     startTrial
-  } = useSubscriptionState();
+  } = useSubscription();
   const { openTrialModal } = useTrialModal();
   const { setIsOverlayActive } = useSubscriptionOverlay();
 

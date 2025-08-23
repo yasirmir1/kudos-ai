@@ -119,7 +119,7 @@ export const AccessControl = ({
 
   // Show trial warning if user is on trial
   const trialDaysRemaining = getTrialDaysRemaining();
-  const showTrialWarning = isTrialActive() && trialDaysRemaining <= 3;
+  const showTrialWarning = isTrialActive && trialDaysRemaining <= 3;
 
   return (
     <div>
