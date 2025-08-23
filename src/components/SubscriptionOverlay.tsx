@@ -89,10 +89,24 @@ export const SubscriptionOverlay: React.FC<SubscriptionOverlayProps> = ({
       const planId = requiredFeature === 'bootcamp' ? 'pass_plus' : 'pass';
       
       if (user) {
-        // User is logged in - use the existing startTrial method
-        const result = await startTrial(planId);
-        if (!result.success) {
-          toast.error(result.message);
+        // User is logged in - call create-checkout directly with trial flag
+        const { data, error } = await supabase.functions.invoke('create-checkout', {
+          body: { 
+            planId: planId + '_monthly',
+            trial: true
+          },
+          headers: {
+            Authorization: `Bearer ${(await supabase.auth.getSession()).data.session?.access_token}`
+          }
+        });
+
+        if (error) {
+          toast.error('Failed to start trial. Please try again.');
+          return;
+        }
+        
+        if (data?.url) {
+          window.open(data.url, '_blank');
         }
       } else {
         // User not logged in - call create-checkout directly for trial
@@ -158,8 +172,10 @@ export const SubscriptionOverlay: React.FC<SubscriptionOverlayProps> = ({
 
   // If user doesn't have access, show grayed out content with conditional upgrade prompt
   if (!hasAccessTo(requiredFeature)) {
-    // Set overlay as active when blocking access
-    setIsOverlayActive(true);
+    // Use useEffect to set overlay state instead of during render
+    React.useEffect(() => {
+      setIsOverlayActive(true);
+    }, [setIsOverlayActive]);
     // Show loading while checking eligibility
     if (checkingEligibility) {
       return (
@@ -266,6 +282,9 @@ export const SubscriptionOverlay: React.FC<SubscriptionOverlayProps> = ({
 
   // User has access, render children normally
   // Clear overlay state when user has access
-  setIsOverlayActive(false);
+  React.useEffect(() => {
+    setIsOverlayActive(false);
+  }, [setIsOverlayActive]);
+  
   return <>{children}</>;
 };
