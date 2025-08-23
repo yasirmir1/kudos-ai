@@ -10,16 +10,8 @@ import { useNavigate } from 'react-router-dom';
 import { SubscriptionThankYou } from '@/components/SubscriptionThankYou';
 import { useTrialModal } from '@/contexts/TrialModalContext';
 
-interface TrialResult {
-  success: boolean;
-  message: string;
-  trial_days?: number;
-  trial_end_date?: string;
-}
 const Pricing = () => {
-  const {
-    user
-  } = useAuth();
+  const { user } = useAuth();
   const navigate = useNavigate();
   const {
     subscriber,
@@ -33,16 +25,13 @@ const Pricing = () => {
     hasUsedTrial,
     createCheckoutSession,
     openCustomerPortal,
-    startTrial,
     refetch
   } = useSubscription();
   const [checkingOut, setCheckingOut] = useState<string | null>(null);
-  const [startingTrial, setStartingTrial] = useState<string | null>(null);
   const [isAnnual, setIsAnnual] = useState(false);
   const [showThankYou, setShowThankYou] = useState(false);
   const [subscribedPlan, setSubscribedPlan] = useState<'pass' | 'pass_plus'>('pass_plus');
   const { openTrialModal } = useTrialModal();
-  const [trialPlanId, setTrialPlanId] = useState<'pass' | 'pass_plus'>('pass_plus');
 
   useEffect(() => {
     // Check for success/cancel parameters
@@ -84,35 +73,12 @@ const Pricing = () => {
       setCheckingOut(null);
     }
   };
-  const handleStartTrial = async (planId: string, isAnnual: boolean = false) => {
-    if (!user) {
-      // Open modal for unauthenticated users
-      setTrialPlanId(planId as 'pass' | 'pass_plus');
-      openTrialModal({ planId: planId === 'pass_monthly' || planId === 'pass_annual' ? 'pass' : 'pass_plus' });
-      return;
-    }
-    
-    // Map plan ID to include billing period for trial
-    const actualPlanId = planId === 'pass' 
-      ? (isAnnual ? 'pass_annual' : 'pass_monthly')
-      : planId === 'pass_plus'
-        ? (isAnnual ? 'pass_plus_annual' : 'pass_plus_monthly') 
-        : planId;
-    
-    setStartingTrial(actualPlanId);
-    try {
-      const result = (await startTrial(actualPlanId)) as unknown as TrialResult;
-      if (result.success) {
-        toast.success(`${result.trial_days}-day trial started successfully!`);
-      } else {
-        toast.error(result.message);
-      }
-    } catch (error) {
-      console.error('Error starting trial:', error);
-      toast.error('Failed to start trial');
-    } finally {
-      setStartingTrial(null);
-    }
+  const handleStartTrial = (planId: string) => {
+    const basePlanId = planId === 'pass' ? 'pass' : 'pass_plus';
+    openTrialModal({ 
+      planId: basePlanId, 
+      mode: user ? 'upgrade' : 'signup' 
+    });
   };
   const handleManageSubscription = async () => {
     try {
@@ -334,11 +300,12 @@ const Pricing = () => {
                           </Button>}
                       </div> : <div className="space-y-4">
                         {/* Trial button */}
-                        {!hasUsedTrialForPlan && <Button className="w-full py-4 font-semibold text-lg rounded-full transition-all duration-200 hover:scale-[1.02]" variant="default" onClick={() => handleStartTrial(plan.id, isAnnual)} disabled={startingTrial === plan.id}>
-                            {startingTrial === plan.id ? <div className="flex items-center">
-                                <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-current mr-2"></div>
-                                Starting Trial...
-                              </div> : user ? 'Start trial now, no credit card needed' : 'Start Free Trial'}
+                        {!hasUsedTrialForPlan && <Button 
+                            className="w-full py-4 font-semibold text-lg rounded-full transition-all duration-200 hover:scale-[1.02]" 
+                            variant="default" 
+                            onClick={() => handleStartTrial(plan.id)}
+                          >
+                            {user ? 'Start trial now, no credit card needed' : 'Start Free Trial'}
                           </Button>}
                         
                         {/* Paid subscription button */}

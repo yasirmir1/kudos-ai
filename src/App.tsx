@@ -7,11 +7,9 @@ import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
 import { AuthProvider, useAuth } from "./hooks/useAuth";
 import { AgeGroupProvider } from "./contexts/AgeGroupContext";
 import { AccessibilityProvider } from "./contexts/AccessibilityContext";
-import { PricingModalProvider, usePricingModal } from "./contexts/PricingModalContext";
 import { TrialModalProvider, useTrialModal } from "./contexts/TrialModalContext";
 import { AppNavigation } from "./components/AppNavigation";
 import { SubscriptionOverlay } from "./components/SubscriptionOverlay";
-import { PricingModal } from "./components/PricingModal";
 import { UnifiedTrialModal } from "./components/UnifiedTrialModal";
 import Index from "./pages/Index";
 import Auth from "./pages/Auth";
@@ -56,23 +54,8 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
       <SessionTracker />
       {showNavigation && <AppNavigation />}
       {children}
-      <PricingModalManager />
       <TrialModalManager />
     </div>
-  );
-};
-
-// Component to manage the pricing modal
-const PricingModalManager = () => {
-  const { isOpen, closePricingModal, highlightPlan, requiredFeature } = usePricingModal();
-  
-  return (
-    <PricingModal 
-      isOpen={isOpen}
-      onClose={closePricingModal}
-      highlightPlan={highlightPlan}
-      requiredFeature={requiredFeature}
-    />
   );
 };
 
@@ -94,10 +77,9 @@ const App = () => (
   <QueryClientProvider client={queryClient}>
     <TooltipProvider>
       <AuthProvider>
-        <PricingModalProvider>
-          <TrialModalProvider>
-            <AgeGroupProvider>
-              <AccessibilityProvider>
+        <TrialModalProvider>
+          <AgeGroupProvider>
+            <AccessibilityProvider>
             <Toaster />
             <Sonner />
             <BrowserRouter>
@@ -132,7 +114,6 @@ const App = () => (
               </AccessibilityProvider>
             </AgeGroupProvider>
           </TrialModalProvider>
-        </PricingModalProvider>
       </AuthProvider>
     </TooltipProvider>
   </QueryClientProvider>

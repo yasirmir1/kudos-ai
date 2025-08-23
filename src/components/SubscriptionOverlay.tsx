@@ -1,15 +1,17 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Switch } from '@/components/ui/switch';
 import { useSubscriptionState } from '@/hooks/useSubscriptionState';
 import { useTrialModal } from '@/contexts/TrialModalContext';
-import { Clock, Crown, Check, Star } from 'lucide-react';
+import { Clock, Crown, Check } from 'lucide-react';
 import { toast } from 'sonner';
+
 interface SubscriptionOverlayProps {
   children: React.ReactNode;
   requiredFeature: 'daily_mode' | 'bootcamp';
 }
+
 export const SubscriptionOverlay: React.FC<SubscriptionOverlayProps> = ({
   children,
   requiredFeature
@@ -21,25 +23,24 @@ export const SubscriptionOverlay: React.FC<SubscriptionOverlayProps> = ({
     hasAccessTo,
     isTrialActive,
     trialDaysRemaining,
-    createCheckoutSession,
-    startTrial
+    createCheckoutSession
   } = useSubscriptionState();
   const { openTrialModal } = useTrialModal();
+
   const handleSubscribeClick = async (e: React.MouseEvent) => {
-    e.stopPropagation(); // Prevent the overlay click from triggering
+    e.stopPropagation();
 
     try {
-      const planId = requiredFeature === 'bootcamp' ? isAnnual ? 'pass_plus_annual' : 'pass_plus_monthly' : isAnnual ? 'pass_annual' : 'pass_monthly';
-      const {
-        url,
-        error
-      } = await createCheckoutSession(planId);
+      const planId = requiredFeature === 'bootcamp' 
+        ? isAnnual ? 'pass_plus_annual' : 'pass_plus_monthly' 
+        : isAnnual ? 'pass_annual' : 'pass_monthly';
+      
+      const { url, error } = await createCheckoutSession(planId);
       if (error) {
         toast.error('Failed to start checkout process. Please try again.');
         return;
       }
       if (url) {
-        // Open Stripe checkout in a new tab
         window.open(url, '_blank');
       }
     } catch (error) {
@@ -47,13 +48,7 @@ export const SubscriptionOverlay: React.FC<SubscriptionOverlayProps> = ({
     }
   };
 
-  // Show loading state
-  if (loading) {
-    return <div className="flex items-center justify-center min-h-screen">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
-      </div>;
-  }
-  const handleStartTrial = async () => {
+  const handleStartTrial = () => {
     openTrialModal({
       planId: requiredFeature === 'bootcamp' ? 'pass_plus' : 'pass',
       requiredFeature,
@@ -61,9 +56,19 @@ export const SubscriptionOverlay: React.FC<SubscriptionOverlayProps> = ({
     });
   };
 
-  // Show trial warning for trials ending soon (only if it's a Stripe trial)
+  // Show loading state
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+      </div>
+    );
+  }
+
+  // Show trial warning for trials ending soon
   if (isTrialActive && trialDaysRemaining <= 3 && trialDaysRemaining > 0) {
-    return <div className="relative">
+    return (
+      <div className="relative">
         <div className="bg-gradient-to-r from-amber-50 to-orange-50 dark:from-amber-950/20 dark:to-orange-950/20 border-l-4 border-amber-400 p-4 mb-4 shadow-sm">
           <div className="flex items-center justify-between">
             <div className="flex items-center">
@@ -85,12 +90,14 @@ export const SubscriptionOverlay: React.FC<SubscriptionOverlayProps> = ({
           </div>
         </div>
         {children}
-      </div>;
+      </div>
+    );
   }
 
   // If user doesn't have access, show grayed out content with click overlay
   if (!hasAccessTo(requiredFeature)) {
-    return <div className="relative">
+    return (
+      <div className="relative">
         {/* Grayed out content */}
         <div className="filter grayscale opacity-50 pointer-events-none select-none">
           {children}
@@ -109,8 +116,6 @@ export const SubscriptionOverlay: React.FC<SubscriptionOverlayProps> = ({
           {/* Center upgrade button */}
           <div className="absolute top-[80px] left-1/2 transform -translate-x-1/2 mx-[25px]">
             <div className="relative bg-card rounded-2xl border border-primary shadow-learning scale-105 p-8 w-[532px] min-h-[500px] transition-all duration-300 hover:shadow-learning hover:-translate-y-1 px-[32px]">
-              
-              
               <div className="text-center">
                 <h3 className="text-2xl font-bold mb-2">
                   {userState === 'expired' ? 'Pass Plus' : userState === 'pass' && requiredFeature === 'bootcamp' ? 'Pass Plus' : requiredFeature === 'bootcamp' ? 'Pass Plus' : 'Pass'}
@@ -129,43 +134,55 @@ export const SubscriptionOverlay: React.FC<SubscriptionOverlayProps> = ({
                   </span>
                 </div>
                 
-                {isAnnual && <div className="flex justify-center mb-2">
+                {isAnnual && (
+                  <div className="flex justify-center mb-2">
                     <Badge variant="secondary" className="bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200">
                       Save up to 45%
                     </Badge>
-                  </div>}
+                  </div>
+                )}
                 
                 <div className="mb-6">
                   <div className="flex items-baseline justify-center gap-2">
-                    {isAnnual && <span className="text-lg text-muted-foreground line-through">
+                    {isAnnual && (
+                      <span className="text-lg text-muted-foreground line-through">
                         £{requiredFeature === 'bootcamp' ? '180' : '96'}
-                      </span>}
+                      </span>
+                    )}
                     <span className="text-4xl font-bold">
                       £{isAnnual ? requiredFeature === 'bootcamp' ? '99' : '59' : requiredFeature === 'bootcamp' ? '15' : '8'}
                     </span>
                     <span className="text-muted-foreground">/{isAnnual ? 'year' : 'month'}</span>
                   </div>
-                  
                 </div>
 
-                {userState === 'no_access' && <Button onClick={handleStartTrial} className="w-full mb-3 bg-blue-600 hover:bg-blue-700 text-white" size="lg">
+                {userState === 'no_access' && (
+                  <Button onClick={handleStartTrial} className="w-full mb-3 bg-blue-600 hover:bg-blue-700 text-white" size="lg">
                     Start 7-Day Free Trial
-                  </Button>}
-                {userState === 'expired' && <Button onClick={handleSubscribeClick} className="w-full mb-3 bg-primary hover:bg-primary/90 text-primary-foreground" size="lg">
+                  </Button>
+                )}
+                
+                {userState === 'expired' && (
+                  <Button onClick={handleSubscribeClick} className="w-full mb-3 bg-primary hover:bg-primary/90 text-primary-foreground" size="lg">
                     Subscribe Now
-                  </Button>}
-                {(userState === 'trial' || userState === 'pass') && requiredFeature === 'bootcamp' && <Button onClick={() => openTrialModal({ planId: 'pass_plus', requiredFeature, mode: 'upgrade' })} className="w-full mb-3 bg-primary hover:bg-primary/90 text-primary-foreground" size="lg">
+                  </Button>
+                )}
+                
+                {(userState === 'trial' || userState === 'pass') && requiredFeature === 'bootcamp' && (
+                  <Button onClick={() => openTrialModal({ planId: 'pass_plus', requiredFeature, mode: 'upgrade' })} className="w-full mb-3 bg-primary hover:bg-primary/90 text-primary-foreground" size="lg">
                     Upgrade to Pass Plus
-                  </Button>}
+                  </Button>
+                )}
                 
-                {userState === 'no_access' && <p className="text-xs text-muted-foreground text-center mt-3 py-0 my-[2px]">
+                {userState === 'no_access' && (
+                  <p className="text-xs text-muted-foreground text-center mt-3 py-0 my-[2px]">
                     No payment required during trial • Cancel anytime
-                  </p>}
-                
-                
+                  </p>
+                )}
 
                 <div className="space-y-3 text-left mx-0 my-[20px]">
-                  {requiredFeature === 'bootcamp' ? <>
+                  {requiredFeature === 'bootcamp' ? (
+                    <>
                       <div className="flex items-start gap-3">
                         <Check className="h-5 w-5 text-primary mt-0.5 flex-shrink-0" />
                         <span className="text-muted-foreground text-base">Everything in Pass</span>
@@ -198,7 +215,9 @@ export const SubscriptionOverlay: React.FC<SubscriptionOverlayProps> = ({
                         <Check className="h-5 w-5 text-primary mt-0.5 flex-shrink-0" />
                         <span className="text-muted-foreground text-base">Achievement badges & rewards</span>
                       </div>
-                    </> : <>
+                    </>
+                  ) : (
+                    <>
                       <div className="flex items-start gap-3">
                         <Check className="h-5 w-5 text-primary mt-0.5 flex-shrink-0" />
                         <span className="text-sm text-muted-foreground">Unlimited daily practice questions</span>
@@ -223,13 +242,15 @@ export const SubscriptionOverlay: React.FC<SubscriptionOverlayProps> = ({
                         <Check className="h-5 w-5 text-primary mt-0.5 flex-shrink-0" />
                         <span className="text-sm text-muted-foreground">Parent dashboard</span>
                       </div>
-                    </>}
+                    </>
+                  )}
                 </div>
               </div>
             </div>
           </div>
         </div>
-      </div>;
+      </div>
+    );
   }
 
   // User has access, render children normally
