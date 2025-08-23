@@ -163,12 +163,8 @@ export const SubscriptionOverlay: React.FC<SubscriptionOverlayProps> = ({
           {/* Content with restricted interaction */}
           <div className="relative">
             {children}
-            {/* Dark overlay to indicate restricted access */}
-            <div className="fixed inset-0 bg-black/20 z-40" />
-          </div>
-          
-          {/* Allow navbar interaction - higher z-index than modal */}
-          <div className="fixed top-0 left-0 right-0 h-20 z-[60] pointer-events-auto">
+            {/* Dark overlay to indicate restricted access but exclude navbar */}
+            <div className="fixed inset-0 bg-black/20 z-40" style={{ clipPath: 'inset(80px 0 0 0)' }} />
           </div>
           
           <div className="fixed inset-0 z-50 flex items-center justify-center pointer-events-none">
@@ -186,12 +182,8 @@ export const SubscriptionOverlay: React.FC<SubscriptionOverlayProps> = ({
         {/* Content with restricted interaction */}
         <div className="relative">
           {children}
-          {/* Dark overlay to indicate restricted access */}
-          <div className="fixed inset-0 bg-black/20 z-40" />
-        </div>
-        
-        {/* Allow navbar interaction - higher z-index than modal */}
-        <div className="fixed top-0 left-0 right-0 h-20 z-[60] pointer-events-auto">
+          {/* Dark overlay to indicate restricted access but exclude navbar */}
+          <div className="fixed inset-0 bg-black/20 z-40" style={{ clipPath: 'inset(80px 0 0 0)' }} />
         </div>
         
         {/* Conditional upgrade prompt based on trial eligibility */}
