@@ -198,6 +198,22 @@ export const useSubscriptionState = () => {
     }
   };
 
+  const getBillingHistory = async (): Promise<{ invoices?: any[]; payments?: any[]; error?: string }> => {
+    if (!user) {
+      return { error: 'User must be authenticated' };
+    }
+
+    try {
+      const { data, error } = await supabase.functions.invoke('get-billing-history');
+
+      if (error) throw error;
+      return data;
+    } catch (error) {
+      console.error('Error fetching billing history:', error);
+      return { error: 'Failed to fetch billing history' };
+    }
+  };
+
   return {
     // State
     userState,
@@ -215,6 +231,7 @@ export const useSubscriptionState = () => {
     startTrial,
     createCheckoutSession,
     openCustomerPortal,
+    getBillingHistory,
     refetch: loadSubscriptionData
   };
 };

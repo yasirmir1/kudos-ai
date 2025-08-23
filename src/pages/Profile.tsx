@@ -17,6 +17,7 @@ import { useAgeGroup, updateAgeGroupFromProfile } from '@/contexts/AgeGroupConte
 import { AgeGroupSelector } from '@/components/AgeGroupSelector';
 import { useAccessibility } from '@/contexts/AccessibilityContext';
 import { useSubscriptionState } from '@/hooks/useSubscriptionState';
+import BillingHistoryModal from '@/components/BillingHistoryModal';
 type AgeGroup = '11+';
 type DatabaseAgeGroup = 'year 2-3' | 'year 4-5' | '11+';
 interface Profile {
@@ -54,6 +55,7 @@ const Profile = () => {
   const [profile, setProfile] = useState<Profile | null>(null);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+  const [billingHistoryOpen, setBillingHistoryOpen] = useState(false);
   const [formData, setFormData] = useState<{
     current_level: string;
     age_group: AgeGroup;
@@ -165,6 +167,10 @@ const Profile = () => {
       // Redirect to pricing for other cases
       navigate('/pricing');
     }
+  };
+
+  const handleBillingHistory = () => {
+    setBillingHistoryOpen(true);
   };
   useEffect(() => {
     if (user) {
@@ -705,7 +711,7 @@ const Profile = () => {
                   <Button 
                     variant="outline" 
                     className="flex items-center space-x-2"
-                    onClick={handleManageSubscription}
+                    onClick={handleBillingHistory}
                     disabled={subscriptionLoading}
                   >
                     <span>Billing History</span>
@@ -771,6 +777,11 @@ const Profile = () => {
           </TabsContent>
         </Tabs>
       </div>
+      
+      <BillingHistoryModal 
+        isOpen={billingHistoryOpen} 
+        onClose={() => setBillingHistoryOpen(false)} 
+      />
     </div>;
 };
 export default Profile;
