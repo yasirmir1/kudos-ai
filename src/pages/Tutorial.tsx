@@ -3,29 +3,27 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
-import { Calendar, Target, BarChart3, Brain, Trophy, BookOpen, Users, Clock, CheckCircle, ArrowRight, Play, FileText, GraduationCap, PenTool, Lightbulb, TrendingUp, Zap, Star, Shield, Award, Eye, Settings, HelpCircle, X, AlertTriangle } from 'lucide-react';
+import { 
+  Calendar, Target, BarChart3, Brain, Trophy, BookOpen, 
+  Users, Clock, CheckCircle, ArrowRight, Play, FileText,
+  GraduationCap, PenTool, Lightbulb, TrendingUp, Zap,
+  Star, Shield, Award, Eye, Settings, HelpCircle, X, AlertTriangle
+} from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+
 const Tutorial = () => {
   const navigate = useNavigate();
   const [activeSection, setActiveSection] = useState('overview');
-  const FeatureHighlight = ({
-    title,
-    description,
-    icon,
-    benefits,
-    example,
-    badge
-  }: {
+
+  const FeatureHighlight = ({ title, description, icon, benefits, example, badge }: {
     title: string;
     description: string;
     icon: React.ReactNode;
     benefits: string[];
-    example?: {
-      title: string;
-      content: React.ReactNode;
-    };
+    example?: { title: string; content: React.ReactNode };
     badge?: string;
-  }) => <Card className="h-full">
+  }) => (
+    <Card className="h-full">
       <CardHeader>
         <div className="flex items-start gap-4">
           <div className="flex-shrink-0 p-3 bg-primary/10 rounded-lg">
@@ -44,77 +42,104 @@ const Tutorial = () => {
         <div>
           <h4 className="mb-3">Key Benefits:</h4>
           <ul className="space-y-2">
-            {benefits.map((benefit, index) => <li key={index} className="flex items-start gap-2 text-sm">
+            {benefits.map((benefit, index) => (
+              <li key={index} className="flex items-start gap-2 text-sm">
                 <div className="w-2 h-2 rounded-full bg-primary mt-2 flex-shrink-0" />
                 <span>{benefit}</span>
-              </li>)}
+              </li>
+            ))}
           </ul>
         </div>
         
-        {example && <div className="bg-muted/50 rounded-lg p-4">
+        {example && (
+          <div className="bg-muted/50 rounded-lg p-4">
             <h4 className="mb-3">{example.title}</h4>
             {example.content}
-          </div>}
+          </div>
+        )}
       </CardContent>
-    </Card>;
+    </Card>
+  );
+
   const ComparisonTable = () => {
-    const features = [{
-      feature: "Adaptive Question System",
-      dailyMode: true,
-      bootcampMode: true,
-      description: "Questions adapt to your performance level"
-    }, {
-      feature: "Structured 52-Week Course",
-      dailyMode: false,
-      bootcampMode: true,
-      description: "Progressive curriculum designed for 11+ preparation"
-    }, {
-      feature: "Topic Coverage",
-      dailyMode: "All topics randomly",
-      bootcampMode: "Weekly progression",
-      description: "How learning content is organized"
-    }, {
-      feature: "Misconception Tracking",
-      dailyMode: true,
-      bootcampMode: true,
-      description: "Identifies and helps fix common mistakes"
-    }, {
-      feature: "Performance Analytics",
-      dailyMode: "Basic insights",
-      bootcampMode: "Comprehensive reports",
-      description: "Detailed progress tracking and analysis"
-    }, {
-      feature: "Mock Tests",
-      dailyMode: false,
-      bootcampMode: true,
-      description: "Full CEM/GL assessment simulations"
-    }, {
-      feature: "Weekly Quizzes",
-      dailyMode: false,
-      bootcampMode: true,
-      description: "Regular assessments building on previous topics"
-    }, {
-      feature: "Flexible Schedule",
-      dailyMode: true,
-      bootcampMode: "Structured",
-      description: "How learning is scheduled"
-    }, {
-      feature: "Learning Stages",
-      dailyMode: "Question-based",
-      bootcampMode: "4-stage system",
-      description: "Concept introduction, guided practice, independent practice, assessment"
-    }];
+    const features = [
+      {
+        feature: "Adaptive Question System",
+        dailyMode: true,
+        bootcampMode: true,
+        description: "Questions adapt to your performance level"
+      },
+      {
+        feature: "Structured 52-Week Course",
+        dailyMode: false,
+        bootcampMode: true,
+        description: "Progressive curriculum designed for 11+ preparation"
+      },
+      {
+        feature: "Topic Coverage",
+        dailyMode: "All topics randomly",
+        bootcampMode: "Weekly progression",
+        description: "How learning content is organized"
+      },
+      {
+        feature: "Misconception Tracking",
+        dailyMode: true,
+        bootcampMode: true,
+        description: "Identifies and helps fix common mistakes"
+      },
+      {
+        feature: "Performance Analytics",
+        dailyMode: "Basic insights",
+        bootcampMode: "Comprehensive reports",
+        description: "Detailed progress tracking and analysis"
+      },
+      {
+        feature: "Mock Tests",
+        dailyMode: false,
+        bootcampMode: true,
+        description: "Full CEM/GL assessment simulations"
+      },
+      {
+        feature: "Weekly Quizzes",
+        dailyMode: false,
+        bootcampMode: true,
+        description: "Regular assessments building on previous topics"
+      },
+      {
+        feature: "Flexible Schedule",
+        dailyMode: true,
+        bootcampMode: "Structured",
+        description: "How learning is scheduled"
+      },
+      {
+        feature: "Learning Stages",
+        dailyMode: "Question-based",
+        bootcampMode: "4-stage system",
+        description: "Concept introduction, guided practice, independent practice, assessment"
+      }
+    ];
+
     const renderFeatureValue = (value: boolean | string) => {
       if (typeof value === "boolean") {
-        return <div className="flex justify-center">
-            {value ? <CheckCircle className="w-5 h-5 text-green-600" /> : <X className="w-5 h-5 text-red-500" />}
-          </div>;
+        return (
+          <div className="flex justify-center">
+            {value ? (
+              <CheckCircle className="w-5 h-5 text-green-600" />
+            ) : (
+              <X className="w-5 h-5 text-red-500" />
+            )}
+          </div>
+        );
       }
-      return <div className="flex justify-center">
+      return (
+        <div className="flex justify-center">
           <Badge variant="outline">{value}</Badge>
-        </div>;
+        </div>
+      );
     };
-    return <Card>
+
+    return (
+      <Card>
         <CardHeader>
           <CardTitle>Daily Mode vs Bootcamp Mode</CardTitle>
         </CardHeader>
@@ -129,13 +154,16 @@ const Tutorial = () => {
                 </tr>
               </thead>
               <tbody>
-                {features.map((feature, index) => <tr key={index} className="border-b hover:bg-muted/50">
+                {features.map((feature, index) => (
+                  <tr key={index} className="border-b hover:bg-muted/50">
                     <td className="p-4">
                       <div>
                         <div>{feature.feature}</div>
-                        {feature.description && <div className="text-sm text-muted-foreground mt-1">
+                        {feature.description && (
+                          <div className="text-sm text-muted-foreground mt-1">
                             {feature.description}
-                          </div>}
+                          </div>
+                        )}
                       </div>
                     </td>
                     <td className="p-4">
@@ -144,28 +172,22 @@ const Tutorial = () => {
                     <td className="p-4">
                       {renderFeatureValue(feature.bootcampMode)}
                     </td>
-                  </tr>)}
+                  </tr>
+                ))}
               </tbody>
             </table>
           </div>
         </CardContent>
-      </Card>;
+      </Card>
+    );
   };
-  const StepGuide = ({
-    title,
-    steps
-  }: {
-    title: string;
-    steps: Array<{
-      number: number;
-      title: string;
-      description: string;
-      tips?: string[];
-    }>;
-  }) => <div className="space-y-6">
+
+  const StepGuide = ({ title, steps }: { title: string; steps: Array<{ number: number; title: string; description: string; tips?: string[] }> }) => (
+    <div className="space-y-6">
       <h3>{title}</h3>
       <div className="space-y-4">
-        {steps.map(step => <Card key={step.number} className="relative">
+        {steps.map((step) => (
+          <Card key={step.number} className="relative">
             <CardContent className="p-6">
               <div className="flex gap-4">
                 <div className="flex-shrink-0">
@@ -176,22 +198,30 @@ const Tutorial = () => {
                 <div className="flex-1">
                   <h4 className="mb-2">{step.title}</h4>
                   <p className="text-muted-foreground mb-4">{step.description}</p>
-                  {step.tips && step.tips.length > 0 && <div className="bg-muted/50 rounded-lg p-4">
+                  {step.tips && step.tips.length > 0 && (
+                    <div className="bg-muted/50 rounded-lg p-4">
                       <div className="text-sm mb-2">💡 Tips:</div>
                       <ul className="text-sm text-muted-foreground space-y-1">
-                        {step.tips.map((tip, index) => <li key={index}>• {tip}</li>)}
+                        {step.tips.map((tip, index) => (
+                          <li key={index}>• {tip}</li>
+                        ))}
                       </ul>
-                    </div>}
+                    </div>
+                  )}
                 </div>
               </div>
             </CardContent>
-          </Card>)}
+          </Card>
+        ))}
       </div>
-    </div>;
+    </div>
+  );
+
   const renderContent = () => {
     switch (activeSection) {
       case 'overview':
-        return <div className="space-y-12">
+        return (
+          <div className="space-y-12">
             {/* Hero Section */}
             <div className="bg-primary text-primary-foreground py-20 rounded-2xl">
               <div className="max-w-4xl mx-auto px-6 text-center space-y-8">
@@ -201,7 +231,12 @@ const Tutorial = () => {
                 <p className="text-xl opacity-90">
                   Stop guessing what your child needs to work on. Our AI identifies exactly where they're struggling and why.
                 </p>
-                <Button onClick={() => navigate('/dashboard')} size="lg" variant="secondary" className="bg-background text-foreground hover:bg-background/90">
+                <Button 
+                  onClick={() => navigate('/dashboard')}
+                  size="lg" 
+                  variant="secondary"
+                  className="bg-background text-foreground hover:bg-background/90"
+                >
                   Start Free Assessment
                 </Button>
                 <div className="text-sm opacity-75">No credit card required • See results in 10 minutes</div>
@@ -220,7 +255,34 @@ const Tutorial = () => {
               <div className="space-y-12">
                 {/* Multiplication Example */}
                 <div className="grid lg:grid-cols-2 gap-12 items-center">
-                  
+                  <div className="space-y-6">
+                    <div className="bg-destructive/10 border border-destructive/20 p-6 rounded-xl">
+                      <h4 className="mb-3 text-destructive">Traditional Approach:</h4>
+                      <div className="space-y-2 text-sm">
+                        <div className="flex items-center gap-2">
+                          <X className="w-4 h-4 text-destructive" />
+                          <span className="line-through">3 × 5 = 8</span>
+                        </div>
+                        <p className="text-destructive">❌ Incorrect. Try again.</p>
+                      </div>
+                    </div>
+                    
+                    <div className="bg-green-50 border border-green-200 p-6 rounded-xl">
+                      <h4 className="mb-3 text-green-800">Our Approach:</h4>
+                      <div className="space-y-2 text-sm">
+                        <div className="flex items-center gap-2">
+                          <X className="w-4 h-4 text-destructive" />
+                          <span className="line-through">3 × 5 = 8</span>
+                        </div>
+                        <div className="bg-green-100 p-3 rounded-lg">
+                          <p className="text-green-800">
+                            <strong>Misconception detected:</strong> Your child is adding (3 + 5) instead of multiplying. 
+                            We&apos;ll focus on multiplication concepts and provide targeted practice.
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
 
                   <div className="space-y-6">
                     <h3>The result?</h3>
@@ -279,7 +341,27 @@ const Tutorial = () => {
                     </div>
                   </div>
 
-                  
+                  <div className="space-y-6">
+                    <h3>Instead of random fraction problems</h3>
+                    <div className="space-y-4">
+                      <div className="flex items-start gap-3">
+                        <CheckCircle className="w-5 h-5 text-green-600 mt-1" />
+                        <span>Visual fraction bars to show size relationships</span>
+                      </div>
+                      <div className="flex items-start gap-3">
+                        <CheckCircle className="w-5 h-5 text-green-600 mt-1" />
+                        <span>Step-by-step comparison techniques</span>
+                      </div>
+                      <div className="flex items-start gap-3">
+                        <CheckCircle className="w-5 h-5 text-green-600 mt-1" />
+                        <span>Practice specifically on unit fractions</span>
+                      </div>
+                      <div className="flex items-start gap-3">
+                        <CheckCircle className="w-5 h-5 text-green-600 mt-1" />
+                        <span>Building intuition about fraction sizes</span>
+                      </div>
+                    </div>
+                  </div>
                 </div>
 
                 {/* Decimals Example */}
@@ -316,7 +398,27 @@ const Tutorial = () => {
                     </div>
                   </div>
 
-                  
+                  <div className="space-y-6">
+                    <h3>Instead of random decimal problems</h3>
+                    <div className="space-y-4">
+                      <div className="flex items-start gap-3">
+                        <CheckCircle className="w-5 h-5 text-green-600 mt-1" />
+                        <span>Place value charts and visual alignment</span>
+                      </div>
+                      <div className="flex items-start gap-3">
+                        <CheckCircle className="w-5 h-5 text-green-600 mt-1" />
+                        <span>Step-by-step decimal addition methods</span>
+                      </div>
+                      <div className="flex items-start gap-3">
+                        <CheckCircle className="w-5 h-5 text-green-600 mt-1" />
+                        <span>Understanding tenths and hundredths</span>
+                      </div>
+                      <div className="flex items-start gap-3">
+                        <CheckCircle className="w-5 h-5 text-green-600 mt-1" />
+                        <span>Converting between fractions and decimals</span>
+                      </div>
+                    </div>
+                  </div>
                 </div>
               </div>
             </section>
@@ -378,7 +480,11 @@ const Tutorial = () => {
                     </div>
 
                     <div className="flex justify-center pt-6">
-                      <Button onClick={() => navigate('/dashboard')} className="h-12 text-base px-8" size="lg">
+                      <Button 
+                        onClick={() => navigate('/dashboard')}
+                        className="h-12 text-base px-8"
+                        size="lg"
+                      >
                         Try Daily Mode <ArrowRight className="h-5 w-5 ml-2" />
                       </Button>
                     </div>
@@ -435,7 +541,12 @@ const Tutorial = () => {
                     </div>
 
                     <div className="flex justify-center pt-6">
-                      <Button onClick={() => navigate('/bootcamp')} className="h-12 text-base px-8" size="lg" variant="outline">
+                      <Button 
+                        onClick={() => navigate('/bootcamp')}
+                        className="h-12 text-base px-8"
+                        size="lg"
+                        variant="outline"
+                      >
                         Enter Bootcamp <ArrowRight className="h-5 w-5 ml-2" />
                       </Button>
                     </div>
@@ -481,12 +592,28 @@ const Tutorial = () => {
             </section>
 
             <ComparisonTable />
-          </div>;
+          </div>
+        );
+
       case 'daily-mode':
-        return <div className="space-y-8">
-            <FeatureHighlight title="Daily Mode: Smart Practice for Busy Families" description="Flexible daily practice designed to identify and strengthen learning areas" icon={<Calendar className="w-6 h-6" />} badge="15-30 min daily" benefits={["Questions adapt in real-time to your child's performance", "All topics covered systematically to ensure nothing is forgotten", "Misconception tracking identifies specific learning gaps", "Performance analytics show detailed progress by topic and subtopic", "Flexible schedule that fits around school and activities"]} example={{
-            title: "How it works",
-            content: <div className="space-y-3 text-sm">
+        return (
+          <div className="space-y-8">
+            <FeatureHighlight
+              title="Daily Mode: Smart Practice for Busy Families"
+              description="Flexible daily practice designed to identify and strengthen learning areas"
+              icon={<Calendar className="w-6 h-6" />}
+              badge="15-30 min daily"
+              benefits={[
+                "Questions adapt in real-time to your child's performance",
+                "All topics covered systematically to ensure nothing is forgotten", 
+                "Misconception tracking identifies specific learning gaps",
+                "Performance analytics show detailed progress by topic and subtopic",
+                "Flexible schedule that fits around school and activities"
+              ]}
+              example={{
+                title: "How it works",
+                content: (
+                  <div className="space-y-3 text-sm">
                     <div className="flex items-start gap-3">
                       <Zap className="h-5 w-5 mt-1 text-primary" />
                       <div>
@@ -506,7 +633,9 @@ const Tutorial = () => {
                       </div>
                     </div>
                   </div>
-          }} />
+                )
+              }}
+            />
 
             <Card className="border-l-4 border-primary">
               <CardContent className="p-6">
@@ -517,37 +646,46 @@ const Tutorial = () => {
                 </p>
               </CardContent>
             </Card>
-          </div>;
+          </div>
+        );
+
       case 'bootcamp-mode':
-        return <div className="space-y-8">
-            <FeatureHighlight title="Bootcamp Mode: Complete 11+ Mastery Course" description="Complete 52-week interactive course for 11+ grammar school entrance exam preparation" icon={<Target className="w-6 h-6" />} badge="52-week course" benefits={["Structured 52-week curriculum designed specifically for 11+ preparation", "Interactive learning stages: concept introduction, guided practice, independent practice, assessment", "Weekly quizzes that progressively cover all topics learned so far", "Full mock papers that closely simulate CEM and GL assessment formats", "Comprehensive analytics tracking weekly progress and mock test performance"]} example={{
-            title: "Learning Journey Structure",
-            content: <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                    {[{
-                icon: Lightbulb,
-                title: 'Concept Introduction',
-                desc: 'Learn new topics with clear explanations'
-              }, {
-                icon: Users,
-                title: 'Guided Practice',
-                desc: 'Practice with step-by-step support'
-              }, {
-                icon: PenTool,
-                title: 'Independent Practice',
-                desc: 'Apply knowledge on your own'
-              }, {
-                icon: CheckCircle,
-                title: 'Assessment',
-                desc: 'Test understanding and track progress'
-              }].map((stage, index) => <div key={index} className="text-center">
+        return (
+          <div className="space-y-8">
+            <FeatureHighlight
+              title="Bootcamp Mode: Complete 11+ Mastery Course"
+              description="Complete 52-week interactive course for 11+ grammar school entrance exam preparation"
+              icon={<Target className="w-6 h-6" />}
+              badge="52-week course"
+              benefits={[
+                "Structured 52-week curriculum designed specifically for 11+ preparation",
+                "Interactive learning stages: concept introduction, guided practice, independent practice, assessment",
+                "Weekly quizzes that progressively cover all topics learned so far",
+                "Full mock papers that closely simulate CEM and GL assessment formats",
+                "Comprehensive analytics tracking weekly progress and mock test performance"
+              ]}
+              example={{
+                title: "Learning Journey Structure",
+                content: (
+                  <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                    {[
+                      { icon: Lightbulb, title: 'Concept Introduction', desc: 'Learn new topics with clear explanations' },
+                      { icon: Users, title: 'Guided Practice', desc: 'Practice with step-by-step support' },
+                      { icon: PenTool, title: 'Independent Practice', desc: 'Apply knowledge on your own' },
+                      { icon: CheckCircle, title: 'Assessment', desc: 'Test understanding and track progress' }
+                    ].map((stage, index) => (
+                      <div key={index} className="text-center">
                         <div className="w-12 h-12 bg-primary rounded-full flex items-center justify-center mx-auto mb-3">
                           <stage.icon className="h-6 w-6 text-primary-foreground" />
                         </div>
                         <h4 className="font-semibold text-sm mb-1">{stage.title}</h4>
                         <p className="text-xs text-muted-foreground">{stage.desc}</p>
-                      </div>)}
+                      </div>
+                    ))}
                   </div>
-          }} />
+                )
+              }}
+            />
 
             <div className="grid md:grid-cols-2 gap-6">
               <Card>
@@ -584,53 +722,72 @@ const Tutorial = () => {
                 </p>
               </CardContent>
             </Card>
-          </div>;
-      case 'getting-started':
-        return <div className="space-y-8">
-            <div className="grid md:grid-cols-2 gap-8">
-              <StepGuide title="For Students" steps={[{
-              number: 1,
-              title: "Create your account and set your age group",
-              description: "Sign up and tell us your current year level so we can provide age-appropriate questions",
-              tips: ["Choose your correct school year for best results", "You can change this later in settings"]
-            }, {
-              number: 2,
-              title: "Choose between Daily Mode or Bootcamp",
-              description: "Select the learning approach that best fits your goals and schedule",
-              tips: ["Daily Mode for flexible practice", "Bootcamp for structured 11+ preparation"]
-            }, {
-              number: 3,
-              title: "Start with a few practice questions",
-              description: "Take the initial assessment to help us understand your current level",
-              tips: ["Answer honestly for best results", "Don't worry about getting everything right"]
-            }, {
-              number: 4,
-              title: "Review your performance in the analytics section",
-              description: "Check your progress and see which topics you're strongest and weakest in",
-              tips: ["Look for patterns in your mistakes", "Focus on understanding, not just scores"]
-            }]} />
+          </div>
+        );
 
-              <StepGuide title="For Parents" steps={[{
-              number: 1,
-              title: "Set up your child's account with appropriate age group",
-              description: "Help your child create their account and ensure the correct year level is selected",
-              tips: ["Supervise the initial setup", "Verify the age group matches their school year"]
-            }, {
-              number: 2,
-              title: "Explore the analytics dashboard",
-              description: "Understand how to read the reports and what they tell you about your child's progress",
-              tips: ["Focus on misconception patterns", "Look for trends over time, not just daily scores"]
-            }, {
-              number: 3,
-              title: "Review misconception tracking",
-              description: "Learn how to identify weak areas and support your child's learning at home",
-              tips: ["Discuss mistakes without judgment", "Use insights to guide additional practice"]
-            }, {
-              number: 4,
-              title: "Set daily practice goals and routines",
-              description: "Establish consistent practice habits and celebrate progress",
-              tips: ["Start with achievable goals", "Consistency is more important than duration"]
-            }]} />
+      case 'getting-started':
+        return (
+          <div className="space-y-8">
+            <div className="grid md:grid-cols-2 gap-8">
+              <StepGuide
+                title="For Students"
+                steps={[
+                  {
+                    number: 1,
+                    title: "Create your account and set your age group",
+                    description: "Sign up and tell us your current year level so we can provide age-appropriate questions",
+                    tips: ["Choose your correct school year for best results", "You can change this later in settings"]
+                  },
+                  {
+                    number: 2,
+                    title: "Choose between Daily Mode or Bootcamp",
+                    description: "Select the learning approach that best fits your goals and schedule",
+                    tips: ["Daily Mode for flexible practice", "Bootcamp for structured 11+ preparation"]
+                  },
+                  {
+                    number: 3,
+                    title: "Start with a few practice questions",
+                    description: "Take the initial assessment to help us understand your current level",
+                    tips: ["Answer honestly for best results", "Don't worry about getting everything right"]
+                  },
+                  {
+                    number: 4,
+                    title: "Review your performance in the analytics section",
+                    description: "Check your progress and see which topics you're strongest and weakest in",
+                    tips: ["Look for patterns in your mistakes", "Focus on understanding, not just scores"]
+                  }
+                ]}
+              />
+
+              <StepGuide
+                title="For Parents"
+                steps={[
+                  {
+                    number: 1,
+                    title: "Set up your child's account with appropriate age group",
+                    description: "Help your child create their account and ensure the correct year level is selected",
+                    tips: ["Supervise the initial setup", "Verify the age group matches their school year"]
+                  },
+                  {
+                    number: 2,
+                    title: "Explore the analytics dashboard",
+                    description: "Understand how to read the reports and what they tell you about your child's progress",
+                    tips: ["Focus on misconception patterns", "Look for trends over time, not just daily scores"]
+                  },
+                  {
+                    number: 3,
+                    title: "Review misconception tracking",
+                    description: "Learn how to identify weak areas and support your child's learning at home",
+                    tips: ["Discuss mistakes without judgment", "Use insights to guide additional practice"]
+                  },
+                  {
+                    number: 4,
+                    title: "Set daily practice goals and routines",
+                    description: "Establish consistent practice habits and celebrate progress",
+                    tips: ["Start with achievable goals", "Consistency is more important than duration"]
+                  }
+                ]}
+              />
             </div>
 
             <Card className="bg-muted/30">
@@ -657,12 +814,16 @@ const Tutorial = () => {
                 </div>
               </CardContent>
             </Card>
-          </div>;
+          </div>
+        );
+
       default:
         return null;
     }
   };
-  return <div className="min-h-screen bg-background">
+
+  return (
+    <div className="min-h-screen bg-background">
       <div className="container mx-auto px-4 py-8">
         {/* Header */}
         <div className="text-center mb-12">
@@ -676,30 +837,22 @@ const Tutorial = () => {
 
         {/* Navigation */}
         <div className="flex flex-wrap gap-2 justify-center mb-8">
-          {[{
-          id: 'overview',
-          label: 'Overview',
-          icon: Eye
-        }, {
-          id: 'daily-mode',
-          label: 'Daily Mode',
-          icon: Calendar
-        }, {
-          id: 'bootcamp-mode',
-          label: 'Bootcamp',
-          icon: Target
-        }, {
-          id: 'getting-started',
-          label: 'Getting Started',
-          icon: Play
-        }].map(({
-          id,
-          label,
-          icon: Icon
-        }) => <Button key={id} variant={activeSection === id ? "default" : "outline"} onClick={() => setActiveSection(id)} className="flex items-center gap-2">
+          {[
+            { id: 'overview', label: 'Overview', icon: Eye },
+            { id: 'daily-mode', label: 'Daily Mode', icon: Calendar },
+            { id: 'bootcamp-mode', label: 'Bootcamp', icon: Target },
+            { id: 'getting-started', label: 'Getting Started', icon: Play }
+          ].map(({ id, label, icon: Icon }) => (
+            <Button
+              key={id}
+              variant={activeSection === id ? "default" : "outline"}
+              onClick={() => setActiveSection(id)}
+              className="flex items-center gap-2"
+            >
               <Icon className="h-4 w-4" />
               {label}
-            </Button>)}
+            </Button>
+          ))}
         </div>
 
         {/* Content */}
@@ -707,6 +860,8 @@ const Tutorial = () => {
           {renderContent()}
         </div>
       </div>
-    </div>;
+    </div>
+  );
 };
+
 export default Tutorial;
