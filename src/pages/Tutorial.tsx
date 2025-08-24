@@ -220,71 +220,75 @@ const Tutorial = () => {
               <div className="space-y-12">
                 {/* Examples Grid */}
                 <div className="grid lg:grid-cols-2 gap-8">
-                  {/* Fractions Example */}
-                  <div className="space-y-6">
-                    <div className="bg-destructive/10 border border-destructive/20 p-6 rounded-xl">
-                      <h4 className="mb-3 text-destructive">Traditional Approach:</h4>
-                      <div className="space-y-2 text-sm">
-                        <p className="text-destructive font-medium">Which is bigger: 1/3 or 1/5?</p>
-                        <div className="flex items-center gap-2">
-                          <X className="w-4 h-4 text-destructive" />
-                          <span className="line-through">1/5</span>
-                        </div>
-                        <p className="text-destructive">❌ Incorrect. Try again.</p>
-                      </div>
-                    </div>
-                    
-                    <div className="bg-green-50 border border-green-200 p-6 rounded-xl">
-                      <h4 className="mb-3 text-green-800">Our Approach:</h4>
-                      <div className="space-y-2 text-sm">
-                        <p className="text-green-800 font-medium">Which is bigger: 1/3 or 1/5?</p>
-                        <div className="flex items-center gap-2">
-                          <X className="w-4 h-4 text-destructive" />
-                          <span className="line-through">1/5</span>
-                        </div>
-                        <div className="bg-green-100 p-3 rounded-lg">
-                          <p className="text-green-800">
-                            <strong>Misconception detected:</strong> Your child thinks &quot;bigger denominator = bigger fraction&quot; - 
-                            they think 5 is bigger than 3, so 1/5 must be bigger than 1/3. 
-                            Our system provides targeted practice on fraction size comparison and visual representation.
-                          </p>
+                  {/* Fractions Example Container */}
+                  <Card className="p-6 border-2 border-blue-100">
+                    <CardContent className="p-0 space-y-6">
+                      <div className="bg-destructive/10 border border-destructive/20 p-6 rounded-xl">
+                        <h4 className="mb-3 text-destructive">Traditional Approach:</h4>
+                        <div className="space-y-2 text-sm">
+                          <p className="text-destructive font-medium">Which is bigger: 1/3 or 1/5?</p>
+                          <div className="flex items-center gap-2">
+                            <X className="w-4 h-4 text-destructive" />
+                            <span className="line-through">1/5</span>
+                          </div>
+                          <p className="text-destructive">❌ Incorrect. Try again.</p>
                         </div>
                       </div>
-                    </div>
-                  </div>
+                      
+                      <div className="bg-green-50 border border-green-200 p-6 rounded-xl">
+                        <h4 className="mb-3 text-green-800">Our Approach:</h4>
+                        <div className="space-y-2 text-sm">
+                          <p className="text-green-800 font-medium">Which is bigger: 1/3 or 1/5?</p>
+                          <div className="flex items-center gap-2">
+                            <X className="w-4 h-4 text-destructive" />
+                            <span className="line-through">1/5</span>
+                          </div>
+                          <div className="bg-green-100 p-3 rounded-lg">
+                            <p className="text-green-800">
+                              <strong>Misconception detected:</strong> Your child thinks &quot;bigger denominator = bigger fraction&quot; - 
+                              they think 5 is bigger than 3, so 1/5 must be bigger than 1/3. 
+                              Our system provides targeted practice on fraction size comparison and visual representation.
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
 
-                  {/* Decimals Example */}
-                  <div className="space-y-6">
-                    <div className="bg-destructive/10 border border-destructive/20 p-6 rounded-xl">
-                      <h4 className="mb-3 text-destructive">Traditional Approach:</h4>
-                      <div className="space-y-2 text-sm">
-                        <p className="text-destructive font-medium">What is 0.7 + 0.23?</p>
-                        <div className="flex items-center gap-2">
-                          <X className="w-4 h-4 text-destructive" />
-                          <span className="line-through">0.30</span>
-                        </div>
-                        <p className="text-destructive">❌ Incorrect. Try again.</p>
-                      </div>
-                    </div>
-                    
-                    <div className="bg-green-50 border border-green-200 p-6 rounded-xl">
-                      <h4 className="mb-3 text-green-800">Our Approach:</h4>
-                      <div className="space-y-2 text-sm">
-                        <p className="text-green-800 font-medium">What is 0.7 + 0.23?</p>
-                        <div className="flex items-center gap-2">
-                          <X className="w-4 h-4 text-destructive" />
-                          <span className="line-through">0.30</span>
-                        </div>
-                        <div className="bg-green-100 p-3 rounded-lg">
-                          <p className="text-green-800">
-                            <strong>Misconception detected:</strong> Your child is making a &quot;decimal alignment misconception&quot; - 
-                            they&apos;re adding 7 + 23 = 30 without understanding place value, treating decimals like whole numbers. 
-                            Our system provides targeted practice on decimal place value and alignment.
-                          </p>
+                  {/* Decimals Example Container */}
+                  <Card className="p-6 border-2 border-purple-100">
+                    <CardContent className="p-0 space-y-6">
+                      <div className="bg-destructive/10 border border-destructive/20 p-6 rounded-xl">
+                        <h4 className="mb-3 text-destructive">Traditional Approach:</h4>
+                        <div className="space-y-2 text-sm">
+                          <p className="text-destructive font-medium">What is 0.7 + 0.23?</p>
+                          <div className="flex items-center gap-2">
+                            <X className="w-4 h-4 text-destructive" />
+                            <span className="line-through">0.30</span>
+                          </div>
+                          <p className="text-destructive">❌ Incorrect. Try again.</p>
                         </div>
                       </div>
-                    </div>
-                  </div>
+                      
+                      <div className="bg-green-50 border border-green-200 p-6 rounded-xl">
+                        <h4 className="mb-3 text-green-800">Our Approach:</h4>
+                        <div className="space-y-2 text-sm">
+                          <p className="text-green-800 font-medium">What is 0.7 + 0.23?</p>
+                          <div className="flex items-center gap-2">
+                            <X className="w-4 h-4 text-destructive" />
+                            <span className="line-through">0.30</span>
+                          </div>
+                          <div className="bg-green-100 p-3 rounded-lg">
+                            <p className="text-green-800">
+                              <strong>Misconception detected:</strong> Your child is making a &quot;decimal alignment misconception&quot; - 
+                              they&apos;re adding 7 + 23 = 30 without understanding place value, treating decimals like whole numbers. 
+                              Our system provides targeted practice on decimal place value and alignment.
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
                 </div>
 
                 {/* The Result Section */}
