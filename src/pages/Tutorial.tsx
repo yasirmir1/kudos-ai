@@ -644,24 +644,24 @@ const Tutorial = () => {
           </div>;
       case 'getting-started':
         return <div className="space-y-8">
-            <div className="grid lg:grid-cols-2 gap-12">
+            <div className="space-y-12">
               {/* For Students */}
               <div className="space-y-6">
                 <h3 className="text-2xl font-semibold">For Students</h3>
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-2 lg:grid-cols-4 gap-6">
                   {/* Step 1 - Top Left */}
                   <Card className="relative">
-                    <CardContent className="p-4">
-                      <div className="flex gap-3">
-                        <Badge variant="secondary" className="w-6 h-6 rounded-full flex items-center justify-center text-xs flex-shrink-0">
+                    <CardContent className="p-6">
+                      <div className="space-y-4">
+                        <Badge variant="secondary" className="w-8 h-8 rounded-full flex items-center justify-center text-sm">
                           1
                         </Badge>
-                        <div className="flex-1 min-w-0">
-                          <h4 className="text-sm font-medium mb-2">Create your account and set your age group</h4>
-                          <p className="text-xs text-muted-foreground mb-3">Sign up and tell us your current year level so we can provide age-appropriate questions</p>
-                          <div className="bg-muted/50 rounded-lg p-2">
-                            <div className="text-xs mb-1">💡 Tips:</div>
-                            <ul className="text-xs text-muted-foreground space-y-1">
+                        <div>
+                          <h4 className="font-medium mb-3">Create your account and set your age group</h4>
+                          <p className="text-sm text-muted-foreground mb-4">Sign up and tell us your current year level so we can provide age-appropriate questions</p>
+                          <div className="bg-muted/50 rounded-lg p-3">
+                            <div className="text-sm mb-2">💡 Tips:</div>
+                            <ul className="text-sm text-muted-foreground space-y-1">
                               <li>• Choose your correct school year for best results</li>
                               <li>• You can change this later in settings</li>
                             </ul>
@@ -673,17 +673,17 @@ const Tutorial = () => {
 
                   {/* Step 2 - Top Right */}
                   <Card className="relative">
-                    <CardContent className="p-4">
-                      <div className="flex gap-3">
-                        <Badge variant="secondary" className="w-6 h-6 rounded-full flex items-center justify-center text-xs flex-shrink-0">
+                    <CardContent className="p-6">
+                      <div className="space-y-4">
+                        <Badge variant="secondary" className="w-8 h-8 rounded-full flex items-center justify-center text-sm">
                           2
                         </Badge>
-                        <div className="flex-1 min-w-0">
-                          <h4 className="text-sm font-medium mb-2">Choose between Daily Mode or Bootcamp</h4>
-                          <p className="text-xs text-muted-foreground mb-3">Select the learning approach that best fits your goals and schedule</p>
-                          <div className="bg-muted/50 rounded-lg p-2">
-                            <div className="text-xs mb-1">💡 Tips:</div>
-                            <ul className="text-xs text-muted-foreground space-y-1">
+                        <div>
+                          <h4 className="font-medium mb-3">Choose between Daily Mode or Bootcamp</h4>
+                          <p className="text-sm text-muted-foreground mb-4">Select the learning approach that best fits your goals and schedule</p>
+                          <div className="bg-muted/50 rounded-lg p-3">
+                            <div className="text-sm mb-2">💡 Tips:</div>
+                            <ul className="text-sm text-muted-foreground space-y-1">
                               <li>• Daily Mode for flexible practice</li>
                               <li>• Bootcamp for structured 11+ preparation</li>
                             </ul>
@@ -695,17 +695,17 @@ const Tutorial = () => {
 
                   {/* Step 3 - Bottom Left */}
                   <Card className="relative">
-                    <CardContent className="p-4">
-                      <div className="flex gap-3">
-                        <Badge variant="secondary" className="w-6 h-6 rounded-full flex items-center justify-center text-xs flex-shrink-0">
+                    <CardContent className="p-6">
+                      <div className="space-y-4">
+                        <Badge variant="secondary" className="w-8 h-8 rounded-full flex items-center justify-center text-sm">
                           3
                         </Badge>
-                        <div className="flex-1 min-w-0">
-                          <h4 className="text-sm font-medium mb-2">Start with a few practice questions</h4>
-                          <p className="text-xs text-muted-foreground mb-3">Take the initial assessment to help us understand your current level</p>
-                          <div className="bg-muted/50 rounded-lg p-2">
-                            <div className="text-xs mb-1">💡 Tips:</div>
-                            <ul className="text-xs text-muted-foreground space-y-1">
+                        <div>
+                          <h4 className="font-medium mb-3">Start with a few practice questions</h4>
+                          <p className="text-sm text-muted-foreground mb-4">Take the initial assessment to help us understand your current level</p>
+                          <div className="bg-muted/50 rounded-lg p-3">
+                            <div className="text-sm mb-2">💡 Tips:</div>
+                            <ul className="text-sm text-muted-foreground space-y-1">
                               <li>• Answer honestly for best results</li>
                               <li>• Don't worry about getting everything right</li>
                             </ul>
@@ -717,17 +717,17 @@ const Tutorial = () => {
 
                   {/* Step 4 - Bottom Right */}
                   <Card className="relative">
-                    <CardContent className="p-4">
-                      <div className="flex gap-3">
-                        <Badge variant="secondary" className="w-6 h-6 rounded-full flex items-center justify-center text-xs flex-shrink-0">
+                    <CardContent className="p-6">
+                      <div className="space-y-4">
+                        <Badge variant="secondary" className="w-8 h-8 rounded-full flex items-center justify-center text-sm">
                           4
                         </Badge>
-                        <div className="flex-1 min-w-0">
-                          <h4 className="text-sm font-medium mb-2">Review your performance in the analytics section</h4>
-                          <p className="text-xs text-muted-foreground mb-3">Check your progress and see which topics you're strongest and weakest in</p>
-                          <div className="bg-muted/50 rounded-lg p-2">
-                            <div className="text-xs mb-1">💡 Tips:</div>
-                            <ul className="text-xs text-muted-foreground space-y-1">
+                        <div>
+                          <h4 className="font-medium mb-3">Review your performance in the analytics section</h4>
+                          <p className="text-sm text-muted-foreground mb-4">Check your progress and see which topics you're strongest and weakest in</p>
+                          <div className="bg-muted/50 rounded-lg p-3">
+                            <div className="text-sm mb-2">💡 Tips:</div>
+                            <ul className="text-sm text-muted-foreground space-y-1">
                               <li>• Look for patterns in your mistakes</li>
                               <li>• Focus on understanding, not just scores</li>
                             </ul>
@@ -742,20 +742,20 @@ const Tutorial = () => {
               {/* For Parents */}
               <div className="space-y-6">
                 <h3 className="text-2xl font-semibold">For Parents</h3>
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-2 lg:grid-cols-4 gap-6">
                   {/* Step 1 - Top Left */}
                   <Card className="relative">
-                    <CardContent className="p-4">
-                      <div className="flex gap-3">
-                        <Badge variant="secondary" className="w-6 h-6 rounded-full flex items-center justify-center text-xs flex-shrink-0">
+                    <CardContent className="p-6">
+                      <div className="space-y-4">
+                        <Badge variant="secondary" className="w-8 h-8 rounded-full flex items-center justify-center text-sm">
                           1
                         </Badge>
-                        <div className="flex-1 min-w-0">
-                          <h4 className="text-sm font-medium mb-2">Set up your child's account with appropriate age group</h4>
-                          <p className="text-xs text-muted-foreground mb-3">Help your child create their account and ensure the correct year level is selected</p>
-                          <div className="bg-muted/50 rounded-lg p-2">
-                            <div className="text-xs mb-1">💡 Tips:</div>
-                            <ul className="text-xs text-muted-foreground space-y-1">
+                        <div>
+                          <h4 className="font-medium mb-3">Set up your child's account with appropriate age group</h4>
+                          <p className="text-sm text-muted-foreground mb-4">Help your child create their account and ensure the correct year level is selected</p>
+                          <div className="bg-muted/50 rounded-lg p-3">
+                            <div className="text-sm mb-2">💡 Tips:</div>
+                            <ul className="text-sm text-muted-foreground space-y-1">
                               <li>• Supervise the initial setup</li>
                               <li>• Verify the age group matches their school year</li>
                             </ul>
@@ -767,17 +767,17 @@ const Tutorial = () => {
 
                   {/* Step 2 - Top Right */}
                   <Card className="relative">
-                    <CardContent className="p-4">
-                      <div className="flex gap-3">
-                        <Badge variant="secondary" className="w-6 h-6 rounded-full flex items-center justify-center text-xs flex-shrink-0">
+                    <CardContent className="p-6">
+                      <div className="space-y-4">
+                        <Badge variant="secondary" className="w-8 h-8 rounded-full flex items-center justify-center text-sm">
                           2
                         </Badge>
-                        <div className="flex-1 min-w-0">
-                          <h4 className="text-sm font-medium mb-2">Explore the analytics dashboard</h4>
-                          <p className="text-xs text-muted-foreground mb-3">Understand how to read the reports and what they tell you about your child's progress</p>
-                          <div className="bg-muted/50 rounded-lg p-2">
-                            <div className="text-xs mb-1">💡 Tips:</div>
-                            <ul className="text-xs text-muted-foreground space-y-1">
+                        <div>
+                          <h4 className="font-medium mb-3">Explore the analytics dashboard</h4>
+                          <p className="text-sm text-muted-foreground mb-4">Understand how to read the reports and what they tell you about your child's progress</p>
+                          <div className="bg-muted/50 rounded-lg p-3">
+                            <div className="text-sm mb-2">💡 Tips:</div>
+                            <ul className="text-sm text-muted-foreground space-y-1">
                               <li>• Focus on misconception patterns</li>
                               <li>• Look for trends over time, not just daily scores</li>
                             </ul>
@@ -789,17 +789,17 @@ const Tutorial = () => {
 
                   {/* Step 3 - Bottom Left */}
                   <Card className="relative">
-                    <CardContent className="p-4">
-                      <div className="flex gap-3">
-                        <Badge variant="secondary" className="w-6 h-6 rounded-full flex items-center justify-center text-xs flex-shrink-0">
+                    <CardContent className="p-6">
+                      <div className="space-y-4">
+                        <Badge variant="secondary" className="w-8 h-8 rounded-full flex items-center justify-center text-sm">
                           3
                         </Badge>
-                        <div className="flex-1 min-w-0">
-                          <h4 className="text-sm font-medium mb-2">Review misconception tracking</h4>
-                          <p className="text-xs text-muted-foreground mb-3">Learn how to identify weak areas and support your child's learning at home</p>
-                          <div className="bg-muted/50 rounded-lg p-2">
-                            <div className="text-xs mb-1">💡 Tips:</div>
-                            <ul className="text-xs text-muted-foreground space-y-1">
+                        <div>
+                          <h4 className="font-medium mb-3">Review misconception tracking</h4>
+                          <p className="text-sm text-muted-foreground mb-4">Learn how to identify weak areas and support your child's learning at home</p>
+                          <div className="bg-muted/50 rounded-lg p-3">
+                            <div className="text-sm mb-2">💡 Tips:</div>
+                            <ul className="text-sm text-muted-foreground space-y-1">
                               <li>• Discuss mistakes without judgment</li>
                               <li>• Use insights to guide additional practice</li>
                             </ul>
@@ -811,17 +811,17 @@ const Tutorial = () => {
 
                   {/* Step 4 - Bottom Right */}
                   <Card className="relative">
-                    <CardContent className="p-4">
-                      <div className="flex gap-3">
-                        <Badge variant="secondary" className="w-6 h-6 rounded-full flex items-center justify-center text-xs flex-shrink-0">
+                    <CardContent className="p-6">
+                      <div className="space-y-4">
+                        <Badge variant="secondary" className="w-8 h-8 rounded-full flex items-center justify-center text-sm">
                           4
                         </Badge>
-                        <div className="flex-1 min-w-0">
-                          <h4 className="text-sm font-medium mb-2">Set daily practice goals and routines</h4>
-                          <p className="text-xs text-muted-foreground mb-3">Establish consistent practice habits and celebrate progress</p>
-                          <div className="bg-muted/50 rounded-lg p-2">
-                            <div className="text-xs mb-1">💡 Tips:</div>
-                            <ul className="text-xs text-muted-foreground space-y-1">
+                        <div>
+                          <h4 className="font-medium mb-3">Set daily practice goals and routines</h4>
+                          <p className="text-sm text-muted-foreground mb-4">Establish consistent practice habits and celebrate progress</p>
+                          <div className="bg-muted/50 rounded-lg p-3">
+                            <div className="text-sm mb-2">💡 Tips:</div>
+                            <ul className="text-sm text-muted-foreground space-y-1">
                               <li>• Start with achievable goals</li>
                               <li>• Consistency is more important than duration</li>
                             </ul>
