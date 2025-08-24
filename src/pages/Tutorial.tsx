@@ -299,98 +299,126 @@ const Tutorial = () => {
             </section>
 
             {/* Two Learning Modes */}
-            <section className="space-y-12">
-              <div className="text-center space-y-4">
+            <section className="space-y-16">
+              <div className="text-center space-y-6">
                 <h2 className="text-4xl">Two Ways to Prepare - Choose What Works for Your Child</h2>
               </div>
               
-              <div className="grid lg:grid-cols-2 gap-8">
-                <Card className="border-2 border-blue-200 bg-blue-50/30">
-                  <CardHeader>
-                    <div className="flex items-center gap-3 mb-4">
-                      <Target className="w-8 h-8 text-blue-600" />
-                      <div>
-                        <CardTitle>Daily Mode: Smart Practice for Busy Families</CardTitle>
-                        <CardDescription className="text-blue-600">Perfect for children who know the basics but need to strengthen weak spots</CardDescription>
+              <div className="grid lg:grid-cols-2 gap-12">
+                <Card className="border-2 border-blue-200 bg-blue-50/30 h-full">
+                  <CardHeader className="pb-6">
+                    <div className="flex items-start gap-4">
+                      <div className="flex-shrink-0 p-3 bg-blue-600/10 rounded-lg">
+                        <Target className="w-8 h-8 text-blue-600" />
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <CardTitle className="text-xl mb-3">Daily Mode: Smart Practice for Busy Families</CardTitle>
+                        <CardDescription className="text-blue-600 text-base leading-relaxed">
+                          Perfect for children who know the basics but need to strengthen weak spots
+                        </CardDescription>
                       </div>
                     </div>
                   </CardHeader>
-                  <CardContent className="space-y-4">
-                    <div className="space-y-4">
-                      <div className="flex items-start gap-3 text-sm">
-                        <CheckCircle className="w-4 h-4 text-green-600 mt-0.5" />
-                        <span><strong>15-30 minutes daily</strong> - fits around school and activities</span>
+                  
+                  <CardContent className="space-y-8 pt-0">
+                    <div className="space-y-5">
+                      <div className="flex items-start gap-4">
+                        <CheckCircle className="w-5 h-5 text-green-600 mt-1 flex-shrink-0" />
+                        <span className="text-sm leading-relaxed">
+                          <strong>15-30 minutes daily</strong> - fits around school and activities
+                        </span>
                       </div>
-                      <div className="flex items-start gap-3 text-sm">
-                        <CheckCircle className="w-4 h-4 text-green-600 mt-0.5" />
-                        <span><strong>Questions adapt in real-time</strong> - gets harder when they're doing well, focuses on struggles</span>
+                      <div className="flex items-start gap-4">
+                        <CheckCircle className="w-5 h-5 text-green-600 mt-1 flex-shrink-0" />
+                        <span className="text-sm leading-relaxed">
+                          <strong>Questions adapt in real-time</strong> - gets harder when they're doing well, focuses on struggles
+                        </span>
                       </div>
-                      <div className="flex items-start gap-3 text-sm">
-                        <CheckCircle className="w-4 h-4 text-green-600 mt-0.5" />
-                        <span><strong>All topics covered systematically</strong> - ensures nothing gets forgotten</span>
+                      <div className="flex items-start gap-4">
+                        <CheckCircle className="w-5 h-5 text-green-600 mt-1 flex-shrink-0" />
+                        <span className="text-sm leading-relaxed">
+                          <strong>All topics covered systematically</strong> - ensures nothing gets forgotten
+                        </span>
                       </div>
-                      <div className="flex items-start gap-3 text-sm">
-                        <CheckCircle className="w-4 h-4 text-green-600 mt-0.5" />
-                        <span><strong>Identifies specific mistakes</strong> - understand if it's careless error or genuine knowledge gap</span>
+                      <div className="flex items-start gap-4">
+                        <CheckCircle className="w-5 h-5 text-green-600 mt-1 flex-shrink-0" />
+                        <span className="text-sm leading-relaxed">
+                          <strong>Identifies specific mistakes</strong> - understand if it's careless error or genuine knowledge gap
+                        </span>
                       </div>
                     </div>
                     
-                    <div className="bg-blue-100 p-4 rounded-lg">
-                      <p className="text-sm text-blue-800">
+                    <div className="bg-blue-100/80 p-5 rounded-lg border border-blue-200">
+                      <p className="text-sm text-blue-800 leading-relaxed">
                         <strong>Best for:</strong> Children already familiar with 11+ topics who need targeted improvement
                       </p>
                     </div>
 
                     <Button 
                       onClick={() => navigate('/dashboard')}
-                      className="w-full"
+                      className="w-full h-12 text-base"
+                      size="lg"
                     >
-                      Try Daily Mode <ArrowRight className="h-4 w-4 ml-2" />
+                      Try Daily Mode <ArrowRight className="h-5 w-5 ml-2" />
                     </Button>
                   </CardContent>
                 </Card>
                 
-                <Card className="border-2 border-orange-200 bg-orange-50/30">
-                  <CardHeader>
-                    <div className="flex items-center gap-3 mb-4">
-                      <Zap className="w-8 h-8 text-orange-600" />
-                      <div>
-                        <CardTitle>Bootcamp Mode: Complete 11+ Mastery Course</CardTitle>
-                        <CardDescription className="text-orange-600">Comprehensive preparation from start to finish</CardDescription>
+                <Card className="border-2 border-orange-200 bg-orange-50/30 h-full">
+                  <CardHeader className="pb-6">
+                    <div className="flex items-start gap-4">
+                      <div className="flex-shrink-0 p-3 bg-orange-600/10 rounded-lg">
+                        <Zap className="w-8 h-8 text-orange-600" />
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <CardTitle className="text-xl mb-3">Bootcamp Mode: Complete 11+ Mastery Course</CardTitle>
+                        <CardDescription className="text-orange-600 text-base leading-relaxed">
+                          Comprehensive preparation from start to finish
+                        </CardDescription>
                       </div>
                     </div>
                   </CardHeader>
-                  <CardContent className="space-y-4">
-                    <div className="space-y-4">
-                      <div className="flex items-start gap-3 text-sm">
-                        <CheckCircle className="w-4 h-4 text-green-600 mt-0.5" />
-                        <span><strong>52-week structured curriculum</strong> - one full year of preparation</span>
+                  
+                  <CardContent className="space-y-8 pt-0">
+                    <div className="space-y-5">
+                      <div className="flex items-start gap-4">
+                        <CheckCircle className="w-5 h-5 text-green-600 mt-1 flex-shrink-0" />
+                        <span className="text-sm leading-relaxed">
+                          <strong>52-week structured curriculum</strong> - one full year of preparation
+                        </span>
                       </div>
-                      <div className="flex items-start gap-3 text-sm">
-                        <CheckCircle className="w-4 h-4 text-green-600 mt-0.5" />
-                        <span><strong>Weekly quizzes</strong> covering everything learned so far</span>
+                      <div className="flex items-start gap-4">
+                        <CheckCircle className="w-5 h-5 text-green-600 mt-1 flex-shrink-0" />
+                        <span className="text-sm leading-relaxed">
+                          <strong>Weekly quizzes</strong> covering everything learned so far
+                        </span>
                       </div>
-                      <div className="flex items-start gap-3 text-sm">
-                        <CheckCircle className="w-4 h-4 text-green-600 mt-0.5" />
-                        <span><strong>Full mock papers</strong> that simulate real CEM and GL exams</span>
+                      <div className="flex items-start gap-4">
+                        <CheckCircle className="w-5 h-5 text-green-600 mt-1 flex-shrink-0" />
+                        <span className="text-sm leading-relaxed">
+                          <strong>Full mock papers</strong> that simulate real CEM and GL exams
+                        </span>
                       </div>
-                      <div className="flex items-start gap-3 text-sm">
-                        <CheckCircle className="w-4 h-4 text-green-600 mt-0.5" />
-                        <span><strong>Step-by-step progression</strong> - builds confidence systematically</span>
+                      <div className="flex items-start gap-4">
+                        <CheckCircle className="w-5 h-5 text-green-600 mt-1 flex-shrink-0" />
+                        <span className="text-sm leading-relaxed">
+                          <strong>Step-by-step progression</strong> - builds confidence systematically
+                        </span>
                       </div>
                     </div>
                     
-                    <div className="bg-orange-100 p-4 rounded-lg">
-                      <p className="text-sm text-orange-800">
+                    <div className="bg-orange-100/80 p-5 rounded-lg border border-orange-200">
+                      <p className="text-sm text-orange-800 leading-relaxed">
                         <strong>Best for:</strong> Starting 11+ preparation from scratch or want comprehensive coverage
                       </p>
                     </div>
 
                     <Button 
                       onClick={() => navigate('/bootcamp')}
-                      className="w-full"
+                      className="w-full h-12 text-base"
+                      size="lg"
                     >
-                      Enter Bootcamp <ArrowRight className="h-4 w-4 ml-2" />
+                      Enter Bootcamp <ArrowRight className="h-5 w-5 ml-2" />
                     </Button>
                   </CardContent>
                 </Card>
