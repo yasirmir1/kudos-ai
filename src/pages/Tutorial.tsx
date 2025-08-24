@@ -209,9 +209,9 @@ const Tutorial = () => {
             </div>
 
             {/* What Makes Us Different */}
-            <div className="text-center space-y-6 mb-16">
-              <h2 className="text-4xl font-bold">Finally, 11+ Prep That Makes Sense</h2>
-              <p className="text-lg text-muted-foreground max-w-5xl mx-auto">
+            <div className="text-center space-y-8 mb-16">
+              <h2 className="text-5xl font-bold">Finally, 11+ Prep That Makes Sense</h2>
+              <p className="text-xl text-muted-foreground max-w-6xl mx-auto leading-relaxed">
                 Traditional 11+ practice gives you a score. We tell you exactly what your child got wrong and why they got it wrong.
               </p>
             </div>
