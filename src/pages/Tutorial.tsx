@@ -121,13 +121,21 @@ const Tutorial = () => {
 
     const renderFeatureValue = (value: boolean | string) => {
       if (typeof value === "boolean") {
-        return value ? (
-          <CheckCircle className="w-5 h-5 text-green-600" />
-        ) : (
-          <X className="w-5 h-5 text-red-500" />
+        return (
+          <div className="flex justify-center">
+            {value ? (
+              <CheckCircle className="w-5 h-5 text-green-600" />
+            ) : (
+              <X className="w-5 h-5 text-red-500" />
+            )}
+          </div>
         );
       }
-      return <Badge variant="outline">{value}</Badge>;
+      return (
+        <div className="flex justify-center">
+          <Badge variant="outline">{value}</Badge>
+        </div>
+      );
     };
 
     return (
@@ -158,10 +166,10 @@ const Tutorial = () => {
                         )}
                       </div>
                     </td>
-                    <td className="p-4 text-center">
+                    <td className="p-4">
                       {renderFeatureValue(feature.dailyMode)}
                     </td>
-                    <td className="p-4 text-center">
+                    <td className="p-4">
                       {renderFeatureValue(feature.bootcampMode)}
                     </td>
                   </tr>
