@@ -472,31 +472,34 @@ const Tutorial = () => {
 
             {/* Analytics Highlight Section */}
             <section className="space-y-8">
-              <Card className="bg-gradient-to-r from-blue-50 to-indigo-50 border-blue-200">
-                <CardContent className="p-8">
+              <Card>
+                <CardHeader>
+                  <CardTitle className="text-center">Analytics That Actually Help</CardTitle>
+                </CardHeader>
+                <CardContent>
                   <div className="text-center space-y-6">
                     <div className="flex justify-center">
-                      <div className="p-4 bg-blue-600/10 rounded-xl">
-                        <BarChart3 className="w-12 h-12 text-blue-600" />
+                      <div className="p-4 bg-primary/10 rounded-xl">
+                        <BarChart3 className="w-12 h-12 text-primary" />
                       </div>
                     </div>
                     <div>
-                      <h3 className="text-2xl font-bold text-blue-900 mb-3">
+                      <h3 className="text-2xl font-bold mb-3">
                         Our detailed analytics show you patterns you'd never spot otherwise
                       </h3>
                       <div className="max-w-2xl mx-auto space-y-4">
                         <div className="flex items-start gap-4 text-left">
-                          <div className="w-3 h-3 rounded-full bg-blue-500 mt-2 flex-shrink-0" />
+                          <div className="w-3 h-3 rounded-full bg-primary mt-2 flex-shrink-0" />
                           <div>
-                            <span className="font-semibold text-blue-900">Performance by Topic:</span>
-                            <span className="text-blue-800 ml-2">See exactly which topics/sub-topics need improvement</span>
+                            <span className="font-semibold">Performance by Topic:</span>
+                            <span className="text-muted-foreground ml-2">See exactly which topics/sub-topics need improvement</span>
                           </div>
                         </div>
                         <div className="flex items-start gap-4 text-left">
-                          <div className="w-3 h-3 rounded-full bg-blue-500 mt-2 flex-shrink-0" />
+                          <div className="w-3 h-3 rounded-full bg-primary mt-2 flex-shrink-0" />
                           <div>
-                            <span className="font-semibold text-blue-900">Misconception Patterns:</span>
-                            <span className="text-blue-800 ml-2">Track specific mistakes across multiple questions</span>
+                            <span className="font-semibold">Misconception Patterns:</span>
+                            <span className="text-muted-foreground ml-2">Track specific mistakes across multiple questions</span>
                           </div>
                         </div>
                       </div>
