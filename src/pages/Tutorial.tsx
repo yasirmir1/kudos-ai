@@ -455,6 +455,12 @@ const Tutorial = () => {
                             <strong>Step-by-step progression</strong> - builds confidence systematically
                           </span>
                         </div>
+                        <div className="flex items-start gap-4">
+                          <CheckCircle className="w-5 h-5 text-green-600 mt-1 flex-shrink-0" />
+                          <span className="text-sm leading-relaxed">
+                            <strong>Get detailed analytics, feedback and exam reports instantly</strong>
+                          </span>
+                        </div>
                       </div>
                       
                       <div className="bg-orange-100/80 p-5 rounded-lg border border-orange-200 mt-8">
