@@ -218,52 +218,9 @@ const Tutorial = () => {
               </div>
 
               <div className="space-y-12">
-                {/* Our Approach Results */}
-                <div className="max-w-4xl mx-auto">
-                  <div className="bg-green-50 border border-green-200 p-8 rounded-xl">
-                    <h3 className="text-green-800 text-2xl mb-6">Our Approach:</h3>
-                    <div className="space-y-2 text-lg mb-6">
-                      <p className="text-green-800 font-medium">3 × 5 = 8</p>
-                      <div className="flex items-center gap-2">
-                        <X className="w-5 h-5 text-destructive" />
-                        <span className="line-through">8</span>
-                      </div>
-                      <div className="bg-green-100 p-4 rounded-lg">
-                        <p className="text-green-800">
-                          <strong>Misconception detected:</strong> Your child is adding (3 + 5) instead of multiplying. 
-                          We'll focus on multiplication concepts and provide targeted practice.
-                        </p>
-                      </div>
-                    </div>
-                    
-                    <h4 className="text-green-800 text-xl mb-4">The result?</h4>
-                    <div className="grid md:grid-cols-2 gap-6">
-                      <div className="space-y-4">
-                        <div className="flex items-start gap-3">
-                          <CheckCircle className="w-5 h-5 text-green-600 mt-1" />
-                          <span>Targeted practice that actually fixes the problem</span>
-                        </div>
-                        <div className="flex items-start gap-3">
-                          <CheckCircle className="w-5 h-5 text-green-600 mt-1" />
-                          <span>No more repetitive practice of concepts they already know</span>
-                        </div>
-                      </div>
-                      <div className="space-y-4">
-                        <div className="flex items-start gap-3">
-                          <CheckCircle className="w-5 h-5 text-green-600 mt-1" />
-                          <span>Clear understanding of why mistakes happen</span>
-                        </div>
-                        <div className="flex items-start gap-3">
-                          <CheckCircle className="w-5 h-5 text-green-600 mt-1" />
-                          <span>Faster improvement with less frustration</span>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Fractions Example */}
-                <div className="grid lg:grid-cols-2 gap-12 items-center">
+                {/* Examples Grid */}
+                <div className="grid lg:grid-cols-2 gap-8">
+                  {/* Fractions Example */}
                   <div className="space-y-6">
                     <div className="bg-destructive/10 border border-destructive/20 p-6 rounded-xl">
                       <h4 className="mb-3 text-destructive">Traditional Approach:</h4>
@@ -296,10 +253,7 @@ const Tutorial = () => {
                     </div>
                   </div>
 
-                </div>
-
-                {/* Decimals Example */}
-                <div className="grid lg:grid-cols-2 gap-12 items-center">
+                  {/* Decimals Example */}
                   <div className="space-y-6">
                     <div className="bg-destructive/10 border border-destructive/20 p-6 rounded-xl">
                       <h4 className="mb-3 text-destructive">Traditional Approach:</h4>
@@ -330,6 +284,60 @@ const Tutorial = () => {
                         </div>
                       </div>
                     </div>
+                  </div>
+                </div>
+
+                {/* The Result Section */}
+                <div className="max-w-4xl mx-auto">
+                  <h3 className="text-2xl font-semibold text-center mb-8">The result?</h3>
+                  <div className="grid grid-cols-2 lg:grid-cols-4 gap-6">
+                    <Card className="text-center p-6">
+                      <CardContent className="p-0">
+                        <div className="flex justify-center mb-4">
+                          <div className="p-3 bg-green-100 rounded-xl">
+                            <Target className="w-8 h-8 text-green-600" />
+                          </div>
+                        </div>
+                        <h4 className="font-medium mb-2">Targeted Practice</h4>
+                        <p className="text-sm text-muted-foreground">Practice that actually fixes the problem</p>
+                      </CardContent>
+                    </Card>
+
+                    <Card className="text-center p-6">
+                      <CardContent className="p-0">
+                        <div className="flex justify-center mb-4">
+                          <div className="p-3 bg-blue-100 rounded-xl">
+                            <Zap className="w-8 h-8 text-blue-600" />
+                          </div>
+                        </div>
+                        <h4 className="font-medium mb-2">Smart Learning</h4>
+                        <p className="text-sm text-muted-foreground">No more repetitive practice of concepts they already know</p>
+                      </CardContent>
+                    </Card>
+
+                    <Card className="text-center p-6">
+                      <CardContent className="p-0">
+                        <div className="flex justify-center mb-4">
+                          <div className="p-3 bg-purple-100 rounded-xl">
+                            <Brain className="w-8 h-8 text-purple-600" />
+                          </div>
+                        </div>
+                        <h4 className="font-medium mb-2">Clear Understanding</h4>
+                        <p className="text-sm text-muted-foreground">Understanding of why mistakes happen</p>
+                      </CardContent>
+                    </Card>
+
+                    <Card className="text-center p-6">
+                      <CardContent className="p-0">
+                        <div className="flex justify-center mb-4">
+                          <div className="p-3 bg-orange-100 rounded-xl">
+                            <TrendingUp className="w-8 h-8 text-orange-600" />
+                          </div>
+                        </div>
+                        <h4 className="font-medium mb-2">Faster Progress</h4>
+                        <p className="text-sm text-muted-foreground">Faster improvement with less frustration</p>
+                      </CardContent>
+                    </Card>
                   </div>
                 </div>
               </div>
