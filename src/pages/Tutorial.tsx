@@ -354,6 +354,20 @@ const Tutorial = () => {
                           <strong>Identifies specific mistakes</strong> - understand if it's careless error or genuine knowledge gap
                         </span>
                       </div>
+                      
+                      <div className="bg-white/80 p-4 rounded-lg border border-blue-200">
+                        <p className="text-sm font-medium text-blue-800 mb-2">Our detailed analytics show you patterns you'd never spot otherwise:</p>
+                        <ul className="space-y-1 text-sm text-blue-700">
+                          <li className="flex items-start gap-2">
+                            <div className="w-1.5 h-1.5 rounded-full bg-blue-500 mt-2 flex-shrink-0" />
+                            <span><strong>Performance by Topic:</strong> See exactly which topics/sub-topics need improvement</span>
+                          </li>
+                          <li className="flex items-start gap-2">
+                            <div className="w-1.5 h-1.5 rounded-full bg-blue-500 mt-2 flex-shrink-0" />
+                            <span><strong>Misconception Patterns:</strong> Track specific mistakes across multiple questions</span>
+                          </li>
+                        </ul>
+                      </div>
                     </div>
                     
                     <div className="bg-blue-100/80 p-5 rounded-lg border border-blue-200 mt-8">
