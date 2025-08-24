@@ -209,14 +209,15 @@ const Tutorial = () => {
             </div>
 
             {/* What Makes Us Different */}
+            <div className="text-center space-y-6 mb-16">
+              <h2 className="text-4xl font-bold">Finally, 11+ Prep That Makes Sense</h2>
+              <p className="text-lg text-muted-foreground max-w-5xl mx-auto">
+                Traditional 11+ practice gives you a score. We tell you exactly what your child got wrong and why they got it wrong.
+              </p>
+            </div>
+            
             <section className="bg-gradient-to-br from-muted/30 to-muted/10 py-16 rounded-3xl -mx-4 md:mx-0">
               <div className="max-w-7xl mx-auto px-8">
-                <div className="text-center space-y-6 mb-16">
-                  <h2 className="text-4xl font-bold">Finally, 11+ Prep That Makes Sense</h2>
-                  <p className="text-lg text-muted-foreground max-w-5xl mx-auto">
-                    Traditional 11+ practice gives you a score. We tell you exactly what your child got wrong and why they got it wrong.
-                  </p>
-                </div>
 
                 <div className="space-y-16">
                   {/* Examples Grid */}
