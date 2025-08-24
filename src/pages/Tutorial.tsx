@@ -194,8 +194,8 @@ const Tutorial = () => {
         return <div className="space-y-20">
             {/* Hero Section */}
             <div className="bg-primary text-primary-foreground py-20 rounded-2xl">
-              <div className="max-w-4xl mx-auto px-6 text-center space-y-8">
-                <h1 className="text-5xl max-w-4xl mx-auto leading-tight">
+              <div className="max-w-5xl mx-auto px-6 text-center space-y-8">
+                <h1 className="text-5xl max-w-none mx-auto leading-tight">
                   The 11+ Prep Platform That Actually Understands How Your Child Learns
                 </h1>
                 <p className="text-xl opacity-90">
@@ -209,11 +209,11 @@ const Tutorial = () => {
             </div>
 
             {/* What Makes Us Different */}
-            <section className="bg-gradient-to-br from-muted/30 to-muted/10 py-16 rounded-3xl">
-              <div className="max-w-6xl mx-auto px-8">
+            <section className="bg-gradient-to-br from-muted/30 to-muted/10 py-16 rounded-3xl -mx-4 md:mx-0">
+              <div className="max-w-7xl mx-auto px-8">
                 <div className="text-center space-y-6 mb-16">
                   <h2 className="text-4xl font-bold">Finally, 11+ Prep That Makes Sense</h2>
-                  <p className="text-lg text-muted-foreground max-w-4xl mx-auto">
+                  <p className="text-lg text-muted-foreground max-w-5xl mx-auto">
                     Traditional 11+ practice gives you a score. We tell you exactly what your child got wrong and why they got it wrong.
                   </p>
                 </div>
@@ -350,13 +350,13 @@ const Tutorial = () => {
             </section>
 
             {/* Two Learning Modes */}
-            <section className="bg-gradient-to-br from-background to-muted/20 py-16 rounded-3xl border">
-              <div className="max-w-6xl mx-auto px-8">
+            <section className="bg-gradient-to-br from-background to-muted/20 py-16 rounded-3xl border -mx-4 md:mx-0">
+              <div className="max-w-7xl mx-auto px-8">
                 <div className="text-center space-y-6 mb-16">
                   <h2 className="text-4xl font-bold">Two Ways to Prepare - Choose What Works for Your Child</h2>
                 </div>
                 
-                <div className="grid lg:grid-cols-2 gap-12 items-stretch">
+                <div className="grid lg:grid-cols-2 gap-12 items-stretch max-w-6xl mx-auto">
                   <Card className="border-2 border-blue-200 bg-blue-50/30 flex flex-col min-h-[600px] shadow-lg">
                     <CardHeader className="pb-6">
                       <div className="flex items-start gap-4">
