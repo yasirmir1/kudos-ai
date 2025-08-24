@@ -209,8 +209,13 @@ const Tutorial: React.FC = () => {
             {/* What Makes Us Different */}
             <div className="text-center space-y-8 mb-16">
               <h2 className="text-5xl font-bold my-[10px]">Finally, 11+ Prep That Makes Sense</h2>
-              <p className="text-xl text-muted-foreground max-w-6xl mx-auto leading-relaxed">Traditional 11+ practice gives you a score.<br></br>We tell you exactly what your child got wrong and why they got it wrong. 
-We don't just mark papers, we identify the type of mistake they're making, fixing misconceptions at the source</p>
+              <p className="text-xl text-muted-foreground max-w-6xl mx-auto leading-relaxed">Traditional 11+ practice gives you results as a percentage.
+
+We give you insights.
+
+
+We pinpoint exactly where your child went wrong and why, so you can see their thinking process clearly.
+We don't just mark answers. We identify the specific types of mistakes your child is making, helping you tackle misconceptions at their root before they become bigger problems.</p>
             </div>
             
             <section className="bg-gradient-to-br from-muted/30 to-muted/10 rounded-3xl -mx-4 md:mx-0 py-[30px]">
