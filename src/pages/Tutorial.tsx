@@ -253,170 +253,139 @@ const Tutorial = () => {
               </div>
 
               <div className="space-y-12">
-                {/* Multiplication Example */}
-                <div className="grid lg:grid-cols-2 gap-12 items-center">
-                  <div className="space-y-6">
-                    <div className="bg-destructive/10 border border-destructive/20 p-6 rounded-xl">
-                      <h4 className="mb-3 text-destructive">Traditional Approach:</h4>
-                      <div className="space-y-2 text-sm">
-                        <div className="flex items-center gap-2">
-                          <X className="w-4 h-4 text-destructive" />
-                          <span className="line-through">3 × 5 = 8</span>
-                        </div>
-                        <p className="text-destructive">❌ Incorrect. Try again.</p>
-                      </div>
-                    </div>
-                    
-                    <div className="bg-green-50 border border-green-200 p-6 rounded-xl">
-                      <h4 className="mb-3 text-green-800">Our Approach:</h4>
-                      <div className="space-y-2 text-sm">
-                        <div className="flex items-center gap-2">
-                          <X className="w-4 h-4 text-destructive" />
-                          <span className="line-through">3 × 5 = 8</span>
-                        </div>
-                        <div className="bg-green-100 p-3 rounded-lg">
-                          <p className="text-green-800">
-                            <strong>Misconception detected:</strong> Your child is adding (3 + 5) instead of multiplying. 
-                            We&apos;ll focus on multiplication concepts and provide targeted practice.
-                          </p>
+                {/* Comparison Cards */}
+                <div className="grid lg:grid-cols-3 gap-8">
+                  <Card className="relative overflow-hidden">
+                    <CardContent className="p-8">
+                      <div className="bg-destructive/10 border border-destructive/20 p-6 rounded-xl mb-6">
+                        <h4 className="mb-3 text-destructive">Traditional Approach:</h4>
+                        <div className="space-y-2 text-sm">
+                          <div className="flex items-center gap-2">
+                            <X className="w-4 h-4 text-destructive" />
+                            <span className="line-through">3 × 5 = 8</span>
+                          </div>
+                          <p className="text-destructive">❌ Incorrect. Try again.</p>
                         </div>
                       </div>
-                    </div>
-                  </div>
+                      
+                      <div className="bg-green-50 border border-green-200 p-6 rounded-xl">
+                        <h4 className="mb-3 text-green-800">Our Approach:</h4>
+                        <div className="space-y-2 text-sm">
+                          <div className="flex items-center gap-2">
+                            <X className="w-4 h-4 text-destructive" />
+                            <span className="line-through">3 × 5 = 8</span>
+                          </div>
+                          <div className="bg-green-100 p-3 rounded-lg">
+                            <p className="text-green-800">
+                              <strong>Misconception detected:</strong> Your child is adding (3 + 5) instead of multiplying. 
+                              We&apos;ll focus on multiplication concepts and provide targeted practice.
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
 
-                  <div className="space-y-6">
-                    <h3>The result?</h3>
-                    <div className="space-y-4">
-                      <div className="flex items-start gap-3">
-                        <CheckCircle className="w-5 h-5 text-green-600 mt-1" />
-                        <span>Targeted practice that actually fixes the problem</span>
+                  <Card className="relative overflow-hidden">
+                    <CardContent className="p-8">
+                      <div className="bg-destructive/10 border border-destructive/20 p-6 rounded-xl mb-6">
+                        <h4 className="mb-3 text-destructive">Traditional Approach:</h4>
+                        <div className="space-y-2 text-sm">
+                          <p className="text-destructive font-medium">Which is bigger: 1/3 or 1/5?</p>
+                          <div className="flex items-center gap-2">
+                            <X className="w-4 h-4 text-destructive" />
+                            <span className="line-through">1/5</span>
+                          </div>
+                          <p className="text-destructive">❌ Incorrect. Try again.</p>
+                        </div>
                       </div>
-                      <div className="flex items-start gap-3">
-                        <CheckCircle className="w-5 h-5 text-green-600 mt-1" />
-                        <span>No more repetitive practice of concepts they already know</span>
+                      
+                      <div className="bg-green-50 border border-green-200 p-6 rounded-xl">
+                        <h4 className="mb-3 text-green-800">Our Approach:</h4>
+                        <div className="space-y-2 text-sm">
+                          <p className="text-green-800 font-medium">Which is bigger: 1/3 or 1/5?</p>
+                          <div className="flex items-center gap-2">
+                            <X className="w-4 h-4 text-destructive" />
+                            <span className="line-through">1/5</span>
+                          </div>
+                          <div className="bg-green-100 p-3 rounded-lg">
+                            <p className="text-green-800">
+                              <strong>Misconception detected:</strong> Your child thinks &quot;bigger denominator = bigger fraction&quot; - 
+                              they think 5 is bigger than 3, so 1/5 must be bigger than 1/3. 
+                              Our system provides targeted practice on fraction size comparison and visual representation.
+                            </p>
+                          </div>
+                        </div>
                       </div>
-                      <div className="flex items-start gap-3">
-                        <CheckCircle className="w-5 h-5 text-green-600 mt-1" />
-                        <span>Clear understanding of why mistakes happen</span>
+                    </CardContent>
+                  </Card>
+
+                  <Card className="relative overflow-hidden">
+                    <CardContent className="p-8">
+                      <div className="bg-destructive/10 border border-destructive/20 p-6 rounded-xl mb-6">
+                        <h4 className="mb-3 text-destructive">Traditional Approach:</h4>
+                        <div className="space-y-2 text-sm">
+                          <p className="text-destructive font-medium">What is 0.7 + 0.23?</p>
+                          <div className="flex items-center gap-2">
+                            <X className="w-4 h-4 text-destructive" />
+                            <span className="line-through">0.30</span>
+                          </div>
+                          <p className="text-destructive">❌ Incorrect. Try again.</p>
+                        </div>
                       </div>
-                      <div className="flex items-start gap-3">
-                        <CheckCircle className="w-5 h-5 text-green-600 mt-1" />
-                        <span>Faster improvement with less frustration</span>
+                      
+                      <div className="bg-green-50 border border-green-200 p-6 rounded-xl">
+                        <h4 className="mb-3 text-green-800">Our Approach:</h4>
+                        <div className="space-y-2 text-sm">
+                          <p className="text-green-800 font-medium">What is 0.7 + 0.23?</p>
+                          <div className="flex items-center gap-2">
+                            <X className="w-4 h-4 text-destructive" />
+                            <span className="line-through">0.30</span>
+                          </div>
+                          <div className="bg-green-100 p-3 rounded-lg">
+                            <p className="text-green-800">
+                              <strong>Misconception detected:</strong> Your child is making a &quot;decimal alignment misconception&quot; - 
+                              they&apos;re adding 7 + 23 = 30 without understanding place value, treating decimals like whole numbers. 
+                              Our system provides targeted practice on decimal place value and alignment.
+                            </p>
+                          </div>
+                        </div>
                       </div>
-                    </div>
-                  </div>
+                    </CardContent>
+                  </Card>
                 </div>
 
-                {/* Fractions Example */}
-                <div className="grid lg:grid-cols-2 gap-12 items-center">
-                  <div className="space-y-6">
-                    <div className="bg-destructive/10 border border-destructive/20 p-6 rounded-xl">
-                      <h4 className="mb-3 text-destructive">Traditional Approach:</h4>
-                      <div className="space-y-2 text-sm">
-                        <p className="text-destructive font-medium">Which is bigger: 1/3 or 1/5?</p>
-                        <div className="flex items-center gap-2">
-                          <X className="w-4 h-4 text-destructive" />
-                          <span className="line-through">1/5</span>
-                        </div>
-                        <p className="text-destructive">❌ Incorrect. Try again.</p>
+                {/* Results Section */}
+                <div className="text-center space-y-8 mt-12">
+                  <h3 className="text-2xl">The result?</h3>
+                  <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+                    <div className="text-center space-y-3">
+                      <div className="bg-green-100 p-4 rounded-full w-16 h-16 mx-auto flex items-center justify-center">
+                        <CheckCircle className="w-8 h-8 text-green-600" />
                       </div>
+                      <h4 className="font-medium">Targeted practice</h4>
+                      <p className="text-sm text-muted-foreground">That actually fixes the problem</p>
                     </div>
-                    
-                    <div className="bg-green-50 border border-green-200 p-6 rounded-xl">
-                      <h4 className="mb-3 text-green-800">Our Approach:</h4>
-                      <div className="space-y-2 text-sm">
-                        <p className="text-green-800 font-medium">Which is bigger: 1/3 or 1/5?</p>
-                        <div className="flex items-center gap-2">
-                          <X className="w-4 h-4 text-destructive" />
-                          <span className="line-through">1/5</span>
-                        </div>
-                        <div className="bg-green-100 p-3 rounded-lg">
-                          <p className="text-green-800">
-                            <strong>Misconception detected:</strong> Your child thinks &quot;bigger denominator = bigger fraction&quot; - 
-                            they think 5 is bigger than 3, so 1/5 must be bigger than 1/3. 
-                            Our system provides targeted practice on fraction size comparison and visual representation.
-                          </p>
-                        </div>
+                    <div className="text-center space-y-3">
+                      <div className="bg-green-100 p-4 rounded-full w-16 h-16 mx-auto flex items-center justify-center">
+                        <Zap className="w-8 h-8 text-green-600" />
                       </div>
+                      <h4 className="font-medium">No repetition</h4>
+                      <p className="text-sm text-muted-foreground">Of concepts they already know</p>
                     </div>
-                  </div>
-
-                  <div className="space-y-6">
-                    <h3>Instead of random fraction problems</h3>
-                    <div className="space-y-4">
-                      <div className="flex items-start gap-3">
-                        <CheckCircle className="w-5 h-5 text-green-600 mt-1" />
-                        <span>Visual fraction bars to show size relationships</span>
+                    <div className="text-center space-y-3">
+                      <div className="bg-green-100 p-4 rounded-full w-16 h-16 mx-auto flex items-center justify-center">
+                        <Brain className="w-8 h-8 text-green-600" />
                       </div>
-                      <div className="flex items-start gap-3">
-                        <CheckCircle className="w-5 h-5 text-green-600 mt-1" />
-                        <span>Step-by-step comparison techniques</span>
-                      </div>
-                      <div className="flex items-start gap-3">
-                        <CheckCircle className="w-5 h-5 text-green-600 mt-1" />
-                        <span>Practice specifically on unit fractions</span>
-                      </div>
-                      <div className="flex items-start gap-3">
-                        <CheckCircle className="w-5 h-5 text-green-600 mt-1" />
-                        <span>Building intuition about fraction sizes</span>
-                      </div>
+                      <h4 className="font-medium">Clear understanding</h4>
+                      <p className="text-sm text-muted-foreground">Of why mistakes happen</p>
                     </div>
-                  </div>
-                </div>
-
-                {/* Decimals Example */}
-                <div className="grid lg:grid-cols-2 gap-12 items-center">
-                  <div className="space-y-6">
-                    <div className="bg-destructive/10 border border-destructive/20 p-6 rounded-xl">
-                      <h4 className="mb-3 text-destructive">Traditional Approach:</h4>
-                      <div className="space-y-2 text-sm">
-                        <p className="text-destructive font-medium">What is 0.7 + 0.23?</p>
-                        <div className="flex items-center gap-2">
-                          <X className="w-4 h-4 text-destructive" />
-                          <span className="line-through">0.30</span>
-                        </div>
-                        <p className="text-destructive">❌ Incorrect. Try again.</p>
+                    <div className="text-center space-y-3">
+                      <div className="bg-green-100 p-4 rounded-full w-16 h-16 mx-auto flex items-center justify-center">
+                        <TrendingUp className="w-8 h-8 text-green-600" />
                       </div>
-                    </div>
-                    
-                    <div className="bg-green-50 border border-green-200 p-6 rounded-xl">
-                      <h4 className="mb-3 text-green-800">Our Approach:</h4>
-                      <div className="space-y-2 text-sm">
-                        <p className="text-green-800 font-medium">What is 0.7 + 0.23?</p>
-                        <div className="flex items-center gap-2">
-                          <X className="w-4 h-4 text-destructive" />
-                          <span className="line-through">0.30</span>
-                        </div>
-                        <div className="bg-green-100 p-3 rounded-lg">
-                          <p className="text-green-800">
-                            <strong>Misconception detected:</strong> Your child is making a &quot;decimal alignment misconception&quot; - 
-                            they&apos;re adding 7 + 23 = 30 without understanding place value, treating decimals like whole numbers. 
-                            Our system provides targeted practice on decimal place value and alignment.
-                          </p>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="space-y-6">
-                    <h3>Instead of random decimal problems</h3>
-                    <div className="space-y-4">
-                      <div className="flex items-start gap-3">
-                        <CheckCircle className="w-5 h-5 text-green-600 mt-1" />
-                        <span>Place value charts and visual alignment</span>
-                      </div>
-                      <div className="flex items-start gap-3">
-                        <CheckCircle className="w-5 h-5 text-green-600 mt-1" />
-                        <span>Step-by-step decimal addition methods</span>
-                      </div>
-                      <div className="flex items-start gap-3">
-                        <CheckCircle className="w-5 h-5 text-green-600 mt-1" />
-                        <span>Understanding tenths and hundredths</span>
-                      </div>
-                      <div className="flex items-start gap-3">
-                        <CheckCircle className="w-5 h-5 text-green-600 mt-1" />
-                        <span>Converting between fractions and decimals</span>
-                      </div>
+                      <h4 className="font-medium">Faster improvement</h4>
+                      <p className="text-sm text-muted-foreground">With less frustration</p>
                     </div>
                   </div>
                 </div>
