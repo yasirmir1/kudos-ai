@@ -114,7 +114,7 @@ const Tutorial = () => {
           <Badge variant="outline">{value}</Badge>
         </div>;
     };
-    return <Card>
+    return <Card className="my-[30px]">
         <CardHeader>
           <CardTitle>Daily Mode vs Bootcamp Mode</CardTitle>
         </CardHeader>
@@ -193,7 +193,7 @@ const Tutorial = () => {
       case 'overview':
         return <div className="space-y-20">
             {/* Hero Section */}
-            <div className="bg-primary text-primary-foreground py-20 rounded-2xl">
+            <div className="bg-primary text-primary-foreground py-20 rounded-2xl my-[60px]">
               <div className="max-w-5xl mx-auto px-6 text-center space-y-8">
                 <h1 className="text-5xl max-w-none mx-auto leading-tight">
                   The 11+ Prep Platform That Actually Understands How Your Child Learns
@@ -201,22 +201,20 @@ const Tutorial = () => {
                 <p className="text-xl opacity-90">
                   Stop guessing what your child needs to work on. Our AI identifies exactly where they're struggling and why.
                 </p>
-                <Button onClick={() => navigate('/dashboard')} size="lg" variant="secondary" className="bg-background text-foreground hover:bg-background/90">
-                  Start Free Assessment
-                </Button>
-                <div className="text-sm opacity-75">No credit card required • See results in 10 minutes</div>
+                
+                
               </div>
             </div>
 
             {/* What Makes Us Different */}
             <div className="text-center space-y-8 mb-16">
-              <h2 className="text-5xl font-bold">Finally, 11+ Prep That Makes Sense</h2>
+              <h2 className="text-5xl font-bold my-[10px]">Finally, 11+ Prep That Makes Sense</h2>
               <p className="text-xl text-muted-foreground max-w-6xl mx-auto leading-relaxed">
                 Traditional 11+ practice gives you a score. We tell you exactly what your child got wrong and why they got it wrong.
               </p>
             </div>
             
-            <section className="bg-gradient-to-br from-muted/30 to-muted/10 py-16 rounded-3xl -mx-4 md:mx-0">
+            <section className="bg-gradient-to-br from-muted/30 to-muted/10 rounded-3xl -mx-4 md:mx-0 py-[30px]">
               <div className="max-w-7xl mx-auto px-8">
 
                 <div className="space-y-16">
@@ -351,7 +349,7 @@ const Tutorial = () => {
             </section>
 
             {/* Two Learning Modes */}
-            <section className="bg-gradient-to-br from-background to-muted/20 py-16 rounded-3xl border -mx-4 md:mx-0">
+            <section className="bg-gradient-to-br from-background to-muted/20 py-16 rounded-3xl border -mx-4 md:mx-0 my-[30px]">
               <div className="max-w-7xl mx-auto px-8">
                 <div className="text-center space-y-6 mb-16">
                   <h2 className="text-4xl font-bold">Two Ways to Prepare - Choose What Works for Your Child</h2>
@@ -850,7 +848,7 @@ const Tutorial = () => {
       <div className="container mx-auto px-4 py-8">
         {/* Header */}
         <div className="text-center mb-12 mt-20">
-          <h1 className="text-4xl mb-4">
+          <h1 className="text-4xl mb-4 my-[15px]">
             How to Use Kudos Academy
           </h1>
           <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
