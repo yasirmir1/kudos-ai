@@ -329,39 +329,37 @@ const Tutorial = () => {
                   </CardHeader>
                   
                   <CardContent className="flex-1 flex flex-col justify-between pt-0">
-                    <div className="space-y-8">
-                      <div className="space-y-5">
-                        <div className="flex items-start gap-4">
-                          <CheckCircle className="w-5 h-5 text-green-600 mt-1 flex-shrink-0" />
-                          <span className="text-sm leading-relaxed">
-                            <strong>15-30 minutes daily</strong> - fits around school and activities
-                          </span>
-                        </div>
-                        <div className="flex items-start gap-4">
-                          <CheckCircle className="w-5 h-5 text-green-600 mt-1 flex-shrink-0" />
-                          <span className="text-sm leading-relaxed">
-                            <strong>Questions adapt in real-time</strong> - gets harder when they're doing well, focuses on struggles
-                          </span>
-                        </div>
-                        <div className="flex items-start gap-4">
-                          <CheckCircle className="w-5 h-5 text-green-600 mt-1 flex-shrink-0" />
-                          <span className="text-sm leading-relaxed">
-                            <strong>All topics covered systematically</strong> - ensures nothing gets forgotten
-                          </span>
-                        </div>
-                        <div className="flex items-start gap-4">
-                          <CheckCircle className="w-5 h-5 text-green-600 mt-1 flex-shrink-0" />
-                          <span className="text-sm leading-relaxed">
-                            <strong>Identifies specific mistakes</strong> - understand if it's careless error or genuine knowledge gap
-                          </span>
-                        </div>
+                    <div className="space-y-5">
+                      <div className="flex items-start gap-4">
+                        <CheckCircle className="w-5 h-5 text-green-600 mt-1 flex-shrink-0" />
+                        <span className="text-sm leading-relaxed">
+                          <strong>15-30 minutes daily</strong> - fits around school and activities
+                        </span>
                       </div>
-                      
-                      <div className="bg-blue-100/80 p-5 rounded-lg border border-blue-200">
-                        <p className="text-sm text-blue-800 leading-relaxed">
-                          <strong>Best for:</strong> Children already familiar with 11+ topics who need targeted improvement
-                        </p>
+                      <div className="flex items-start gap-4">
+                        <CheckCircle className="w-5 h-5 text-green-600 mt-1 flex-shrink-0" />
+                        <span className="text-sm leading-relaxed">
+                          <strong>Questions adapt in real-time</strong> - gets harder when they're doing well, focuses on struggles
+                        </span>
                       </div>
+                      <div className="flex items-start gap-4">
+                        <CheckCircle className="w-5 h-5 text-green-600 mt-1 flex-shrink-0" />
+                        <span className="text-sm leading-relaxed">
+                          <strong>All topics covered systematically</strong> - ensures nothing gets forgotten
+                        </span>
+                      </div>
+                      <div className="flex items-start gap-4">
+                        <CheckCircle className="w-5 h-5 text-green-600 mt-1 flex-shrink-0" />
+                        <span className="text-sm leading-relaxed">
+                          <strong>Identifies specific mistakes</strong> - understand if it's careless error or genuine knowledge gap
+                        </span>
+                      </div>
+                    </div>
+                    
+                    <div className="bg-blue-100/80 p-5 rounded-lg border border-blue-200 mt-8">
+                      <p className="text-sm text-blue-800 leading-relaxed">
+                        <strong>Best for:</strong> Children already familiar with 11+ topics who need targeted improvement
+                      </p>
                     </div>
 
                     <div className="flex justify-center pt-6">
@@ -392,39 +390,37 @@ const Tutorial = () => {
                   </CardHeader>
                   
                   <CardContent className="flex-1 flex flex-col justify-between pt-0">
-                    <div className="space-y-8">
-                      <div className="space-y-5">
-                        <div className="flex items-start gap-4">
-                          <CheckCircle className="w-5 h-5 text-green-600 mt-1 flex-shrink-0" />
-                          <span className="text-sm leading-relaxed">
-                            <strong>52-week structured curriculum</strong> - one full year of preparation
-                          </span>
-                        </div>
-                        <div className="flex items-start gap-4">
-                          <CheckCircle className="w-5 h-5 text-green-600 mt-1 flex-shrink-0" />
-                          <span className="text-sm leading-relaxed">
-                            <strong>Weekly quizzes</strong> covering everything learned so far
-                          </span>
-                        </div>
-                        <div className="flex items-start gap-4">
-                          <CheckCircle className="w-5 h-5 text-green-600 mt-1 flex-shrink-0" />
-                          <span className="text-sm leading-relaxed">
-                            <strong>Full mock papers</strong> that simulate real CEM and GL exams
-                          </span>
-                        </div>
-                        <div className="flex items-start gap-4">
-                          <CheckCircle className="w-5 h-5 text-green-600 mt-1 flex-shrink-0" />
-                          <span className="text-sm leading-relaxed">
-                            <strong>Step-by-step progression</strong> - builds confidence systematically
-                          </span>
-                        </div>
+                    <div className="space-y-5">
+                      <div className="flex items-start gap-4">
+                        <CheckCircle className="w-5 h-5 text-green-600 mt-1 flex-shrink-0" />
+                        <span className="text-sm leading-relaxed">
+                          <strong>52-week structured curriculum</strong> - one full year of preparation
+                        </span>
                       </div>
-                      
-                      <div className="bg-orange-100/80 p-5 rounded-lg border border-orange-200">
-                        <p className="text-sm text-orange-800 leading-relaxed">
-                          <strong>Best for:</strong> Starting 11+ preparation from scratch or want comprehensive coverage
-                        </p>
+                      <div className="flex items-start gap-4">
+                        <CheckCircle className="w-5 h-5 text-green-600 mt-1 flex-shrink-0" />
+                        <span className="text-sm leading-relaxed">
+                          <strong>Weekly quizzes</strong> covering everything learned so far
+                        </span>
                       </div>
+                      <div className="flex items-start gap-4">
+                        <CheckCircle className="w-5 h-5 text-green-600 mt-1 flex-shrink-0" />
+                        <span className="text-sm leading-relaxed">
+                          <strong>Full mock papers</strong> that simulate real CEM and GL exams
+                        </span>
+                      </div>
+                      <div className="flex items-start gap-4">
+                        <CheckCircle className="w-5 h-5 text-green-600 mt-1 flex-shrink-0" />
+                        <span className="text-sm leading-relaxed">
+                          <strong>Step-by-step progression</strong> - builds confidence systematically
+                        </span>
+                      </div>
+                    </div>
+                    
+                    <div className="bg-orange-100/80 p-5 rounded-lg border border-orange-200 mt-8">
+                      <p className="text-sm text-orange-800 leading-relaxed">
+                        <strong>Best for:</strong> Starting 11+ preparation from scratch or want comprehensive coverage
+                      </p>
                     </div>
 
                     <div className="flex justify-center pt-6">
