@@ -292,7 +292,68 @@ const Tutorial = () => {
                   </div>
 
                   {/* The Result Section */}
-                  
+                  <div className="max-w-5xl mx-auto">
+                    <div className="text-center mb-12 space-y-4">
+                      <p className="text-lg text-muted-foreground max-w-4xl mx-auto leading-relaxed">
+                        Traditional 11+ practice gives you a score. We tell you exactly what your child got wrong and why they got it wrong.
+                      </p>
+                      <p className="text-lg text-muted-foreground max-w-4xl mx-auto leading-relaxed">
+                        When your child answers a question wrong, we don't just mark it incorrect. We identify the type of mistake they're making.
+                      </p>
+                      <p className="text-lg text-muted-foreground max-w-4xl mx-auto leading-relaxed">
+                        The result? Targeted practice that actually fixes the problem, not just more of the same questions.
+                      </p>
+                    </div>
+                    <div className="grid grid-cols-2 lg:grid-cols-4 gap-8">
+                      <Card className="text-center p-8 shadow-lg hover:shadow-xl transition-shadow">
+                        <CardContent className="p-0">
+                          <div className="flex justify-center mb-6">
+                            <div className="p-4 bg-green-100 rounded-2xl">
+                              <Target className="w-10 h-10 text-green-600" />
+                            </div>
+                          </div>
+                          <h4 className="font-semibold mb-3 text-lg">Targeted Practice</h4>
+                          <p className="text-sm text-muted-foreground leading-relaxed">Practice that actually fixes the problem</p>
+                        </CardContent>
+                      </Card>
+
+                      <Card className="text-center p-8 shadow-lg hover:shadow-xl transition-shadow">
+                        <CardContent className="p-0">
+                          <div className="flex justify-center mb-6">
+                            <div className="p-4 bg-blue-100 rounded-2xl">
+                              <Zap className="w-10 h-10 text-blue-600" />
+                            </div>
+                          </div>
+                          <h4 className="font-semibold mb-3 text-lg">Smart Learning</h4>
+                          <p className="text-sm text-muted-foreground leading-relaxed">No more repetitive practice of concepts they already know</p>
+                        </CardContent>
+                      </Card>
+
+                      <Card className="text-center p-8 shadow-lg hover:shadow-xl transition-shadow">
+                        <CardContent className="p-0">
+                          <div className="flex justify-center mb-6">
+                            <div className="p-4 bg-purple-100 rounded-2xl">
+                              <Brain className="w-10 h-10 text-purple-600" />
+                            </div>
+                          </div>
+                          <h4 className="font-semibold mb-3 text-lg">Clear Understanding</h4>
+                          <p className="text-sm text-muted-foreground leading-relaxed">Understanding of why mistakes happen</p>
+                        </CardContent>
+                      </Card>
+
+                      <Card className="text-center p-8 shadow-lg hover:shadow-xl transition-shadow">
+                        <CardContent className="p-0">
+                          <div className="flex justify-center mb-6">
+                            <div className="p-4 bg-orange-100 rounded-2xl">
+                              <TrendingUp className="w-10 h-10 text-orange-600" />
+                            </div>
+                          </div>
+                          <h4 className="font-semibold mb-3 text-lg">Faster Progress</h4>
+                          <p className="text-sm text-muted-foreground leading-relaxed">Faster improvement with less frustration</p>
+                        </CardContent>
+                      </Card>
+                    </div>
+                  </div>
                 </div>
               </div>
             </section>
