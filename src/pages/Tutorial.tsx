@@ -202,15 +202,15 @@ const Tutorial: React.FC = () => {
                 <h1 className="text-5xl max-w-none mx-auto leading-tight">
                   The 11+ Prep Platform That Actually Understands How Your Child Learns
                 </h1>
-                <p className="text-xl opacity-90">Stop guessing what your child needs to work on and work smarter: we don't just mark questions correct or incorrect. We identify the type of mistake they're making.</p>
+                <p className="text-xl opacity-90">Stop guessing what your child needs to work on: Work Smarter, not Harder</p>
               </div>
             </div>
 
             {/* What Makes Us Different */}
             <div className="text-center space-y-8 mb-16">
-              <h2 className="text-5xl font-bold my-[10px]">Finally, 11+ Prep That Works</h2>
-              <p className="text-xl text-muted-foreground max-w-6xl mx-auto leading-relaxed">Traditional 11+ practice gives you a score. We tell you exactly what your child got wrong and why they got it wrong. 
-We don't just mark papers, we identify the type of mistake they're making, fixing misconceptions at the source</p>
+              <h2 className="text-5xl font-bold my-[10px]">Finally, 11+ Prep That Makes Sense</h2>
+              <p className="text-xl text-muted-foreground max-w-6xl mx-auto leading-relaxed">Traditional 11+ practice gives you results asa a percentage. We do things differently here: 
+<br></br>We don't just mark papers, we identify the type of mistake they're making, fixing misconceptions at the source</p>
             </div>
             
             <section className="bg-gradient-to-br from-muted/30 to-muted/10 rounded-3xl -mx-4 md:mx-0 py-[30px]">
@@ -293,13 +293,7 @@ We don't just mark papers, we identify the type of mistake they're making, fixin
                   <div className="max-w-5xl mx-auto">
                     <div className="text-center mb-12 space-y-4">
                       <p className="text-lg text-muted-foreground max-w-4xl mx-auto leading-relaxed">
-                        Traditional 11+ practice gives you a score. We tell you exactly what your child got wrong and why they got it wrong.
-                      </p>
-                      <p className="text-lg text-muted-foreground max-w-4xl mx-auto leading-relaxed">
-                        When your child answers a question wrong, we don't just mark it incorrect. We identify the type of mistake they're making.
-                      </p>
-                      <p className="text-lg text-muted-foreground max-w-4xl mx-auto leading-relaxed">
-                        The result? Targeted practice that actually fixes the problem, not just more of the same questions.
+     Targeted practice that actually identifies and fixes misconceptions: Less Repetition, More Learning.
                       </p>
                     </div>
                     <div className="grid grid-cols-2 lg:grid-cols-4 gap-8">
