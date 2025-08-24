@@ -296,27 +296,6 @@ const Tutorial = () => {
                     </div>
                   </div>
 
-                  <div className="space-y-6">
-                    <h3>Instead of random fraction problems</h3>
-                    <div className="space-y-4">
-                      <div className="flex items-start gap-3">
-                        <CheckCircle className="w-5 h-5 text-green-600 mt-1" />
-                        <span>Visual fraction bars to show size relationships</span>
-                      </div>
-                      <div className="flex items-start gap-3">
-                        <CheckCircle className="w-5 h-5 text-green-600 mt-1" />
-                        <span>Step-by-step comparison techniques</span>
-                      </div>
-                      <div className="flex items-start gap-3">
-                        <CheckCircle className="w-5 h-5 text-green-600 mt-1" />
-                        <span>Practice specifically on unit fractions</span>
-                      </div>
-                      <div className="flex items-start gap-3">
-                        <CheckCircle className="w-5 h-5 text-green-600 mt-1" />
-                        <span>Building intuition about fraction sizes</span>
-                      </div>
-                    </div>
-                  </div>
                 </div>
 
                 {/* Decimals Example */}
@@ -349,28 +328,6 @@ const Tutorial = () => {
                             Our system provides targeted practice on decimal place value and alignment.
                           </p>
                         </div>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="space-y-6">
-                    <h3>Instead of random decimal problems</h3>
-                    <div className="space-y-4">
-                      <div className="flex items-start gap-3">
-                        <CheckCircle className="w-5 h-5 text-green-600 mt-1" />
-                        <span>Place value charts and visual alignment</span>
-                      </div>
-                      <div className="flex items-start gap-3">
-                        <CheckCircle className="w-5 h-5 text-green-600 mt-1" />
-                        <span>Step-by-step decimal addition methods</span>
-                      </div>
-                      <div className="flex items-start gap-3">
-                        <CheckCircle className="w-5 h-5 text-green-600 mt-1" />
-                        <span>Understanding tenths and hundredths</span>
-                      </div>
-                      <div className="flex items-start gap-3">
-                        <CheckCircle className="w-5 h-5 text-green-600 mt-1" />
-                        <span>Converting between fractions and decimals</span>
                       </div>
                     </div>
                   </div>
