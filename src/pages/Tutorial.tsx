@@ -842,7 +842,7 @@ const Tutorial = () => {
   return <div className="min-h-screen bg-background">
       <div className="container mx-auto px-4 py-8">
         {/* Header */}
-        <div className="text-center mb-12">
+        <div className="text-center mb-12 mt-20">
           <h1 className="text-4xl mb-4">
             How to Use Kudos Academy
           </h1>
