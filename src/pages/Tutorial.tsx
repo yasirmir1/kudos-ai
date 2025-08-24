@@ -293,7 +293,17 @@ const Tutorial = () => {
 
                   {/* The Result Section */}
                   <div className="max-w-5xl mx-auto">
-                    <h3 className="text-3xl font-semibold text-center mb-12">The result?</h3>
+                    <div className="text-center mb-12 space-y-4">
+                      <p className="text-lg text-muted-foreground max-w-4xl mx-auto leading-relaxed">
+                        Traditional 11+ practice gives you a score. We tell you exactly what your child got wrong and why they got it wrong.
+                      </p>
+                      <p className="text-lg text-muted-foreground max-w-4xl mx-auto leading-relaxed">
+                        When your child answers a question wrong, we don't just mark it incorrect. We identify the type of mistake they're making.
+                      </p>
+                      <p className="text-lg text-muted-foreground max-w-4xl mx-auto leading-relaxed">
+                        The result? Targeted practice that actually fixes the problem, not just more of the same questions.
+                      </p>
+                    </div>
                     <div className="grid grid-cols-2 lg:grid-cols-4 gap-8">
                       <Card className="text-center p-8 shadow-lg hover:shadow-xl transition-shadow">
                         <CardContent className="p-0">
