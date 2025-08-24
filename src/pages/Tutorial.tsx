@@ -195,9 +195,7 @@ const Tutorial = () => {
             {/* Hero Section */}
             <div className="bg-primary text-primary-foreground py-20 rounded-2xl my-[60px]">
               <div className="max-w-5xl mx-auto px-6 text-center space-y-8">
-                <h1 className="text-5xl max-w-none mx-auto leading-tight">
-                  The 11+ Prep Platform That Actually Understands How Your Child Learns
-                </h1>
+                <h1 className="text-5xl max-w-none mx-auto leading-tight">The 11+ Prep Platform That Understands How Your Child Learns in Real Time</h1>
                 <p className="text-xl opacity-90">Stop guessing what your child needs to work on: Traditional 11+ practice just gives you an overall  test score. We tell you exactly what your child got wrong and why they got it wrong.</p>
                 
                 
@@ -289,17 +287,7 @@ const Tutorial = () => {
 
                   {/* The Result Section */}
                   <div className="max-w-5xl mx-auto">
-                    <div className="text-center mb-12 space-y-4">
-                      <p className="text-lg text-muted-foreground max-w-4xl mx-auto leading-relaxed">
-                        Traditional 11+ practice gives you a score. We tell you exactly what your child got wrong and why they got it wrong.
-                      </p>
-                      <p className="text-lg text-muted-foreground max-w-4xl mx-auto leading-relaxed">
-                        When your child answers a question wrong, we don't just mark it incorrect. We identify the type of mistake they're making.
-                      </p>
-                      <p className="text-lg text-muted-foreground max-w-4xl mx-auto leading-relaxed">
-                        The result? Targeted practice that actually fixes the problem, not just more of the same questions.
-                      </p>
-                    </div>
+                    
                     <div className="grid grid-cols-2 lg:grid-cols-4 gap-8">
                       <Card className="text-center p-8 shadow-lg hover:shadow-xl transition-shadow">
                         <CardContent className="p-0">
@@ -850,51 +838,6 @@ const Tutorial = () => {
         return null;
     }
   };
-  return <div className="min-h-screen bg-background">
-      <div className="container mx-auto px-4 py-8">
-        {/* Header */}
-        <div className="text-center mb-12 mt-20">
-          <h1 className="text-4xl mb-4 my-[15px]">
-            How to Use Kudos Academy
-          </h1>
-          <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
-            Master mathematics with our two powerful learning modes designed for different goals and learning styles
-          </p>
-        </div>
-
-        {/* Navigation */}
-        <div className="flex flex-wrap gap-2 justify-center mb-8">
-          {[{
-          id: 'overview',
-          label: 'Overview',
-          icon: Eye
-        }, {
-          id: 'daily-mode',
-          label: 'Daily Mode',
-          icon: Calendar
-        }, {
-          id: 'bootcamp-mode',
-          label: 'Bootcamp',
-          icon: Target
-        }, {
-          id: 'getting-started',
-          label: 'Getting Started',
-          icon: Play
-        }].map(({
-          id,
-          label,
-          icon: Icon
-        }) => <Button key={id} variant={activeSection === id ? "default" : "outline"} onClick={() => setActiveSection(id)} className="flex items-center gap-2">
-              <Icon className="h-4 w-4" />
-              {label}
-            </Button>)}
-        </div>
-
-        {/* Content */}
-        <div className="max-w-6xl mx-auto">
-          {renderContent()}
-        </div>
-      </div>
-    </div>;
+  return;
 };
 export default Tutorial;
