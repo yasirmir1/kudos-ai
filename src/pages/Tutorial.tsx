@@ -218,28 +218,45 @@ const Tutorial = () => {
               </div>
 
               <div className="space-y-12">
-                {/* Multiplication Example */}
-                <div className="grid lg:grid-cols-2 gap-12 items-center">
-                  
-
-                  <div className="space-y-6">
-                    <h3>The result?</h3>
-                    <div className="space-y-4">
-                      <div className="flex items-start gap-3">
-                        <CheckCircle className="w-5 h-5 text-green-600 mt-1" />
-                        <span>Targeted practice that actually fixes the problem</span>
+                {/* Our Approach Results */}
+                <div className="max-w-4xl mx-auto">
+                  <div className="bg-green-50 border border-green-200 p-8 rounded-xl">
+                    <h3 className="text-green-800 text-2xl mb-6">Our Approach:</h3>
+                    <div className="space-y-2 text-lg mb-6">
+                      <p className="text-green-800 font-medium">3 × 5 = 8</p>
+                      <div className="flex items-center gap-2">
+                        <X className="w-5 h-5 text-destructive" />
+                        <span className="line-through">8</span>
                       </div>
-                      <div className="flex items-start gap-3">
-                        <CheckCircle className="w-5 h-5 text-green-600 mt-1" />
-                        <span>No more repetitive practice of concepts they already know</span>
+                      <div className="bg-green-100 p-4 rounded-lg">
+                        <p className="text-green-800">
+                          <strong>Misconception detected:</strong> Your child is adding (3 + 5) instead of multiplying. 
+                          We'll focus on multiplication concepts and provide targeted practice.
+                        </p>
                       </div>
-                      <div className="flex items-start gap-3">
-                        <CheckCircle className="w-5 h-5 text-green-600 mt-1" />
-                        <span>Clear understanding of why mistakes happen</span>
+                    </div>
+                    
+                    <h4 className="text-green-800 text-xl mb-4">The result?</h4>
+                    <div className="grid md:grid-cols-2 gap-6">
+                      <div className="space-y-4">
+                        <div className="flex items-start gap-3">
+                          <CheckCircle className="w-5 h-5 text-green-600 mt-1" />
+                          <span>Targeted practice that actually fixes the problem</span>
+                        </div>
+                        <div className="flex items-start gap-3">
+                          <CheckCircle className="w-5 h-5 text-green-600 mt-1" />
+                          <span>No more repetitive practice of concepts they already know</span>
+                        </div>
                       </div>
-                      <div className="flex items-start gap-3">
-                        <CheckCircle className="w-5 h-5 text-green-600 mt-1" />
-                        <span>Faster improvement with less frustration</span>
+                      <div className="space-y-4">
+                        <div className="flex items-start gap-3">
+                          <CheckCircle className="w-5 h-5 text-green-600 mt-1" />
+                          <span>Clear understanding of why mistakes happen</span>
+                        </div>
+                        <div className="flex items-start gap-3">
+                          <CheckCircle className="w-5 h-5 text-green-600 mt-1" />
+                          <span>Faster improvement with less frustration</span>
+                        </div>
                       </div>
                     </div>
                   </div>
