@@ -314,7 +314,7 @@ const Tutorial = () => {
               
               <div className="space-y-8">
                 <div className="grid lg:grid-cols-2 gap-12">
-                  <Card className="border-2 border-blue-200 bg-blue-50/30 h-full">
+                  <Card className="border-2 border-blue-200 bg-blue-50/30 flex flex-col">
                     <CardHeader className="pb-6">
                       <div className="flex items-start gap-4">
                         <div className="flex-shrink-0 p-3 bg-blue-600/10 rounded-lg">
@@ -329,7 +329,7 @@ const Tutorial = () => {
                       </div>
                     </CardHeader>
                     
-                    <CardContent className="space-y-8 pt-0">
+                    <CardContent className="flex-1 flex flex-col justify-between space-y-8 pt-0">
                       <div className="space-y-5">
                         <div className="flex items-start gap-4">
                           <CheckCircle className="w-5 h-5 text-green-600 mt-1 flex-shrink-0" />
@@ -357,7 +357,7 @@ const Tutorial = () => {
                         </div>
                       </div>
                       
-                      <div className="bg-blue-100/80 p-5 rounded-lg border border-blue-200">
+                      <div className="bg-blue-100/80 p-5 rounded-lg border border-blue-200 mt-auto">
                         <p className="text-sm text-blue-800 leading-relaxed">
                           <strong>Best for:</strong> Children already familiar with 11+ topics who need targeted improvement
                         </p>
@@ -365,7 +365,7 @@ const Tutorial = () => {
                     </CardContent>
                   </Card>
                   
-                  <Card className="border-2 border-orange-200 bg-orange-50/30 h-full">
+                  <Card className="border-2 border-orange-200 bg-orange-50/30 flex flex-col">
                     <CardHeader className="pb-6">
                       <div className="flex items-start gap-4">
                         <div className="flex-shrink-0 p-3 bg-orange-600/10 rounded-lg">
@@ -380,7 +380,7 @@ const Tutorial = () => {
                       </div>
                     </CardHeader>
                     
-                    <CardContent className="space-y-8 pt-0">
+                    <CardContent className="flex-1 flex flex-col justify-between space-y-8 pt-0">
                       <div className="space-y-5">
                         <div className="flex items-start gap-4">
                           <CheckCircle className="w-5 h-5 text-green-600 mt-1 flex-shrink-0" />
@@ -408,7 +408,7 @@ const Tutorial = () => {
                         </div>
                       </div>
                       
-                      <div className="bg-orange-100/80 p-5 rounded-lg border border-orange-200">
+                      <div className="bg-orange-100/80 p-5 rounded-lg border border-orange-200 mt-auto">
                         <p className="text-sm text-orange-800 leading-relaxed">
                           <strong>Best for:</strong> Starting 11+ preparation from scratch or want comprehensive coverage
                         </p>
