@@ -644,50 +644,194 @@ const Tutorial = () => {
           </div>;
       case 'getting-started':
         return <div className="space-y-8">
-            <div className="grid md:grid-cols-2 gap-8">
-              <StepGuide title="For Students" steps={[{
-              number: 1,
-              title: "Create your account and set your age group",
-              description: "Sign up and tell us your current year level so we can provide age-appropriate questions",
-              tips: ["Choose your correct school year for best results", "You can change this later in settings"]
-            }, {
-              number: 2,
-              title: "Choose between Daily Mode or Bootcamp",
-              description: "Select the learning approach that best fits your goals and schedule",
-              tips: ["Daily Mode for flexible practice", "Bootcamp for structured 11+ preparation"]
-            }, {
-              number: 3,
-              title: "Start with a few practice questions",
-              description: "Take the initial assessment to help us understand your current level",
-              tips: ["Answer honestly for best results", "Don't worry about getting everything right"]
-            }, {
-              number: 4,
-              title: "Review your performance in the analytics section",
-              description: "Check your progress and see which topics you're strongest and weakest in",
-              tips: ["Look for patterns in your mistakes", "Focus on understanding, not just scores"]
-            }]} />
+            <div className="grid lg:grid-cols-2 gap-12">
+              {/* For Students */}
+              <div className="space-y-6">
+                <h3 className="text-2xl font-semibold">For Students</h3>
+                <div className="grid grid-cols-2 gap-4">
+                  {/* Step 1 - Top Left */}
+                  <Card className="relative">
+                    <CardContent className="p-4">
+                      <div className="flex gap-3">
+                        <Badge variant="secondary" className="w-6 h-6 rounded-full flex items-center justify-center text-xs flex-shrink-0">
+                          1
+                        </Badge>
+                        <div className="flex-1 min-w-0">
+                          <h4 className="text-sm font-medium mb-2">Create your account and set your age group</h4>
+                          <p className="text-xs text-muted-foreground mb-3">Sign up and tell us your current year level so we can provide age-appropriate questions</p>
+                          <div className="bg-muted/50 rounded-lg p-2">
+                            <div className="text-xs mb-1">💡 Tips:</div>
+                            <ul className="text-xs text-muted-foreground space-y-1">
+                              <li>• Choose your correct school year for best results</li>
+                              <li>• You can change this later in settings</li>
+                            </ul>
+                          </div>
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
 
-              <StepGuide title="For Parents" steps={[{
-              number: 1,
-              title: "Set up your child's account with appropriate age group",
-              description: "Help your child create their account and ensure the correct year level is selected",
-              tips: ["Supervise the initial setup", "Verify the age group matches their school year"]
-            }, {
-              number: 2,
-              title: "Explore the analytics dashboard",
-              description: "Understand how to read the reports and what they tell you about your child's progress",
-              tips: ["Focus on misconception patterns", "Look for trends over time, not just daily scores"]
-            }, {
-              number: 3,
-              title: "Review misconception tracking",
-              description: "Learn how to identify weak areas and support your child's learning at home",
-              tips: ["Discuss mistakes without judgment", "Use insights to guide additional practice"]
-            }, {
-              number: 4,
-              title: "Set daily practice goals and routines",
-              description: "Establish consistent practice habits and celebrate progress",
-              tips: ["Start with achievable goals", "Consistency is more important than duration"]
-            }]} />
+                  {/* Step 2 - Top Right */}
+                  <Card className="relative">
+                    <CardContent className="p-4">
+                      <div className="flex gap-3">
+                        <Badge variant="secondary" className="w-6 h-6 rounded-full flex items-center justify-center text-xs flex-shrink-0">
+                          2
+                        </Badge>
+                        <div className="flex-1 min-w-0">
+                          <h4 className="text-sm font-medium mb-2">Choose between Daily Mode or Bootcamp</h4>
+                          <p className="text-xs text-muted-foreground mb-3">Select the learning approach that best fits your goals and schedule</p>
+                          <div className="bg-muted/50 rounded-lg p-2">
+                            <div className="text-xs mb-1">💡 Tips:</div>
+                            <ul className="text-xs text-muted-foreground space-y-1">
+                              <li>• Daily Mode for flexible practice</li>
+                              <li>• Bootcamp for structured 11+ preparation</li>
+                            </ul>
+                          </div>
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+
+                  {/* Step 3 - Bottom Left */}
+                  <Card className="relative">
+                    <CardContent className="p-4">
+                      <div className="flex gap-3">
+                        <Badge variant="secondary" className="w-6 h-6 rounded-full flex items-center justify-center text-xs flex-shrink-0">
+                          3
+                        </Badge>
+                        <div className="flex-1 min-w-0">
+                          <h4 className="text-sm font-medium mb-2">Start with a few practice questions</h4>
+                          <p className="text-xs text-muted-foreground mb-3">Take the initial assessment to help us understand your current level</p>
+                          <div className="bg-muted/50 rounded-lg p-2">
+                            <div className="text-xs mb-1">💡 Tips:</div>
+                            <ul className="text-xs text-muted-foreground space-y-1">
+                              <li>• Answer honestly for best results</li>
+                              <li>• Don't worry about getting everything right</li>
+                            </ul>
+                          </div>
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+
+                  {/* Step 4 - Bottom Right */}
+                  <Card className="relative">
+                    <CardContent className="p-4">
+                      <div className="flex gap-3">
+                        <Badge variant="secondary" className="w-6 h-6 rounded-full flex items-center justify-center text-xs flex-shrink-0">
+                          4
+                        </Badge>
+                        <div className="flex-1 min-w-0">
+                          <h4 className="text-sm font-medium mb-2">Review your performance in the analytics section</h4>
+                          <p className="text-xs text-muted-foreground mb-3">Check your progress and see which topics you're strongest and weakest in</p>
+                          <div className="bg-muted/50 rounded-lg p-2">
+                            <div className="text-xs mb-1">💡 Tips:</div>
+                            <ul className="text-xs text-muted-foreground space-y-1">
+                              <li>• Look for patterns in your mistakes</li>
+                              <li>• Focus on understanding, not just scores</li>
+                            </ul>
+                          </div>
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+                </div>
+              </div>
+
+              {/* For Parents */}
+              <div className="space-y-6">
+                <h3 className="text-2xl font-semibold">For Parents</h3>
+                <div className="grid grid-cols-2 gap-4">
+                  {/* Step 1 - Top Left */}
+                  <Card className="relative">
+                    <CardContent className="p-4">
+                      <div className="flex gap-3">
+                        <Badge variant="secondary" className="w-6 h-6 rounded-full flex items-center justify-center text-xs flex-shrink-0">
+                          1
+                        </Badge>
+                        <div className="flex-1 min-w-0">
+                          <h4 className="text-sm font-medium mb-2">Set up your child's account with appropriate age group</h4>
+                          <p className="text-xs text-muted-foreground mb-3">Help your child create their account and ensure the correct year level is selected</p>
+                          <div className="bg-muted/50 rounded-lg p-2">
+                            <div className="text-xs mb-1">💡 Tips:</div>
+                            <ul className="text-xs text-muted-foreground space-y-1">
+                              <li>• Supervise the initial setup</li>
+                              <li>• Verify the age group matches their school year</li>
+                            </ul>
+                          </div>
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+
+                  {/* Step 2 - Top Right */}
+                  <Card className="relative">
+                    <CardContent className="p-4">
+                      <div className="flex gap-3">
+                        <Badge variant="secondary" className="w-6 h-6 rounded-full flex items-center justify-center text-xs flex-shrink-0">
+                          2
+                        </Badge>
+                        <div className="flex-1 min-w-0">
+                          <h4 className="text-sm font-medium mb-2">Explore the analytics dashboard</h4>
+                          <p className="text-xs text-muted-foreground mb-3">Understand how to read the reports and what they tell you about your child's progress</p>
+                          <div className="bg-muted/50 rounded-lg p-2">
+                            <div className="text-xs mb-1">💡 Tips:</div>
+                            <ul className="text-xs text-muted-foreground space-y-1">
+                              <li>• Focus on misconception patterns</li>
+                              <li>• Look for trends over time, not just daily scores</li>
+                            </ul>
+                          </div>
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+
+                  {/* Step 3 - Bottom Left */}
+                  <Card className="relative">
+                    <CardContent className="p-4">
+                      <div className="flex gap-3">
+                        <Badge variant="secondary" className="w-6 h-6 rounded-full flex items-center justify-center text-xs flex-shrink-0">
+                          3
+                        </Badge>
+                        <div className="flex-1 min-w-0">
+                          <h4 className="text-sm font-medium mb-2">Review misconception tracking</h4>
+                          <p className="text-xs text-muted-foreground mb-3">Learn how to identify weak areas and support your child's learning at home</p>
+                          <div className="bg-muted/50 rounded-lg p-2">
+                            <div className="text-xs mb-1">💡 Tips:</div>
+                            <ul className="text-xs text-muted-foreground space-y-1">
+                              <li>• Discuss mistakes without judgment</li>
+                              <li>• Use insights to guide additional practice</li>
+                            </ul>
+                          </div>
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+
+                  {/* Step 4 - Bottom Right */}
+                  <Card className="relative">
+                    <CardContent className="p-4">
+                      <div className="flex gap-3">
+                        <Badge variant="secondary" className="w-6 h-6 rounded-full flex items-center justify-center text-xs flex-shrink-0">
+                          4
+                        </Badge>
+                        <div className="flex-1 min-w-0">
+                          <h4 className="text-sm font-medium mb-2">Set daily practice goals and routines</h4>
+                          <p className="text-xs text-muted-foreground mb-3">Establish consistent practice habits and celebrate progress</p>
+                          <div className="bg-muted/50 rounded-lg p-2">
+                            <div className="text-xs mb-1">💡 Tips:</div>
+                            <ul className="text-xs text-muted-foreground space-y-1">
+                              <li>• Start with achievable goals</li>
+                              <li>• Consistency is more important than duration</li>
+                            </ul>
+                          </div>
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+                </div>
+              </div>
             </div>
 
             <Card className="bg-muted/30">
