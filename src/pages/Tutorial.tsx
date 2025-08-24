@@ -483,7 +483,7 @@ const Tutorial = () => {
             <section className="space-y-8">
               <Card>
                 <CardHeader>
-                  <CardTitle className="text-center">Analytics That Actually Help</CardTitle>
+                  <CardTitle className="text-center py-[15px]">Analytics That Actually Help</CardTitle>
                 </CardHeader>
                 <CardContent>
                   <div className="text-center space-y-6">
