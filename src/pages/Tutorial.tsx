@@ -2,398 +2,601 @@ import React, { useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Progress } from '@/components/ui/progress';
 import { 
   Calendar, Target, BarChart3, Brain, Trophy, BookOpen, 
   Users, Clock, CheckCircle, ArrowRight, Play, FileText,
   GraduationCap, PenTool, Lightbulb, TrendingUp, Zap,
-  Star, Shield, Award, Eye, Settings, HelpCircle
+  Star, Shield, Award, Eye, Settings, HelpCircle, X, AlertTriangle
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 const Tutorial = () => {
   const navigate = useNavigate();
-  const [activeTab, setActiveTab] = useState('overview');
+  const [activeSection, setActiveSection] = useState('overview');
 
-  const features = {
-    dailyMode: [
-      { icon: Calendar, title: 'Daily Questions', desc: 'Answer questions across all topics every day' },
-      { icon: Brain, title: 'Misconception Tracking', desc: 'Identify and address specific learning gaps' },
-      { icon: BarChart3, title: 'Performance Analytics', desc: 'Detailed insights by topic and subtopic' },
-      { icon: TrendingUp, title: 'Adaptive Learning', desc: 'Questions adapt to your strengths and weaknesses' }
-    ],
-    bootcamp: [
-      { icon: Target, title: '52-Week Course', desc: 'Structured programme for 11+ exam preparation' },
-      { icon: BookOpen, title: 'Interactive Learning', desc: 'Concept introduction, practice, and assessment' },
-      { icon: Trophy, title: 'Weekly Quizzes', desc: 'Progressive testing covering all learned topics' },
-      { icon: GraduationCap, title: 'Mock Tests', desc: 'CEM and GL assessment simulation' }
-    ]
+  const FeatureHighlight = ({ title, description, icon, benefits, example, badge }: {
+    title: string;
+    description: string;
+    icon: React.ReactNode;
+    benefits: string[];
+    example?: { title: string; content: React.ReactNode };
+    badge?: string;
+  }) => (
+    <Card className="h-full">
+      <CardHeader>
+        <div className="flex items-start gap-4">
+          <div className="flex-shrink-0 p-3 bg-primary/10 rounded-lg">
+            {icon}
+          </div>
+          <div className="flex-1">
+            <div className="flex items-center gap-2 mb-2">
+              <CardTitle>{title}</CardTitle>
+              {badge && <Badge variant="secondary">{badge}</Badge>}
+            </div>
+            <CardDescription>{description}</CardDescription>
+          </div>
+        </div>
+      </CardHeader>
+      <CardContent className="space-y-6">
+        <div>
+          <h4 className="mb-3">Key Benefits:</h4>
+          <ul className="space-y-2">
+            {benefits.map((benefit, index) => (
+              <li key={index} className="flex items-start gap-2 text-sm">
+                <div className="w-2 h-2 rounded-full bg-primary mt-2 flex-shrink-0" />
+                <span>{benefit}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+        
+        {example && (
+          <div className="bg-muted/50 rounded-lg p-4">
+            <h4 className="mb-3">{example.title}</h4>
+            {example.content}
+          </div>
+        )}
+      </CardContent>
+    </Card>
+  );
+
+  const ComparisonTable = () => {
+    const features = [
+      {
+        feature: "Adaptive Question System",
+        dailyMode: true,
+        bootcampMode: true,
+        description: "Questions adapt to your performance level"
+      },
+      {
+        feature: "Structured 52-Week Course",
+        dailyMode: false,
+        bootcampMode: true,
+        description: "Progressive curriculum designed for 11+ preparation"
+      },
+      {
+        feature: "Topic Coverage",
+        dailyMode: "All topics randomly",
+        bootcampMode: "Weekly progression",
+        description: "How learning content is organized"
+      },
+      {
+        feature: "Misconception Tracking",
+        dailyMode: true,
+        bootcampMode: true,
+        description: "Identifies and helps fix common mistakes"
+      },
+      {
+        feature: "Performance Analytics",
+        dailyMode: "Basic insights",
+        bootcampMode: "Comprehensive reports",
+        description: "Detailed progress tracking and analysis"
+      },
+      {
+        feature: "Mock Tests",
+        dailyMode: false,
+        bootcampMode: true,
+        description: "Full CEM/GL assessment simulations"
+      },
+      {
+        feature: "Weekly Quizzes",
+        dailyMode: false,
+        bootcampMode: true,
+        description: "Regular assessments building on previous topics"
+      },
+      {
+        feature: "Flexible Schedule",
+        dailyMode: true,
+        bootcampMode: "Structured",
+        description: "How learning is scheduled"
+      },
+      {
+        feature: "Learning Stages",
+        dailyMode: "Question-based",
+        bootcampMode: "4-stage system",
+        description: "Concept introduction, guided practice, independent practice, assessment"
+      }
+    ];
+
+    const renderFeatureValue = (value: boolean | string) => {
+      if (typeof value === "boolean") {
+        return value ? (
+          <CheckCircle className="w-5 h-5 text-green-600" />
+        ) : (
+          <X className="w-5 h-5 text-red-500" />
+        );
+      }
+      return <Badge variant="outline">{value}</Badge>;
+    };
+
+    return (
+      <Card>
+        <CardHeader>
+          <CardTitle>Daily Mode vs Bootcamp Mode</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="overflow-x-auto">
+            <table className="w-full border-collapse">
+              <thead>
+                <tr className="border-b">
+                  <th className="text-left p-4">Feature</th>
+                  <th className="text-center p-4">Daily Mode</th>
+                  <th className="text-center p-4">Bootcamp Mode</th>
+                </tr>
+              </thead>
+              <tbody>
+                {features.map((feature, index) => (
+                  <tr key={index} className="border-b hover:bg-muted/50">
+                    <td className="p-4">
+                      <div>
+                        <div>{feature.feature}</div>
+                        {feature.description && (
+                          <div className="text-sm text-muted-foreground mt-1">
+                            {feature.description}
+                          </div>
+                        )}
+                      </div>
+                    </td>
+                    <td className="p-4 text-center">
+                      {renderFeatureValue(feature.dailyMode)}
+                    </td>
+                    <td className="p-4 text-center">
+                      {renderFeatureValue(feature.bootcampMode)}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </CardContent>
+      </Card>
+    );
   };
 
-  const learningStages = [
-    { icon: Lightbulb, title: 'Concept Introduction', desc: 'Learn new topics with clear explanations' },
-    { icon: Users, title: 'Guided Practice', desc: 'Practice with step-by-step support' },
-    { icon: PenTool, title: 'Independent Practice', desc: 'Apply knowledge on your own' },
-    { icon: CheckCircle, title: 'Assessment', desc: 'Test understanding and track progress' }
-  ];
-
-  const FeatureCard = ({ icon: Icon, title, desc }: { icon: any, title: string, desc: string }) => (
-    <Card className="h-full hover:shadow-lg transition-all duration-300 hover:scale-105">
-      <CardContent className="p-6 text-center">
-        <Icon className="h-12 w-12 mx-auto mb-4 text-primary" />
-        <h3 className="font-semibold mb-2">{title}</h3>
-        <p className="text-sm text-muted-foreground">{desc}</p>
-      </CardContent>
-    </Card>
-  );
-
-  const ComparisonTable = () => (
-    <Card>
-      <CardHeader>
-        <CardTitle className="flex items-center gap-2">
-          <Eye className="h-5 w-5" />
-          Feature Comparison
-        </CardTitle>
-        <CardDescription>
-          Choose the learning mode that best fits your needs
-        </CardDescription>
-      </CardHeader>
-      <CardContent>
-        <div className="overflow-x-auto">
-          <table className="w-full border-collapse">
-            <thead>
-              <tr className="border-b">
-                <th className="text-left p-4 font-medium">Feature</th>
-                <th className="text-center p-4 font-medium">
-                  <Badge variant="outline" className="bg-gradient-to-r from-blue-50 to-blue-100 text-blue-700">
-                    Daily Mode
+  const StepGuide = ({ title, steps }: { title: string; steps: Array<{ number: number; title: string; description: string; tips?: string[] }> }) => (
+    <div className="space-y-6">
+      <h3>{title}</h3>
+      <div className="space-y-4">
+        {steps.map((step) => (
+          <Card key={step.number} className="relative">
+            <CardContent className="p-6">
+              <div className="flex gap-4">
+                <div className="flex-shrink-0">
+                  <Badge variant="secondary" className="w-8 h-8 rounded-full flex items-center justify-center">
+                    {step.number}
                   </Badge>
-                </th>
-                <th className="text-center p-4 font-medium">
-                  <Badge variant="outline" className="bg-gradient-to-r from-emerald-50 to-emerald-100 text-emerald-700">
-                    Bootcamp
-                  </Badge>
-                </th>
-              </tr>
-            </thead>
-            <tbody>
-              {[
-                ['Question Pool', 'All topics mixed', '52-week curriculum'],
-                ['Learning Structure', 'Flexible daily practice', 'Sequential weekly modules'],
-                ['Analytics', 'Topic performance tracking', 'Weekly progress + mock tests'],
-                ['Target Audience', 'General practice', '11+ exam preparation'],
-                ['Time Commitment', '15-30 minutes daily', '1-2 hours weekly'],
-                ['Assessment Style', 'Continuous evaluation', 'Weekly quizzes + mock papers']
-              ].map(([feature, daily, bootcamp], index) => (
-                <tr key={index} className="border-b hover:bg-muted/30">
-                  <td className="p-4 font-medium">{feature}</td>
-                  <td className="p-4 text-center text-sm">{daily}</td>
-                  <td className="p-4 text-center text-sm">{bootcamp}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      </CardContent>
-    </Card>
-  );
-
-  return (
-    <div className="min-h-screen bg-gradient-learning">
-      <div className="container mx-auto px-4 py-8">
-        {/* Hero Section */}
-        <div className="text-center mb-12">
-          <h1 className="text-4xl font-bold mb-4 bg-gradient-primary bg-clip-text text-transparent">
-            How to Use Kudos Academy
-          </h1>
-          <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
-            Master mathematics with our two powerful learning modes designed for different goals and learning styles
-          </p>
-        </div>
-
-        {/* Quick Navigation */}
-        <div className="flex flex-wrap gap-2 justify-center mb-8">
-          {[
-            { id: 'overview', label: 'Overview', icon: Eye },
-            { id: 'daily', label: 'Daily Mode', icon: Calendar },
-            { id: 'bootcamp', label: 'Bootcamp', icon: Target },
-            { id: 'getting-started', label: 'Getting Started', icon: Play }
-          ].map(({ id, label, icon: Icon }) => (
-            <Button
-              key={id}
-              variant={activeTab === id ? "default" : "outline"}
-              onClick={() => setActiveTab(id)}
-              className="flex items-center gap-2"
-            >
-              <Icon className="h-4 w-4" />
-              {label}
-            </Button>
-          ))}
-        </div>
-
-        <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-8">
-          <TabsList className="hidden">
-            <TabsTrigger value="overview">Overview</TabsTrigger>
-            <TabsTrigger value="daily">Daily Mode</TabsTrigger>
-            <TabsTrigger value="bootcamp">Bootcamp</TabsTrigger>
-            <TabsTrigger value="getting-started">Getting Started</TabsTrigger>
-          </TabsList>
-
-          <TabsContent value="overview" className="space-y-8">
-            <ComparisonTable />
-            
-            <div className="grid md:grid-cols-2 gap-8">
-              <Card className="bg-gradient-to-br from-blue-50 to-blue-100 border-blue-200">
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2 text-blue-700">
-                    <Calendar className="h-5 w-5" />
-                    Daily Mode
-                  </CardTitle>
-                  <CardDescription className="text-blue-600">
-                    Perfect for ongoing practice and skill maintenance
-                  </CardDescription>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  <div className="grid grid-cols-2 gap-4">
-                    {features.dailyMode.map((feature, index) => (
-                      <div key={index} className="text-center">
-                        <feature.icon className="h-8 w-8 mx-auto mb-2 text-blue-600" />
-                        <h4 className="font-medium text-sm text-blue-800">{feature.title}</h4>
-                      </div>
-                    ))}
-                  </div>
-                  <Button 
-                    onClick={() => navigate('/dashboard')}
-                    className="w-full bg-blue-600 hover:bg-blue-700"
-                  >
-                    Try Daily Mode <ArrowRight className="h-4 w-4 ml-2" />
-                  </Button>
-                </CardContent>
-              </Card>
-
-              <Card className="bg-gradient-to-br from-emerald-50 to-emerald-100 border-emerald-200">
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2 text-emerald-700">
-                    <Target className="h-5 w-5" />
-                    Bootcamp
-                  </CardTitle>
-                  <CardDescription className="text-emerald-600">
-                    Structured 52-week course for 11+ exam success
-                  </CardDescription>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  <div className="grid grid-cols-2 gap-4">
-                    {features.bootcamp.map((feature, index) => (
-                      <div key={index} className="text-center">
-                        <feature.icon className="h-8 w-8 mx-auto mb-2 text-emerald-600" />
-                        <h4 className="font-medium text-sm text-emerald-800">{feature.title}</h4>
-                      </div>
-                    ))}
-                  </div>
-                  <Button 
-                    onClick={() => navigate('/bootcamp')}
-                    className="w-full bg-emerald-600 hover:bg-emerald-700"
-                  >
-                    Enter Bootcamp <ArrowRight className="h-4 w-4 ml-2" />
-                  </Button>
-                </CardContent>
-              </Card>
-            </div>
-          </TabsContent>
-
-          <TabsContent value="daily" className="space-y-8">
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <Calendar className="h-5 w-5" />
-                  Daily Mode Guide
-                </CardTitle>
-                <CardDescription>
-                  Flexible daily practice designed to identify and strengthen learning areas
-                </CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-6">
-                <div className="grid md:grid-cols-2 gap-6">
-                  {features.dailyMode.map((feature, index) => (
-                    <FeatureCard key={index} {...feature} />
-                  ))}
                 </div>
-                
-                <div className="bg-gradient-to-r from-blue-50 to-blue-100 p-6 rounded-lg">
-                  <h3 className="font-semibold mb-4 text-blue-800">How Daily Mode Works</h3>
-                  <div className="space-y-3 text-sm text-blue-700">
+                <div className="flex-1">
+                  <h4 className="mb-2">{step.title}</h4>
+                  <p className="text-muted-foreground mb-4">{step.description}</p>
+                  {step.tips && step.tips.length > 0 && (
+                    <div className="bg-muted/50 rounded-lg p-4">
+                      <div className="text-sm mb-2">💡 Tips:</div>
+                      <ul className="text-sm text-muted-foreground space-y-1">
+                        {step.tips.map((tip, index) => (
+                          <li key={index}>• {tip}</li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        ))}
+      </div>
+    </div>
+  );
+
+  const renderContent = () => {
+    switch (activeSection) {
+      case 'overview':
+        return (
+          <div className="space-y-12">
+            {/* Hero Section */}
+            <div className="bg-primary text-primary-foreground py-20 rounded-2xl">
+              <div className="max-w-4xl mx-auto px-6 text-center space-y-8">
+                <h1 className="text-5xl max-w-4xl mx-auto leading-tight">
+                  The 11+ Prep Platform That Actually Understands How Your Child Learns
+                </h1>
+                <p className="text-xl opacity-90">
+                  Stop guessing what your child needs to work on. Our AI identifies exactly where they're struggling and why.
+                </p>
+                <Button 
+                  onClick={() => navigate('/dashboard')}
+                  size="lg" 
+                  variant="secondary"
+                  className="bg-background text-foreground hover:bg-background/90"
+                >
+                  Start Free Assessment
+                </Button>
+                <div className="text-sm opacity-75">No credit card required • See results in 10 minutes</div>
+              </div>
+            </div>
+
+            {/* What Makes Us Different */}
+            <section className="space-y-12">
+              <div className="text-center space-y-4">
+                <h2 className="text-4xl">Finally, 11+ Prep That Makes Sense</h2>
+                <p className="text-lg text-muted-foreground max-w-3xl mx-auto">
+                  Traditional 11+ practice gives you a score. We tell you exactly what your child got wrong and why they got it wrong.
+                </p>
+              </div>
+
+              <div className="grid lg:grid-cols-2 gap-12 items-center">
+                <div className="space-y-6">
+                  <div className="bg-destructive/10 border border-destructive/20 p-6 rounded-xl">
+                    <h4 className="mb-3 text-destructive">Traditional Approach:</h4>
+                    <div className="space-y-2 text-sm">
+                      <div className="flex items-center gap-2">
+                        <X className="w-4 h-4 text-destructive" />
+                        <span className="line-through">3 × 5 = 8</span>
+                      </div>
+                      <p className="text-destructive">❌ Incorrect. Try again.</p>
+                    </div>
+                  </div>
+                  
+                  <div className="bg-green-50 border border-green-200 p-6 rounded-xl">
+                    <h4 className="mb-3 text-green-800">Our Approach:</h4>
+                    <div className="space-y-2 text-sm">
+                      <div className="flex items-center gap-2">
+                        <X className="w-4 h-4 text-destructive" />
+                        <span className="line-through">3 × 5 = 8</span>
+                      </div>
+                      <div className="bg-green-100 p-3 rounded-lg">
+                        <p className="text-green-800">
+                          <strong>Misconception detected:</strong> Your child is adding (3 + 5) instead of multiplying. 
+                          We'll focus on multiplication concepts and provide targeted practice.
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="space-y-6">
+                  <h3>The result?</h3>
+                  <div className="space-y-4">
                     <div className="flex items-start gap-3">
-                      <Zap className="h-5 w-5 mt-1 text-blue-600" />
+                      <CheckCircle className="w-5 h-5 text-green-600 mt-1" />
+                      <span>Targeted practice that actually fixes the problem</span>
+                    </div>
+                    <div className="flex items-start gap-3">
+                      <CheckCircle className="w-5 h-5 text-green-600 mt-1" />
+                      <span>No more repetitive practice of concepts they already know</span>
+                    </div>
+                    <div className="flex items-start gap-3">
+                      <CheckCircle className="w-5 h-5 text-green-600 mt-1" />
+                      <span>Clear understanding of why mistakes happen</span>
+                    </div>
+                    <div className="flex items-start gap-3">
+                      <CheckCircle className="w-5 h-5 text-green-600 mt-1" />
+                      <span>Faster improvement with less frustration</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </section>
+
+            {/* Two Learning Modes */}
+            <section className="space-y-12">
+              <div className="text-center space-y-4">
+                <h2 className="text-4xl">Two Ways to Prepare - Choose What Works for Your Child</h2>
+              </div>
+              
+              <div className="grid lg:grid-cols-2 gap-8">
+                <Card className="border-2 border-blue-200 bg-blue-50/30">
+                  <CardHeader>
+                    <div className="flex items-center gap-3 mb-4">
+                      <Target className="w-8 h-8 text-blue-600" />
+                      <div>
+                        <CardTitle>Daily Mode: Smart Practice for Busy Families</CardTitle>
+                        <CardDescription className="text-blue-600">Perfect for children who know the basics but need to strengthen weak spots</CardDescription>
+                      </div>
+                    </div>
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                    <div className="space-y-4">
+                      <div className="flex items-start gap-3 text-sm">
+                        <CheckCircle className="w-4 h-4 text-green-600 mt-0.5" />
+                        <span><strong>15-30 minutes daily</strong> - fits around school and activities</span>
+                      </div>
+                      <div className="flex items-start gap-3 text-sm">
+                        <CheckCircle className="w-4 h-4 text-green-600 mt-0.5" />
+                        <span><strong>Questions adapt in real-time</strong> - gets harder when they're doing well, focuses on struggles</span>
+                      </div>
+                      <div className="flex items-start gap-3 text-sm">
+                        <CheckCircle className="w-4 h-4 text-green-600 mt-0.5" />
+                        <span><strong>All topics covered systematically</strong> - ensures nothing gets forgotten</span>
+                      </div>
+                      <div className="flex items-start gap-3 text-sm">
+                        <CheckCircle className="w-4 h-4 text-green-600 mt-0.5" />
+                        <span><strong>Identifies specific mistakes</strong> - understand if it's careless error or genuine knowledge gap</span>
+                      </div>
+                    </div>
+                    
+                    <div className="bg-blue-100 p-4 rounded-lg">
+                      <p className="text-sm text-blue-800">
+                        <strong>Best for:</strong> Children already familiar with 11+ topics who need targeted improvement
+                      </p>
+                    </div>
+
+                    <Button 
+                      onClick={() => navigate('/dashboard')}
+                      className="w-full"
+                    >
+                      Try Daily Mode <ArrowRight className="h-4 w-4 ml-2" />
+                    </Button>
+                  </CardContent>
+                </Card>
+                
+                <Card className="border-2 border-orange-200 bg-orange-50/30">
+                  <CardHeader>
+                    <div className="flex items-center gap-3 mb-4">
+                      <Zap className="w-8 h-8 text-orange-600" />
+                      <div>
+                        <CardTitle>Bootcamp Mode: Complete 11+ Mastery Course</CardTitle>
+                        <CardDescription className="text-orange-600">Comprehensive preparation from start to finish</CardDescription>
+                      </div>
+                    </div>
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                    <div className="space-y-4">
+                      <div className="flex items-start gap-3 text-sm">
+                        <CheckCircle className="w-4 h-4 text-green-600 mt-0.5" />
+                        <span><strong>52-week structured curriculum</strong> - one full year of preparation</span>
+                      </div>
+                      <div className="flex items-start gap-3 text-sm">
+                        <CheckCircle className="w-4 h-4 text-green-600 mt-0.5" />
+                        <span><strong>Weekly quizzes</strong> covering everything learned so far</span>
+                      </div>
+                      <div className="flex items-start gap-3 text-sm">
+                        <CheckCircle className="w-4 h-4 text-green-600 mt-0.5" />
+                        <span><strong>Full mock papers</strong> that simulate real CEM and GL exams</span>
+                      </div>
+                      <div className="flex items-start gap-3 text-sm">
+                        <CheckCircle className="w-4 h-4 text-green-600 mt-0.5" />
+                        <span><strong>Step-by-step progression</strong> - builds confidence systematically</span>
+                      </div>
+                    </div>
+                    
+                    <div className="bg-orange-100 p-4 rounded-lg">
+                      <p className="text-sm text-orange-800">
+                        <strong>Best for:</strong> Starting 11+ preparation from scratch or want comprehensive coverage
+                      </p>
+                    </div>
+
+                    <Button 
+                      onClick={() => navigate('/bootcamp')}
+                      className="w-full"
+                    >
+                      Enter Bootcamp <ArrowRight className="h-4 w-4 ml-2" />
+                    </Button>
+                  </CardContent>
+                </Card>
+              </div>
+            </section>
+
+            <ComparisonTable />
+          </div>
+        );
+
+      case 'daily-mode':
+        return (
+          <div className="space-y-8">
+            <FeatureHighlight
+              title="Daily Mode: Smart Practice for Busy Families"
+              description="Flexible daily practice designed to identify and strengthen learning areas"
+              icon={<Calendar className="w-6 h-6" />}
+              badge="15-30 min daily"
+              benefits={[
+                "Questions adapt in real-time to your child's performance",
+                "All topics covered systematically to ensure nothing is forgotten", 
+                "Misconception tracking identifies specific learning gaps",
+                "Performance analytics show detailed progress by topic and subtopic",
+                "Flexible schedule that fits around school and activities"
+              ]}
+              example={{
+                title: "How it works",
+                content: (
+                  <div className="space-y-3 text-sm">
+                    <div className="flex items-start gap-3">
+                      <Zap className="h-5 w-5 mt-1 text-primary" />
                       <div>
                         <strong>Adaptive Questions:</strong> The system presents questions from all topics, adapting difficulty based on your performance
                       </div>
                     </div>
                     <div className="flex items-start gap-3">
-                      <Brain className="h-5 w-5 mt-1 text-blue-600" />
+                      <Brain className="h-5 w-5 mt-1 text-primary" />
                       <div>
                         <strong>Misconception Tracking:</strong> Each incorrect answer is analyzed to identify specific learning gaps
                       </div>
                     </div>
                     <div className="flex items-start gap-3">
-                      <BarChart3 className="h-5 w-5 mt-1 text-blue-600" />
+                      <BarChart3 className="h-5 w-5 mt-1 text-primary" />
                       <div>
                         <strong>Performance Insights:</strong> Detailed analytics show progress by topic, subtopic, and common mistakes
                       </div>
                     </div>
                   </div>
-                </div>
+                )
+              }}
+            />
 
-                <div className="border-l-4 border-blue-500 pl-4">
-                  <h4 className="font-semibold text-blue-800">For Parents</h4>
-                  <p className="text-sm text-blue-700 mt-1">
-                    Monitor your child's progress through detailed reports showing strengths, weaknesses, 
-                    and specific areas that need attention. Set daily practice goals and track consistency.
-                  </p>
-                </div>
+            <Card className="border-l-4 border-primary">
+              <CardContent className="p-6">
+                <h4 className="mb-3">For Parents</h4>
+                <p className="text-muted-foreground">
+                  Monitor your child's progress through detailed reports showing strengths, weaknesses, 
+                  and specific areas that need attention. Set daily practice goals and track consistency.
+                </p>
               </CardContent>
             </Card>
-          </TabsContent>
+          </div>
+        );
 
-          <TabsContent value="bootcamp" className="space-y-8">
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <Target className="h-5 w-5" />
-                  Bootcamp Guide
-                </CardTitle>
-                <CardDescription>
-                  Complete 52-week interactive course for 11+ grammar school entrance exam preparation
-                </CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-6">
-                <div className="grid md:grid-cols-2 gap-6">
-                  {features.bootcamp.map((feature, index) => (
-                    <FeatureCard key={index} {...feature} />
-                  ))}
-                </div>
-
-                <Card className="bg-gradient-to-r from-emerald-50 to-emerald-100 border-emerald-200">
-                  <CardHeader>
-                    <CardTitle className="text-emerald-800">Learning Journey Structure</CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="grid md:grid-cols-4 gap-4">
-                      {learningStages.map((stage, index) => (
-                        <div key={index} className="text-center">
-                          <div className="w-12 h-12 bg-emerald-600 rounded-full flex items-center justify-center mx-auto mb-3">
-                            <stage.icon className="h-6 w-6 text-white" />
-                          </div>
-                          <h4 className="font-semibold text-sm text-emerald-800 mb-1">{stage.title}</h4>
-                          <p className="text-xs text-emerald-700">{stage.desc}</p>
-                        </div>
-                      ))}
-                    </div>
-                  </CardContent>
-                </Card>
-
-                <div className="grid md:grid-cols-2 gap-6">
-                  <Card className="border-emerald-200">
-                    <CardHeader>
-                      <CardTitle className="text-emerald-800 flex items-center gap-2">
-                        <Trophy className="h-5 w-5" />
-                        Weekly Quizzes
-                      </CardTitle>
-                    </CardHeader>
-                    <CardContent className="text-sm text-emerald-700">
-                      <p>Progressive testing that covers all topics learned so far. Each week builds on previous knowledge, ensuring comprehensive understanding.</p>
-                    </CardContent>
-                  </Card>
-
-                  <Card className="border-emerald-200">
-                    <CardHeader>
-                      <CardTitle className="text-emerald-800 flex items-center gap-2">
-                        <GraduationCap className="h-5 w-5" />
-                        Mock Tests
-                      </CardTitle>
-                    </CardHeader>
-                    <CardContent className="text-sm text-emerald-700">
-                      <p>Practice papers that closely simulate CEM and GL assessment formats, providing realistic exam experience and preparation.</p>
-                    </CardContent>
-                  </Card>
-                </div>
-
-                <div className="border-l-4 border-emerald-500 pl-4">
-                  <h4 className="font-semibold text-emerald-800">11+ Exam Focus</h4>
-                  <p className="text-sm text-emerald-700 mt-1">
-                    Specifically designed for students preparing for 11+ grammar school entrance exams. 
-                    Covers all mathematical concepts tested by major exam boards including CEM and GL Assessment.
-                  </p>
-                </div>
-              </CardContent>
-            </Card>
-          </TabsContent>
-
-          <TabsContent value="getting-started" className="space-y-8">
-            <div className="grid md:grid-cols-2 gap-8">
-              <Card>
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <Users className="h-5 w-5" />
-                    For Students
-                  </CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  <div className="space-y-3">
+      case 'bootcamp-mode':
+        return (
+          <div className="space-y-8">
+            <FeatureHighlight
+              title="Bootcamp Mode: Complete 11+ Mastery Course"
+              description="Complete 52-week interactive course for 11+ grammar school entrance exam preparation"
+              icon={<Target className="w-6 h-6" />}
+              badge="52-week course"
+              benefits={[
+                "Structured 52-week curriculum designed specifically for 11+ preparation",
+                "Interactive learning stages: concept introduction, guided practice, independent practice, assessment",
+                "Weekly quizzes that progressively cover all topics learned so far",
+                "Full mock papers that closely simulate CEM and GL assessment formats",
+                "Comprehensive analytics tracking weekly progress and mock test performance"
+              ]}
+              example={{
+                title: "Learning Journey Structure",
+                content: (
+                  <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                     {[
-                      'Create your account and set your age group',
-                      'Choose between Daily Mode or Bootcamp',
-                      'Start with a few practice questions',
-                      'Review your performance in the analytics section',
-                      'Use the visual math tools when needed',
-                      'Track your progress and celebrate achievements'
-                    ].map((step, index) => (
-                      <div key={index} className="flex items-start gap-3">
-                        <div className="w-6 h-6 bg-primary rounded-full flex items-center justify-center text-xs text-white font-bold">
-                          {index + 1}
+                      { icon: Lightbulb, title: 'Concept Introduction', desc: 'Learn new topics with clear explanations' },
+                      { icon: Users, title: 'Guided Practice', desc: 'Practice with step-by-step support' },
+                      { icon: PenTool, title: 'Independent Practice', desc: 'Apply knowledge on your own' },
+                      { icon: CheckCircle, title: 'Assessment', desc: 'Test understanding and track progress' }
+                    ].map((stage, index) => (
+                      <div key={index} className="text-center">
+                        <div className="w-12 h-12 bg-primary rounded-full flex items-center justify-center mx-auto mb-3">
+                          <stage.icon className="h-6 w-6 text-primary-foreground" />
                         </div>
-                        <span className="text-sm">{step}</span>
+                        <h4 className="font-semibold text-sm mb-1">{stage.title}</h4>
+                        <p className="text-xs text-muted-foreground">{stage.desc}</p>
                       </div>
                     ))}
                   </div>
-                  <Button onClick={() => navigate('/dashboard')} className="w-full">
-                    Start Learning <Play className="h-4 w-4 ml-2" />
-                  </Button>
+                )
+              }}
+            />
+
+            <div className="grid md:grid-cols-2 gap-6">
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <Trophy className="h-5 w-5" />
+                    Weekly Quizzes
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="text-sm text-muted-foreground">
+                  <p>Progressive testing that covers all topics learned so far. Each week builds on previous knowledge, ensuring comprehensive understanding.</p>
                 </CardContent>
               </Card>
 
               <Card>
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
-                    <Shield className="h-5 w-5" />
-                    For Parents
+                    <GraduationCap className="h-5 w-5" />
+                    Mock Tests
                   </CardTitle>
                 </CardHeader>
-                <CardContent className="space-y-4">
-                  <div className="space-y-3">
-                    {[
-                      'Set up your child\'s account with appropriate age group',
-                      'Explore the analytics dashboard to understand reports',
-                      'Review misconception tracking to identify weak areas',
-                      'Set daily practice goals and routines',
-                      'Monitor weekly progress and celebrate improvements',
-                      'Use insights to support learning at home'
-                    ].map((step, index) => (
-                      <div key={index} className="flex items-start gap-3">
-                        <div className="w-6 h-6 bg-primary rounded-full flex items-center justify-center text-xs text-white font-bold">
-                          {index + 1}
-                        </div>
-                        <span className="text-sm">{step}</span>
-                      </div>
-                    ))}
-                  </div>
-                  <Button onClick={() => navigate('/analytics')} variant="outline" className="w-full">
-                    View Analytics <BarChart3 className="h-4 w-4 ml-2" />
-                  </Button>
+                <CardContent className="text-sm text-muted-foreground">
+                  <p>Practice papers that closely simulate CEM and GL assessment formats, providing realistic exam experience and preparation.</p>
                 </CardContent>
               </Card>
             </div>
 
-            <Card className="bg-gradient-focus bg-opacity-10 border-primary">
+            <Card className="border-l-4 border-primary">
+              <CardContent className="p-6">
+                <h4 className="mb-3">11+ Exam Focus</h4>
+                <p className="text-muted-foreground">
+                  Specifically designed for students preparing for 11+ grammar school entrance exams. 
+                  Covers all mathematical concepts tested by major exam boards including CEM and GL Assessment.
+                </p>
+              </CardContent>
+            </Card>
+          </div>
+        );
+
+      case 'getting-started':
+        return (
+          <div className="space-y-8">
+            <div className="grid md:grid-cols-2 gap-8">
+              <StepGuide
+                title="For Students"
+                steps={[
+                  {
+                    number: 1,
+                    title: "Create your account and set your age group",
+                    description: "Sign up and tell us your current year level so we can provide age-appropriate questions",
+                    tips: ["Choose your correct school year for best results", "You can change this later in settings"]
+                  },
+                  {
+                    number: 2,
+                    title: "Choose between Daily Mode or Bootcamp",
+                    description: "Select the learning approach that best fits your goals and schedule",
+                    tips: ["Daily Mode for flexible practice", "Bootcamp for structured 11+ preparation"]
+                  },
+                  {
+                    number: 3,
+                    title: "Start with a few practice questions",
+                    description: "Take the initial assessment to help us understand your current level",
+                    tips: ["Answer honestly for best results", "Don't worry about getting everything right"]
+                  },
+                  {
+                    number: 4,
+                    title: "Review your performance in the analytics section",
+                    description: "Check your progress and see which topics you're strongest and weakest in",
+                    tips: ["Look for patterns in your mistakes", "Focus on understanding, not just scores"]
+                  }
+                ]}
+              />
+
+              <StepGuide
+                title="For Parents"
+                steps={[
+                  {
+                    number: 1,
+                    title: "Set up your child's account with appropriate age group",
+                    description: "Help your child create their account and ensure the correct year level is selected",
+                    tips: ["Supervise the initial setup", "Verify the age group matches their school year"]
+                  },
+                  {
+                    number: 2,
+                    title: "Explore the analytics dashboard",
+                    description: "Understand how to read the reports and what they tell you about your child's progress",
+                    tips: ["Focus on misconception patterns", "Look for trends over time, not just daily scores"]
+                  },
+                  {
+                    number: 3,
+                    title: "Review misconception tracking",
+                    description: "Learn how to identify weak areas and support your child's learning at home",
+                    tips: ["Discuss mistakes without judgment", "Use insights to guide additional practice"]
+                  },
+                  {
+                    number: 4,
+                    title: "Set daily practice goals and routines",
+                    description: "Establish consistent practice habits and celebrate progress",
+                    tips: ["Start with achievable goals", "Consistency is more important than duration"]
+                  }
+                ]}
+              />
+            </div>
+
+            <Card className="bg-muted/30">
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <HelpCircle className="h-5 w-5" />
@@ -417,8 +620,51 @@ const Tutorial = () => {
                 </div>
               </CardContent>
             </Card>
-          </TabsContent>
-        </Tabs>
+          </div>
+        );
+
+      default:
+        return null;
+    }
+  };
+
+  return (
+    <div className="min-h-screen bg-background">
+      <div className="container mx-auto px-4 py-8">
+        {/* Header */}
+        <div className="text-center mb-12">
+          <h1 className="text-4xl mb-4">
+            How to Use Kudos Academy
+          </h1>
+          <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
+            Master mathematics with our two powerful learning modes designed for different goals and learning styles
+          </p>
+        </div>
+
+        {/* Navigation */}
+        <div className="flex flex-wrap gap-2 justify-center mb-8">
+          {[
+            { id: 'overview', label: 'Overview', icon: Eye },
+            { id: 'daily-mode', label: 'Daily Mode', icon: Calendar },
+            { id: 'bootcamp-mode', label: 'Bootcamp', icon: Target },
+            { id: 'getting-started', label: 'Getting Started', icon: Play }
+          ].map(({ id, label, icon: Icon }) => (
+            <Button
+              key={id}
+              variant={activeSection === id ? "default" : "outline"}
+              onClick={() => setActiveSection(id)}
+              className="flex items-center gap-2"
+            >
+              <Icon className="h-4 w-4" />
+              {label}
+            </Button>
+          ))}
+        </div>
+
+        {/* Content */}
+        <div className="max-w-6xl mx-auto">
+          {renderContent()}
+        </div>
       </div>
     </div>
   );
