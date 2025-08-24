@@ -198,9 +198,7 @@ const Tutorial = () => {
                 <h1 className="text-5xl max-w-none mx-auto leading-tight">
                   The 11+ Prep Platform That Actually Understands How Your Child Learns
                 </h1>
-                <p className="text-xl opacity-90">
-                  Stop guessing what your child needs to work on. Our AI identifies exactly where they're struggling and why.
-                </p>
+                <p className="text-xl opacity-90">Stop guessing what your child needs to work on: Traditional 11+ practice just gives you an overall  test score. We tell you exactly what your child got wrong and why they got it wrong.</p>
                 
                 
               </div>
@@ -209,9 +207,7 @@ const Tutorial = () => {
             {/* What Makes Us Different */}
             <div className="text-center space-y-8 mb-16">
               <h2 className="text-5xl font-bold my-[10px]">Finally, 11+ Prep That Makes Sense</h2>
-              <p className="text-xl text-muted-foreground max-w-6xl mx-auto leading-relaxed">
-                Traditional 11+ practice gives you a score. We tell you exactly what your child got wrong and why they got it wrong.
-              </p>
+              <p className="text-xl text-muted-foreground max-w-6xl mx-auto leading-relaxed">Targeted practice that actually fixes the problem, not just more of the same questions.</p>
             </div>
             
             <section className="bg-gradient-to-br from-muted/30 to-muted/10 rounded-3xl -mx-4 md:mx-0 py-[30px]">
