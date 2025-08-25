@@ -206,42 +206,6 @@ const Tutorial: React.FC = () => {
               </div>
             </div>
 
-        {/* Navigation */}
-        <div className="flex flex-wrap gap-2 justify-center mb-8">
-          {[{
-            id: 'overview',
-            label: 'Overview',
-            icon: <Eye className="w-4 h-4" />
-          }, {
-            id: 'daily-mode',
-            label: 'Daily Mode',
-            icon: <Calendar className="w-4 h-4" />
-          }, {
-            id: 'bootcamp-mode',
-            label: 'Bootcamp Mode',
-            icon: <GraduationCap className="w-4 h-4" />
-          }, {
-            id: 'best-practices',
-            label: 'Best Practices',
-            icon: <Star className="w-4 h-4" />
-          }, {
-            id: 'troubleshooting',
-            label: 'Troubleshooting',
-            icon: <Settings className="w-4 h-4" />
-          }, {
-            id: 'support',
-            label: 'Support',
-            icon: <HelpCircle className="w-4 h-4" />
-          }].map(({
-            id,
-            label,
-            icon
-          }) => <Button key={id} variant={activeSection === id ? "default" : "outline"} onClick={() => setActiveSection(id)} className="flex items-center gap-2">
-              {icon}
-              {label}
-            </Button>)}
-        </div>
-
             {/* What Makes Us Different */}
             <div className="text-center space-y-8 mb-16">
               <h2 className="text-5xl font-bold my-[10px]">Finally, 11+ Prep That Makes Sense</h2>
@@ -897,6 +861,33 @@ We don't just mark answers. We identify the specific types of mistakes your chil
       <div className="container mx-auto px-4 py-8">
         {/* Header */}
         
+        {/* Navigation */}
+        <div className="flex flex-wrap gap-2 justify-center mb-8">
+          {[{
+            id: 'overview',
+            label: 'Overview',
+            icon: <Eye className="w-4 h-4" />
+          }, {
+            id: 'daily-mode',
+            label: 'Daily Mode',
+            icon: <Calendar className="w-4 h-4" />
+          }, {
+            id: 'bootcamp-mode',
+            label: 'Bootcamp',
+            icon: <Target className="w-4 h-4" />
+          }, {
+            id: 'getting-started',
+            label: 'Getting Started',
+            icon: <Play className="w-4 h-4" />
+          }].map(({
+            id,
+            label,
+            icon
+          }) => <Button key={id} variant={activeSection === id ? "default" : "outline"} onClick={() => setActiveSection(id)} className="flex items-center gap-2">
+              {icon}
+              {label}
+            </Button>)}
+        </div>
 
         {/* Content */}
         <div className="max-w-6xl mx-auto">
