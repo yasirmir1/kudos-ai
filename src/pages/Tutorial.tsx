@@ -862,6 +862,11 @@ We don't just mark answers. We identify the specific types of mistakes your chil
         {/* Header */}
         
 
+        {/* Content */}
+        <div className="max-w-6xl mx-auto">
+          {renderContent()}
+        </div>
+
         {/* Navigation */}
         <div className="flex flex-wrap gap-2 justify-center mb-8">
           {[{
@@ -888,11 +893,6 @@ We don't just mark answers. We identify the specific types of mistakes your chil
               <Icon className="h-4 w-4" />
               {label}
             </Button>)}
-        </div>
-
-        {/* Content */}
-        <div className="max-w-6xl mx-auto">
-          {renderContent()}
         </div>
       </div>
     </div>;
