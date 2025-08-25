@@ -209,16 +209,16 @@ const Tutorial: React.FC = () => {
             {/* What Makes Us Different */}
             <div className="text-center space-y-8 mb-16">
               <h2 className="text-5xl font-bold my-[10px]">Finally, 11+ Prep That Makes Sense</h2>
-              <p className="text-xl text-muted-foreground max-w-6xl mx-auto leading-relaxed">Traditional 11+ practice gives you results as a percentage.
-
-We give you insights.
+              <p className="text-xl text-muted-foreground max-w-6xl mx-auto leading-relaxed font-extralight my-[30px]">Traditional 11+ practice gives you results as a score. We give you insights. 
 
 
-We pinpoint exactly where your child went wrong and why, so you can see their thinking process clearly.
-We don't just mark answers. We identify the specific types of mistakes your child is making, helping you tackle misconceptions at their root before they become bigger problems.</p>
+We pinpoint exactly where your child went wrong and why.
+
+
+We don't just mark answers. We tackle misconceptions at the source.</p>
             </div>
             
-            <section className="bg-gradient-to-br from-muted/30 to-muted/10 rounded-3xl -mx-4 md:mx-0 py-[30px]">
+            <section className="bg-gradient-to-br from-muted/30 to-muted/10 -mx-4 md:mx-0 py-[30px] rounded-2xl">
               <div className="max-w-7xl mx-auto px-8">
                 <div className="space-y-16">
                   {/* Examples Grid */}
@@ -864,26 +864,26 @@ We don't just mark answers. We identify the specific types of mistakes your chil
         {/* Navigation */}
         <div className="flex flex-wrap gap-2 justify-center mb-8">
           {[{
-            id: 'overview',
-            label: 'Overview',
-            icon: <Eye className="w-4 h-4" />
-          }, {
-            id: 'daily-mode',
-            label: 'Daily Mode',
-            icon: <Calendar className="w-4 h-4" />
-          }, {
-            id: 'bootcamp-mode',
-            label: 'Bootcamp',
-            icon: <Target className="w-4 h-4" />
-          }, {
-            id: 'getting-started',
-            label: 'Getting Started',
-            icon: <Play className="w-4 h-4" />
-          }].map(({
-            id,
-            label,
-            icon
-          }) => <Button key={id} variant={activeSection === id ? "default" : "outline"} onClick={() => setActiveSection(id)} className="flex items-center gap-2">
+          id: 'overview',
+          label: 'Overview',
+          icon: <Eye className="w-4 h-4" />
+        }, {
+          id: 'daily-mode',
+          label: 'Daily Mode',
+          icon: <Calendar className="w-4 h-4" />
+        }, {
+          id: 'bootcamp-mode',
+          label: 'Bootcamp',
+          icon: <Target className="w-4 h-4" />
+        }, {
+          id: 'getting-started',
+          label: 'Getting Started',
+          icon: <Play className="w-4 h-4" />
+        }].map(({
+          id,
+          label,
+          icon
+        }) => <Button key={id} variant={activeSection === id ? "default" : "outline"} onClick={() => setActiveSection(id)} className="flex items-center gap-2">
               {icon}
               {label}
             </Button>)}
