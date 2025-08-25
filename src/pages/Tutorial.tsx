@@ -209,7 +209,7 @@ const Tutorial: React.FC = () => {
             {/* What Makes Us Different */}
             <div className="text-center space-y-8 mb-16">
               <h2 className="text-5xl font-bold my-[10px]">Finally, 11+ Prep That Makes Sense</h2>
-              <p className="text-xl text-muted-foreground max-w-6xl mx-auto leading-relaxed font-extralight my-[30px]">Traditional 11+ practice gives you results as a score. We give you insights.  
+              <p className="text-muted-foreground max-w-6xl mx-auto leading-relaxed my-[30px] text-2xl font-normal">Traditional 11+ practice gives you a score. We give you insights. 
 We pinpoint exactly where your child went wrong and why. 
 We don't just do the marking, we tackle misconceptions at the source.</p>
             </div>
@@ -291,7 +291,7 @@ We don't just do the marking, we tackle misconceptions at the source.</p>
                   </div>
 
                   {/* The Result Section */}
-                  <div className="max-w-5xl mx-auto">
+                  <div className="max-w-5xl mx-auto text-2xl">
                     <div className="text-center mb-12 space-y-4">
                       
                       
