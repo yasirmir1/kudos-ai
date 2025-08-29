@@ -4,6 +4,7 @@ import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import { KudosScoreCard } from './KudosScoreCard';
 import { PerformanceChart } from './PerformanceChart';
 import { MockTestPerformanceContainer } from './MockTestPerformanceContainer';
@@ -12,6 +13,7 @@ import { SkillDevelopmentCard } from './SkillDevelopmentCard';
 import { EnhancedProgressInsights } from './EnhancedProgressInsights';
 import { useAuth } from '../../hooks/useAuth';
 import { useBootcampData } from '../../hooks/useBootcampData';
+import { useKudosScore } from '../../hooks/useKudosScore';
 import { BootcampAPI } from '../../lib/bootcamp-api';
 import { supabase } from '@/integrations/supabase/client';
 interface ParentInsight {
@@ -48,6 +50,7 @@ export const ProgressView: React.FC = () => {
     progress,
     isLoading
   } = useBootcampData();
+  const { kudosData } = useKudosScore();
   const [insights, setInsights] = useState<ParentInsight[]>([]);
   const [topTopics, setTopTopics] = useState<TopicProgress[]>([]);
   const [strugglingTopics, setStrugglingTopics] = useState<TopicProgress[]>([]);
@@ -510,7 +513,55 @@ export const ProgressView: React.FC = () => {
         </div>
       </div>
 
-
+      {/* Score Trend Over Time */}
+      <Card className="p-6">
+        <h3 className="text-lg font-semibold mb-4">Score Trend Over Time</h3>
+        {kudosData?.trend && kudosData.trend.length > 1 ? (
+          <div className="h-48">
+            <ResponsiveContainer width="100%" height="100%">
+              <LineChart data={kudosData.trend.map((score, index) => ({
+                session: index + 1,
+                score: score,
+                date: new Date(Date.now() - (kudosData.trend.length - index - 1) * 24 * 60 * 60 * 1000).toLocaleDateString()
+              }))}>
+                <CartesianGrid strokeDasharray="3 3" className="stroke-muted" />
+                <XAxis 
+                  dataKey="session" 
+                  className="text-xs fill-muted-foreground"
+                  tick={{ fontSize: 10 }}
+                />
+                <YAxis 
+                  className="text-xs fill-muted-foreground"
+                  tick={{ fontSize: 10 }}
+                />
+                <Tooltip 
+                  contentStyle={{
+                    backgroundColor: 'hsl(var(--card))',
+                    border: '1px solid hsl(var(--border))',
+                    borderRadius: '6px',
+                    fontSize: '12px'
+                  }}
+                  formatter={(value) => [value, 'Kudos Score']}
+                  labelFormatter={(label) => `Session ${label}`}
+                />
+                <Line 
+                  type="monotone" 
+                  dataKey="score" 
+                  stroke="hsl(var(--primary))" 
+                  strokeWidth={2}
+                  dot={{ fill: 'hsl(var(--primary))', strokeWidth: 0, r: 4 }}
+                  activeDot={{ r: 6, stroke: 'hsl(var(--primary))', strokeWidth: 2 }}
+                />
+              </LineChart>
+            </ResponsiveContainer>
+          </div>
+        ) : (
+          <div className="text-center py-8 text-muted-foreground">
+            <TrendingUp className="h-8 w-8 mx-auto mb-2 opacity-50" />
+            <p className="text-sm">Complete more sessions to see your progress trend!</p>
+          </div>
+        )}
+      </Card>
 
       {/* Topics to Work On - Full Width */}
       <div className="bg-card rounded-xl shadow-sm border p-6">
