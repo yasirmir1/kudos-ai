@@ -8,12 +8,23 @@ import {
   Target,
   BookOpen,
   Trophy,
-  Heart
+  Heart,
+  BarChart3,
+  Eye,
+  Loader2,
+  Award,
+  Zap
 } from 'lucide-react';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { KudosScoreCard } from './KudosScoreCard';
+import { PerformanceChart } from './PerformanceChart';
+import { MockTestPerformanceContainer } from './MockTestPerformanceContainer';
+import { WeeklyTestPerformanceContainer } from './WeeklyTestPerformanceContainer';
+import { SkillDevelopmentCard } from './SkillDevelopmentCard';
+import { EnhancedProgressInsights } from './EnhancedProgressInsights';
 import { useAuth } from '../../hooks/useAuth';
 import { useBootcampData } from '../../hooks/useBootcampData';
 import { BootcampAPI } from '../../lib/bootcamp-api';
@@ -34,9 +45,22 @@ interface TopicProgress {
   trend: 'improving' | 'stable' | 'declining';
 }
 
+interface Skill {
+  name: string;
+  level: number;
+  trend: 'up' | 'down' | 'stable';
+}
+
+interface Achievement {
+  name: string;
+  description: string;
+  icon: React.ComponentType<any>;
+  date: string;
+}
+
 export const ProgressView: React.FC = () => {
   const { user } = useAuth();
-  const { student, stats, isLoading } = useBootcampData();
+  const { student, stats, progress, isLoading } = useBootcampData();
   const [insights, setInsights] = useState<ParentInsight[]>([]);
   const [topTopics, setTopTopics] = useState<TopicProgress[]>([]);
   const [strugglingTopics, setStrugglingTopics] = useState<TopicProgress[]>([]);
@@ -45,10 +69,16 @@ export const ProgressView: React.FC = () => {
     accuracyThisWeek: 0,
     timeSpentMinutes: 0 
   });
+  
+  // Detailed view data
+  const [skillsData, setSkillsData] = useState<Skill[]>([]);
+  const [skillDevelopmentData, setSkillDevelopmentData] = useState<{ skill: string; accuracy: number }[]>([]);
+  const [recentAchievements, setRecentAchievements] = useState<Achievement[]>([]);
 
   useEffect(() => {
     if (user && student && stats) {
       loadParentDashboardData();
+      loadDetailedProgressData();
     }
   }, [user, student, stats]);
 
@@ -149,6 +179,130 @@ export const ProgressView: React.FC = () => {
     }
   };
 
+  const loadDetailedProgressData = async () => {
+    if (!user) return;
+    
+    try {
+      const studentProfile = await BootcampAPI.getStudentProfile(user.id);
+      if (studentProfile) {
+        const [progress, summary, topics] = await Promise.all([
+          BootcampAPI.getStudentProgress(studentProfile.student_id),
+          BootcampAPI.getStudentPerformanceSummary(studentProfile.student_id),
+          supabase.from('bootcamp_topics').select('id, name').order('topic_order')
+        ]);
+
+        // Create topic name mapping
+        const topicNameMap = new Map();
+        if (topics.data) {
+          topics.data.forEach((topic: any) => {
+            topicNameMap.set(topic.id, topic.name);
+          });
+        }
+
+        // Get topic performance data from both sources
+        const [responseCounts, mockTestCounts] = await Promise.all([
+          // Regular practice responses
+          supabase
+            .from('bootcamp_student_responses')
+            .select(`
+              is_correct,
+              bootcamp_questions!inner(topic_id)
+            `)
+            .eq('student_id', studentProfile.student_id),
+          
+          // Mock test answers  
+          supabase
+            .from('bootcamp_mock_test_answers')
+            .select(`
+              is_correct,
+              bootcamp_mock_test_sessions!inner(student_id),
+              mock_test_questions!inner(topic)
+            `)
+            .eq('bootcamp_mock_test_sessions.student_id', studentProfile.student_id)
+        ]);
+
+        // Calculate topic performance from both sources
+        const topicStats = new Map<string, { correct: number; total: number }>();
+
+        // Process regular responses
+        responseCounts.data?.forEach((response: any) => {
+          const topicId = response.bootcamp_questions.topic_id;
+          const current = topicStats.get(topicId) || { correct: 0, total: 0 };
+          current.total++;
+          if (response.is_correct) current.correct++;
+          topicStats.set(topicId, current);
+        });
+
+        // Process mock test answers
+        mockTestCounts.data?.forEach((answer: any) => {
+          const topicName = answer.mock_test_questions.topic;
+          // Find topic ID by name
+          const topicId = Array.from(topicNameMap.entries())
+            .find(([_, name]) => name.toLowerCase().includes(topicName.toLowerCase()))?.[0];
+          
+          if (topicId) {
+            const current = topicStats.get(topicId) || { correct: 0, total: 0 };
+            current.total++;
+            if (answer.is_correct) current.correct++;
+            topicStats.set(topicId, current);
+          }
+        });
+
+        // Convert to skill development data
+        const skillsDataForCard = Array.from(topicStats.entries())
+          .map(([topicId, stats]) => ({
+            skill: topicNameMap.get(topicId) || topicId,
+            accuracy: stats.total > 0 ? Math.round((stats.correct / stats.total) * 100) : 0
+          }))
+          .filter(skill => skill.skill) // Only include named topics
+          .sort((a, b) => b.accuracy - a.accuracy); // Sort by accuracy descending
+
+        setSkillDevelopmentData(skillsDataForCard);
+
+        // Map progress to skills data with proper topic names
+        const skills: Skill[] = progress.map((p: any) => ({
+          name: topicNameMap.get(p.topic_id) || p.topic_id,
+          level: Math.round(p.accuracy_percentage || 0),
+          trend: (p.accuracy_percentage >= 80 ? 'up' : 
+                 p.accuracy_percentage >= 60 ? 'stable' : 'down') as 'up' | 'down' | 'stable'
+        })).slice(0, 5);
+
+        setSkillsData(skills);
+
+        // Generate achievements based on performance
+        const achievements: Achievement[] = [];
+        if (stats.accuracy >= 95) {
+          achievements.push({ 
+            name: 'Accuracy Master', 
+            description: 'Achieve 95% overall accuracy', 
+            icon: Target, 
+            date: 'Recently' 
+          });
+        }
+        if (stats.totalQuestions >= 100) {
+          achievements.push({ 
+            name: 'Question Master', 
+            description: 'Complete 100+ practice questions', 
+            icon: Zap, 
+            date: 'Recently' 
+          });
+        }
+        if (stats.streakDays >= 7) {
+          achievements.push({ 
+            name: 'Week Warrior', 
+            description: '7+ days of active practice', 
+            icon: Award, 
+            date: 'Recently' 
+          });
+        }
+
+        setRecentAchievements(achievements);
+      }
+    } catch (error) {
+      console.error('Error loading detailed progress data:', error);
+    }
+  };
+
   const generateParentInsights = (
     stats: any, 
     topicData: TopicProgress[], 
@@ -228,15 +382,15 @@ export const ProgressView: React.FC = () => {
     return (
       <div className="flex items-center justify-center min-h-[400px]">
         <div className="text-center space-y-4">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto"></div>
+          <Loader2 className="h-8 w-8 animate-spin mx-auto text-primary" />
           <p className="text-muted-foreground">Loading progress...</p>
         </div>
       </div>
     );
   }
 
-  return (
-    <div className="space-y-6 max-w-6xl mx-auto">
+  const renderSimpleView = () => (
+    <div className="space-y-6">
       {/* Header */}
       <div className="text-center space-y-2">
         <h1 className="text-3xl font-bold text-foreground">Learning Progress</h1>
@@ -388,6 +542,146 @@ export const ProgressView: React.FC = () => {
           </Button>
         </div>
       </Card>
+    </div>
+  );
+
+  const renderDetailedView = () => (
+    <div className="space-y-6">
+      <div className="bg-card rounded-xl shadow-sm border p-6">
+        <h1 className="text-2xl font-bold text-foreground mb-2">Detailed Progress Analytics</h1>
+        <p className="text-muted-foreground">Comprehensive view of learning performance</p>
+      </div>
+
+      {/* Kudos Score */}
+      <KudosScoreCard />
+
+      {/* Key Stats */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div className="bg-card rounded-xl shadow-sm border p-6 text-center">
+          <h3 className="text-lg font-semibold text-foreground mb-2">Questions Attempted</h3>
+          <p className="text-3xl font-bold text-primary">
+            {stats.totalQuestions}
+          </p>
+          <p className="text-sm text-muted-foreground">total questions</p>
+        </div>
+        
+        <div className="bg-card rounded-xl shadow-sm border p-6 text-center">
+          <h3 className="text-lg font-semibold text-foreground mb-2">Overall Accuracy</h3>
+          <p className="text-3xl font-bold text-success">
+            {stats.accuracy}%
+          </p>
+          <p className="text-sm text-muted-foreground">correct answers</p>
+        </div>
+        
+        <div className="bg-card rounded-xl shadow-sm border p-6 text-center">
+          <h3 className="text-lg font-semibold text-foreground mb-2">Active Days</h3>
+          <p className="text-3xl font-bold text-warning">
+            {stats.streakDays}
+          </p>
+          <p className="text-sm text-muted-foreground">days practicing</p>
+        </div>
+      </div>
+
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div className="bg-card rounded-xl shadow-sm border p-6">
+          <h2 className="text-lg font-semibold text-foreground mb-4">Skill Development</h2>
+          <div className="space-y-4">
+            {skillsData.length > 0 ? skillsData.map((skill, index) => (
+              <div key={index}>
+                <div className="flex items-center justify-between mb-2">
+                  <span className="text-sm font-medium text-foreground">{skill.name}</span>
+                  <div className="flex items-center space-x-2">
+                    <span className="text-sm text-muted-foreground">{skill.level}%</span>
+                    {skill.trend === 'up' && <TrendingUp className="h-3 w-3 text-success" />}
+                    {skill.trend === 'down' && <TrendingUp className="h-3 w-3 text-destructive rotate-180" />}
+                  </div>
+                </div>
+                <div className="w-full bg-muted rounded-full h-2">
+                  <div 
+                    className="bg-gradient-to-r from-primary to-primary/80 h-2 rounded-full transition-all duration-300"
+                    style={{ width: `${skill.level}%` }}
+                  />
+                </div>
+              </div>
+            )) : (
+              <p className="text-muted-foreground text-center py-4">
+                Start practicing to see your skill development!
+              </p>
+            )}
+          </div>
+        </div>
+
+        <div className="bg-card rounded-xl shadow-sm border p-6">
+          <h2 className="text-lg font-semibold text-foreground mb-4">Recent Achievements</h2>
+          <div className="space-y-3">
+            {recentAchievements.length > 0 ? recentAchievements.map((achievement, index) => (
+              <div key={index} className="flex items-start space-x-3 p-3 rounded-lg hover:bg-muted/50">
+                <div className="p-2 bg-primary/10 rounded-lg">
+                  <achievement.icon className="h-4 w-4 text-primary" />
+                </div>
+                <div className="flex-1">
+                  <p className="font-medium text-foreground">{achievement.name}</p>
+                  <p className="text-sm text-muted-foreground">{achievement.description}</p>
+                  <p className="text-xs text-muted-foreground mt-1">{achievement.date}</p>
+                </div>
+              </div>
+            )) : (
+              <p className="text-muted-foreground text-center py-4">
+                Complete more practice sessions to unlock achievements!
+              </p>
+            )}
+          </div>
+        </div>
+      </div>
+
+      {/* Mock Test and Weekly Test Performance Containers */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <MockTestPerformanceContainer />
+        <WeeklyTestPerformanceContainer />
+      </div>
+
+      <div className="bg-card rounded-xl shadow-sm border p-6">
+        <h2 className="text-lg font-semibold text-foreground mb-6">Performance Overview</h2>
+        <PerformanceChart />
+      </div>
+
+      {/* Enhanced Analytics & Insights */}
+      <div className="space-y-6">
+        <div className="bg-card rounded-xl shadow-sm border p-6">
+          <h2 className="text-lg font-semibold text-foreground mb-6">Advanced Analytics</h2>
+          <EnhancedProgressInsights />
+        </div>
+      </div>
+
+      {/* Skill Development */}
+      <div className="mb-6">
+        <SkillDevelopmentCard skills={skillDevelopmentData} />
+      </div>
+    </div>
+  );
+
+  return (
+    <div className="space-y-6 max-w-6xl mx-auto">
+      <Tabs defaultValue="simple" className="w-full">
+        <TabsList className="grid w-full grid-cols-2">
+          <TabsTrigger value="simple" className="flex items-center gap-2">
+            <Eye className="h-4 w-4" />
+            Simple View
+          </TabsTrigger>
+          <TabsTrigger value="detailed" className="flex items-center gap-2">
+            <BarChart3 className="h-4 w-4" />
+            Detailed Analytics
+          </TabsTrigger>
+        </TabsList>
+        
+        <TabsContent value="simple" className="mt-6">
+          {renderSimpleView()}
+        </TabsContent>
+        
+        <TabsContent value="detailed" className="mt-6">
+          {renderDetailedView()}
+        </TabsContent>
+      </Tabs>
     </div>
   );
 };
