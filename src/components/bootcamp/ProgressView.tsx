@@ -510,45 +510,44 @@ export const ProgressView: React.FC = () => {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-
-        <div className="bg-card rounded-xl shadow-sm border p-6">
-          <h2 className="text-lg font-semibold text-foreground mb-4 flex items-center gap-2">
-            <BookOpen className="h-5 w-5 text-primary" />
-            Topics to Work On
-          </h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-            {skillDevelopmentData.length > 0 ? skillDevelopmentData.slice(0, 10).map((skill, index) => (
-              <div key={index} className="flex items-center justify-between p-3 bg-muted/30 rounded-lg">
-                <div className="flex-1">
-                  <div className="font-medium text-foreground">{skill.skill}</div>
-                  <div className="w-full bg-muted rounded-full h-2 mt-2">
-                    <div 
-                      className={`h-2 rounded-full transition-all ${
-                        skill.accuracy >= 80 ? 'bg-success' : 
-                        skill.accuracy >= 60 ? 'bg-warning' : 'bg-destructive'
-                      }`}
-                      style={{ width: `${skill.accuracy}%` }}
-                    />
-                  </div>
-                </div>
-                <div className="text-right ml-4">
-                  <div className={`text-lg font-bold ${
-                    skill.accuracy >= 80 ? 'text-success' : 
-                    skill.accuracy >= 60 ? 'text-warning' : 'text-destructive'
-                  }`}>
-                    {skill.accuracy}%
-                  </div>
+      {/* Topics to Work On - Full Width */}
+      <div className="bg-card rounded-xl shadow-sm border p-6">
+        <h2 className="text-lg font-semibold text-foreground mb-4 flex items-center gap-2">
+          <BookOpen className="h-5 w-5 text-primary" />
+          Topics to Work On
+        </h2>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+          {skillDevelopmentData.length > 0 ? skillDevelopmentData.slice(0, 12).map((skill, index) => (
+            <div key={index} className="flex items-center justify-between p-3 bg-muted/30 rounded-lg">
+              <div className="flex-1">
+                <div className="font-medium text-foreground">{skill.skill}</div>
+                <div className="w-full bg-muted rounded-full h-2 mt-2">
+                  <div 
+                    className={`h-2 rounded-full transition-all ${
+                      skill.accuracy >= 80 ? 'bg-success' : 
+                      skill.accuracy >= 60 ? 'bg-warning' : 'bg-destructive'
+                    }`}
+                    style={{ width: `${skill.accuracy}%` }}
+                  />
                 </div>
               </div>
-            )) : (
-              <p className="text-muted-foreground text-center py-4 col-span-2">
-                Complete more practice sessions to see topic progress!
-              </p>
-            )}
-          </div>
+              <div className="text-right ml-4">
+                <div className={`text-lg font-bold ${
+                  skill.accuracy >= 80 ? 'text-success' : 
+                  skill.accuracy >= 60 ? 'text-warning' : 'text-destructive'
+                }`}>
+                  {skill.accuracy}%
+                </div>
+              </div>
+            </div>
+          )) : (
+            <p className="text-muted-foreground text-center py-4 col-span-full">
+              Complete more practice sessions to see topic progress!
+            </p>
+          )}
         </div>
       </div>
+
 
       {/* Common Misconceptions Card */}
       <div className="bg-card rounded-xl shadow-sm border p-6">
