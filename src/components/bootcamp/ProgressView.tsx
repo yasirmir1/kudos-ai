@@ -510,8 +510,6 @@ export const ProgressView: React.FC = () => {
         </div>
       </div>
 
-      {/* Kudos Score */}
-      <KudosScoreCard />
 
 
       {/* Topics to Work On - Full Width */}
