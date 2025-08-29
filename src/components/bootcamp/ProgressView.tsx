@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { Star, TrendingUp, AlertTriangle, CheckCircle, Clock, Target, BookOpen, Trophy, Heart, BarChart3, Eye, Loader2, Award, Zap } from 'lucide-react';
+import { Star, TrendingUp, AlertTriangle, CheckCircle, Clock, Target, BookOpen, Trophy, Heart, BarChart3, Loader2, Award, Zap } from 'lucide-react';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import { KudosScoreCard } from './KudosScoreCard';
 import { PerformanceChart } from './PerformanceChart';
@@ -354,132 +354,6 @@ export const ProgressView: React.FC = () => {
         </div>
       </div>;
   }
-  const renderSimpleView = () => <div className="space-y-6">
-      {/* Header */}
-      <div className="text-center space-y-2">
-        <h1 className="text-3xl font-bold text-foreground">Learning Progress</h1>
-        <p className="text-muted-foreground">
-          A simple view of your child's math journey
-        </p>
-      </div>
-
-      {/* Kudos Score - Featured prominently */}
-      <KudosScoreCard />
-
-      {/* Key Metrics */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <Card className="p-4 text-center">
-          <BookOpen className="h-6 w-6 mx-auto mb-2 text-primary" />
-          <div className="text-2xl font-bold text-foreground">{stats.totalQuestions}</div>
-          <div className="text-sm text-muted-foreground">Questions Completed</div>
-        </Card>
-        
-        <Card className="p-4 text-center">
-          <Target className="h-6 w-6 mx-auto mb-2 text-success" />
-          <div className="text-2xl font-bold text-foreground">{stats.accuracy}%</div>
-          <div className="text-sm text-muted-foreground">Overall Accuracy</div>
-        </Card>
-        
-        <Card className="p-4 text-center">
-          <Heart className="h-6 w-6 mx-auto mb-2 text-warning" />
-          <div className="text-2xl font-bold text-foreground">{weeklyActivity.questionsThisWeek}</div>
-          <div className="text-sm text-muted-foreground">This Week</div>
-        </Card>
-        
-        <Card className="p-4 text-center">
-          <Clock className="h-6 w-6 mx-auto mb-2 text-primary" />
-          <div className="text-2xl font-bold text-foreground">{weeklyActivity.timeSpentMinutes}m</div>
-          <div className="text-sm text-muted-foreground">Time Practiced</div>
-        </Card>
-      </div>
-
-      {/* Parent Insights */}
-      <Card className="p-6">
-        <h2 className="text-xl font-semibold mb-4 flex items-center gap-2">
-          <Star className="h-5 w-5 text-primary" />
-          Key Insights
-        </h2>
-        <div className="space-y-4">
-          {insights.length > 0 ? insights.map((insight, index) => <div key={index} className={`p-4 rounded-lg border-l-4 ${insight.type === 'strength' ? 'border-success bg-success/5' : insight.type === 'concern' ? 'border-destructive bg-destructive/5' : 'border-primary bg-primary/5'}`}>
-              <div className="flex items-start gap-3">
-                <insight.icon className={`h-5 w-5 mt-0.5 ${insight.type === 'strength' ? 'text-success' : insight.type === 'concern' ? 'text-destructive' : 'text-primary'}`} />
-                <div className="flex-1">
-                  <h3 className="font-medium text-foreground">{insight.title}</h3>
-                  <p className="text-sm text-muted-foreground mt-1">{insight.description}</p>
-                  {insight.action && <p className="text-sm font-medium mt-2 text-foreground">
-                      💡 {insight.action}
-                    </p>}
-                </div>
-              </div>
-            </div>) : <p className="text-center text-muted-foreground py-4">
-              Complete more practice sessions to see personalized insights!
-            </p>}
-        </div>
-      </Card>
-
-      {/* Topic Performance */}
-      <div className="grid md:grid-cols-2 gap-6">
-        {/* Strong Areas */}
-        <Card className="p-6">
-          <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
-            <CheckCircle className="h-5 w-5 text-success" />
-            Strong Areas
-          </h3>
-          <div className="space-y-3">
-            {topTopics.length > 0 ? topTopics.map((topic, index) => <div key={index} className="flex items-center justify-between p-3 bg-success/5 rounded-lg">
-                <div>
-                  <div className="font-medium text-foreground">{topic.name}</div>
-                  <div className="text-sm text-muted-foreground">{topic.attempts} questions</div>
-                </div>
-                <div className="text-right">
-                  <div className="text-lg font-bold text-success">{topic.accuracy}%</div>
-                  {topic.trend === 'improving' && <TrendingUp className="h-4 w-4 text-success ml-auto" />}
-                </div>
-              </div>) : <p className="text-center text-muted-foreground py-4">
-                Keep practicing to identify strong areas!
-              </p>}
-          </div>
-        </Card>
-
-        {/* Areas for Growth */}
-        <Card className="p-6">
-          <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
-            <Target className="h-5 w-5 text-primary" />
-            Growth Areas
-          </h3>
-          <div className="space-y-3">
-            {strugglingTopics.length > 0 ? strugglingTopics.map((topic, index) => <div key={index} className="flex items-center justify-between p-3 bg-warning/5 rounded-lg">
-                <div>
-                  <div className="font-medium text-foreground">{topic.name}</div>
-                  <div className="text-sm text-muted-foreground">{topic.attempts} questions</div>
-                </div>
-                <div className="text-right">
-                  <div className="text-lg font-bold text-warning">{topic.accuracy}%</div>
-                  <div className="text-xs text-muted-foreground">Needs practice</div>
-                </div>
-              </div>) : <p className="text-center text-muted-foreground py-4">
-                Great! No major weak areas identified.
-              </p>}
-          </div>
-        </Card>
-      </div>
-
-      {/* Action Buttons */}
-      <Card className="p-6 text-center">
-        <h3 className="text-lg font-semibold mb-4">Help Your Child Progress</h3>
-        <div className="flex flex-wrap justify-center gap-3">
-          <Button variant="default">
-            Start Practice Session
-          </Button>
-          <Button variant="outline">
-            Review Mistakes
-          </Button>
-          <Button variant="outline">
-            Set Daily Goal
-          </Button>
-        </div>
-      </Card>
-    </div>;
   const renderDetailedView = () => <div className="space-y-6">
       <div className="bg-card rounded-xl shadow-sm border p-6">
         <h1 className="text-2xl font-bold text-foreground mb-2">Detailed Progress Analytics</h1>
@@ -679,25 +553,6 @@ export const ProgressView: React.FC = () => {
 
     </div>;
   return <div className="space-y-6 max-w-6xl mx-auto">
-      <Tabs defaultValue="simple" className="w-full">
-        <TabsList className="grid w-full grid-cols-2">
-          <TabsTrigger value="simple" className="flex items-center gap-2">
-            <Eye className="h-4 w-4" />
-            Simple View
-          </TabsTrigger>
-          <TabsTrigger value="detailed" className="flex items-center gap-2">
-            <BarChart3 className="h-4 w-4" />
-            Detailed Analytics
-          </TabsTrigger>
-        </TabsList>
-        
-        <TabsContent value="simple" className="mt-6">
-          {renderSimpleView()}
-        </TabsContent>
-        
-        <TabsContent value="detailed" className="mt-6">
-          {renderDetailedView()}
-        </TabsContent>
-      </Tabs>
+      {renderDetailedView()}
     </div>;
 };
