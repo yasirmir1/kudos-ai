@@ -530,21 +530,73 @@ export const ProgressView: React.FC = () => {
         </div>
 
         <div className="bg-card rounded-xl shadow-sm border p-6">
-          <h2 className="text-lg font-semibold text-foreground mb-4">Recent Achievements</h2>
+          <h2 className="text-lg font-semibold text-foreground mb-4 flex items-center gap-2">
+            <BookOpen className="h-5 w-5 text-primary" />
+            Topics to Work On
+          </h2>
           <div className="space-y-3">
-            {recentAchievements.length > 0 ? recentAchievements.map((achievement, index) => <div key={index} className="flex items-start space-x-3 p-3 rounded-lg hover:bg-muted/50">
-                <div className="p-2 bg-primary/10 rounded-lg">
-                  <achievement.icon className="h-4 w-4 text-primary" />
-                </div>
+            {skillDevelopmentData.length > 0 ? skillDevelopmentData.slice(0, 5).map((skill, index) => (
+              <div key={index} className="flex items-center justify-between p-3 bg-muted/30 rounded-lg">
                 <div className="flex-1">
-                  <p className="font-medium text-foreground">{achievement.name}</p>
-                  <p className="text-sm text-muted-foreground">{achievement.description}</p>
-                  <p className="text-xs text-muted-foreground mt-1">{achievement.date}</p>
+                  <div className="font-medium text-foreground">{skill.skill}</div>
+                  <div className="w-full bg-muted rounded-full h-2 mt-2">
+                    <div 
+                      className={`h-2 rounded-full transition-all ${
+                        skill.accuracy >= 80 ? 'bg-success' : 
+                        skill.accuracy >= 60 ? 'bg-warning' : 'bg-destructive'
+                      }`}
+                      style={{ width: `${skill.accuracy}%` }}
+                    />
+                  </div>
                 </div>
-              </div>) : <p className="text-muted-foreground text-center py-4">
-                Complete more practice sessions to unlock achievements!
-              </p>}
+                <div className="text-right ml-4">
+                  <div className={`text-lg font-bold ${
+                    skill.accuracy >= 80 ? 'text-success' : 
+                    skill.accuracy >= 60 ? 'text-warning' : 'text-destructive'
+                  }`}>
+                    {skill.accuracy}%
+                  </div>
+                </div>
+              </div>
+            )) : (
+              <p className="text-muted-foreground text-center py-4">
+                Complete more practice sessions to see topic progress!
+              </p>
+            )}
           </div>
+        </div>
+      </div>
+
+      {/* Common Misconceptions Card */}
+      <div className="bg-card rounded-xl shadow-sm border p-6">
+        <h2 className="text-lg font-semibold text-foreground mb-4 flex items-center gap-2">
+          <AlertTriangle className="h-5 w-5 text-warning" />
+          Common Misconceptions
+        </h2>
+        <div className="space-y-3">
+          {strugglingTopics.length > 0 ? strugglingTopics.map((topic, index) => (
+            <div key={index} className="flex items-center justify-between p-3 bg-warning/5 rounded-lg border border-warning/20">
+              <div>
+                <div className="font-medium text-foreground">{topic.name}</div>
+                <div className="text-sm text-muted-foreground">
+                  {topic.attempts} attempts • {topic.accuracy}% accuracy
+                </div>
+                {topic.trend === 'declining' && (
+                  <div className="text-xs text-warning mt-1 flex items-center gap-1">
+                    <AlertTriangle className="h-3 w-3" />
+                    Performance declining
+                  </div>
+                )}
+              </div>
+              <Button variant="outline" size="sm">
+                Practice
+              </Button>
+            </div>
+          )) : (
+            <p className="text-muted-foreground text-center py-4">
+              No significant misconceptions detected. Great work!
+            </p>
+          )}
         </div>
       </div>
 
