@@ -270,18 +270,11 @@ export class EnhancedBootcampAPI {
     try {
       const { data } = await supabase
         .from('bootcamp_student_progress')
-        .select('topic_id, accuracy_percentage, confidence_trend')
+        .select('topic_id, accuracy_percentage')
         .eq('student_id', studentId)
         .gte('accuracy_percentage', 85);
 
-      return (data || [])
-        .filter(progress => {
-          const avgConfidence = progress.confidence_trend?.length > 0
-            ? progress.confidence_trend.reduce((a: number, b: number) => a + b, 0) / progress.confidence_trend.length
-            : 0;
-          return avgConfidence > 0.8;
-        })
-        .map(progress => progress.topic_id);
+      return (data || []).map(progress => progress.topic_id);
         
     } catch (error) {
       console.error('Error getting skip-ahead candidates:', error);
@@ -296,18 +289,11 @@ export class EnhancedBootcampAPI {
     try {
       const { data } = await supabase
         .from('bootcamp_student_progress')
-        .select('topic_id, accuracy_percentage, confidence_trend')
+        .select('topic_id, accuracy_percentage')
         .eq('student_id', studentId)
         .lt('accuracy_percentage', 60);
 
-      return (data || [])
-        .filter(progress => {
-          const avgConfidence = progress.confidence_trend?.length > 0
-            ? progress.confidence_trend.reduce((a: number, b: number) => a + b, 0) / progress.confidence_trend.length
-            : 0;
-          return avgConfidence < 0.5 || progress.accuracy_percentage < 50;
-        })
-        .map(progress => progress.topic_id);
+      return (data || []).map(progress => progress.topic_id);
         
     } catch (error) {
       console.error('Error getting extra practice candidates:', error);

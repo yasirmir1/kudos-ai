@@ -447,6 +447,8 @@ export type Database = {
           description: string
           exam_board: string | null
           id: number
+          intervention_data: Json | null
+          intervention_type: string | null
           misconception_id: string
           misconception_name: string
           related_topics: string[] | null
@@ -460,6 +462,8 @@ export type Database = {
           description: string
           exam_board?: string | null
           id?: number
+          intervention_data?: Json | null
+          intervention_type?: string | null
           misconception_id: string
           misconception_name: string
           related_topics?: string[] | null
@@ -473,6 +477,8 @@ export type Database = {
           description?: string
           exam_board?: string | null
           id?: number
+          intervention_data?: Json | null
+          intervention_type?: string | null
           misconception_id?: string
           misconception_name?: string
           related_topics?: string[] | null
@@ -849,8 +855,10 @@ export type Database = {
         Row: {
           accuracy_percentage: number | null
           average_speed_seconds: number | null
+          confidence_trend: number[] | null
           created_at: string | null
           last_activity: string | null
+          last_confidence_update: string | null
           mastery_score: number | null
           module_id: string | null
           progress_id: string
@@ -858,12 +866,15 @@ export type Database = {
           student_id: string | null
           topic_id: string | null
           updated_at: string | null
+          weak_misconceptions: string[] | null
         }
         Insert: {
           accuracy_percentage?: number | null
           average_speed_seconds?: number | null
+          confidence_trend?: number[] | null
           created_at?: string | null
           last_activity?: string | null
+          last_confidence_update?: string | null
           mastery_score?: number | null
           module_id?: string | null
           progress_id?: string
@@ -871,12 +882,15 @@ export type Database = {
           student_id?: string | null
           topic_id?: string | null
           updated_at?: string | null
+          weak_misconceptions?: string[] | null
         }
         Update: {
           accuracy_percentage?: number | null
           average_speed_seconds?: number | null
+          confidence_trend?: number[] | null
           created_at?: string | null
           last_activity?: string | null
+          last_confidence_update?: string | null
           mastery_score?: number | null
           module_id?: string | null
           progress_id?: string
@@ -884,6 +898,7 @@ export type Database = {
           student_id?: string | null
           topic_id?: string | null
           updated_at?: string | null
+          weak_misconceptions?: string[] | null
         }
         Relationships: [
           {
@@ -911,6 +926,7 @@ export type Database = {
           id: number
           is_correct: boolean
           misconception_detected: string | null
+          misconception_severity: string | null
           question_id: string
           required_hint: boolean | null
           responded_at: string | null
@@ -928,6 +944,7 @@ export type Database = {
           id?: number
           is_correct: boolean
           misconception_detected?: string | null
+          misconception_severity?: string | null
           question_id: string
           required_hint?: boolean | null
           responded_at?: string | null
@@ -945,6 +962,7 @@ export type Database = {
           id?: number
           is_correct?: boolean
           misconception_detected?: string | null
+          misconception_severity?: string | null
           question_id?: string
           required_hint?: boolean | null
           responded_at?: string | null

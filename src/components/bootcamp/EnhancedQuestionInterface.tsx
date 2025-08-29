@@ -110,16 +110,20 @@ export const EnhancedQuestionInterface: React.FC<EnhancedQuestionInterfaceProps>
         }
       }
 
-      // Get intervention data for this misconception
+      // Get intervention data for this misconception - simplified for now
       if (misconception) {
         const { data: intervention } = await supabase
           .from('bootcamp_misconceptions_catalog')
-          .select('intervention_type, intervention_data, remediation_strategy')
+          .select('remediation_strategy')
           .eq('misconception_id', misconception)
           .maybeSingle();
 
         if (intervention) {
-          setMisconceptionDetails(intervention);
+          setMisconceptionDetails({
+            intervention_type: 'explanation',
+            intervention_data: { steps: ['Review the concept', 'Practice similar problems'] },
+            remediation_strategy: intervention.remediation_strategy || 'Review and practice'
+          });
         }
       }
     }
@@ -167,30 +171,13 @@ export const EnhancedQuestionInterface: React.FC<EnhancedQuestionInterfaceProps>
     if (!student) return;
 
     try {
-      // Get current progress
-      const { data: currentProgress } = await supabase
-        .from('bootcamp_student_progress')
-        .select('confidence_trend, weak_misconceptions')
-        .eq('student_id', student.student_id)
-        .eq('topic_id', topicId)
-        .maybeSingle();
-
-      const existingTrend = currentProgress?.confidence_trend || [];
-      const newTrend = [...existingTrend, confidenceValue].slice(-10); // Keep last 10 values
-
-      const weakMisconceptions = currentProgress?.weak_misconceptions || [];
-      if (!correct && misconceptionDetails) {
-        weakMisconceptions.push(misconceptionDetails.intervention_type);
-      }
-
+      // For now, just update basic progress since confidence_trend columns may not exist yet
       await supabase
         .from('bootcamp_student_progress')
         .upsert({
           student_id: student.student_id,
           topic_id: topicId,
-          confidence_trend: newTrend,
-          weak_misconceptions: [...new Set(weakMisconceptions)].slice(-5), // Keep last 5 unique
-          last_confidence_update: new Date().toISOString()
+          last_activity: new Date().toISOString()
         }, {
           onConflict: 'student_id,topic_id'
         });
