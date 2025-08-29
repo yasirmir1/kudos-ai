@@ -365,7 +365,7 @@ export const ProgressView: React.FC = () => {
         <div className="bg-card rounded-xl shadow-sm border p-6 text-center">
           <h3 className="text-lg font-semibold text-foreground mb-2">Kudos Score</h3>
           <p className="text-3xl font-bold text-primary">
-            30
+            {kudosData?.current_score || 0}
           </p>
           <p className="text-sm text-muted-foreground">Difficulty & speed adjusted performance</p>
         </div>
