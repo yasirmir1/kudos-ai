@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { Brain, Target, Shield, Award, TrendingUp, AlertCircle, Loader2 } from 'lucide-react';
+import { Brain, Target, Shield, Award, TrendingUp, AlertCircle, Loader2, BarChart3 } from 'lucide-react';
 import { WeeklyProgressChart } from './WeeklyProgressChart';
 import { WeeklyTestPerformanceCard } from './WeeklyTestPerformanceCard';
 import { MockTestPerformanceCard } from './MockTestPerformanceCard';
 import { LearningJourneyCard } from './LearningJourneyCard';
 import { ReviewMistakesModal } from './ReviewMistakesModal';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
 import { useAuth } from '../../hooks/useAuth';
 import { BootcampAPI } from '../../lib/bootcamp-api';
 import { supabase } from '@/integrations/supabase/client';
@@ -294,6 +296,34 @@ export const Dashboard: React.FC<DashboardProps> = ({
 
 
       <WeeklyProgressChart />
+
+      {/* Quick Access to Advanced Analytics */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <BarChart3 className="h-5 w-5" />
+            Advanced Analytics Available
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-muted-foreground mb-2">
+                View detailed confidence trends, misconception analysis, and adaptive recommendations
+              </p>
+              <div className="flex gap-2">
+                <span className="text-xs bg-primary/10 text-primary px-2 py-1 rounded">Confidence Tracking</span>
+                <span className="text-xs bg-success/10 text-success px-2 py-1 rounded">Misconception Analysis</span>
+                <span className="text-xs bg-warning/10 text-warning px-2 py-1 rounded">AI Recommendations</span>
+              </div>
+            </div>
+            <Button onClick={() => setCurrentView('progress')} className="gap-2">
+              <TrendingUp className="h-4 w-4" />
+              View Analytics
+            </Button>
+          </div>
+        </CardContent>
+      </Card>
 
       {/* Review Mistakes Modal */}
       <ReviewMistakesModal 

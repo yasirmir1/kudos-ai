@@ -4,6 +4,7 @@ import { PerformanceChart } from './PerformanceChart';
 import { MockTestPerformanceContainer } from './MockTestPerformanceContainer';
 import { WeeklyTestPerformanceContainer } from './WeeklyTestPerformanceContainer';
 import { SkillDevelopmentCard } from './SkillDevelopmentCard';
+import { EnhancedProgressInsights } from './EnhancedProgressInsights';
 import { useAuth } from '../../hooks/useAuth';
 import { useBootcampData } from '../../hooks/useBootcampData';
 import { BootcampAPI } from '../../lib/bootcamp-api';
@@ -278,6 +279,14 @@ export const ProgressView: React.FC = () => {
       <div className="bg-card rounded-xl shadow-sm border p-6">
         <h2 className="text-lg font-semibold text-foreground mb-6">Performance Overview</h2>
         <PerformanceChart />
+      </div>
+
+      {/* Enhanced Analytics & Insights */}
+      <div className="space-y-6">
+        <div className="bg-card rounded-xl shadow-sm border p-6">
+          <h2 className="text-lg font-semibold text-foreground mb-6">Advanced Analytics</h2>
+          <EnhancedProgressInsights />
+        </div>
       </div>
 
       {/* Skill Development */}

@@ -4,6 +4,8 @@ import { QuestionProgress } from './QuestionProgress';
 import { FractionBar, NumberLine, GeometryShape } from './VisualMathTools';
 import PracticeReport from './PracticeReport';
 import { BootcampAPI, BootcampQuestion } from '../../lib/bootcamp-api';
+import { EnhancedQuestionInterface } from './EnhancedQuestionInterface';
+import { BootcampQuestion as EnhancedBootcampQuestion } from '@/hooks/useBootcampDatabase';
 import { useAuth } from '../../hooks/useAuth';
 import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
@@ -69,6 +71,7 @@ export const EnhancedPracticeSession: React.FC = () => {
   const [activeTab, setActiveTab] = useState<'question' | 'tools' | 'notes'>('question');
   const [notes, setNotes] = useState<string>('');
   const [topicNameMap, setTopicNameMap] = useState<Map<string, string>>(new Map());
+  const [useEnhancedInterface, setUseEnhancedInterface] = useState(true);
 
   useEffect(() => {
     if (user) {
@@ -455,8 +458,91 @@ export const EnhancedPracticeSession: React.FC = () => {
     );
   }
 
+  // Convert AdaptedQuestion to EnhancedBootcampQuestion format for EnhancedQuestionInterface
+  const enhancedQuestion: EnhancedBootcampQuestion = {
+    question_id: question.id,
+    module_id: 'practice',
+    topic_id: question.topic,
+    subtopic_id: 'general',
+    question_text: question.text,
+    question_type: 'multiple_choice',
+    question_category: 'arithmetic',
+    difficulty: question.difficulty as 'foundation' | 'intermediate' | 'advanced',
+    cognitive_level: 'application',
+    option_a: question.options?.[0]?.value || '',
+    option_b: question.options?.[1]?.value || '',
+    option_c: question.options?.[2]?.value || '',
+    option_d: question.options?.[3]?.value || '',
+    correct_answer: question.correct,
+    explanation: question.explanation || '',
+    visual_aid: question.visualData ? 'Visual aid available' : '',
+    prerequisite_skills: [],
+    exam_boards: [],
+    marks: 1,
+    time_seconds: question.timeAllowed
+  };
+
+  if (useEnhancedInterface) {
+    return (
+      <div className="max-w-6xl mx-auto space-y-6">
+        <div className="flex justify-between items-center mb-4">
+          <div className="flex items-center gap-4">
+            <h2 className="text-xl font-semibold">Enhanced Practice Session</h2>
+            <Badge variant="outline">AI-Powered Learning</Badge>
+          </div>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => setUseEnhancedInterface(false)}
+          >
+            Switch to Classic View
+          </Button>
+        </div>
+        
+        <EnhancedQuestionInterface
+          question={enhancedQuestion}
+          onAnswer={(response) => {
+            console.log('Enhanced response:', response);
+            if (response.isCorrect) {
+              setCorrectCount(prev => prev + 1);
+            }
+            setShowFeedback(true);
+            setTimeout(() => {
+              handleNext();
+            }, 3000); // Auto-advance after feedback
+          }}
+          questionNumber={currentQuestion + 1}
+          totalQuestions={questions.length}
+          showConfidenceRating={true}
+          showContextualHints={true}
+        />
+        
+        {showFeedback && (
+          <div className="text-center pt-4">
+            <Button onClick={handleNext} size="lg" className="gap-2">
+              Next Question <ArrowRight className="h-4 w-4" />
+            </Button>
+          </div>
+        )}
+      </div>
+    );
+  }
+
   return (
     <div className="max-w-6xl mx-auto space-y-6">
+      <div className="flex justify-between items-center mb-4">
+        <div className="flex items-center gap-4">
+          <h2 className="text-xl font-semibold">Classic Practice Session</h2>
+        </div>
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={() => setUseEnhancedInterface(true)}
+        >
+          Switch to Enhanced View
+        </Button>
+      </div>
+      
       <Card>
         <CardHeader>
           <div className="flex items-center justify-between">
