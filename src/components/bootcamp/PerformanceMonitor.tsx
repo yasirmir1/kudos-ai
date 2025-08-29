@@ -3,6 +3,7 @@ import { Activity, TrendingUp, Clock, Target } from 'lucide-react';
 import { Card } from '@/components/ui/card';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
+import { KudosScoreCard } from './KudosScoreCard';
 
 interface PerformanceData {
   accuracy_trend: number[];
@@ -110,49 +111,55 @@ export const PerformanceMonitor: React.FC = () => {
     : 0;
 
   return (
-    <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-      <Card className="p-4">
-        <div className="flex items-center space-x-2">
-          <Target className="h-5 w-5 text-primary" />
-          <div>
-            <p className="text-sm text-muted-foreground">Current Accuracy</p>
-            <p className="text-2xl font-bold">{Math.round(currentAccuracy)}%</p>
+    <div className="space-y-6">
+      {/* Kudos Score - Featured prominently */}
+      <KudosScoreCard />
+      
+      {/* Traditional Performance Metrics */}
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <Card className="p-4">
+          <div className="flex items-center space-x-2">
+            <Target className="h-5 w-5 text-primary" />
+            <div>
+              <p className="text-sm text-muted-foreground">Current Accuracy</p>
+              <p className="text-2xl font-bold">{Math.round(currentAccuracy)}%</p>
+            </div>
           </div>
-        </div>
-      </Card>
+        </Card>
 
-      <Card className="p-4">
-        <div className="flex items-center space-x-2">
-          <Clock className="h-5 w-5 text-blue-500" />
-          <div>
-            <p className="text-sm text-muted-foreground">Avg Response Time</p>
-            <p className="text-2xl font-bold">{avgResponseTime}s</p>
+        <Card className="p-4">
+          <div className="flex items-center space-x-2">
+            <Clock className="h-5 w-5 text-blue-500" />
+            <div>
+              <p className="text-sm text-muted-foreground">Avg Response Time</p>
+              <p className="text-2xl font-bold">{avgResponseTime}s</p>
+            </div>
           </div>
-        </div>
-      </Card>
+        </Card>
 
-      <Card className="p-4">
-        <div className="flex items-center space-x-2">
-          <TrendingUp className={`h-5 w-5 ${performanceData.improvement_rate >= 0 ? 'text-green-500' : 'text-red-500'}`} />
-          <div>
-            <p className="text-sm text-muted-foreground">Improvement</p>
-            <p className="text-2xl font-bold">
-              {performanceData.improvement_rate >= 0 ? '+' : ''}
-              {Math.round(performanceData.improvement_rate)}%
-            </p>
+        <Card className="p-4">
+          <div className="flex items-center space-x-2">
+            <TrendingUp className={`h-5 w-5 ${performanceData.improvement_rate >= 0 ? 'text-green-500' : 'text-red-500'}`} />
+            <div>
+              <p className="text-sm text-muted-foreground">Improvement</p>
+              <p className="text-2xl font-bold">
+                {performanceData.improvement_rate >= 0 ? '+' : ''}
+                {Math.round(performanceData.improvement_rate)}%
+              </p>
+            </div>
           </div>
-        </div>
-      </Card>
+        </Card>
 
-      <Card className="p-4">
-        <div className="flex items-center space-x-2">
-          <Activity className="h-5 w-5 text-orange-500" />
-          <div>
-            <p className="text-sm text-muted-foreground">Session Length</p>
-            <p className="text-2xl font-bold">{performanceData.session_length}m</p>
+        <Card className="p-4">
+          <div className="flex items-center space-x-2">
+            <Activity className="h-5 w-5 text-orange-500" />
+            <div>
+              <p className="text-sm text-muted-foreground">Session Length</p>
+              <p className="text-2xl font-bold">{performanceData.session_length}m</p>
+            </div>
           </div>
-        </div>
-      </Card>
+        </Card>
+      </div>
     </div>
   );
 };
