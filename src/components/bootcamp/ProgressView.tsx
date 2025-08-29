@@ -517,8 +517,8 @@ export const ProgressView: React.FC = () => {
             <BookOpen className="h-5 w-5 text-primary" />
             Topics to Work On
           </h2>
-          <div className="space-y-3">
-            {skillDevelopmentData.length > 0 ? skillDevelopmentData.slice(0, 5).map((skill, index) => (
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+            {skillDevelopmentData.length > 0 ? skillDevelopmentData.slice(0, 10).map((skill, index) => (
               <div key={index} className="flex items-center justify-between p-3 bg-muted/30 rounded-lg">
                 <div className="flex-1">
                   <div className="font-medium text-foreground">{skill.skill}</div>
@@ -542,7 +542,7 @@ export const ProgressView: React.FC = () => {
                 </div>
               </div>
             )) : (
-              <p className="text-muted-foreground text-center py-4">
+              <p className="text-muted-foreground text-center py-4 col-span-2">
                 Complete more practice sessions to see topic progress!
               </p>
             )}
