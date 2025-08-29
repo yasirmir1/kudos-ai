@@ -483,9 +483,6 @@ export const ProgressView: React.FC = () => {
         <p className="text-muted-foreground">Comprehensive view of learning performance</p>
       </div>
 
-      {/* Kudos Score */}
-      <KudosScoreCard />
-
       {/* Key Stats */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         <div className="bg-card rounded-xl shadow-sm border p-6 text-center">
@@ -512,6 +509,10 @@ export const ProgressView: React.FC = () => {
           <p className="text-sm text-muted-foreground">total questions</p>
         </div>
       </div>
+
+      {/* Kudos Score */}
+      <KudosScoreCard />
+
 
       {/* Topics to Work On - Full Width */}
       <div className="bg-card rounded-xl shadow-sm border p-6">
