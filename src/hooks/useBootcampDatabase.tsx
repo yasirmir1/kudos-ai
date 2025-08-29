@@ -297,7 +297,9 @@ export const useBootcampDatabase = () => {
     selectedAnswer: string,
     isCorrect: boolean,
     timeTaken: number,
-    misconceptionDetected?: string
+    misconceptionDetected?: string,
+    confidenceRating?: number,
+    misconceptionSeverity?: string
   ) => {
     if (!student) return null;
 
@@ -309,7 +311,9 @@ export const useBootcampDatabase = () => {
         selected_answer: selectedAnswer,
         is_correct: isCorrect,
         time_taken: timeTaken,
-        misconception_detected: misconceptionDetected
+        misconception_detected: misconceptionDetected,
+        confidence_rating: confidenceRating,
+        misconception_severity: misconceptionSeverity
       })
       .select()
       .single();
