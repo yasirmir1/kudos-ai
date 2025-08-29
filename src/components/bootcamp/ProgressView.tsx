@@ -162,7 +162,11 @@ export const ProgressView: React.FC = () => {
     try {
       const studentProfile = await BootcampAPI.getStudentProfile(user.id);
       if (studentProfile) {
-        const [progress, summary, topics] = await Promise.all([BootcampAPI.getStudentProgress(studentProfile.student_id), BootcampAPI.getStudentPerformanceSummary(studentProfile.student_id), supabase.from('bootcamp_topics').select('id, name').order('topic_order')]);
+        const [progress, summary, topics] = await Promise.all([
+          BootcampAPI.getStudentProgress(studentProfile.student_id), 
+          BootcampAPI.getStudentPerformanceSummary(studentProfile.student_id), 
+          supabase.from('bootcamp_topics').select('id, name').order('topic_order')
+        ]);
 
         // Create topic name mapping
         const topicNameMap = new Map();
@@ -174,31 +178,33 @@ export const ProgressView: React.FC = () => {
 
         // Get topic performance data from both sources
         const [responseCounts, mockTestCounts] = await Promise.all([
-        // Regular practice responses
-        supabase.from('bootcamp_student_responses').select(`
+          // Regular practice responses
+          supabase.from('bootcamp_student_responses').select(`
               is_correct,
               bootcamp_questions!inner(topic_id)
             `).eq('student_id', studentProfile.student_id),
-        // Mock test answers  
-        supabase.from('bootcamp_mock_test_answers').select(`
+          // Mock test answers  
+          supabase.from('bootcamp_mock_test_answers').select(`
               is_correct,
               bootcamp_mock_test_sessions!inner(student_id),
               mock_test_questions!inner(topic)
-            `).eq('bootcamp_mock_test_sessions.student_id', studentProfile.student_id)]);
+            `).eq('bootcamp_mock_test_sessions.student_id', studentProfile.student_id)
+        ]);
 
         // Calculate topic performance from both sources
-        const topicStats = new Map<string, {
-          correct: number;
-          total: number;
-        }>();
+        const topicStats = new Map<string, { correct: number; total: number; }>();
+
+        // Initialize all topics with 0 stats
+        if (topics.data) {
+          topics.data.forEach((topic: any) => {
+            topicStats.set(topic.id, { correct: 0, total: 0 });
+          });
+        }
 
         // Process regular responses
         responseCounts.data?.forEach((response: any) => {
           const topicId = response.bootcamp_questions.topic_id;
-          const current = topicStats.get(topicId) || {
-            correct: 0,
-            total: 0
-          };
+          const current = topicStats.get(topicId) || { correct: 0, total: 0 };
           current.total++;
           if (response.is_correct) current.correct++;
           topicStats.set(topicId, current);
@@ -208,22 +214,21 @@ export const ProgressView: React.FC = () => {
         mockTestCounts.data?.forEach((answer: any) => {
           const topicName = answer.mock_test_questions.topic;
           // Find topic ID by name
-          const topicId = Array.from(topicNameMap.entries()).find(([_, name]) => name.toLowerCase().includes(topicName.toLowerCase()))?.[0];
+          const topicId = Array.from(topicNameMap.entries()).find(([_, name]) => 
+            name.toLowerCase().includes(topicName.toLowerCase())
+          )?.[0];
           if (topicId) {
-            const current = topicStats.get(topicId) || {
-              correct: 0,
-              total: 0
-            };
+            const current = topicStats.get(topicId) || { correct: 0, total: 0 };
             current.total++;
             if (answer.is_correct) current.correct++;
             topicStats.set(topicId, current);
           }
         });
 
-        // Convert to skill development data
+        // Convert to skill development data - include ALL topics
         const skillsDataForCard = Array.from(topicStats.entries()).map(([topicId, stats]) => ({
           skill: topicNameMap.get(topicId) || topicId,
-          accuracy: stats.total > 0 ? Math.round(stats.correct / stats.total * 100) : 0
+          accuracy: stats.total > 0 ? Math.round((stats.correct / stats.total) * 100) : 0
         })).filter(skill => skill.skill) // Only include named topics
         .sort((a, b) => b.accuracy - a.accuracy); // Sort by accuracy descending
 
@@ -509,18 +514,22 @@ export const ProgressView: React.FC = () => {
         <div className="bg-card rounded-xl shadow-sm border p-6">
           <h2 className="text-lg font-semibold text-foreground mb-4">Skill Development</h2>
           <div className="space-y-4">
-            {skillsData.length > 0 ? skillsData.map((skill, index) => <div key={index}>
+            {skillDevelopmentData.length > 0 ? skillDevelopmentData.map((skill, index) => <div key={index}>
                 <div className="flex items-center justify-between mb-2">
-                  
+                  <span className="text-sm font-medium text-foreground">{skill.skill}</span>
                   <div className="flex items-center space-x-2">
-                    <span className="text-sm text-muted-foreground">{skill.level}%</span>
-                    {skill.trend === 'up' && <TrendingUp className="h-3 w-3 text-success" />}
-                    {skill.trend === 'down' && <TrendingUp className="h-3 w-3 text-destructive rotate-180" />}
+                    <span className="text-sm text-muted-foreground">{skill.accuracy}%</span>
+                    {skill.accuracy >= 80 && <TrendingUp className="h-3 w-3 text-success" />}
+                    {skill.accuracy < 60 && <TrendingUp className="h-3 w-3 text-destructive rotate-180" />}
                   </div>
                 </div>
                 <div className="w-full bg-muted rounded-full h-2">
-                  <div className="bg-gradient-to-r from-primary to-primary/80 h-2 rounded-full transition-all duration-300" style={{
-                width: `${skill.level}%`
+                  <div className={`h-2 rounded-full transition-all duration-300 ${
+                    skill.accuracy >= 80 ? 'bg-gradient-to-r from-success to-success/80' : 
+                    skill.accuracy >= 60 ? 'bg-gradient-to-r from-warning to-warning/80' : 
+                    'bg-gradient-to-r from-destructive to-destructive/80'
+                  }`} style={{
+                width: `${skill.accuracy}%`
               }} />
                 </div>
               </div>) : <p className="text-muted-foreground text-center py-4">
@@ -530,21 +539,73 @@ export const ProgressView: React.FC = () => {
         </div>
 
         <div className="bg-card rounded-xl shadow-sm border p-6">
-          <h2 className="text-lg font-semibold text-foreground mb-4">Recent Achievements</h2>
+          <h2 className="text-lg font-semibold text-foreground mb-4 flex items-center gap-2">
+            <BookOpen className="h-5 w-5 text-primary" />
+            Topics to Work On
+          </h2>
           <div className="space-y-3">
-            {recentAchievements.length > 0 ? recentAchievements.map((achievement, index) => <div key={index} className="flex items-start space-x-3 p-3 rounded-lg hover:bg-muted/50">
-                <div className="p-2 bg-primary/10 rounded-lg">
-                  <achievement.icon className="h-4 w-4 text-primary" />
-                </div>
+            {skillDevelopmentData.length > 0 ? skillDevelopmentData.slice(0, 5).map((skill, index) => (
+              <div key={index} className="flex items-center justify-between p-3 bg-muted/30 rounded-lg">
                 <div className="flex-1">
-                  <p className="font-medium text-foreground">{achievement.name}</p>
-                  <p className="text-sm text-muted-foreground">{achievement.description}</p>
-                  <p className="text-xs text-muted-foreground mt-1">{achievement.date}</p>
+                  <div className="font-medium text-foreground">{skill.skill}</div>
+                  <div className="w-full bg-muted rounded-full h-2 mt-2">
+                    <div 
+                      className={`h-2 rounded-full transition-all ${
+                        skill.accuracy >= 80 ? 'bg-success' : 
+                        skill.accuracy >= 60 ? 'bg-warning' : 'bg-destructive'
+                      }`}
+                      style={{ width: `${skill.accuracy}%` }}
+                    />
+                  </div>
                 </div>
-              </div>) : <p className="text-muted-foreground text-center py-4">
-                Complete more practice sessions to unlock achievements!
-              </p>}
+                <div className="text-right ml-4">
+                  <div className={`text-lg font-bold ${
+                    skill.accuracy >= 80 ? 'text-success' : 
+                    skill.accuracy >= 60 ? 'text-warning' : 'text-destructive'
+                  }`}>
+                    {skill.accuracy}%
+                  </div>
+                </div>
+              </div>
+            )) : (
+              <p className="text-muted-foreground text-center py-4">
+                Complete more practice sessions to see topic progress!
+              </p>
+            )}
           </div>
+        </div>
+      </div>
+
+      {/* Common Misconceptions Card */}
+      <div className="bg-card rounded-xl shadow-sm border p-6">
+        <h2 className="text-lg font-semibold text-foreground mb-4 flex items-center gap-2">
+          <AlertTriangle className="h-5 w-5 text-warning" />
+          Common Misconceptions
+        </h2>
+        <div className="space-y-3">
+          {strugglingTopics.length > 0 ? strugglingTopics.map((topic, index) => (
+            <div key={index} className="flex items-center justify-between p-3 bg-warning/5 rounded-lg border border-warning/20">
+              <div>
+                <div className="font-medium text-foreground">{topic.name}</div>
+                <div className="text-sm text-muted-foreground">
+                  {topic.attempts} attempts • {topic.accuracy}% accuracy
+                </div>
+                {topic.trend === 'declining' && (
+                  <div className="text-xs text-warning mt-1 flex items-center gap-1">
+                    <AlertTriangle className="h-3 w-3" />
+                    Performance declining
+                  </div>
+                )}
+              </div>
+              <Button variant="outline" size="sm">
+                Practice
+              </Button>
+            </div>
+          )) : (
+            <p className="text-muted-foreground text-center py-4">
+              No significant misconceptions detected. Great work!
+            </p>
+          )}
         </div>
       </div>
 
