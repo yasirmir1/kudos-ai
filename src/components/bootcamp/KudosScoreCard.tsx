@@ -1,7 +1,8 @@
 import React from 'react';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { TrendingUp, TrendingDown, Zap, Target, Clock } from 'lucide-react';
+import { TrendingUp, TrendingDown, Target } from 'lucide-react';
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import { useKudosScore } from '@/hooks/useKudosScore';
 
 export const KudosScoreCard: React.FC = () => {
@@ -51,6 +52,13 @@ export const KudosScoreCard: React.FC = () => {
 
   const scoreBadge = getScoreBadge(kudosData.current_score);
 
+  // Transform trend data for the chart
+  const chartData = kudosData.trend.map((score, index) => ({
+    session: index + 1,
+    score: score,
+    date: new Date(Date.now() - (kudosData.trend.length - index - 1) * 24 * 60 * 60 * 1000).toLocaleDateString()
+  }));
+
   return (
     <Card className="p-6">
       <div className="flex items-center justify-between mb-4">
@@ -72,64 +80,49 @@ export const KudosScoreCard: React.FC = () => {
           <p className="text-sm text-muted-foreground mt-1">Current Score</p>
         </div>
 
-        {/* Performance Metrics */}
-        <div className="grid grid-cols-3 gap-4">
-          <div className="text-center">
-            <div className="flex items-center justify-center mb-2">
-              {kudosData.performance_improvement >= 0 ? (
-                <TrendingUp className="h-5 w-5 text-success" />
-              ) : (
-                <TrendingDown className="h-5 w-5 text-destructive" />
-              )}
-            </div>
-            <div className={`font-semibold ${
-              kudosData.performance_improvement >= 0 ? 'text-success' : 'text-destructive'
-            }`}>
-              {kudosData.performance_improvement >= 0 ? '+' : ''}{kudosData.performance_improvement}%
-            </div>
-            <p className="text-xs text-muted-foreground">Improvement</p>
-          </div>
-
-          <div className="text-center">
-            <div className="flex items-center justify-center mb-2">
-              <Zap className="h-5 w-5 text-warning" />
-            </div>
-            <div className={`font-semibold ${
-              kudosData.difficulty_progression >= 0 ? 'text-success' : 'text-muted-foreground'
-            }`}>
-              {kudosData.difficulty_progression >= 0 ? '+' : ''}{kudosData.difficulty_progression}%
-            </div>
-            <p className="text-xs text-muted-foreground">Difficulty</p>
-          </div>
-
-          <div className="text-center">
-            <div className="flex items-center justify-center mb-2">
-              <Clock className="h-5 w-5 text-primary" />
-            </div>
-            <div className={`font-semibold ${
-              kudosData.speed_efficiency >= 100 ? 'text-success' : 'text-muted-foreground'
-            }`}>
-              {kudosData.speed_efficiency}%
-            </div>
-            <p className="text-xs text-muted-foreground">Speed</p>
-          </div>
-        </div>
-
-        {/* Trend Visualization */}
-        {kudosData.trend.length > 1 && (
+        {/* Time Series Chart */}
+        {kudosData.trend.length > 1 ? (
           <div>
-            <p className="text-sm font-medium mb-2">Score Trend</p>
-            <div className="flex items-end space-x-1 h-8">
-              {kudosData.trend.map((score, index) => (
-                <div
-                  key={index}
-                  className="bg-primary/20 flex-1 rounded-t"
-                  style={{
-                    height: `${Math.max(10, (score / Math.max(...kudosData.trend)) * 100)}%`
-                  }}
-                />
-              ))}
+            <p className="text-sm font-medium mb-4">Score Trend Over Time</p>
+            <div className="h-48">
+              <ResponsiveContainer width="100%" height="100%">
+                <LineChart data={chartData}>
+                  <CartesianGrid strokeDasharray="3 3" className="stroke-muted" />
+                  <XAxis 
+                    dataKey="session" 
+                    className="text-xs fill-muted-foreground"
+                    tick={{ fontSize: 10 }}
+                  />
+                  <YAxis 
+                    className="text-xs fill-muted-foreground"
+                    tick={{ fontSize: 10 }}
+                  />
+                  <Tooltip 
+                    contentStyle={{
+                      backgroundColor: 'hsl(var(--card))',
+                      border: '1px solid hsl(var(--border))',
+                      borderRadius: '6px',
+                      fontSize: '12px'
+                    }}
+                    formatter={(value) => [value, 'Kudos Score']}
+                    labelFormatter={(label) => `Session ${label}`}
+                  />
+                  <Line 
+                    type="monotone" 
+                    dataKey="score" 
+                    stroke="hsl(var(--primary))" 
+                    strokeWidth={2}
+                    dot={{ fill: 'hsl(var(--primary))', strokeWidth: 0, r: 4 }}
+                    activeDot={{ r: 6, stroke: 'hsl(var(--primary))', strokeWidth: 2 }}
+                  />
+                </LineChart>
+              </ResponsiveContainer>
             </div>
+          </div>
+        ) : (
+          <div className="text-center py-8 text-muted-foreground">
+            <TrendingUp className="h-8 w-8 mx-auto mb-2 opacity-50" />
+            <p className="text-sm">Complete more sessions to see your progress trend!</p>
           </div>
         )}
       </div>
