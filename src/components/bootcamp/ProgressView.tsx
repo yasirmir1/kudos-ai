@@ -511,32 +511,6 @@ export const ProgressView: React.FC = () => {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <div className="bg-card rounded-xl shadow-sm border p-6">
-          <h2 className="text-lg font-semibold text-foreground mb-4">Skill Development</h2>
-          <div className="space-y-4">
-            {skillDevelopmentData.length > 0 ? skillDevelopmentData.map((skill, index) => <div key={index}>
-                <div className="flex items-center justify-between mb-2">
-                  <span className="text-sm font-medium text-foreground">{skill.skill}</span>
-                  <div className="flex items-center space-x-2">
-                    <span className="text-sm text-muted-foreground">{skill.accuracy}%</span>
-                    {skill.accuracy >= 80 && <TrendingUp className="h-3 w-3 text-success" />}
-                    {skill.accuracy < 60 && <TrendingUp className="h-3 w-3 text-destructive rotate-180" />}
-                  </div>
-                </div>
-                <div className="w-full bg-muted rounded-full h-2">
-                  <div className={`h-2 rounded-full transition-all duration-300 ${
-                    skill.accuracy >= 80 ? 'bg-gradient-to-r from-success to-success/80' : 
-                    skill.accuracy >= 60 ? 'bg-gradient-to-r from-warning to-warning/80' : 
-                    'bg-gradient-to-r from-destructive to-destructive/80'
-                  }`} style={{
-                width: `${skill.accuracy}%`
-              }} />
-                </div>
-              </div>) : <p className="text-muted-foreground text-center py-4">
-                Start practicing to see your skill development!
-              </p>}
-          </div>
-        </div>
 
         <div className="bg-card rounded-xl shadow-sm border p-6">
           <h2 className="text-lg font-semibold text-foreground mb-4 flex items-center gap-2">
@@ -623,6 +597,34 @@ export const ProgressView: React.FC = () => {
       {/* Enhanced Analytics & Insights */}
       <div className="space-y-6">
         
+      </div>
+
+      {/* Skill Development - Moved to bottom */}
+      <div className="bg-card rounded-xl shadow-sm border p-6">
+        <h2 className="text-lg font-semibold text-foreground mb-4">Skill Development</h2>
+        <div className="space-y-4">
+          {skillDevelopmentData.length > 0 ? skillDevelopmentData.map((skill, index) => <div key={index}>
+              <div className="flex items-center justify-between mb-2">
+                <span className="text-sm font-medium text-foreground">{skill.skill}</span>
+                <div className="flex items-center space-x-2">
+                  <span className="text-sm text-muted-foreground">{skill.accuracy}%</span>
+                  {skill.accuracy >= 80 && <TrendingUp className="h-3 w-3 text-success" />}
+                  {skill.accuracy < 60 && <TrendingUp className="h-3 w-3 text-destructive rotate-180" />}
+                </div>
+              </div>
+              <div className="w-full bg-muted rounded-full h-2">
+                <div className={`h-2 rounded-full transition-all duration-300 ${
+                  skill.accuracy >= 80 ? 'bg-gradient-to-r from-success to-success/80' : 
+                  skill.accuracy >= 60 ? 'bg-gradient-to-r from-warning to-warning/80' : 
+                  'bg-gradient-to-r from-destructive to-destructive/80'
+                }`} style={{
+              width: `${skill.accuracy}%`
+            }} />
+              </div>
+            </div>) : <p className="text-muted-foreground text-center py-4">
+              Start practicing to see your skill development!
+            </p>}
+        </div>
       </div>
 
     </div>;
