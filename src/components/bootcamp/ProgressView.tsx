@@ -625,10 +625,6 @@ export const ProgressView: React.FC = () => {
         
       </div>
 
-      {/* Skill Development */}
-      <div className="mb-6">
-        <SkillDevelopmentCard skills={skillDevelopmentData} />
-      </div>
     </div>;
   return <div className="space-y-6 max-w-6xl mx-auto">
       <Tabs defaultValue="simple" className="w-full">
