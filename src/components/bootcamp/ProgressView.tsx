@@ -225,12 +225,15 @@ export const ProgressView: React.FC = () => {
           }
         });
 
-        // Convert to skill development data - include ALL topics
-        const skillsDataForCard = Array.from(topicStats.entries()).map(([topicId, stats]) => ({
+        // Convert to skill development data - only include topics with responses
+        const skillsDataForCard = Array.from(topicStats.entries())
+        .filter(([topicId, topicStat]) => topicStat.total > 0) // Only include topics with actual responses
+        .map(([topicId, topicStat]) => ({
           skill: topicNameMap.get(topicId) || topicId,
-          accuracy: stats.total > 0 ? Math.round((stats.correct / stats.total) * 100) : 0
-        })).filter(skill => skill.skill) // Only include named topics
-        .sort((a, b) => b.accuracy - a.accuracy); // Sort by accuracy descending
+          accuracy: Math.round((topicStat.correct / topicStat.total) * 100)
+        }))
+        .filter(skill => skill.skill) // Only include named topics
+        .sort((a, b) => a.accuracy - b.accuracy); // Sort by accuracy ascending (smallest to largest)
 
         setSkillDevelopmentData(skillsDataForCard);
 
