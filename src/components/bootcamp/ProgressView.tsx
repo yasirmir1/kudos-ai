@@ -489,11 +489,11 @@ export const ProgressView: React.FC = () => {
       {/* Key Stats */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         <div className="bg-card rounded-xl shadow-sm border p-6 text-center">
-          <h3 className="text-lg font-semibold text-foreground mb-2">Questions Attempted</h3>
+          <h3 className="text-lg font-semibold text-foreground mb-2">Kudos Score</h3>
           <p className="text-3xl font-bold text-primary">
-            {stats.totalQuestions}
+            30
           </p>
-          <p className="text-sm text-muted-foreground">total questions</p>
+          <p className="text-sm text-muted-foreground">Difficulty & speed adjusted performance</p>
         </div>
         
         <div className="bg-card rounded-xl shadow-sm border p-6 text-center">
@@ -505,11 +505,11 @@ export const ProgressView: React.FC = () => {
         </div>
         
         <div className="bg-card rounded-xl shadow-sm border p-6 text-center">
-          <h3 className="text-lg font-semibold text-foreground mb-2">Kudos Score</h3>
+          <h3 className="text-lg font-semibold text-foreground mb-2">Questions Attempted</h3>
           <p className="text-3xl font-bold text-primary">
-            30
+            {stats.totalQuestions}
           </p>
-          <p className="text-sm text-muted-foreground">Difficulty & speed adjusted performance</p>
+          <p className="text-sm text-muted-foreground">total questions</p>
         </div>
       </div>
 
