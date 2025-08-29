@@ -577,8 +577,7 @@ export const ProgressView: React.FC = () => {
                  <div className="w-full bg-muted rounded-full h-2 mt-2">
                    <div 
                      className={`h-2 rounded-full transition-all ${
-                       skill.accuracy >= 80 ? 'bg-success' : 
-                       skill.accuracy >= 60 ? 'bg-warning' : 'bg-destructive'
+                       skill.accuracy >= 50 ? 'bg-foreground' : 'bg-destructive'
                      }`}
                      style={{ width: `${skill.accuracy}%` }}
                    />
@@ -586,8 +585,7 @@ export const ProgressView: React.FC = () => {
                </div>
                <div className="text-right ml-4">
                  <div className={`text-lg font-bold ${
-                   skill.accuracy >= 80 ? 'text-success' : 
-                   skill.accuracy >= 60 ? 'text-warning' : 'text-destructive'
+                   skill.accuracy >= 50 ? 'text-foreground' : 'text-destructive'
                  }`}>
                    {skill.accuracy}%
                  </div>
