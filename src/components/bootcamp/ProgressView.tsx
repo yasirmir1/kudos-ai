@@ -162,7 +162,11 @@ export const ProgressView: React.FC = () => {
     try {
       const studentProfile = await BootcampAPI.getStudentProfile(user.id);
       if (studentProfile) {
-        const [progress, summary, topics] = await Promise.all([BootcampAPI.getStudentProgress(studentProfile.student_id), BootcampAPI.getStudentPerformanceSummary(studentProfile.student_id), supabase.from('bootcamp_topics').select('id, name').order('topic_order')]);
+        const [progress, summary, topics] = await Promise.all([
+          BootcampAPI.getStudentProgress(studentProfile.student_id), 
+          BootcampAPI.getStudentPerformanceSummary(studentProfile.student_id), 
+          supabase.from('bootcamp_topics').select('id, name').order('topic_order')
+        ]);
 
         // Create topic name mapping
         const topicNameMap = new Map();
@@ -174,31 +178,33 @@ export const ProgressView: React.FC = () => {
 
         // Get topic performance data from both sources
         const [responseCounts, mockTestCounts] = await Promise.all([
-        // Regular practice responses
-        supabase.from('bootcamp_student_responses').select(`
+          // Regular practice responses
+          supabase.from('bootcamp_student_responses').select(`
               is_correct,
               bootcamp_questions!inner(topic_id)
             `).eq('student_id', studentProfile.student_id),
-        // Mock test answers  
-        supabase.from('bootcamp_mock_test_answers').select(`
+          // Mock test answers  
+          supabase.from('bootcamp_mock_test_answers').select(`
               is_correct,
               bootcamp_mock_test_sessions!inner(student_id),
               mock_test_questions!inner(topic)
-            `).eq('bootcamp_mock_test_sessions.student_id', studentProfile.student_id)]);
+            `).eq('bootcamp_mock_test_sessions.student_id', studentProfile.student_id)
+        ]);
 
         // Calculate topic performance from both sources
-        const topicStats = new Map<string, {
-          correct: number;
-          total: number;
-        }>();
+        const topicStats = new Map<string, { correct: number; total: number; }>();
+
+        // Initialize all topics with 0 stats
+        if (topics.data) {
+          topics.data.forEach((topic: any) => {
+            topicStats.set(topic.id, { correct: 0, total: 0 });
+          });
+        }
 
         // Process regular responses
         responseCounts.data?.forEach((response: any) => {
           const topicId = response.bootcamp_questions.topic_id;
-          const current = topicStats.get(topicId) || {
-            correct: 0,
-            total: 0
-          };
+          const current = topicStats.get(topicId) || { correct: 0, total: 0 };
           current.total++;
           if (response.is_correct) current.correct++;
           topicStats.set(topicId, current);
@@ -208,22 +214,21 @@ export const ProgressView: React.FC = () => {
         mockTestCounts.data?.forEach((answer: any) => {
           const topicName = answer.mock_test_questions.topic;
           // Find topic ID by name
-          const topicId = Array.from(topicNameMap.entries()).find(([_, name]) => name.toLowerCase().includes(topicName.toLowerCase()))?.[0];
+          const topicId = Array.from(topicNameMap.entries()).find(([_, name]) => 
+            name.toLowerCase().includes(topicName.toLowerCase())
+          )?.[0];
           if (topicId) {
-            const current = topicStats.get(topicId) || {
-              correct: 0,
-              total: 0
-            };
+            const current = topicStats.get(topicId) || { correct: 0, total: 0 };
             current.total++;
             if (answer.is_correct) current.correct++;
             topicStats.set(topicId, current);
           }
         });
 
-        // Convert to skill development data
+        // Convert to skill development data - include ALL topics
         const skillsDataForCard = Array.from(topicStats.entries()).map(([topicId, stats]) => ({
           skill: topicNameMap.get(topicId) || topicId,
-          accuracy: stats.total > 0 ? Math.round(stats.correct / stats.total * 100) : 0
+          accuracy: stats.total > 0 ? Math.round((stats.correct / stats.total) * 100) : 0
         })).filter(skill => skill.skill) // Only include named topics
         .sort((a, b) => b.accuracy - a.accuracy); // Sort by accuracy descending
 
