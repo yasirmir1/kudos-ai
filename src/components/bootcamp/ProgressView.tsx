@@ -228,20 +228,15 @@ export const ProgressView: React.FC = () => {
           }
         });
 
-        // Convert to skill development data - include ALL topics
+        // Convert to skill development data - only include topics with responses for "Topics to Work On"
         const skillsDataForCard = Array.from(topicStats.entries())
+        .filter(([topicId, topicStat]) => topicStat.total > 0) // Only include topics with actual responses
         .map(([topicId, topicStat]) => ({
           skill: topicNameMap.get(topicId) || topicId,
-          accuracy: topicStat.total > 0 ? Math.round((topicStat.correct / topicStat.total) * 100) : 0
+          accuracy: Math.round((topicStat.correct / topicStat.total) * 100)
         }))
         .filter(skill => skill.skill) // Only include named topics
-        .sort((a, b) => {
-          // Sort "not started" (0% accuracy) topics to the end, others by accuracy ascending
-          if (a.accuracy === 0 && b.accuracy === 0) return 0;
-          if (a.accuracy === 0) return 1;
-          if (b.accuracy === 0) return -1;
-          return a.accuracy - b.accuracy;
-        });
+        .sort((a, b) => a.accuracy - b.accuracy); // Sort by accuracy ascending (smallest to largest)
 
         setSkillDevelopmentData(skillsDataForCard);
 
@@ -575,30 +570,28 @@ export const ProgressView: React.FC = () => {
           Topics to Work On
         </h2>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
-          {skillDevelopmentData.length > 0 ? skillDevelopmentData.slice(0, 12).map((skill, index) => (
+          {skillDevelopmentData.length > 0 ? skillDevelopmentData.slice(0, 9).map((skill, index) => (
             <div key={index} className="flex items-center justify-between p-3 bg-muted/30 rounded-lg">
               <div className="flex-1">
                 <div className="font-medium text-foreground">{skill.skill}</div>
-                <div className="w-full bg-muted rounded-full h-2 mt-2">
-                  <div 
-                    className={`h-2 rounded-full transition-all ${
-                      skill.accuracy === 0 ? 'bg-muted-foreground/30' :
-                      skill.accuracy >= 80 ? 'bg-success' : 
-                      skill.accuracy >= 60 ? 'bg-warning' : 'bg-destructive'
-                    }`}
-                    style={{ width: `${skill.accuracy === 0 ? 100 : skill.accuracy}%` }}
-                  />
-                </div>
-              </div>
-              <div className="text-right ml-4">
-                <div className={`text-lg font-bold ${
-                  skill.accuracy === 0 ? 'text-muted-foreground' :
-                  skill.accuracy >= 80 ? 'text-success' : 
-                  skill.accuracy >= 60 ? 'text-warning' : 'text-destructive'
-                }`}>
-                  {skill.accuracy === 0 ? 'Not Started' : `${skill.accuracy}%`}
-                </div>
-              </div>
+                 <div className="w-full bg-muted rounded-full h-2 mt-2">
+                   <div 
+                     className={`h-2 rounded-full transition-all ${
+                       skill.accuracy >= 80 ? 'bg-success' : 
+                       skill.accuracy >= 60 ? 'bg-warning' : 'bg-destructive'
+                     }`}
+                     style={{ width: `${skill.accuracy}%` }}
+                   />
+                 </div>
+               </div>
+               <div className="text-right ml-4">
+                 <div className={`text-lg font-bold ${
+                   skill.accuracy >= 80 ? 'text-success' : 
+                   skill.accuracy >= 60 ? 'text-warning' : 'text-destructive'
+                 }`}>
+                   {skill.accuracy}%
+                 </div>
+               </div>
             </div>
           )) : (
             <p className="text-muted-foreground text-center py-4 col-span-full">
@@ -666,21 +659,18 @@ export const ProgressView: React.FC = () => {
               <div className="flex items-center justify-between mb-2">
                 <span className="text-sm font-medium text-foreground">{skill.skill}</span>
                 <div className="flex items-center space-x-2">
-                  <span className={`text-sm ${skill.accuracy === 0 ? 'text-muted-foreground' : 'text-muted-foreground'}`}>
-                    {skill.accuracy === 0 ? 'Not Started' : `${skill.accuracy}%`}
-                  </span>
+                  <span className="text-sm text-muted-foreground">{skill.accuracy}%</span>
                   {skill.accuracy >= 80 && <TrendingUp className="h-3 w-3 text-success" />}
-                  {skill.accuracy > 0 && skill.accuracy < 60 && <TrendingUp className="h-3 w-3 text-destructive rotate-180" />}
+                  {skill.accuracy < 60 && <TrendingUp className="h-3 w-3 text-destructive rotate-180" />}
                 </div>
               </div>
               <div className="w-full bg-muted rounded-full h-2">
                 <div className={`h-2 rounded-full transition-all duration-300 ${
-                  skill.accuracy === 0 ? 'bg-muted-foreground/30' :
                   skill.accuracy >= 80 ? 'bg-gradient-to-r from-success to-success/80' : 
                   skill.accuracy >= 60 ? 'bg-gradient-to-r from-warning to-warning/80' : 
                   'bg-gradient-to-r from-destructive to-destructive/80'
                 }`} style={{
-              width: `${skill.accuracy === 0 ? 100 : skill.accuracy}%`
+              width: `${skill.accuracy}%`
             }} />
               </div>
             </div>) : <p className="text-muted-foreground text-center py-4">
