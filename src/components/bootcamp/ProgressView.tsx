@@ -505,11 +505,11 @@ export const ProgressView: React.FC = () => {
         </div>
         
         <div className="bg-card rounded-xl shadow-sm border p-6 text-center">
-          <h3 className="text-lg font-semibold text-foreground mb-2">Active Days</h3>
-          <p className="text-3xl font-bold text-warning">
-            {stats.streakDays}
+          <h3 className="text-lg font-semibold text-foreground mb-2">Kudos Score</h3>
+          <p className="text-3xl font-bold text-primary">
+            30
           </p>
-          <p className="text-sm text-muted-foreground">days practicing</p>
+          <p className="text-sm text-muted-foreground">Difficulty & speed adjusted performance</p>
         </div>
       </div>
 
