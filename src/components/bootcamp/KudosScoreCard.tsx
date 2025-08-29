@@ -72,12 +72,23 @@ export const KudosScoreCard: React.FC = () => {
       </div>
 
       <div className="space-y-6">
-        {/* Current Score */}
-        <div className="text-center">
-          <div className={`text-4xl font-bold ${getScoreColor(kudosData.current_score)}`}>
-            {kudosData.current_score}
+        {/* Current Score Section */}
+        <div className="grid grid-cols-2 gap-4">
+          <div className="text-center">
+            <div className={`text-3xl font-bold ${getScoreColor(kudosData.current_score)}`}>
+              {kudosData.current_score}
+            </div>
+            <p className="text-sm text-muted-foreground mt-1">Kudos Score</p>
+            <p className="text-xs text-muted-foreground">Difficulty & speed adjusted performance</p>
           </div>
-          <p className="text-sm text-muted-foreground mt-1">Current Score</p>
+          
+          <div className="text-center">
+            <div className="text-3xl font-bold text-foreground">
+              24
+            </div>
+            <p className="text-sm text-muted-foreground mt-1">Questions Attempted</p>
+            <p className="text-xs text-muted-foreground">total questions</p>
+          </div>
         </div>
 
         {/* Time Series Chart */}
