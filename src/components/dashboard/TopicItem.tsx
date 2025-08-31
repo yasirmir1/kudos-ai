@@ -64,13 +64,13 @@ export const TopicItem: React.FC<TopicItemProps> = ({
             {accuracyPercent}%
           </Badge>
           <Badge variant="secondary" className="text-xs">
-            {displayCount}{displayText.charAt(0)}
+            {displayCount}
           </Badge>
         </div>
       </div>
       
       {showClickHint && (
-        <div className="flex justify-end">
+        <div className="flex justify-start">
           <span className="text-xs text-primary">Click to practice</span>
         </div>
       )}
