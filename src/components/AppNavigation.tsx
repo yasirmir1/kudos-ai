@@ -242,14 +242,14 @@ export const AppNavigation: React.FC<AppNavigationProps> = ({
         </div>
       </div>
       
-      {/* Help Button at bottom of page */}
-      <div className="fixed bottom-4 left-1/2 transform -translate-x-1/2 z-50">
+      {/* Floating Help Button */}
+      <div className="fixed bottom-6 right-6 z-50">
         <Button
           onClick={() => setIsHelpOpen(true)}
-          className="h-12 px-6 rounded-full shadow-lg hover:shadow-xl transition-all duration-200 bg-primary hover:bg-primary/90"
+          className="h-14 w-14 rounded-full shadow-lg hover:shadow-xl transition-all duration-200 bg-primary hover:bg-primary/90"
+          size="icon"
         >
-          <HelpCircle className="h-5 w-5 mr-2" />
-          <span>Help</span>
+          <HelpCircle className="h-6 w-6" />
         </Button>
       </div>
 
