@@ -60,11 +60,11 @@ export const TopicItem: React.FC<TopicItemProps> = ({
           </p>
         </div>
         <div className="flex items-center gap-2 flex-shrink-0">
-          <Badge variant="outline" className="text-xs">
-            {displayCount} {displayText}{displayCount !== 1 ? 's' : ''}
-          </Badge>
-          <Badge variant={getBadgeVariant()} className="ml-2 flex-shrink-0">
+          <Badge variant={getBadgeVariant()}>
             {accuracyPercent}%
+          </Badge>
+          <Badge variant="secondary" className="text-xs">
+            {displayCount}{displayText.charAt(0)}
           </Badge>
         </div>
       </div>
