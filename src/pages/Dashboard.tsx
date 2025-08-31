@@ -13,6 +13,7 @@ import { TopicsStudiedModal } from '@/components/TopicsStudiedModal';
 import { MisconceptionExplanationModal } from '@/components/MisconceptionExplanationModal';
 import { MisconceptionQuestionsModal } from '@/components/MisconceptionQuestionsModal';
 import { FocusAreaQuestionsModal } from '@/components/FocusAreaQuestionsModal';
+import { getFriendlyMisconceptionName } from '@/lib/misconceptionLabels';
 import { WorksheetGeneratorModal } from '@/components/WorksheetGeneratorModal';
 import { SessionsModal } from '@/components/SessionsModal';
 import { AgeGroupSelector } from '@/components/AgeGroupSelector';
@@ -258,48 +259,7 @@ const Dashboard = () => {
     }
   };
   const formatMisconceptionForKids = (redHerring: string) => {
-    // Handle empty or invalid misconceptions
-    if (!redHerring || redHerring.trim() === '') {
-      return 'Unknown thinking pattern 🤔';
-    }
-
-    // Create more kid-friendly labels for common misconceptions
-    const kidFriendlyLabels: {
-      [key: string]: string;
-    } = {
-      'Decimals_IncorrectPlaceValueShift': 'Moving decimal points the wrong way 🔢',
-      'Equivalence_PartialRecognition': 'Mixing up equal signs 🤔',
-      'Fractions_AddNumeratorsAndDenominators': 'Adding fractions like whole numbers 🍕',
-      'Fractions_MultiplyLikeAddition': 'Multiplying fractions like adding ✖️',
-      'HCF_PartialFactorization': 'Finding factors but not the biggest one 🔍',
-      'NegativeNumbers_IntervalAcrossZero': 'Counting backwards gets tricky ⬅️',
-      'OrderOfOperations_ParenthesesIgnored': 'Forgetting about parentheses first 📐',
-      'OrderOfOperations_SubtractionBeforeMultiplication': 'Doing subtraction before times ➖',
-      'PlaceValue_DigitValueConfusion': 'Mixing up what position means 📍',
-      'PlaceValue_OrderingConfusion_ZeroPlacement': 'Zero placement puzzles 0️⃣',
-      'Rounding_DownInsteadOfUp': 'Rounding the wrong direction ⬇️',
-      'Rounding_IncorrectDirection': 'Getting confused which way to round 🔄',
-      'Percentage_IncorrectOperation': 'Getting percentages mixed up 📊',
-      'Algebra_IncorrectOperation': 'Mix-ups with algebra steps 🔢',
-      'Addition_CarryError': 'Forgetting to carry numbers 📝',
-      'Subtraction_BorrowError': 'Mix-ups when borrowing 🔄',
-      'Multiplication_TableError': 'Times table mix-ups ✖️',
-      'Division_RemainderError': 'Getting remainders wrong ➗',
-      'FractionEquivalence_Error': 'Finding equal fractions tricky 🍰',
-      'DecimalComparison_Error': 'Comparing decimals wrongly 🔍',
-      'GeometryAngle_Error': 'Angle measurements confusing 📐',
-      'MeasurementUnit_Error': 'Unit conversion mix-ups 📏',
-      'ProbabilityLogic_Error': 'Probability thinking tricky 🎲',
-      'DataInterpretation_Error': 'Reading charts confusing 📊'
-    };
-
-    // If we have a kid-friendly version, use it
-    if (kidFriendlyLabels[redHerring]) {
-      return kidFriendlyLabels[redHerring];
-    }
-
-    // Fallback: make any other misconception kid-friendly
-    return redHerring.replace(/_/g, ' ').replace(/([a-z])([A-Z])/g, '$1 $2').toLowerCase().replace(/\b\w/g, l => l.toUpperCase()).trim() + ' 🤯';
+    return getFriendlyMisconceptionName(redHerring);
   };
   const overallAccuracy = performance.length > 0 ? performance.reduce((sum, p) => sum + p.accuracy, 0) / performance.length : 0;
   const strongestTopic = performance[0];

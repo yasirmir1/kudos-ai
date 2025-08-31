@@ -7,6 +7,7 @@ import { Progress } from '@/components/ui/progress';
 import { TrendingUp, AlertTriangle, Target, BarChart3, Loader2, Brain, Shield, Zap, Heart, Star, BookOpen } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/components/ui/use-toast';
+import { getFriendlyMisconceptionName } from '@/lib/misconceptionLabels';
 
 interface MisconceptionPattern {
   misconception_code: string;
@@ -119,36 +120,6 @@ export const MisconceptionPatternAnalysis: React.FC<MisconceptionPatternAnalysis
     }
   };
 
-  const getFriendlyMisconceptionName = (code: string) => {
-    // Clean up the code first
-    const cleanCode = code.replace(/[[\]"]/g, '');
-    
-    // Create friendly labels for common misconceptions
-    const friendlyLabels: { [key: string]: string } = {
-      'Percentage_IncorrectOperation': 'Percentage Mix-ups',
-      'PlaceValue_DigitValueConfusion': 'Place Value Confusion',
-      'Rounding_IncorrectDirection': 'Rounding Direction',
-      'Algebra_IncorrectOperation': 'Algebra Steps',
-      'Fractions_AddNumeratorsAndDenominators': 'Fraction Addition',
-      'Decimals_IncorrectPlaceValueShift': 'Decimal Point Position',
-      'OrderOfOperations_ParenthesesIgnored': 'Order of Operations',
-      'Multiplication_TableError': 'Times Tables',
-      'Division_RemainderError': 'Division with Remainders',
-      'Addition_CarryError': 'Carrying Numbers',
-      'Subtraction_BorrowError': 'Borrowing Numbers',
-      'MixedNumbers_ImproperConversion': 'Mixed Numbers',
-      'Rounding_DownInsteadOfUp': 'Rounding Direction',
-      'PrimeNumbers_OddNumberConfusion': 'Prime Numbers',
-      'MultiStep_OperationSequenceError': 'Multi-step Problems',
-      'Equivalence_PartialRecognition': 'Equivalent Fractions',
-      'HCF_PartialFactorization': 'Finding Common Factors',
-      'Geometry_AreaTriangle_NoDivideBy2': 'Triangle Area',
-      'Coordinates_OrderError': 'Coordinate Points',
-      'FractionDecimal_ConversionError': 'Fraction to Decimal',
-    };
-
-    return friendlyLabels[cleanCode] || cleanCode;
-  };
 
   const getSeverityIcon = (severity: string) => {
     switch (severity) {
