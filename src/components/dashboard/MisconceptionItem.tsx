@@ -48,12 +48,17 @@ export const MisconceptionItem: React.FC<MisconceptionItemProps> = ({
       className="p-2 rounded-lg border bg-muted/30 cursor-pointer hover:bg-muted/50 hover:border-primary/50 transition-all duration-200"
       onClick={onClick}
     >
-      {/* Top row: frequency badge on left, topics and count on right */}
+      {/* Top row: topics with frequency badge, count on right */}
       <div className="flex items-center justify-between mb-2">
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 min-w-0 flex-1">
+          {misconception.topics && misconception.topics.length > 0 && (
+            <p className="text-xs text-muted-foreground truncate">
+              {misconception.topics.join(', ')}
+            </p>
+          )}
           {getFrequencyBadge(misconception.frequency)}
         </div>
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 flex-shrink-0">
           {misconception.fromCache && (
             <Badge variant="outline" className="text-xs text-green-600 border-green-300">
               ⚡ Cached
@@ -64,13 +69,6 @@ export const MisconceptionItem: React.FC<MisconceptionItemProps> = ({
           </Badge>
         </div>
       </div>
-      
-      {/* Topics */}
-      {misconception.topics && misconception.topics.length > 0 && (
-        <p className="text-xs text-muted-foreground truncate mb-2">
-          {misconception.topics.join(', ')}
-        </p>
-      )}
       
       {/* Misconception text */}
       <div>
