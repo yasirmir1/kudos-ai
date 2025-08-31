@@ -36,7 +36,7 @@ export const TopicItem: React.FC<TopicItemProps> = ({
 
   return (
     <div 
-      className={`p-3 rounded-lg border transition-all duration-200 ${
+      className={`px-4 py-2 rounded-lg border transition-all duration-200 ${
         isClickable 
           ? 'cursor-pointer hover:bg-muted/50 hover:border-primary/50' 
           : 'bg-muted/20'
