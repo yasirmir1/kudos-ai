@@ -11,6 +11,14 @@ interface TopicItemProps {
   showClickHint?: boolean;
 }
 
+const getDisplayCount = (type: 'strength' | 'focus', accuracy: number, attempts: number) => {
+  if (type === 'strength') {
+    return Math.round(accuracy * attempts); // correct answers
+  } else {
+    return Math.round((1 - accuracy) * attempts); // mistakes
+  }
+};
+
 export const TopicItem: React.FC<TopicItemProps> = ({
   topic,
   accuracy,
@@ -21,6 +29,8 @@ export const TopicItem: React.FC<TopicItemProps> = ({
   showClickHint = false
 }) => {
   const accuracyPercent = Math.round(accuracy * 100);
+  const displayCount = getDisplayCount(type, accuracy, attempts);
+  const displayText = type === 'strength' ? 'correct' : 'mistake';
   const isClickable = !!onClick;
   
   const getAccuracyColor = () => {
@@ -51,7 +61,7 @@ export const TopicItem: React.FC<TopicItemProps> = ({
         </div>
         <div className="flex items-center gap-2 flex-shrink-0">
           <Badge variant="outline" className="text-xs">
-            {attempts} attempt{attempts !== 1 ? 's' : ''}
+            {displayCount} {displayText}{displayCount !== 1 ? 's' : ''}
           </Badge>
           <Badge variant={getBadgeVariant()} className="ml-2 flex-shrink-0">
             {accuracyPercent}%
