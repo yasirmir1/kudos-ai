@@ -48,7 +48,7 @@ export const TopicItem: React.FC<TopicItemProps> = ({
           <Badge variant="outline" className="mr-3 flex-shrink-0 text-xs">
             #{index + 1}
           </Badge>
-          <p className="text-sm font-medium text-foreground truncate">
+          <p className="text-xs font-medium text-foreground truncate">
             {topic}
           </p>
         </div>
