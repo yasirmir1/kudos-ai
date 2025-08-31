@@ -149,9 +149,8 @@ export const AppNavigation: React.FC<AppNavigationProps> = ({
               </button>}
           </div>
 
-          {/* Center section - Mode Toggle or Title/Subtitle */}
-          <div className="flex-1 flex justify-center items-center">
-            {/* Mode Toggle Switch - Always centered */}
+          {/* Center section - Mode Toggle (absolutely centered) */}
+          <div className="absolute left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2">
             <div className="bg-muted p-1 rounded-full flex items-center">
               <Button 
                 variant={!isBootcampRoute ? "default" : "ghost"} 
@@ -182,13 +181,13 @@ export const AppNavigation: React.FC<AppNavigationProps> = ({
                 <span>Bootcamp</span>
               </Button>
             </div>
-            
-            {/* Title/Subtitle if provided - will be below toggle */}
-            {(title || subtitle) && <div className="absolute top-20 left-1/2 transform -translate-x-1/2 text-center">
-                {title && <h1 className="text-xl font-bold">{title}</h1>}
-                {subtitle && <p className="text-sm text-muted-foreground">{subtitle}</p>}
-              </div>}
           </div>
+
+          {/* Title/Subtitle if provided - positioned below header */}
+          {(title || subtitle) && <div className="absolute top-20 left-1/2 transform -translate-x-1/2 text-center">
+              {title && <h1 className="text-xl font-bold">{title}</h1>}
+              {subtitle && <p className="text-sm text-muted-foreground">{subtitle}</p>}
+            </div>}
 
           {/* Right section - Navigation and Trial Indicator */}
           <div className="flex items-center space-x-3">
