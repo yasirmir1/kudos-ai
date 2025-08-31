@@ -320,16 +320,19 @@ const Dashboard = () => {
   };
 
   const renderOverview = () => (
-    <div className="container mx-auto px-4 py-8 space-y-8">
-      {/* Quick Actions */}
-      <div className="text-center space-y-4 py-[20px]">
-        <h2 className="text-3xl font-bold">Ready to learn?</h2>
-        <p className="text-muted-foreground max-w-2xl mx-auto">
-          Your adaptive learning system has prepared personalized {selectedAgeGroup} questions based on your progress
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+      {/* Ready to learn section */}
+      <div className="bg-card rounded-lg shadow-sm p-8 text-center mb-8">
+        <h1 className="text-3xl font-bold text-foreground">Ready to learn?</h1>
+        <p className="mt-3 text-base text-muted-foreground">
+          Your adaptive learning system has prepared personalized {selectedAgeGroup} questions.
         </p>
-        <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
-          <Button size="lg" onClick={startLearning} className="bg-gradient-to-r from-primary to-primary-glow hover:from-primary-glow hover:to-primary">
-            <Play className="mr-2 h-5 w-5" />
+        <div className="mt-6 flex flex-col sm:flex-row justify-center items-center space-y-4 sm:space-y-0 sm:space-x-4">
+          <Button 
+            onClick={startLearning}
+            className="flex items-center justify-center bg-primary text-primary-foreground font-semibold px-6 py-3 rounded-lg shadow-md hover:bg-primary/90 transition-colors text-base w-full sm:w-auto"
+          >
+            <Play className="mr-2 h-4 w-4" />
             Start Practice Session
           </Button>
           <WorksheetGeneratorModal />
@@ -337,144 +340,125 @@ const Dashboard = () => {
       </div>
 
       {/* Stats Overview */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-        <Card className="cursor-pointer hover:shadow-md transition-shadow" onClick={() => setQuestionHistoryOpen(true)}>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total Questions</CardTitle>
-            <Target className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{totalQuestions}</div>
-            <p className="text-xs text-muted-foreground">Questions completed • Click to view</p>
-          </CardContent>
-        </Card>
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+        <div className="bg-card p-4 rounded-lg shadow-sm cursor-pointer hover:shadow-md transition-shadow" onClick={() => setQuestionHistoryOpen(true)}>
+          <div className="flex justify-between items-center">
+            <h3 className="text-sm font-medium text-muted-foreground">Total Questions</h3>
+            <Target className="text-muted-foreground h-5 w-5" />
+          </div>
+          <p className="text-3xl font-bold text-foreground mt-2">{totalQuestions}</p>
+          <p className="text-xs text-muted-foreground mt-2">Questions completed</p>
+        </div>
 
-        <Card className="cursor-pointer hover:shadow-md transition-shadow" onClick={() => setTopicAccuracyOpen(true)}>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Overall Accuracy</CardTitle>
-            <TrendingUp className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{Math.round(overallAccuracy * 100)}%</div>
-            <Progress value={overallAccuracy * 100} className="mt-2" />
-            <p className="text-xs text-muted-foreground mt-2">By topic • Click to view</p>
-          </CardContent>
-        </Card>
+        <div className="bg-card p-4 rounded-lg shadow-sm cursor-pointer hover:shadow-md transition-shadow" onClick={() => setTopicAccuracyOpen(true)}>
+          <div className="flex justify-between items-center">
+            <h3 className="text-sm font-medium text-muted-foreground">Overall Accuracy</h3>
+            <TrendingUp className="text-muted-foreground h-5 w-5" />
+          </div>
+          <div className="flex items-center mt-2">
+            <p className="text-3xl font-bold text-success mr-2">{Math.round(overallAccuracy * 100)}%</p>
+            <div className="w-full bg-muted rounded-full h-2">
+              <div 
+                className="bg-primary h-2 rounded-full transition-all duration-500" 
+                style={{ width: `${overallAccuracy * 100}%` }}
+              />
+            </div>
+          </div>
+          <p className="text-xs text-muted-foreground mt-2">By topic</p>
+        </div>
 
-        <Card className="cursor-pointer hover:shadow-md transition-shadow" onClick={() => setTopicsStudiedOpen(true)}>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Topics Studied</CardTitle>
-            <BookOpen className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{performance.length}</div>
-            <p className="text-xs text-muted-foreground">Different topics • Click to view</p>
-          </CardContent>
-        </Card>
+        <div className="bg-card p-4 rounded-lg shadow-sm cursor-pointer hover:shadow-md transition-shadow" onClick={() => setTopicsStudiedOpen(true)}>
+          <div className="flex justify-between items-center">
+            <h3 className="text-sm font-medium text-muted-foreground">Topics Studied</h3>
+            <BookOpen className="text-muted-foreground h-5 w-5" />
+          </div>
+          <p className="text-3xl font-bold text-foreground mt-2">{performance.length}</p>
+          <p className="text-xs text-muted-foreground mt-2">Different topics</p>
+        </div>
 
-        <Card className="cursor-pointer hover:shadow-md transition-shadow" onClick={() => setSessionsModalOpen(true)}>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Sessions</CardTitle>
-            <Calendar className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{totalSessions}</div>
-            <p className="text-xs text-muted-foreground">Practice sessions • Click to view</p>
-          </CardContent>
-        </Card>
+        <div className="bg-card p-4 rounded-lg shadow-sm cursor-pointer hover:shadow-md transition-shadow" onClick={() => setSessionsModalOpen(true)}>
+          <div className="flex justify-between items-center">
+            <h3 className="text-sm font-medium text-muted-foreground">Sessions</h3>
+            <Calendar className="text-muted-foreground h-5 w-5" />
+          </div>
+          <p className="text-3xl font-bold text-foreground mt-2">{totalSessions}</p>
+          <p className="text-xs text-muted-foreground mt-2">Practice sessions</p>
+        </div>
       </div>
 
       {/* Performance Details */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Strongest Topics */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center space-x-2">
-              <Award className="h-5 w-5 text-green-500" />
-              <span>Your Strengths</span>
-            </CardTitle>
-            <CardDescription>Topics where you're performing well</CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-4">
+        {/* Your Strengths */}
+        <div className="bg-card p-6 rounded-lg shadow-sm">
+          <div className="flex items-center mb-4">
+            <Award className="text-success text-2xl h-6 w-6 mr-3" />
+            <h3 className="text-lg font-semibold text-foreground">Your Strengths</h3>
+          </div>
+          <p className="text-sm text-muted-foreground mb-4">Topics where you're performing well</p>
+          <div className="space-y-3">
             {performance.filter(topic => topic.accuracy >= 0.5).slice(0, 5).map((topic, index) => (
-              <div key={topic.topic} className="flex items-center justify-between">
-                <div className="flex items-center space-x-3">
-                  <Badge variant="secondary" className="text-xs min-w-8 flex justify-center bg-green-100 text-green-700 border-green-200">
-                    #{index + 1}
-                  </Badge>
-                  <span className="font-medium">{topic.topic}</span>
-                </div>
-                <div className="text-right">
-                  <div className="text-sm font-medium text-green-600">
-                    {Math.round(topic.accuracy * 100)}%
+              <div key={topic.topic}>
+                <div className="flex justify-between items-center">
+                  <div className="flex items-center">
+                    <span className="text-sm font-bold text-muted-foreground mr-2">#{index + 1}</span>
+                    <p className="text-sm text-foreground">{topic.topic}</p>
                   </div>
-                  <div className="text-xs text-muted-foreground">
-                    {topic.total_attempts} attempts
-                  </div>
+                  <span className="text-sm font-bold text-success">{Math.round(topic.accuracy * 100)}%</span>
                 </div>
+                <p className="text-xs text-muted-foreground ml-7 mt-1">{topic.total_attempts} attempts</p>
               </div>
             ))}
             {performance.filter(topic => topic.accuracy >= 0.5).length === 0 && (
-              <div className="text-center py-4 text-muted-foreground">
-                Complete some practice questions to see your strengths!
+              <div className="text-center py-4">
+                <p className="text-sm text-muted-foreground">Complete some practice questions to see your strengths!</p>
               </div>
             )}
-          </CardContent>
-        </Card>
+          </div>
+        </div>
 
-        {/* Areas for Improvement */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center space-x-2">
-              <Target className="h-5 w-5 text-orange-500" />
-              <span>Focus Areas</span>
-            </CardTitle>
-            <CardDescription>Topics that need more attention</CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-4">
+        {/* Focus Areas */}
+        <div className="bg-card p-6 rounded-lg shadow-sm">
+          <div className="flex items-center mb-4">
+            <Target className="text-warning text-2xl h-6 w-6 mr-3" />
+            <h3 className="text-lg font-semibold text-foreground">Focus Areas</h3>
+          </div>
+          <p className="text-sm text-muted-foreground mb-4">Topics that need more attention</p>
+          <div className="space-y-3">
             {needsWork.map((topic, index) => (
               <div 
-                key={topic.topic} 
-                className="flex items-center justify-between cursor-pointer hover:bg-gray-50 p-2 rounded-lg transition-colors" 
+                key={topic.topic}
+                className="cursor-pointer hover:bg-muted/50 p-2 rounded-lg transition-colors" 
                 onClick={() => {
                   setSelectedFocusArea(topic);
                   setFocusAreaQuestionsOpen(true);
                 }}
               >
-                <div className="flex items-center space-x-3">
-                  <Badge variant="destructive" className="text-xs min-w-8 flex justify-center">
-                    #{index + 1}
-                  </Badge>
-                  <span className="font-medium">{topic.topic}</span>
-                </div>
-                <div className="text-right">
-                  <div className="text-sm font-medium text-orange-600">
-                    {Math.round(topic.accuracy * 100)}%
+                <div className="flex justify-between items-center">
+                  <div className="flex items-center">
+                    <span className="text-sm font-bold text-muted-foreground mr-2">#{index + 1}</span>
+                    <p className="text-sm text-foreground">{topic.topic}</p>
                   </div>
-                  <div className="text-xs text-muted-foreground">
-                    {topic.attempts} attempts • Click to view questions
-                  </div>
+                  <span className="text-sm font-bold text-destructive">{Math.round(topic.accuracy * 100)}%</span>
                 </div>
+                <p className="text-xs text-muted-foreground ml-7 mt-1">{topic.attempts} attempts • Click to practice</p>
               </div>
             ))}
             {needsWork.length === 0 && (
-              <div className="text-center py-4 text-muted-foreground">
-                Great job! No weak areas identified yet.
+              <div className="text-center py-4">
+                <p className="text-sm text-muted-foreground">Great job! No weak areas identified yet.</p>
               </div>
             )}
-          </CardContent>
-        </Card>
+          </div>
+        </div>
 
-        {/* Common Misconceptions */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center space-x-2">
-              <Clock className="h-5 w-5 text-blue-500" />
-              <span>Misconceptions</span>
-            </CardTitle>
-            <CardDescription>Common mistakes to watch out for</CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-4">
+        {/* Misconceptions */}
+        <div className="bg-card p-6 rounded-lg shadow-sm">
+          <div className="flex items-center mb-4">
+            <Clock className="text-destructive text-2xl h-6 w-6 mr-3" />
+            <h3 className="text-lg font-semibold text-foreground">Misconceptions</h3>
+          </div>
+          <p className="text-sm text-muted-foreground mb-4">Common mistakes to watch out for</p>
+          <div className="space-y-3">
             {loadingExplanations && misconceptions.length > 0 && (
               <div className="flex items-center justify-center py-4">
                 <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-primary"></div>
@@ -486,14 +470,14 @@ const Dashboard = () => {
               const kidFriendlyLabel = formatMisconceptionForKids(misconception.red_herring);
               return (
                 <div 
-                  key={`${misconception.red_herring}-${index}`} 
-                  className="space-y-2 p-3 rounded-lg border bg-gradient-to-r from-blue-50/50 to-purple-50/50 cursor-pointer hover:shadow-md transition-shadow" 
+                  key={`${misconception.red_herring}-${index}`}
+                  className="p-3 rounded-lg border bg-muted/30 cursor-pointer hover:bg-muted/50 transition-colors" 
                   onClick={() => {
                     setSelectedMisconceptionForQuestions(misconception);
                     setMisconceptionQuestionsOpen(true);
                   }}
                 >
-                  <div className="flex items-center justify-between">
+                  <div className="flex items-center justify-between mb-2">
                     <div className="flex items-center space-x-2">
                       {getFrequencyColorBadge(misconception.frequency)}
                       <span className="text-xs text-muted-foreground">
@@ -501,10 +485,10 @@ const Dashboard = () => {
                       </span>
                     </div>
                   </div>
-                  <p className="text-sm font-medium text-blue-900">
+                  <p className="text-sm font-medium text-foreground mb-1">
                     {kidFriendlyLabel}
                   </p>
-                  <p className="text-xs text-blue-700">
+                  <p className="text-xs text-muted-foreground">
                     Let's see what happened and learn together! 🌟
                   </p>
                 </div>
@@ -512,12 +496,12 @@ const Dashboard = () => {
             })}
             
             {misconceptions.length === 0 && (
-              <div className="text-center py-4 text-muted-foreground">
-                Complete some practice questions to identify misconceptions.
+              <div className="text-center py-4">
+                <p className="text-sm text-muted-foreground">Complete some practice questions to identify misconceptions.</p>
               </div>
             )}
-          </CardContent>
-        </Card>
+          </div>
+        </div>
       </div>
 
       {/* Modals */}
