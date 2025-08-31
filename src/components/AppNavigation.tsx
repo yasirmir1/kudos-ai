@@ -1,12 +1,15 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { BookOpen, BarChart3, User, GraduationCap, FileText, Play, Target, Calendar, CreditCard, LogOut, Clock, Crown, HelpCircle } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
 import { useSubscription } from '@/hooks/useSubscription';
 import { useTrialModal } from '@/contexts/TrialModalContext';
 import { cn } from '@/lib/utils';
+import HelpCenter from '@/components/bootcamp/HelpCenter';
 interface AppNavigationProps {
   title?: string;
   subtitle?: string;
@@ -21,6 +24,7 @@ export const AppNavigation: React.FC<AppNavigationProps> = ({
   backButtonText = "Back",
   backButtonPath = "/dashboard"
 }) => {
+  const [isHelpOpen, setIsHelpOpen] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
   const {
@@ -59,12 +63,8 @@ export const AppNavigation: React.FC<AppNavigationProps> = ({
       mode: 'upgrade'
     });
   };
+  // Remove help from navigation items and handle it separately
   const mainAppItems = [
-    {
-      path: '/tutorial',
-      label: 'Help',
-      icon: HelpCircle
-    },
     {
       path: '/profile',
       label: 'Profile',
@@ -72,11 +72,6 @@ export const AppNavigation: React.FC<AppNavigationProps> = ({
     }
   ];
   const bootcampItems = [
-    {
-      path: '/tutorial',
-      label: 'Help',
-      icon: HelpCircle
-    },
     {
       path: '/profile',
       label: 'Profile',
@@ -184,16 +179,38 @@ export const AppNavigation: React.FC<AppNavigationProps> = ({
               </Badge>
             </div>
 
-            {/* System Mode Buttons */}
-            <div className="hidden md:flex items-center space-x-4 mr-6">
-              <Button variant={!isBootcampRoute ? "default" : "ghost"} size="sm" onClick={() => navigate('/dashboard')} className={cn("flex items-center space-x-2 px-4 py-2 min-w-[120px] justify-center", !isBootcampRoute && "bg-primary text-primary-foreground")}>
-                <Calendar className="h-4 w-4" />
-                <span className="hidden lg:inline">Daily Mode</span>
-              </Button>
-              <Button variant={isBootcampRoute ? "default" : "ghost"} size="sm" onClick={() => navigate('/bootcamp')} className={cn("flex items-center space-x-2 px-4 py-2 min-w-[120px] justify-center", isBootcampRoute && "bg-primary text-primary-foreground")}>
-                <Target className="h-4 w-4" />
-                <span className="hidden lg:inline">Bootcamp</span>
-              </Button>
+            {/* Mode Toggle Switch */}
+            <div className="hidden md:flex items-center space-x-2 mr-6">
+              <div className="bg-muted p-1 rounded-full flex items-center">
+                <Button 
+                  variant={!isBootcampRoute ? "default" : "ghost"} 
+                  size="sm" 
+                  onClick={() => navigate('/dashboard')}
+                  className={cn(
+                    "flex items-center space-x-2 px-4 py-1.5 rounded-full text-sm font-medium transition-colors",
+                    !isBootcampRoute 
+                      ? "bg-primary text-primary-foreground shadow-sm" 
+                      : "text-muted-foreground hover:text-foreground"
+                  )}
+                >
+                  <Calendar className="h-4 w-4" />
+                  <span>Daily Mode</span>
+                </Button>
+                <Button 
+                  variant={isBootcampRoute ? "default" : "ghost"} 
+                  size="sm" 
+                  onClick={() => navigate('/bootcamp')}
+                  className={cn(
+                    "flex items-center space-x-2 px-4 py-1.5 rounded-full text-sm font-medium transition-colors",
+                    isBootcampRoute 
+                      ? "bg-primary text-primary-foreground shadow-sm" 
+                      : "text-muted-foreground hover:text-foreground"
+                  )}
+                >
+                  <Target className="h-4 w-4" />
+                  <span>Bootcamp</span>
+                </Button>
+              </div>
             </div>
 
             
@@ -233,5 +250,25 @@ export const AppNavigation: React.FC<AppNavigationProps> = ({
           </div>
         </div>
       </div>
+      
+      {/* Floating Help Button */}
+      <div className="fixed bottom-6 right-6 z-50">
+        <Button
+          onClick={() => setIsHelpOpen(true)}
+          className="h-14 w-14 rounded-full shadow-lg hover:shadow-xl transition-all duration-200 bg-primary hover:bg-primary/90"
+          size="icon"
+        >
+          <HelpCircle className="h-6 w-6" />
+        </Button>
+      </div>
+
+      {/* Help Dialog */}
+      <Dialog open={isHelpOpen} onOpenChange={setIsHelpOpen}>
+        <DialogContent className="max-w-6xl max-h-[90vh] overflow-hidden p-0">
+          <div className="overflow-y-auto max-h-[90vh]">
+            <HelpCenter />
+          </div>
+        </DialogContent>
+      </Dialog>
     </header>;
 };
