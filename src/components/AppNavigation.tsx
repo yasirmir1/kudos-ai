@@ -134,115 +134,118 @@ export const AppNavigation: React.FC<AppNavigationProps> = ({
     }
   };
   const isActivePath = (path: string) => location.pathname === path;
-  return <header className="border-b bg-card/50 backdrop-blur-sm">
-      <div className="container mx-auto px-0 py-[15px] pr-12">
-        <div className="flex justify-between items-center">
-          {/* Left section - Back button or Logo */}
-          <div className="flex items-center space-x-4">
-            {showBackButton ? <Button variant="ghost" onClick={() => navigate(backButtonPath)}>
-                {backButtonText}
-              </Button> : <button 
-                onClick={() => navigate('/')} 
-                className="flex items-center space-x-2 hover:opacity-80 transition-opacity"
-              >
-                <img src="/lovable-uploads/343d37bc-a8af-452f-b2b9-250214aa6175.png" alt="Kudos Academy" className="h-16 w-auto" />
-              </button>}
-          </div>
-
-          {/* Center section - Mode Toggle (absolutely centered) */}
-          <div className="absolute left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2">
-            <div className="bg-muted p-1 rounded-full flex items-center">
-              <Button 
-                variant={!isBootcampRoute ? "default" : "ghost"} 
-                size="sm" 
-                onClick={() => navigate('/dashboard')}
-                className={cn(
-                  "flex items-center space-x-2 px-4 py-1.5 rounded-full text-sm font-medium transition-colors",
-                  !isBootcampRoute 
-                    ? "bg-primary text-primary-foreground shadow-sm" 
-                    : "text-muted-foreground hover:text-foreground"
-                )}
-              >
-                <Calendar className="h-4 w-4" />
-                <span>Daily Mode</span>
-              </Button>
-              <Button 
-                variant={isBootcampRoute ? "default" : "ghost"} 
-                size="sm" 
-                onClick={() => navigate('/bootcamp')}
-                className={cn(
-                  "flex items-center space-x-2 px-4 py-1.5 rounded-full text-sm font-medium transition-colors",
-                  isBootcampRoute 
-                    ? "bg-primary text-primary-foreground shadow-sm" 
-                    : "text-muted-foreground hover:text-foreground"
-                )}
-              >
-                <Target className="h-4 w-4" />
-                <span>Bootcamp</span>
-              </Button>
-            </div>
-          </div>
-
-          {/* Title/Subtitle if provided - positioned below header */}
-          {(title || subtitle) && <div className="absolute top-20 left-1/2 transform -translate-x-1/2 text-center">
-              {title && <h1 className="text-xl font-bold">{title}</h1>}
-              {subtitle && <p className="text-sm text-muted-foreground">{subtitle}</p>}
-            </div>}
-
-          {/* Right section - Navigation and Trial Indicator */}
-          <div className="flex items-center space-x-3">
-            {/* Upgrade Button for limited access */}
-            {shouldShowUpgrade && <Button variant="destructive" size="sm" onClick={handleUpgradeClick} className="flex items-center space-x-2 px-4 py-2">
-                <CreditCard className="h-4 w-4" />
-                <span>{isTrialExpired ? 'Upgrade Now' : 'Upgrade to Plus'}</span>
-              </Button>}
-
-            {/* Plan Status Indicator - Always show */}
-            <div className="hidden md:flex items-center">
-              <Badge variant="outline" className="flex items-center space-x-1 px-2 py-0.5 text-muted-foreground border-muted-foreground/30">
-                <planDisplay.icon className="h-3 w-3" />
-                <span className="text-xs">{planDisplay.text}</span>
-              </Badge>
+  return (
+    <>
+      <header className="border-b bg-card/50 backdrop-blur-sm">
+        <div className="container mx-auto px-0 py-[15px] pr-12">
+          <div className="flex justify-between items-center">
+            {/* Left section - Back button or Logo */}
+            <div className="flex items-center space-x-4">
+              {showBackButton ? <Button variant="ghost" onClick={() => navigate(backButtonPath)}>
+                  {backButtonText}
+                </Button> : <button 
+                  onClick={() => navigate('/')} 
+                  className="flex items-center space-x-2 hover:opacity-80 transition-opacity"
+                >
+                  <img src="/lovable-uploads/343d37bc-a8af-452f-b2b9-250214aa6175.png" alt="Kudos Academy" className="h-16 w-auto" />
+                </button>}
             </div>
 
-            {/* Navigation Links */}
-            <nav className="hidden md:flex items-center space-x-2">
-              {navigationItems.map(item => {
-              const Icon = item.icon;
-              const isActive = isActivePath(item.path);
-              return <Button key={item.path} variant={isActive ? "default" : "ghost"} size="sm" onClick={() => navigate(item.path)} className={cn("flex items-center space-x-2 px-4 py-2 min-w-[100px] justify-center", isActive && "bg-primary text-primary-foreground")}>
-                    <Icon className="h-4 w-4" />
-                    <span className="hidden lg:inline">{item.label}</span>
-                  </Button>;
-            })}
-              
-              {/* Logout Button - Icon only */}
-              <Button variant="ghost" size="sm" onClick={handleLogout} className="flex items-center justify-center px-3 py-2 w-auto" title="Logout">
-                <LogOut className="h-4 w-4" />
-              </Button>
-            </nav>
-
-            {/* Mobile Navigation Dropdown */}
-            <div className="md:hidden">
-              <select value={location.pathname} onChange={e => {
-              if (e.target.value === 'logout') {
-                handleLogout();
-              } else {
-                navigate(e.target.value);
-              }
-            }} className="px-3 py-2 text-sm border rounded-md bg-background">
-                {navigationItems.map(item => <option key={item.path} value={item.path}>
-                    {item.label}
-                  </option>)}
-                <option value="logout">Logout</option>
-              </select>
+            {/* Center section - Mode Toggle (absolutely centered) */}
+            <div className="absolute left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2">
+              <div className="bg-muted p-1 rounded-full flex items-center">
+                <Button 
+                  variant={!isBootcampRoute ? "default" : "ghost"} 
+                  size="sm" 
+                  onClick={() => navigate('/dashboard')}
+                  className={cn(
+                    "flex items-center space-x-2 px-4 py-1.5 rounded-full text-sm font-medium transition-colors",
+                    !isBootcampRoute 
+                      ? "bg-primary text-primary-foreground shadow-sm" 
+                      : "text-muted-foreground hover:text-foreground"
+                  )}
+                >
+                  <Calendar className="h-4 w-4" />
+                  <span>Daily Mode</span>
+                </Button>
+                <Button 
+                  variant={isBootcampRoute ? "default" : "ghost"} 
+                  size="sm" 
+                  onClick={() => navigate('/bootcamp')}
+                  className={cn(
+                    "flex items-center space-x-2 px-4 py-1.5 rounded-full text-sm font-medium transition-colors",
+                    isBootcampRoute 
+                      ? "bg-primary text-primary-foreground shadow-sm" 
+                      : "text-muted-foreground hover:text-foreground"
+                  )}
+                >
+                  <Target className="h-4 w-4" />
+                  <span>Bootcamp</span>
+                </Button>
+              </div>
             </div>
 
+            {/* Title/Subtitle if provided - positioned below header */}
+            {(title || subtitle) && <div className="absolute top-20 left-1/2 transform -translate-x-1/2 text-center">
+                {title && <h1 className="text-xl font-bold">{title}</h1>}
+                {subtitle && <p className="text-sm text-muted-foreground">{subtitle}</p>}
+              </div>}
+
+            {/* Right section - Navigation and Trial Indicator */}
+            <div className="flex items-center space-x-3">
+              {/* Upgrade Button for limited access */}
+              {shouldShowUpgrade && <Button variant="destructive" size="sm" onClick={handleUpgradeClick} className="flex items-center space-x-2 px-4 py-2">
+                  <CreditCard className="h-4 w-4" />
+                  <span>{isTrialExpired ? 'Upgrade Now' : 'Upgrade to Plus'}</span>
+                </Button>}
+
+              {/* Plan Status Indicator - Always show */}
+              <div className="hidden md:flex items-center">
+                <Badge variant="outline" className="flex items-center space-x-1 px-2 py-0.5 text-muted-foreground border-muted-foreground/30">
+                  <planDisplay.icon className="h-3 w-3" />
+                  <span className="text-xs">{planDisplay.text}</span>
+                </Badge>
+              </div>
+
+              {/* Navigation Links */}
+              <nav className="hidden md:flex items-center space-x-2">
+                {navigationItems.map(item => {
+                const Icon = item.icon;
+                const isActive = isActivePath(item.path);
+                return <Button key={item.path} variant={isActive ? "default" : "ghost"} size="sm" onClick={() => navigate(item.path)} className={cn("flex items-center space-x-2 px-4 py-2 min-w-[100px] justify-center", isActive && "bg-primary text-primary-foreground")}>
+                      <Icon className="h-4 w-4" />
+                      <span className="hidden lg:inline">{item.label}</span>
+                    </Button>;
+              })}
+                
+                {/* Logout Button - Icon only */}
+                <Button variant="ghost" size="sm" onClick={handleLogout} className="flex items-center justify-center px-3 py-2 w-auto" title="Logout">
+                  <LogOut className="h-4 w-4" />
+                </Button>
+              </nav>
+
+              {/* Mobile Navigation Dropdown */}
+              <div className="md:hidden">
+                <select value={location.pathname} onChange={e => {
+                if (e.target.value === 'logout') {
+                  handleLogout();
+                } else {
+                  navigate(e.target.value);
+                }
+              }} className="px-3 py-2 text-sm border rounded-md bg-background">
+                  {navigationItems.map(item => <option key={item.path} value={item.path}>
+                      {item.label}
+                    </option>)}
+                  <option value="logout">Logout</option>
+                </select>
+              </div>
+
+            </div>
           </div>
         </div>
-      </div>
-      
-      {/* Floating Help Button */}
+      </header>
+
+      {/* Floating Help Button - Outside header for proper viewport positioning */}
       <div className="fixed bottom-6 right-6 z-50">
         <Button
           onClick={() => setIsHelpOpen(true)}
@@ -261,5 +264,6 @@ export const AppNavigation: React.FC<AppNavigationProps> = ({
           </div>
         </DialogContent>
       </Dialog>
-    </header>;
+    </>
+  );
 };
