@@ -53,11 +53,14 @@ export const TopicItem: React.FC<TopicItemProps> = ({
       }`}
       onClick={onClick}
     >
-      <div className="flex items-center justify-between mb-2">
-        <div className="flex items-center min-w-0 flex-1">
-          <p className="text-xs font-medium text-foreground truncate">
+      <div className="flex items-center justify-between h-full">
+        <div className="flex flex-col justify-center min-w-0 flex-1">
+          <p className="text-xs font-medium text-foreground truncate mb-1">
             {topic}
           </p>
+          {showClickHint && (
+            <span className="text-xs text-primary">Click to practice</span>
+          )}
         </div>
         <div className="flex items-center gap-2 flex-shrink-0">
           <Badge variant={getBadgeVariant()}>
@@ -68,12 +71,6 @@ export const TopicItem: React.FC<TopicItemProps> = ({
           </Badge>
         </div>
       </div>
-      
-      {showClickHint && (
-        <div className="flex justify-start">
-          <span className="text-xs text-primary">Click to practice</span>
-        </div>
-      )}
     </div>
   );
 };
