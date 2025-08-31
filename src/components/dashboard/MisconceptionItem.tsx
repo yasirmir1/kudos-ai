@@ -45,24 +45,22 @@ export const MisconceptionItem: React.FC<MisconceptionItemProps> = ({
 
   return (
     <div 
-      className="px-4 py-2 rounded-lg border bg-muted/30 cursor-pointer hover:bg-muted/50 hover:border-primary/50 transition-all duration-200"
+      className="px-4 py-3 rounded-lg border bg-muted/30 cursor-pointer hover:bg-muted/50 hover:border-primary/50 transition-all duration-200"
       onClick={onClick}
     >
-      <div className="flex justify-between h-full">
-        <div className="flex flex-col min-w-0 flex-1 pr-2">
-          {/* Topics */}
+      <div className="flex items-center justify-between gap-4">
+        <div className="min-w-0 flex-1">
           {misconception.topics && misconception.topics.length > 0 && (
-            <p className="text-sm text-muted-foreground truncate mb-2">
+            <p className="text-xs text-muted-foreground truncate mb-1">
               {misconception.topics.join(', ')}
             </p>
           )}
-          
-          <p className="text-[10px] font-medium text-foreground line-clamp-2">
+          <p className="text-sm font-medium text-foreground line-clamp-2">
             {kidFriendlyLabel}
           </p>
         </div>
         
-        <div className="flex items-start gap-2 flex-shrink-0 pt-1">
+        <div className="flex items-center gap-2 flex-shrink-0">
           {getFrequencyBadge(misconception.frequency)}
           {misconception.fromCache && (
             <Badge variant="outline" className="text-xs text-green-600 border-green-300">

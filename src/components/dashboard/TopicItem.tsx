@@ -46,16 +46,16 @@ export const TopicItem: React.FC<TopicItemProps> = ({
 
   return (
     <div 
-      className={`px-4 py-2 rounded-lg border transition-all duration-200 ${
+      className={`px-4 py-3 rounded-lg border transition-all duration-200 ${
         isClickable 
           ? 'cursor-pointer hover:bg-muted/50 hover:border-primary/50' 
           : 'bg-muted/20'
       }`}
       onClick={onClick}
     >
-      <div className="flex items-center justify-between h-full">
-        <div className="flex flex-col min-w-0 flex-1 pr-2" style={{ justifyContent: showClickHint ? 'center' : 'center' }}>
-          <p className="text-xs font-medium text-foreground break-words" style={{ marginBottom: showClickHint ? '4px' : '0' }}>
+      <div className="flex items-center justify-between gap-4">
+        <div className="min-w-0 flex-1">
+          <p className="text-sm font-medium text-foreground truncate">
             {topic}
           </p>
           {showClickHint && (
