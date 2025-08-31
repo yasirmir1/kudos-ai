@@ -51,6 +51,7 @@ export const AppNavigation: React.FC<AppNavigationProps> = ({
 
   // Determine which navigation items to show based on current route
   const isBootcampRoute = location.pathname.startsWith('/bootcamp');
+  const isProfileRoute = location.pathname === '/profile';
 
   // Check if trial is expired and require payment
   const shouldShowUpgrade = isTrialExpired || userState === 'pass' && isBootcampRoute;
@@ -155,12 +156,12 @@ export const AppNavigation: React.FC<AppNavigationProps> = ({
             <div className="absolute left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2">
               <div className="bg-muted p-1 rounded-full flex items-center">
                 <Button 
-                  variant={!isBootcampRoute ? "default" : "ghost"} 
+                  variant={!isBootcampRoute && !isProfileRoute ? "default" : "ghost"} 
                   size="sm" 
                   onClick={() => navigate('/dashboard')}
                   className={cn(
                     "flex items-center space-x-2 px-4 py-1.5 rounded-full text-sm font-medium transition-colors",
-                    !isBootcampRoute 
+                    !isBootcampRoute && !isProfileRoute
                       ? "bg-primary text-primary-foreground shadow-sm" 
                       : "text-muted-foreground hover:text-foreground"
                   )}
@@ -169,12 +170,12 @@ export const AppNavigation: React.FC<AppNavigationProps> = ({
                   <span>Daily Mode</span>
                 </Button>
                 <Button 
-                  variant={isBootcampRoute ? "default" : "ghost"} 
+                  variant={isBootcampRoute && !isProfileRoute ? "default" : "ghost"} 
                   size="sm" 
                   onClick={() => navigate('/bootcamp')}
                   className={cn(
                     "flex items-center space-x-2 px-4 py-1.5 rounded-full text-sm font-medium transition-colors",
-                    isBootcampRoute 
+                    isBootcampRoute && !isProfileRoute
                       ? "bg-primary text-primary-foreground shadow-sm" 
                       : "text-muted-foreground hover:text-foreground"
                   )}
