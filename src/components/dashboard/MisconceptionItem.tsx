@@ -55,7 +55,7 @@ export const MisconceptionItem: React.FC<MisconceptionItemProps> = ({
               {misconception.topics.join(', ')}
             </p>
           )}
-          <p className="text-sm font-medium text-foreground line-clamp-2">
+          <p className="text-xs font-medium text-foreground line-clamp-2">
             {kidFriendlyLabel}
           </p>
         </div>
