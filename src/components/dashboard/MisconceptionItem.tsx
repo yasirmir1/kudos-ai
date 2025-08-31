@@ -65,7 +65,7 @@ export const MisconceptionItem: React.FC<MisconceptionItemProps> = ({
             </Badge>
           )}
           <Badge variant="secondary" className="text-xs">
-            {misconception.frequency}x
+            {misconception.frequency}
           </Badge>
         </div>
       </div>
