@@ -65,14 +65,14 @@ export const MisconceptionItem: React.FC<MisconceptionItemProps> = ({
         <div className="flex items-center gap-1 flex-shrink-0">
           {getFrequencyBadge(misconception.frequency)}
           {misconception.fromCache && (
-            <Badge variant="outline" className="text-[9px] px-1 py-0 text-green-600 border-green-300">
+            <Badge variant="outline" className="text-[10px] px-1 py-0 text-green-600 border-green-300">
               ⚡
             </Badge>
           )}
-          <Badge variant="destructive" className="text-[9px] px-1 py-0">
+          <Badge variant="destructive" className="text-[10px] px-1 py-0">
             {Math.round((misconception.frequency / (misconception.frequency + 10)) * 100)}%
           </Badge>
-          <Badge variant="secondary" className="text-[9px] px-1 py-0">
+          <Badge variant="secondary" className="text-[10px] px-1 py-0">
             {misconception.frequency}
           </Badge>
         </div>
