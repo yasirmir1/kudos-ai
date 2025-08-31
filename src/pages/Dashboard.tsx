@@ -69,7 +69,7 @@ const Dashboard = () => {
   
   // Get student ID for misconception cache
   const [studentId, setStudentId] = useState<string | null>(null);
-  const { cachedMisconceptions, cacheHitRate, isLoading: cacheLoading } = useMisconceptionCache(studentId);
+  const { cachedMisconceptions = [], cacheHitRate = 0, isLoading: cacheLoading = false } = useMisconceptionCache(studentId) || {};
 
   useEffect(() => {
     const getStudentId = async () => {
