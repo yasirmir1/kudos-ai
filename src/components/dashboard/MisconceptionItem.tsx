@@ -57,17 +57,13 @@ export const MisconceptionItem: React.FC<MisconceptionItemProps> = ({
             </p>
           )}
           
-          {/* Misconception text with frequency badge */}
-          <div className="flex items-center gap-2 mb-2">
-            {getFrequencyBadge(misconception.frequency)}
-          </div>
-          
           <p className="text-[10px] font-medium text-foreground line-clamp-2">
             {kidFriendlyLabel}
           </p>
         </div>
         
         <div className="flex items-center gap-2 flex-shrink-0">
+          {getFrequencyBadge(misconception.frequency)}
           {misconception.fromCache && (
             <Badge variant="outline" className="text-xs text-green-600 border-green-300">
               ⚡ Cached
