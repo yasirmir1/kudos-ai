@@ -73,7 +73,7 @@ export const MisconceptionItem: React.FC<MisconceptionItemProps> = ({
               ⚡ Cached
             </Badge>
           )}
-          <Badge variant="destructive">
+          <Badge variant="destructive" className="text-xs">
             {Math.round((misconception.frequency / (misconception.frequency + 10)) * 100)}%
           </Badge>
           <Badge variant="secondary" className="text-xs">

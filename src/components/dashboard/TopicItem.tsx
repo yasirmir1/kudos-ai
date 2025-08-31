@@ -63,7 +63,7 @@ export const TopicItem: React.FC<TopicItemProps> = ({
           )}
         </div>
         <div className="flex items-center gap-2 flex-shrink-0">
-          <Badge variant={getBadgeVariant()}>
+          <Badge variant={getBadgeVariant()} className="text-xs">
             {accuracyPercent}%
           </Badge>
           <Badge variant="secondary" className="text-xs">
