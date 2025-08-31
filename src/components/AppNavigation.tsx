@@ -192,7 +192,7 @@ export const AppNavigation: React.FC<AppNavigationProps> = ({
               </div>}
 
             {/* Right section - Navigation and Trial Indicator */}
-            <div className="flex items-center space-x-3">
+            <div className="flex items-center space-x-4">
               {/* Upgrade Button for limited access */}
               {shouldShowUpgrade && <Button variant="destructive" size="sm" onClick={handleUpgradeClick} className="flex items-center space-x-2 px-4 py-2">
                   <CreditCard className="h-4 w-4" />
@@ -201,14 +201,14 @@ export const AppNavigation: React.FC<AppNavigationProps> = ({
 
               {/* Plan Status Indicator - Always show */}
               <div className="hidden md:flex items-center">
-                <Badge variant="outline" className="flex items-center space-x-1 px-2 py-0.5 text-muted-foreground border-muted-foreground/30">
+                <Badge variant="outline" className="flex items-center space-x-1 px-3 py-1 text-muted-foreground border-muted-foreground/30">
                   <planDisplay.icon className="h-3 w-3" />
                   <span className="text-xs">{planDisplay.text}</span>
                 </Badge>
               </div>
 
               {/* Navigation Links */}
-              <nav className="hidden md:flex items-center space-x-2">
+              <nav className="hidden md:flex items-center space-x-1">
                 {navigationItems.map(item => {
                 const Icon = item.icon;
                 const isActive = isActivePath(item.path);
@@ -218,8 +218,11 @@ export const AppNavigation: React.FC<AppNavigationProps> = ({
                     </Button>;
               })}
                 
+                {/* Separator */}
+                <div className="w-px h-6 bg-border mx-2"></div>
+                
                 {/* Logout Button - Icon only */}
-                <Button variant="ghost" size="sm" onClick={handleLogout} className="flex items-center justify-center px-3 py-2 w-auto" title="Logout">
+                <Button variant="ghost" size="sm" onClick={handleLogout} className="flex items-center justify-center px-3 py-2" title="Logout">
                   <LogOut className="h-4 w-4" />
                 </Button>
               </nav>
