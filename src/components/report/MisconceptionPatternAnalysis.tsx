@@ -119,6 +119,37 @@ export const MisconceptionPatternAnalysis: React.FC<MisconceptionPatternAnalysis
     }
   };
 
+  const getFriendlyMisconceptionName = (code: string) => {
+    // Clean up the code first
+    const cleanCode = code.replace(/[[\]"]/g, '');
+    
+    // Create friendly labels for common misconceptions
+    const friendlyLabels: { [key: string]: string } = {
+      'Percentage_IncorrectOperation': 'Percentage Mix-ups',
+      'PlaceValue_DigitValueConfusion': 'Place Value Confusion',
+      'Rounding_IncorrectDirection': 'Rounding Direction',
+      'Algebra_IncorrectOperation': 'Algebra Steps',
+      'Fractions_AddNumeratorsAndDenominators': 'Fraction Addition',
+      'Decimals_IncorrectPlaceValueShift': 'Decimal Point Position',
+      'OrderOfOperations_ParenthesesIgnored': 'Order of Operations',
+      'Multiplication_TableError': 'Times Tables',
+      'Division_RemainderError': 'Division with Remainders',
+      'Addition_CarryError': 'Carrying Numbers',
+      'Subtraction_BorrowError': 'Borrowing Numbers',
+      'MixedNumbers_ImproperConversion': 'Mixed Numbers',
+      'Rounding_DownInsteadOfUp': 'Rounding Direction',
+      'PrimeNumbers_OddNumberConfusion': 'Prime Numbers',
+      'MultiStep_OperationSequenceError': 'Multi-step Problems',
+      'Equivalence_PartialRecognition': 'Equivalent Fractions',
+      'HCF_PartialFactorization': 'Finding Common Factors',
+      'Geometry_AreaTriangle_NoDivideBy2': 'Triangle Area',
+      'Coordinates_OrderError': 'Coordinate Points',
+      'FractionDecimal_ConversionError': 'Fraction to Decimal',
+    };
+
+    return friendlyLabels[cleanCode] || cleanCode;
+  };
+
   const getSeverityIcon = (severity: string) => {
     switch (severity) {
       case 'critical': return AlertTriangle;
@@ -260,11 +291,11 @@ export const MisconceptionPatternAnalysis: React.FC<MisconceptionPatternAnalysis
               return (
                 <div key={index} className="p-3 rounded-lg border bg-card">
                   <div className="flex items-start justify-between mb-2">
-                    <div className="flex items-center gap-2 flex-1">
-                      <Icon className="h-4 w-4 text-muted-foreground flex-shrink-0" />
-                      <span className="text-sm font-medium leading-tight">
-                        {pattern.misconception_code.replace(/[[\]"]/g, '')}
-                      </span>
+                     <div className="flex items-center gap-2 flex-1">
+                       <Icon className="h-4 w-4 text-muted-foreground flex-shrink-0" />
+                       <span className="text-sm font-medium leading-tight">
+                         {getFriendlyMisconceptionName(pattern.misconception_code)}
+                       </span>
                     </div>
                     <div className="flex items-center gap-2 flex-shrink-0">
                     <Badge className={`text-xs ${getSeverityColor(pattern.severity)}`}>
