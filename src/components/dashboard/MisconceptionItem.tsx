@@ -48,30 +48,33 @@ export const MisconceptionItem: React.FC<MisconceptionItemProps> = ({
       className="p-2 rounded-lg border bg-muted/30 cursor-pointer hover:bg-muted/50 hover:border-primary/50 transition-all duration-200"
       onClick={onClick}
     >
-      <div className="flex items-center justify-between mb-2">
-        <div className="flex items-center gap-2 min-w-0 flex-1">
-          {getFrequencyBadge(misconception.frequency)}
-          {misconception.fromCache && (
-            <Badge variant="outline" className="text-xs text-green-600 border-green-300">
-              ⚡ Cached
-            </Badge>
-          )}
-        </div>
-        <Badge variant="secondary" className="text-xs flex-shrink-0">
-          {misconception.frequency}x
-        </Badge>
-      </div>
+      {/* Topics at the top */}
+      {misconception.topics && misconception.topics.length > 0 && (
+        <p className="text-xs text-muted-foreground truncate mb-2">
+          {misconception.topics.join(', ')}
+        </p>
+      )}
       
-      <div className="space-y-1">
+      {/* Misconception text */}
+      <div className="mb-2">
         <p className="text-[10px] font-medium text-foreground line-clamp-2">
           {kidFriendlyLabel}
         </p>
-        
-        {misconception.topics && misconception.topics.length > 0 && (
-          <p className="text-xs text-muted-foreground truncate">
-            {misconception.topics.join(', ')}
-          </p>
+      </div>
+      
+      {/* Frequency info on the right */}
+      <div className="flex items-center justify-end gap-2">
+        {misconception.fromCache && (
+          <Badge variant="outline" className="text-xs text-green-600 border-green-300">
+            ⚡ Cached
+          </Badge>
         )}
+        <div className="flex items-center gap-1">
+          {getFrequencyBadge(misconception.frequency)}
+          <Badge variant="secondary" className="text-xs">
+            {misconception.frequency}x
+          </Badge>
+        </div>
       </div>
     </div>
   );
