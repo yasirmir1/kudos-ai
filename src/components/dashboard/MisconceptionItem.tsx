@@ -22,22 +22,22 @@ export const MisconceptionItem: React.FC<MisconceptionItemProps> = ({
     if (frequency >= 5) {
       return (
         <div className="flex items-center gap-1">
-          <Circle className="w-3 h-3 fill-red-500 text-red-500" />
-          <Badge variant="destructive" className="text-xs">High</Badge>
+          <Circle className="w-2 h-2 fill-red-500 text-red-500" />
+          <Badge variant="destructive" className="text-[10px] px-1 py-0">High</Badge>
         </div>
       );
     } else if (frequency >= 3) {
       return (
         <div className="flex items-center gap-1">
-          <Circle className="w-3 h-3 fill-yellow-500 text-yellow-500" />
-          <Badge variant="secondary" className="text-xs">Medium</Badge>
+          <Circle className="w-2 h-2 fill-yellow-500 text-yellow-500" />
+          <Badge variant="secondary" className="text-[10px] px-1 py-0">Medium</Badge>
         </div>
       );
     } else {
       return (
         <div className="flex items-center gap-1">
-          <Circle className="w-3 h-3 fill-green-500 text-green-500" />
-          <Badge variant="outline" className="text-xs">Low</Badge>
+          <Circle className="w-2 h-2 fill-green-500 text-green-500" />
+          <Badge variant="outline" className="text-[10px] px-1 py-0">Low</Badge>
         </div>
       );
     }
@@ -52,7 +52,7 @@ export const MisconceptionItem: React.FC<MisconceptionItemProps> = ({
       <div className="flex items-center justify-between mb-2">
         <div className="flex items-center gap-2 min-w-0 flex-1">
           {misconception.topics && misconception.topics.length > 0 && (
-            <p className="text-xs text-muted-foreground truncate">
+            <p className="text-sm text-muted-foreground truncate">
               {misconception.topics.join(', ')}
             </p>
           )}
