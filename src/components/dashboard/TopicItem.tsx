@@ -55,7 +55,7 @@ export const TopicItem: React.FC<TopicItemProps> = ({
     >
       <div className="flex items-center justify-between h-full">
         <div className="flex flex-col justify-center min-w-0 flex-1">
-          <p className="text-xs font-medium text-foreground truncate mb-1">
+          <p className="text-xs font-medium text-foreground truncate mb-2">
             {topic}
           </p>
           {showClickHint && (
