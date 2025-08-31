@@ -63,7 +63,7 @@ export const MisconceptionItem: React.FC<MisconceptionItemProps> = ({
       </div>
       
       <div className="space-y-1">
-        <p className="text-xs font-medium text-foreground line-clamp-2">
+        <p className="text-[10px] font-medium text-foreground line-clamp-2">
           {kidFriendlyLabel}
         </p>
         
