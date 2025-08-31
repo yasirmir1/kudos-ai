@@ -45,9 +45,6 @@ export const TopicItem: React.FC<TopicItemProps> = ({
     >
       <div className="flex items-center justify-between mb-2">
         <div className="flex items-center min-w-0 flex-1">
-          <Badge variant="outline" className="mr-3 flex-shrink-0 text-xs">
-            #{index + 1}
-          </Badge>
           <p className="text-xs font-medium text-foreground truncate">
             {topic}
           </p>
@@ -57,7 +54,7 @@ export const TopicItem: React.FC<TopicItemProps> = ({
         </Badge>
       </div>
       
-      <div className="flex items-center justify-between text-xs text-muted-foreground pl-8">
+      <div className="flex items-center justify-between text-xs text-muted-foreground">
         <span>{attempts} attempt{attempts !== 1 ? 's' : ''}</span>
         {showClickHint && (
           <span className="text-primary">Click to practice</span>
