@@ -4,7 +4,7 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Progress } from '@/components/ui/progress';
-import { TrendingUp, AlertTriangle, Target, BarChart3, Loader2, Brain, Shield, Zap } from 'lucide-react';
+import { TrendingUp, AlertTriangle, Target, BarChart3, Loader2, Brain, Shield, Zap, Heart, Star, BookOpen } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/components/ui/use-toast';
 
@@ -87,8 +87,17 @@ export const MisconceptionPatternAnalysis: React.FC<MisconceptionPatternAnalysis
     switch (severity) {
       case 'critical': return 'bg-red-100 text-red-800 border-red-200';
       case 'high': return 'bg-orange-100 text-orange-800 border-orange-200';
-      case 'medium': return 'bg-yellow-100 text-yellow-800 border-yellow-200';
-      default: return 'bg-blue-100 text-blue-800 border-blue-200';
+      case 'medium': return 'bg-blue-100 text-blue-800 border-blue-200';
+      default: return 'bg-green-100 text-green-800 border-green-200';
+    }
+  };
+
+  const getSeverityLabel = (severity: string) => {
+    switch (severity) {
+      case 'critical': return 'Needs Focus';
+      case 'high': return 'Working On It';
+      case 'medium': return 'Learning';
+      default: return 'Improving';
     }
   };
 
@@ -125,15 +134,15 @@ export const MisconceptionPatternAnalysis: React.FC<MisconceptionPatternAnalysis
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
-              <Brain className="h-5 w-5" />
-              Misconception Pattern Analysis
+              <Heart className="h-5 w-5 text-pink-500" />
+              Your Child's Learning Journey
             </CardTitle>
-            <CardDescription>Advanced AI analysis of repeated learning patterns</CardDescription>
+            <CardDescription>Understanding how your child learns and grows</CardDescription>
           </CardHeader>
           <CardContent>
             <div className="flex items-center justify-center py-12">
               <Loader2 className="h-8 w-8 animate-spin mr-3" />
-              <span className="text-lg">Analyzing your learning patterns...</span>
+              <span className="text-lg">Analyzing your child's learning journey...</span>
             </div>
           </CardContent>
         </Card>
@@ -146,17 +155,17 @@ export const MisconceptionPatternAnalysis: React.FC<MisconceptionPatternAnalysis
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            <Brain className="h-5 w-5" />
-            Misconception Pattern Analysis
+            <Star className="h-5 w-5 text-yellow-500" />
+            Wonderful News!
           </CardTitle>
-          <CardDescription>No concerning patterns detected</CardDescription>
+          <CardDescription>Your child is doing brilliantly</CardDescription>
         </CardHeader>
         <CardContent>
           <div className="text-center py-8">
-            <Shield className="h-12 w-12 text-green-500 mx-auto mb-4" />
-            <h3 className="text-lg font-medium mb-2">Excellent Learning Progress!</h3>
+            <Star className="h-12 w-12 text-yellow-500 mx-auto mb-4" />
+            <h3 className="text-lg font-medium mb-2">Your child is making excellent progress! 🌟</h3>
             <p className="text-muted-foreground">
-              No significant misconception patterns found. Keep up the great work!
+              We haven't found any concerning learning patterns. Your child is building strong foundations and developing great mathematical understanding. Keep encouraging their curiosity!
             </p>
           </div>
         </CardContent>
@@ -170,14 +179,14 @@ export const MisconceptionPatternAnalysis: React.FC<MisconceptionPatternAnalysis
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            <Brain className="h-5 w-5" />
-            Misconception Pattern Analysis
+            <Heart className="h-5 w-5 text-pink-500" />
+            Your Child's Learning Insights
             <Badge variant="outline" className="ml-auto">
-              {analysis.patterns.length} patterns detected
+              {analysis.patterns.length} areas to explore
             </Badge>
           </CardTitle>
           <CardDescription>
-            Advanced AI analysis identifying repeated misconception patterns and learning obstacles
+            Understanding how your child learns best and where they might need a little extra support
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-6">
@@ -185,46 +194,46 @@ export const MisconceptionPatternAnalysis: React.FC<MisconceptionPatternAnalysis
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             <div className="text-center p-3 rounded-lg bg-muted/30">
               <div className="text-2xl font-bold text-primary">{analysis.analysis_summary.total_patterns}</div>
-              <div className="text-sm text-muted-foreground">Total Patterns</div>
+              <div className="text-sm text-muted-foreground">Learning Areas</div>
             </div>
             <div className="text-center p-3 rounded-lg bg-red-50 border border-red-200">
               <div className="text-2xl font-bold text-red-600">{analysis.analysis_summary.critical_count}</div>
-              <div className="text-sm text-red-600">Critical</div>
+              <div className="text-sm text-red-600">Need Focus</div>
             </div>
             <div className="text-center p-3 rounded-lg bg-orange-50 border border-orange-200">
               <div className="text-2xl font-bold text-orange-600">{analysis.analysis_summary.emerging_count}</div>
-              <div className="text-sm text-orange-600">Emerging</div>
+              <div className="text-sm text-orange-600">Getting Better</div>
             </div>
             <div className="text-center p-3 rounded-lg bg-blue-50 border border-blue-200">
               <div className="text-2xl font-bold text-blue-600">
                 {analysis.problematic_topics.length}
               </div>
-              <div className="text-sm text-blue-600">Topics Affected</div>
+              <div className="text-sm text-blue-600">Subjects to Review</div>
             </div>
           </div>
 
           {/* Critical Alerts */}
           {analysis.critical_patterns.length > 0 && (
-            <Alert variant="destructive">
-              <AlertTriangle className="h-4 w-4" />
+            <Alert className="border-orange-200 bg-orange-50">
+              <Heart className="h-4 w-4 text-orange-600" />
               <AlertDescription>
-                <strong>Urgent:</strong> {analysis.critical_patterns.length} critical misconception patterns require immediate attention to prevent further learning obstacles.
+                <strong>Gentle reminder:</strong> Your child might benefit from some extra practice in {analysis.critical_patterns.length} area{analysis.critical_patterns.length > 1 ? 's' : ''}. A little focused attention can make a big difference! 💪
               </AlertDescription>
             </Alert>
           )}
 
-          {/* AI Recommendations */}
+          {/* Parent-Friendly Recommendations */}
           {analysis.recommendations.length > 0 && (
             <div className="space-y-3">
               <h4 className="font-medium flex items-center gap-2">
-                <Target className="h-4 w-4" />
-                AI Recommendations
+                <BookOpen className="h-4 w-4 text-blue-600" />
+                Helpful Suggestions for You
               </h4>
               {analysis.recommendations.map((rec, index) => (
-                <Alert key={index} variant={rec.priority === 1 ? "destructive" : "default"}>
-                  <Target className="h-4 w-4" />
+                <Alert key={index} className={rec.priority === 1 ? "border-blue-200 bg-blue-50" : "border-green-200 bg-green-50"}>
+                  <BookOpen className="h-4 w-4 text-blue-600" />
                   <AlertDescription>
-                    <strong>{rec.title}:</strong> {rec.description}
+                    <strong>{rec.title.replace('Critical', 'Important').replace('Patterns', 'Learning Areas')}:</strong> {rec.description.replace('misconceptions', 'concepts your child is working on').replace('intervention', 'extra practice')}
                   </AlertDescription>
                 </Alert>
               ))}
@@ -239,10 +248,10 @@ export const MisconceptionPatternAnalysis: React.FC<MisconceptionPatternAnalysis
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
-              <BarChart3 className="h-5 w-5" />
-              Most Frequent Patterns
+              <BarChart3 className="h-5 w-5 text-blue-600" />
+              Learning Challenges
             </CardTitle>
-            <CardDescription>Misconceptions you encounter most often</CardDescription>
+            <CardDescription>Areas where your child is building understanding</CardDescription>
           </CardHeader>
           <CardContent className="space-y-3">
             {analysis.patterns.slice(0, 6).map((pattern, index) => {
@@ -258,18 +267,18 @@ export const MisconceptionPatternAnalysis: React.FC<MisconceptionPatternAnalysis
                       </span>
                     </div>
                     <div className="flex items-center gap-2 flex-shrink-0">
-                      <Badge className={`text-xs ${getSeverityColor(pattern.severity)}`}>
-                        {pattern.severity}
+                    <Badge className={`text-xs ${getSeverityColor(pattern.severity)}`}>
+                        {getSeverityLabel(pattern.severity)}
                       </Badge>
                       {pattern.trend === 'increasing' && (
-                        <TrendingUp className="h-3 w-3 text-red-500" />
+                        <TrendingUp className="h-3 w-3 text-orange-500" />
                       )}
                     </div>
                   </div>
                   
                   <div className="flex items-center justify-between mb-2">
                     <span className="text-xs text-muted-foreground">
-                      Frequency: {pattern.frequency} times
+                      Seen {pattern.frequency} times
                     </span>
                     <span className="text-xs text-muted-foreground capitalize">
                       {pattern.pattern_type}
@@ -305,29 +314,29 @@ export const MisconceptionPatternAnalysis: React.FC<MisconceptionPatternAnalysis
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
-              <AlertTriangle className="h-5 w-5" />
-              Topics Needing Focus
+              <BookOpen className="h-5 w-5 text-purple-600" />
+              Subjects to Practice Together
             </CardTitle>
-            <CardDescription>Areas with multiple misconception patterns</CardDescription>
+            <CardDescription>Areas where your child would benefit from extra support</CardDescription>
           </CardHeader>
           <CardContent className="space-y-3">
             {analysis.problematic_topics.length > 0 ? (
               analysis.problematic_topics.map((topic, index) => (
                 <div key={index} className="p-3 rounded-lg border bg-orange-50/50 border-orange-200">
                   <div className="flex justify-between items-start mb-2">
-                    <h4 className="font-medium text-orange-900 leading-tight">
+                    <h4 className="font-medium text-purple-900 leading-tight">
                       {topic.topic}
                     </h4>
-                    <Badge variant="outline" className="text-orange-700 border-orange-300 flex-shrink-0">
+                    <Badge variant="outline" className="text-purple-700 border-purple-300 flex-shrink-0">
                       {topic.misconception_count} patterns
                     </Badge>
                   </div>
                   
                   <div className="flex items-center justify-between">
-                    <span className="text-xs text-orange-600">
-                      Total occurrences: {topic.total_frequency}
+                    <span className="text-xs text-purple-600">
+                      Practice opportunities: {topic.total_frequency}
                     </span>
-                    <Progress 
+                    <Progress
                       value={Math.min((topic.total_frequency / 20) * 100, 100)} 
                       className="h-1 w-20"
                     />
@@ -336,8 +345,8 @@ export const MisconceptionPatternAnalysis: React.FC<MisconceptionPatternAnalysis
               ))
             ) : (
               <div className="text-center py-6 text-muted-foreground">
-                <Shield className="h-8 w-8 text-green-500 mx-auto mb-2" />
-                <p className="text-sm">No problematic topics identified!</p>
+                <Star className="h-8 w-8 text-green-500 mx-auto mb-2" />
+                <p className="text-sm">Your child is doing well across all subjects! 🌟</p>
               </div>
             )}
           </CardContent>
@@ -355,12 +364,12 @@ export const MisconceptionPatternAnalysis: React.FC<MisconceptionPatternAnalysis
           {loading ? (
             <>
               <Loader2 className="h-4 w-4 animate-spin" />
-              Re-analyzing...
+              Updating insights...
             </>
           ) : (
             <>
-              <BarChart3 className="h-4 w-4" />
-              Refresh Pattern Analysis
+              <Heart className="h-4 w-4" />
+              Refresh Learning Insights
             </>
           )}
         </Button>
