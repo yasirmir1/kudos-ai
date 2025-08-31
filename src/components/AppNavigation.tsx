@@ -149,71 +149,63 @@ export const AppNavigation: React.FC<AppNavigationProps> = ({
               </button>}
           </div>
 
-          {/* Center section - Title/Subtitle if provided */}
-          {(title || subtitle) && <div className="flex items-center space-x-3">
-              <div>
+          {/* Center section - Mode Toggle or Title/Subtitle */}
+          <div className="flex-1 flex justify-center items-center">
+            {/* Mode Toggle Switch - Always centered */}
+            <div className="bg-muted p-1 rounded-full flex items-center">
+              <Button 
+                variant={!isBootcampRoute ? "default" : "ghost"} 
+                size="sm" 
+                onClick={() => navigate('/dashboard')}
+                className={cn(
+                  "flex items-center space-x-2 px-4 py-1.5 rounded-full text-sm font-medium transition-colors",
+                  !isBootcampRoute 
+                    ? "bg-primary text-primary-foreground shadow-sm" 
+                    : "text-muted-foreground hover:text-foreground"
+                )}
+              >
+                <Calendar className="h-4 w-4" />
+                <span>Daily Mode</span>
+              </Button>
+              <Button 
+                variant={isBootcampRoute ? "default" : "ghost"} 
+                size="sm" 
+                onClick={() => navigate('/bootcamp')}
+                className={cn(
+                  "flex items-center space-x-2 px-4 py-1.5 rounded-full text-sm font-medium transition-colors",
+                  isBootcampRoute 
+                    ? "bg-primary text-primary-foreground shadow-sm" 
+                    : "text-muted-foreground hover:text-foreground"
+                )}
+              >
+                <Target className="h-4 w-4" />
+                <span>Bootcamp</span>
+              </Button>
+            </div>
+            
+            {/* Title/Subtitle if provided - will be below toggle */}
+            {(title || subtitle) && <div className="absolute top-20 left-1/2 transform -translate-x-1/2 text-center">
                 {title && <h1 className="text-xl font-bold">{title}</h1>}
                 {subtitle && <p className="text-sm text-muted-foreground">{subtitle}</p>}
-              </div>
-            </div>}
+              </div>}
+          </div>
 
           {/* Right section - Navigation and Trial Indicator */}
           <div className="flex items-center space-x-3">
-            {/* Trial Days Indicator */}
-            {isTrialActive && trialDaysRemaining > 0 && <div className="flex items-center space-x-2">
-                
-              </div>}
-
             {/* Upgrade Button for limited access */}
             {shouldShowUpgrade && <Button variant="destructive" size="sm" onClick={handleUpgradeClick} className="flex items-center space-x-2 px-4 py-2">
                 <CreditCard className="h-4 w-4" />
                 <span>{isTrialExpired ? 'Upgrade Now' : 'Upgrade to Plus'}</span>
               </Button>}
 
-            {/* Plan Status Indicator */}
-            <div className="hidden md:flex items-center space-x-2 mr-4 mx-0">
-              
-              <Badge variant={planDisplay.variant} className="flex items-center space-x-1 px-3 py-1 mx-[10px]">
+            {/* Plan Status Indicator - Always show */}
+            <div className="hidden md:flex items-center">
+              <Badge variant={planDisplay.variant} className="flex items-center space-x-1 px-3 py-1">
                 <planDisplay.icon className="h-3 w-3" />
                 <span className="text-xs font-medium">{planDisplay.text}</span>
               </Badge>
             </div>
 
-            {/* Mode Toggle Switch */}
-            <div className="hidden md:flex items-center space-x-2 mr-6">
-              <div className="bg-muted p-1 rounded-full flex items-center">
-                <Button 
-                  variant={!isBootcampRoute ? "default" : "ghost"} 
-                  size="sm" 
-                  onClick={() => navigate('/dashboard')}
-                  className={cn(
-                    "flex items-center space-x-2 px-4 py-1.5 rounded-full text-sm font-medium transition-colors",
-                    !isBootcampRoute 
-                      ? "bg-primary text-primary-foreground shadow-sm" 
-                      : "text-muted-foreground hover:text-foreground"
-                  )}
-                >
-                  <Calendar className="h-4 w-4" />
-                  <span>Daily Mode</span>
-                </Button>
-                <Button 
-                  variant={isBootcampRoute ? "default" : "ghost"} 
-                  size="sm" 
-                  onClick={() => navigate('/bootcamp')}
-                  className={cn(
-                    "flex items-center space-x-2 px-4 py-1.5 rounded-full text-sm font-medium transition-colors",
-                    isBootcampRoute 
-                      ? "bg-primary text-primary-foreground shadow-sm" 
-                      : "text-muted-foreground hover:text-foreground"
-                  )}
-                >
-                  <Target className="h-4 w-4" />
-                  <span>Bootcamp</span>
-                </Button>
-              </div>
-            </div>
-
-            
             {/* Navigation Links */}
             <nav className="hidden md:flex items-center space-x-2">
               {navigationItems.map(item => {
