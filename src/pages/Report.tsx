@@ -3,11 +3,12 @@ import { Badge } from '@/components/ui/badge';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { BookOpen, Clock, Calendar, Brain, Lightbulb, BarChart3, Filter } from 'lucide-react';
+import { BookOpen, Clock, Calendar, Brain, Lightbulb, BarChart3, Filter, TrendingUp } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
 import { useToast } from '@/hooks/use-toast';
 import { InteractiveInsights } from '@/components/InteractiveInsights';
+import { MisconceptionPatternAnalysis } from '@/components/report/MisconceptionPatternAnalysis';
 
 interface StudiedTopic {
   topic: string;
@@ -180,15 +181,18 @@ export default function Report() {
         </div>
 
         <div className="space-y-6">
+          {/* Misconception Pattern Analysis - Full Width */}
+          <MisconceptionPatternAnalysis studentId={user?.id || null} />
+          
           {/* AI Insights Panel - Full Width */}
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <Lightbulb className="h-5 w-5 text-primary" />
-                Learning Insights & Misconception Analysis
+                Additional Learning Insights
               </CardTitle>
               <CardDescription>
-                AI-powered analysis of your learning patterns and areas for improvement
+                Comprehensive AI analysis of your learning journey and progress
               </CardDescription>
             </CardHeader>
             <CardContent>
