@@ -17,7 +17,7 @@ import { WorksheetGeneratorModal } from '@/components/WorksheetGeneratorModal';
 import { SessionsModal } from '@/components/SessionsModal';
 import { AgeGroupSelector } from '@/components/AgeGroupSelector';
 import { useAgeGroup } from '@/contexts/AgeGroupContext';
-import { DashboardNavigation } from '@/components/dashboard';
+import { DashboardNavigation, DashboardCard, TopicItem, MisconceptionItem, EmptyState, LoadingState } from '@/components/dashboard';
 import { useMisconceptionCache } from '@/hooks/useMisconceptionCache';
 import { BatchMisconceptionProcessor } from '@/components/bootcamp/BatchMisconceptionProcessor';
 import Practice from './Practice';
@@ -256,15 +256,6 @@ const Dashboard = () => {
       setLoadingExplanations(false);
     }
   };
-  const getFrequencyColorBadge = (frequency: number) => {
-    if (frequency >= 5) {
-      return <div title={`Oops! This happened ${frequency} times - let's work on this!`}><Circle className="w-3 h-3 fill-red-500 text-red-500" /></div>;
-    } else if (frequency >= 3) {
-      return <div title={`This happened ${frequency} times - time to practice!`}><Circle className="w-3 h-3 fill-yellow-500 text-yellow-500" /></div>;
-    } else {
-      return <div title={`Only ${frequency} time${frequency > 1 ? 's' : ''} - you're learning!`}><Circle className="w-3 h-3 fill-green-500 text-green-500" /></div>;
-    }
-  };
   const formatMisconceptionForKids = (redHerring: string) => {
     // Handle empty or invalid misconceptions
     if (!redHerring || redHerring.trim() === '') {
@@ -354,107 +345,103 @@ const Dashboard = () => {
       {/* Performance Details */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Your Strengths */}
-        <div className="bg-card p-6 rounded-lg shadow-sm">
-          <div className="flex items-center mb-4">
-            <Award className="text-success text-2xl h-6 w-6 mr-3" />
-            <h3 className="text-lg font-semibold text-foreground">Your Strengths</h3>
-          </div>
-          <p className="text-sm text-muted-foreground mb-4">Topics where you're performing well</p>
-          <div className="space-y-3">
-            {performance.filter(topic => topic.accuracy >= 0.5).slice(0, 5).map((topic, index) => <div key={topic.topic}>
-                <div className="flex justify-between items-center">
-                  <div className="flex items-center">
-                    <span className="text-sm font-bold text-muted-foreground mr-2">#{index + 1}</span>
-                    <p className="text-sm text-foreground">{topic.topic}</p>
-                  </div>
-                  <span className="text-sm font-bold text-success">{Math.round(topic.accuracy * 100)}%</span>
-                </div>
-                <p className="text-xs text-muted-foreground ml-7 mt-1">{topic.total_attempts} attempts</p>
-              </div>)}
-            {performance.filter(topic => topic.accuracy >= 0.5).length === 0 && <div className="text-center py-4">
-                <p className="text-sm text-muted-foreground">Complete some practice questions to see your strengths!</p>
-              </div>}
-          </div>
-        </div>
+        <DashboardCard
+          title="Your Strengths"
+          subtitle="Topics where you're performing well"
+          icon={Award}
+          iconColor="text-green-600"
+        >
+          {performance.filter(topic => topic.accuracy >= 0.5).slice(0, 5).map((topic, index) => (
+            <TopicItem
+              key={topic.topic}
+              topic={topic.topic}
+              accuracy={topic.accuracy}
+              attempts={topic.total_attempts}
+              index={index}
+              type="strength"
+            />
+          ))}
+          {performance.filter(topic => topic.accuracy >= 0.5).length === 0 && (
+            <EmptyState
+              message="Complete some practice questions to see your strengths!"
+              icon={<Award className="h-8 w-8" />}
+            />
+          )}
+        </DashboardCard>
 
         {/* Focus Areas */}
-        <div className="bg-card p-6 rounded-lg shadow-sm">
-          <div className="flex items-center mb-4">
-            <Target className="text-warning text-2xl h-6 w-6 mr-3" />
-            <h3 className="text-lg font-semibold text-foreground">Focus Areas</h3>
-          </div>
-          <p className="text-sm text-muted-foreground mb-4">Topics that need more attention</p>
-          <div className="space-y-3">
-            {needsWork.map((topic, index) => <div key={topic.topic} className="cursor-pointer hover:bg-muted/50 p-2 rounded-lg transition-colors" onClick={() => {
-            setSelectedFocusArea(topic);
-            setFocusAreaQuestionsOpen(true);
-          }}>
-                <div className="flex justify-between items-center">
-                  <div className="flex items-center">
-                    <span className="text-sm font-bold text-muted-foreground mr-2">#{index + 1}</span>
-                    <p className="text-sm text-foreground">{topic.topic}</p>
-                  </div>
-                  <span className="text-sm font-bold text-destructive">{Math.round(topic.accuracy * 100)}%</span>
-                </div>
-                <p className="text-xs text-muted-foreground ml-7 mt-1">{topic.attempts} attempts • Click to practice</p>
-              </div>)}
-            {needsWork.length === 0 && <div className="text-center py-4">
-                <p className="text-sm text-muted-foreground">Great job! No weak areas identified yet.</p>
-              </div>}
-          </div>
-        </div>
+        <DashboardCard
+          title="Focus Areas"
+          subtitle="Topics that need more attention"
+          icon={Target}
+          iconColor="text-yellow-600"
+        >
+          {needsWork.map((topic, index) => (
+            <TopicItem
+              key={topic.topic}
+              topic={topic.topic}
+              accuracy={topic.accuracy}
+              attempts={topic.attempts}
+              index={index}
+              type="focus"
+              onClick={() => {
+                setSelectedFocusArea(topic);
+                setFocusAreaQuestionsOpen(true);
+              }}
+              showClickHint={true}
+            />
+          ))}
+          {needsWork.length === 0 && (
+            <EmptyState
+              message="Great job! No weak areas identified yet."
+              icon={<Target className="h-8 w-8" />}
+            />
+          )}
+        </DashboardCard>
 
         {/* Misconceptions */}
-        <div className="bg-card p-6 rounded-lg shadow-sm">
-          <div className="flex items-center mb-4">
-            <Clock className="text-destructive text-2xl h-6 w-6 mr-3" />
-            <h3 className="text-lg font-semibold text-foreground">Misconceptions</h3>
-          </div>
-          <p className="text-sm text-muted-foreground mb-4">Common mistakes to watch out for</p>
-          <div className="space-y-3">
-            {loadingExplanations && misconceptions.length > 0 && <div className="flex items-center justify-center py-4">
-                <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-primary"></div>
-                <span className="ml-2 text-sm text-muted-foreground">Analyzing misconceptions...</span>
-              </div>}
-            
-            {/* Show cached misconceptions first, fallback to regular misconceptions */}
-            {!cacheLoading && !loadingExplanations && (cachedMisconceptions.length > 0 ? cachedMisconceptions : misconceptions).slice(0, 3).map((misconception, index) => {
+        <DashboardCard
+          title="Misconceptions"
+          subtitle="Common mistakes to watch out for"
+          icon={Clock}
+          iconColor="text-red-600"
+        >
+          {loadingExplanations && misconceptions.length > 0 && (
+            <LoadingState message="Analyzing misconceptions..." />
+          )}
+          
+          {!cacheLoading && !loadingExplanations && (cachedMisconceptions.length > 0 ? cachedMisconceptions : misconceptions).slice(0, 3).map((misconception, index) => {
             const kidFriendlyLabel = formatMisconceptionForKids(misconception.red_herring);
-            return <div key={`${misconception.red_herring}-${index}`} className="p-3 rounded-lg border bg-muted/30 cursor-pointer hover:bg-muted/50 transition-colors" onClick={() => {
-              setSelectedMisconceptionForQuestions(misconception);
-              setMisconceptionQuestionsOpen(true);
-            }}>
-                  <div className="flex items-center justify-between mb-2">
-                    <div className="flex items-center space-x-2">
-                      {getFrequencyColorBadge(misconception.frequency)}
-                      <span className="text-xs text-muted-foreground">
-                        {misconception.topics?.join(', ')}
-                      </span>
-                    </div>
-                  </div>
-                  <p className="text-sm font-medium text-foreground mb-1">
-                    {kidFriendlyLabel}
-                  </p>
-                  <p className="text-xs text-muted-foreground">
-                    Let's see what happened and learn together! 🌟
-                  </p>
-                </div>;
+            return (
+              <MisconceptionItem
+                key={`${misconception.red_herring}-${index}`}
+                misconception={misconception}
+                kidFriendlyLabel={kidFriendlyLabel}
+                onClick={() => {
+                  setSelectedMisconceptionForQuestions(misconception);
+                  setMisconceptionQuestionsOpen(true);
+                }}
+              />
+            );
           })}
-            
-            {misconceptions.length === 0 && <div className="text-center py-4">
-                <p className="text-sm text-muted-foreground">Complete some practice questions to identify misconceptions.</p>
-              </div>}
+          
+          {misconceptions.length === 0 && (
+            <EmptyState
+              message="Complete some practice questions to identify misconceptions."
+              icon={<Clock className="h-8 w-8" />}
+            />
+          )}
 
           {/* Cache Performance Indicator */}
           {cacheHitRate > 0 && (
-            <div className="mt-2 text-xs text-muted-foreground flex items-center gap-1">
-              <div className="h-2 w-2 rounded-full bg-green-500"></div>
-              Cache hit rate: {cacheHitRate.toFixed(0)}% • Reduced API calls by ~80%
+            <div className="mt-4 p-2 rounded-md bg-green-50 border border-green-200">
+              <div className="text-xs text-green-800 flex items-center gap-1">
+                <div className="h-2 w-2 rounded-full bg-green-500"></div>
+                Cache hit rate: {cacheHitRate.toFixed(0)}% • Reduced API calls by ~80%
+              </div>
             </div>
           )}
-
-          </div>
-        </div>
+        </DashboardCard>
       </div>
 
       {/* Batch Processing Monitor (Development) */}
