@@ -19,9 +19,7 @@ import { SessionsModal } from '@/components/SessionsModal';
 import { AgeGroupSelector } from '@/components/AgeGroupSelector';
 import { useAgeGroup } from '@/contexts/AgeGroupContext';
 import { DashboardNavigation, DashboardCard, TopicItem, MisconceptionItem, EmptyState, LoadingState } from '@/components/dashboard';
-import { MisconceptionPatternsCard } from '@/components/dashboard/MisconceptionPatternsCard';
 import { useMisconceptionCache } from '@/hooks/useMisconceptionCache';
-import { BatchMisconceptionProcessor } from '@/components/bootcamp/BatchMisconceptionProcessor';
 import Practice from './Practice';
 import Curriculum from './Curriculum';
 import Analytics from './Analytics';
@@ -405,15 +403,6 @@ const Dashboard = () => {
         </DashboardCard>
       </div>
 
-      {/* Pattern Analysis - Full Width */}
-      <div className="mt-8">
-        <MisconceptionPatternsCard studentId={studentId} />
-      </div>
-
-      {/* Batch Processing Monitor (Development) */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-6">
-        <BatchMisconceptionProcessor />
-      </div>
 
       {/* Stats Overview */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mt-8">
