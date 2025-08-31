@@ -286,12 +286,7 @@ const Dashboard = () => {
     }
 
     // Fallback: make any other misconception kid-friendly
-    return redHerring
-      .replace(/_/g, ' ')
-      .replace(/([a-z])([A-Z])/g, '$1 $2')
-      .toLowerCase()
-      .replace(/\b\w/g, l => l.toUpperCase())
-      .trim() + ' 🤯';
+    return redHerring.replace(/_/g, ' ').replace(/([a-z])([A-Z])/g, '$1 $2').toLowerCase().replace(/\b\w/g, l => l.toUpperCase()).trim() + ' 🤯';
   };
   const overallAccuracy = performance.length > 0 ? performance.reduce((sum, p) => sum + p.accuracy, 0) / performance.length : 0;
   const strongestTopic = performance[0];
@@ -318,20 +313,15 @@ const Dashboard = () => {
         return renderOverview();
     }
   };
-
-  const renderOverview = () => (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+  const renderOverview = () => <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
       {/* Ready to learn section */}
-      <div className="bg-card rounded-lg shadow-sm p-8 text-center mb-8">
+      <div className="bg-card rounded-lg shadow-sm p-8 text-center mb-8 py-[40px] my-[5px]">
         <h1 className="text-3xl font-bold text-foreground">Ready to learn?</h1>
         <p className="mt-3 text-base text-muted-foreground">
           Your adaptive learning system has prepared personalized {selectedAgeGroup} questions.
         </p>
         <div className="mt-6 flex flex-col sm:flex-row justify-center items-center space-y-4 sm:space-y-0 sm:space-x-4">
-          <Button 
-            onClick={startLearning}
-            className="flex items-center justify-center bg-primary text-primary-foreground font-semibold px-6 py-3 rounded-lg shadow-md hover:bg-primary/90 transition-colors text-base w-full sm:w-auto"
-          >
+          <Button onClick={startLearning} className="flex items-center justify-center bg-primary text-primary-foreground font-semibold px-6 py-3 rounded-lg shadow-md hover:bg-primary/90 transition-colors text-base w-full sm:w-auto">
             <Play className="mr-2 h-4 w-4" />
             Start Practice Session
           </Button>
@@ -350,8 +340,7 @@ const Dashboard = () => {
           </div>
           <p className="text-sm text-muted-foreground mb-4">Topics where you're performing well</p>
           <div className="space-y-3">
-            {performance.filter(topic => topic.accuracy >= 0.5).slice(0, 5).map((topic, index) => (
-              <div key={topic.topic}>
+            {performance.filter(topic => topic.accuracy >= 0.5).slice(0, 5).map((topic, index) => <div key={topic.topic}>
                 <div className="flex justify-between items-center">
                   <div className="flex items-center">
                     <span className="text-sm font-bold text-muted-foreground mr-2">#{index + 1}</span>
@@ -360,13 +349,10 @@ const Dashboard = () => {
                   <span className="text-sm font-bold text-success">{Math.round(topic.accuracy * 100)}%</span>
                 </div>
                 <p className="text-xs text-muted-foreground ml-7 mt-1">{topic.total_attempts} attempts</p>
-              </div>
-            ))}
-            {performance.filter(topic => topic.accuracy >= 0.5).length === 0 && (
-              <div className="text-center py-4">
+              </div>)}
+            {performance.filter(topic => topic.accuracy >= 0.5).length === 0 && <div className="text-center py-4">
                 <p className="text-sm text-muted-foreground">Complete some practice questions to see your strengths!</p>
-              </div>
-            )}
+              </div>}
           </div>
         </div>
 
@@ -378,15 +364,10 @@ const Dashboard = () => {
           </div>
           <p className="text-sm text-muted-foreground mb-4">Topics that need more attention</p>
           <div className="space-y-3">
-            {needsWork.map((topic, index) => (
-              <div 
-                key={topic.topic}
-                className="cursor-pointer hover:bg-muted/50 p-2 rounded-lg transition-colors" 
-                onClick={() => {
-                  setSelectedFocusArea(topic);
-                  setFocusAreaQuestionsOpen(true);
-                }}
-              >
+            {needsWork.map((topic, index) => <div key={topic.topic} className="cursor-pointer hover:bg-muted/50 p-2 rounded-lg transition-colors" onClick={() => {
+            setSelectedFocusArea(topic);
+            setFocusAreaQuestionsOpen(true);
+          }}>
                 <div className="flex justify-between items-center">
                   <div className="flex items-center">
                     <span className="text-sm font-bold text-muted-foreground mr-2">#{index + 1}</span>
@@ -395,13 +376,10 @@ const Dashboard = () => {
                   <span className="text-sm font-bold text-destructive">{Math.round(topic.accuracy * 100)}%</span>
                 </div>
                 <p className="text-xs text-muted-foreground ml-7 mt-1">{topic.attempts} attempts • Click to practice</p>
-              </div>
-            ))}
-            {needsWork.length === 0 && (
-              <div className="text-center py-4">
+              </div>)}
+            {needsWork.length === 0 && <div className="text-center py-4">
                 <p className="text-sm text-muted-foreground">Great job! No weak areas identified yet.</p>
-              </div>
-            )}
+              </div>}
           </div>
         </div>
 
@@ -413,24 +391,17 @@ const Dashboard = () => {
           </div>
           <p className="text-sm text-muted-foreground mb-4">Common mistakes to watch out for</p>
           <div className="space-y-3">
-            {loadingExplanations && misconceptions.length > 0 && (
-              <div className="flex items-center justify-center py-4">
+            {loadingExplanations && misconceptions.length > 0 && <div className="flex items-center justify-center py-4">
                 <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-primary"></div>
                 <span className="ml-2 text-sm text-muted-foreground">Analyzing misconceptions...</span>
-              </div>
-            )}
+              </div>}
             
             {!loadingExplanations && misconceptions.slice(0, 5).map((misconception, index) => {
-              const kidFriendlyLabel = formatMisconceptionForKids(misconception.red_herring);
-              return (
-                <div 
-                  key={`${misconception.red_herring}-${index}`}
-                  className="p-3 rounded-lg border bg-muted/30 cursor-pointer hover:bg-muted/50 transition-colors" 
-                  onClick={() => {
-                    setSelectedMisconceptionForQuestions(misconception);
-                    setMisconceptionQuestionsOpen(true);
-                  }}
-                >
+            const kidFriendlyLabel = formatMisconceptionForKids(misconception.red_herring);
+            return <div key={`${misconception.red_herring}-${index}`} className="p-3 rounded-lg border bg-muted/30 cursor-pointer hover:bg-muted/50 transition-colors" onClick={() => {
+              setSelectedMisconceptionForQuestions(misconception);
+              setMisconceptionQuestionsOpen(true);
+            }}>
                   <div className="flex items-center justify-between mb-2">
                     <div className="flex items-center space-x-2">
                       {getFrequencyColorBadge(misconception.frequency)}
@@ -445,15 +416,12 @@ const Dashboard = () => {
                   <p className="text-xs text-muted-foreground">
                     Let's see what happened and learn together! 🌟
                   </p>
-                </div>
-              );
-            })}
+                </div>;
+          })}
             
-            {misconceptions.length === 0 && (
-              <div className="text-center py-4">
+            {misconceptions.length === 0 && <div className="text-center py-4">
                 <p className="text-sm text-muted-foreground">Complete some practice questions to identify misconceptions.</p>
-              </div>
-            )}
+              </div>}
           </div>
         </div>
       </div>
@@ -477,10 +445,9 @@ const Dashboard = () => {
           <div className="flex items-center mt-2">
             <p className="text-3xl font-bold text-success mr-2">{Math.round(overallAccuracy * 100)}%</p>
             <div className="w-full bg-muted rounded-full h-2">
-              <div 
-                className="bg-primary h-2 rounded-full transition-all duration-500" 
-                style={{ width: `${overallAccuracy * 100}%` }}
-              />
+              <div className="bg-primary h-2 rounded-full transition-all duration-500" style={{
+              width: `${overallAccuracy * 100}%`
+            }} />
             </div>
           </div>
           <p className="text-xs text-muted-foreground mt-2">By topic</p>
@@ -513,16 +480,11 @@ const Dashboard = () => {
       <MisconceptionQuestionsModal open={misconceptionQuestionsOpen} onOpenChange={setMisconceptionQuestionsOpen} misconception={selectedMisconceptionForQuestions} />
       <FocusAreaQuestionsModal open={focusAreaQuestionsOpen} onOpenChange={setFocusAreaQuestionsOpen} focusArea={selectedFocusArea} />
       <SessionsModal open={sessionsModalOpen} onOpenChange={setSessionsModalOpen} />
-    </div>
-  );
-
-  return (
-    <div>
+    </div>;
+  return <div>
       <DashboardNavigation currentView={currentView} setCurrentView={setCurrentView} />
       
       {renderCurrentView()}
-    </div>
-  );
+    </div>;
 };
-
 export default Dashboard;
