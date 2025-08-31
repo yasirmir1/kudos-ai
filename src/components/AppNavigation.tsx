@@ -246,7 +246,14 @@ export const AppNavigation: React.FC<AppNavigationProps> = ({
       </header>
 
       {/* Floating Help Button - Outside header for proper viewport positioning */}
-      <div className="fixed bottom-6 right-6 z-50">
+      <div 
+        className="fixed z-[9999]" 
+        style={{ 
+          bottom: '24px', 
+          right: '24px',
+          position: 'fixed'
+        }}
+      >
         <Button
           onClick={() => setIsHelpOpen(true)}
           className="h-14 w-14 rounded-full shadow-lg hover:shadow-xl transition-all duration-200 bg-primary hover:bg-primary/90"
