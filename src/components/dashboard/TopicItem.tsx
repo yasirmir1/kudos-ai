@@ -49,17 +49,21 @@ export const TopicItem: React.FC<TopicItemProps> = ({
             {topic}
           </p>
         </div>
-        <Badge variant={getBadgeVariant()} className="ml-2 flex-shrink-0">
-          {accuracyPercent}%
-        </Badge>
+        <div className="flex items-center gap-2 flex-shrink-0">
+          <Badge variant="outline" className="text-xs">
+            {attempts} attempt{attempts !== 1 ? 's' : ''}
+          </Badge>
+          <Badge variant={getBadgeVariant()} className="ml-2 flex-shrink-0">
+            {accuracyPercent}%
+          </Badge>
+        </div>
       </div>
       
-      <div className="flex items-center justify-between text-xs text-muted-foreground">
-        <span>{attempts} attempt{attempts !== 1 ? 's' : ''}</span>
-        {showClickHint && (
-          <span className="text-primary">Click to practice</span>
-        )}
-      </div>
+      {showClickHint && (
+        <div className="flex justify-end">
+          <span className="text-xs text-primary">Click to practice</span>
+        </div>
+      )}
     </div>
   );
 };
