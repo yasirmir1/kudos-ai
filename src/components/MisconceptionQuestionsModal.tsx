@@ -11,6 +11,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
 import { AlertCircle, Clock, X, Sparkles, AlertTriangle, CheckCircle, Brain, Star } from 'lucide-react';
+import { getFriendlyMisconceptionName } from '@/lib/misconceptionLabels';
 
 interface MisconceptionQuestionsModalProps {
   open: boolean;
@@ -177,37 +178,7 @@ export function MisconceptionQuestionsModal({
   };
 
   const formatMisconceptionName = (redHerring: string) => {
-    // Handle empty or invalid misconceptions
-    if (!redHerring || redHerring.trim() === '') {
-      return 'Unknown Misconception';
-    }
-
-    // Create friendly labels for common misconceptions
-    const friendlyLabels: { [key: string]: string } = {
-      'Percentage_IncorrectOperation': 'Percentage Calculation Error',
-      'PlaceValue_DigitValueConfusion': 'Place Value Confusion',
-      'Rounding_IncorrectDirection': 'Rounding Direction Error',
-      'Algebra_IncorrectOperation': 'Algebra Operation Mix-up',
-      'Fractions_AddNumeratorsAndDenominators': 'Fraction Addition Error',
-      'Decimals_IncorrectPlaceValueShift': 'Decimal Point Movement Error',
-      'OrderOfOperations_ParenthesesIgnored': 'Parentheses Order Error',
-      'Multiplication_TableError': 'Times Table Mix-up',
-      'Division_RemainderError': 'Division Remainder Error',
-      'Addition_CarryError': 'Addition Carrying Error',
-      'Subtraction_BorrowError': 'Subtraction Borrowing Error'
-    };
-
-    if (friendlyLabels[redHerring]) {
-      return friendlyLabels[redHerring];
-    }
-
-    // Fallback formatting
-    return redHerring
-      .replace(/_/g, ' ')
-      .replace(/([a-z])([A-Z])/g, '$1 $2')
-      .toLowerCase()
-      .replace(/\b\w/g, l => l.toUpperCase())
-      .trim();
+    return getFriendlyMisconceptionName(redHerring);
   };
 
   const formatOptions = (options: any) => {
