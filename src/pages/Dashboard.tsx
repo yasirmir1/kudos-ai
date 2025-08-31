@@ -396,7 +396,7 @@ const Dashboard = () => {
                 <span className="ml-2 text-sm text-muted-foreground">Analyzing misconceptions...</span>
               </div>}
             
-            {!loadingExplanations && misconceptions.slice(0, 5).map((misconception, index) => {
+            {!loadingExplanations && misconceptions.slice(0, 3).map((misconception, index) => {
             const kidFriendlyLabel = formatMisconceptionForKids(misconception.red_herring);
             return <div key={`${misconception.red_herring}-${index}`} className="p-3 rounded-lg border bg-muted/30 cursor-pointer hover:bg-muted/50 transition-colors" onClick={() => {
               setSelectedMisconceptionForQuestions(misconception);
