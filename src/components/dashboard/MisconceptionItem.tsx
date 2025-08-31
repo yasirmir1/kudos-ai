@@ -45,7 +45,7 @@ export const MisconceptionItem: React.FC<MisconceptionItemProps> = ({
 
   return (
     <div 
-      className="p-2 rounded-lg border bg-muted/30 cursor-pointer hover:bg-muted/50 hover:border-primary/50 transition-all duration-200"
+      className="px-4 py-2 rounded-lg border bg-muted/30 cursor-pointer hover:bg-muted/50 hover:border-primary/50 transition-all duration-200"
       onClick={onClick}
     >
       {/* Top row: topics with frequency badge, count on right */}
