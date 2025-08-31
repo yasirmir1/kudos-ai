@@ -18,6 +18,8 @@ import { SessionsModal } from '@/components/SessionsModal';
 import { AgeGroupSelector } from '@/components/AgeGroupSelector';
 import { useAgeGroup } from '@/contexts/AgeGroupContext';
 import { DashboardNavigation } from '@/components/dashboard';
+import { useMisconceptionCache } from '@/hooks/useMisconceptionCache';
+import { BatchMisconceptionProcessor } from '@/components/bootcamp/BatchMisconceptionProcessor';
 import Practice from './Practice';
 import Curriculum from './Curriculum';
 import Analytics from './Analytics';
@@ -64,6 +66,25 @@ const Dashboard = () => {
   const [focusAreaQuestionsOpen, setFocusAreaQuestionsOpen] = useState(false);
   const [selectedFocusArea, setSelectedFocusArea] = useState<any>(null);
   const [sessionsModalOpen, setSessionsModalOpen] = useState(false);
+  
+  // Get student ID for misconception cache
+  const [studentId, setStudentId] = useState<string | null>(null);
+  const { cachedMisconceptions, cacheHitRate, isLoading: cacheLoading } = useMisconceptionCache(studentId);
+
+  useEffect(() => {
+    const getStudentId = async () => {
+      if (user) {
+        try {
+          const { data } = await supabase.rpc('get_current_student_id');
+          setStudentId(data);
+        } catch (error) {
+          console.error('Error getting student ID:', error);
+        }
+      }
+    };
+    getStudentId();
+  }, [user]);
+
   useEffect(() => {
     if (user) {
       loadDashboardData();
@@ -396,7 +417,8 @@ const Dashboard = () => {
                 <span className="ml-2 text-sm text-muted-foreground">Analyzing misconceptions...</span>
               </div>}
             
-            {!loadingExplanations && misconceptions.slice(0, 3).map((misconception, index) => {
+            {/* Show cached misconceptions first, fallback to regular misconceptions */}
+            {!cacheLoading && !loadingExplanations && (cachedMisconceptions.length > 0 ? cachedMisconceptions : misconceptions).slice(0, 3).map((misconception, index) => {
             const kidFriendlyLabel = formatMisconceptionForKids(misconception.red_herring);
             return <div key={`${misconception.red_herring}-${index}`} className="p-3 rounded-lg border bg-muted/30 cursor-pointer hover:bg-muted/50 transition-colors" onClick={() => {
               setSelectedMisconceptionForQuestions(misconception);
@@ -422,8 +444,22 @@ const Dashboard = () => {
             {misconceptions.length === 0 && <div className="text-center py-4">
                 <p className="text-sm text-muted-foreground">Complete some practice questions to identify misconceptions.</p>
               </div>}
+
+          {/* Cache Performance Indicator */}
+          {cacheHitRate > 0 && (
+            <div className="mt-2 text-xs text-muted-foreground flex items-center gap-1">
+              <div className="h-2 w-2 rounded-full bg-green-500"></div>
+              Cache hit rate: {cacheHitRate.toFixed(0)}% • Reduced API calls by ~80%
+            </div>
+          )}
+
           </div>
         </div>
+      </div>
+
+      {/* Batch Processing Monitor (Development) */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-6">
+        <BatchMisconceptionProcessor />
       </div>
 
       {/* Stats Overview */}

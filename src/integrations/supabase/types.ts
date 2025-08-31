@@ -145,11 +145,13 @@ export type Database = {
           answer_id: string
           answer_value: string
           created_at: string | null
+          detection_confidence: number | null
           diagnostic_feedback: string | null
           error_category: string | null
           is_correct: boolean | null
           misconception_code: string | null
           option_letter: string | null
+          pattern_rules: Json | null
           question_id: string
           remedial_topic: string | null
           selection_count: number | null
@@ -158,11 +160,13 @@ export type Database = {
           answer_id?: string
           answer_value: string
           created_at?: string | null
+          detection_confidence?: number | null
           diagnostic_feedback?: string | null
           error_category?: string | null
           is_correct?: boolean | null
           misconception_code?: string | null
           option_letter?: string | null
+          pattern_rules?: Json | null
           question_id: string
           remedial_topic?: string | null
           selection_count?: number | null
@@ -171,11 +175,13 @@ export type Database = {
           answer_id?: string
           answer_value?: string
           created_at?: string | null
+          detection_confidence?: number | null
           diagnostic_feedback?: string | null
           error_category?: string | null
           is_correct?: boolean | null
           misconception_code?: string | null
           option_letter?: string | null
+          pattern_rules?: Json | null
           question_id?: string
           remedial_topic?: string | null
           selection_count?: number | null
@@ -385,6 +391,36 @@ export type Database = {
         }
         Relationships: []
       }
+      bootcamp_explanation_cache: {
+        Row: {
+          api_source: string | null
+          cache_key: string
+          created_at: string | null
+          explanation: string
+          id: string
+          last_accessed: string | null
+          usage_count: number | null
+        }
+        Insert: {
+          api_source?: string | null
+          cache_key: string
+          created_at?: string | null
+          explanation: string
+          id?: string
+          last_accessed?: string | null
+          usage_count?: number | null
+        }
+        Update: {
+          api_source?: string | null
+          cache_key?: string
+          created_at?: string | null
+          explanation?: string
+          id?: string
+          last_accessed?: string | null
+          usage_count?: number | null
+        }
+        Relationships: []
+      }
       bootcamp_learning_sessions: {
         Row: {
           created_at: string | null
@@ -438,6 +474,75 @@ export type Database = {
             referencedColumns: ["student_id"]
           },
         ]
+      }
+      bootcamp_misconception_patterns: {
+        Row: {
+          created_at: string | null
+          hit_count: number | null
+          id: string
+          last_used: string | null
+          pattern_data: Json
+          pattern_key: string
+        }
+        Insert: {
+          created_at?: string | null
+          hit_count?: number | null
+          id?: string
+          last_used?: string | null
+          pattern_data: Json
+          pattern_key: string
+        }
+        Update: {
+          created_at?: string | null
+          hit_count?: number | null
+          id?: string
+          last_used?: string | null
+          pattern_data?: Json
+          pattern_key?: string
+        }
+        Relationships: []
+      }
+      bootcamp_misconception_queue: {
+        Row: {
+          correct_answer: string
+          created_at: string | null
+          id: string
+          misconception_code: string | null
+          priority: number | null
+          processed_at: string | null
+          question_id: string
+          retry_count: number | null
+          status: string | null
+          student_answer: string
+          student_id: string
+        }
+        Insert: {
+          correct_answer: string
+          created_at?: string | null
+          id?: string
+          misconception_code?: string | null
+          priority?: number | null
+          processed_at?: string | null
+          question_id: string
+          retry_count?: number | null
+          status?: string | null
+          student_answer: string
+          student_id: string
+        }
+        Update: {
+          correct_answer?: string
+          created_at?: string | null
+          id?: string
+          misconception_code?: string | null
+          priority?: number | null
+          processed_at?: string | null
+          question_id?: string
+          retry_count?: number | null
+          status?: string | null
+          student_answer?: string
+          student_id?: string
+        }
+        Relationships: []
       }
       bootcamp_misconceptions_catalog: {
         Row: {

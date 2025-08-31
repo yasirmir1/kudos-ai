@@ -13,6 +13,7 @@ import {
   Lightbulb,
   HelpCircle
 } from 'lucide-react';
+import { useMisconceptionDetection } from '@/hooks/useMisconceptionDetection';
 import { useBootcampDatabase, BootcampQuestion } from '@/hooks/useBootcampDatabase';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
@@ -64,6 +65,9 @@ export const EnhancedQuestionInterface: React.FC<EnhancedQuestionInterfaceProps>
   const [misconceptionDetails, setMisconceptionDetails] = useState<MisconceptionIntervention | null>(null);
   const [showWorkedExample, setShowWorkedExample] = useState(false);
   const [adaptiveHint, setAdaptiveHint] = useState<string | null>(null);
+  
+  // Initialize misconception detection hook
+  const { detectMisconception, isDetecting } = useMisconceptionDetection();
 
   // Timer
   useEffect(() => {
@@ -86,21 +90,24 @@ export const EnhancedQuestionInterface: React.FC<EnhancedQuestionInterfaceProps>
 
     const timeTakenSeconds = Math.floor((Date.now() - startTime) / 1000);
     
-    // Determine correctness and detect misconceptions
+    // Use optimized misconception detection with local rules and caching
     const isCorrect = selectedAnswer === question.correct_answer;
     let misconception = '';
     let misconceptionSeverity = 'low';
+    let cachedExplanation: string | undefined;
     
     if (!isCorrect) {
-      // Get misconception data from answer options
-      const { data: answerOptions } = await supabase
-        .from('bootcamp_answer_options')
-        .select('*')
-        .eq('question_id', question.question_id)
-        .eq('option_letter', selectedAnswer);
-
-      if (answerOptions && answerOptions.length > 0) {
-        misconception = answerOptions[0].misconception_code || '';
+      try {
+        // Use optimized detection with caching
+        const detectionResult = await detectMisconception(
+          student.student_id,
+          question.question_id,
+          selectedAnswer,
+          question.correct_answer
+        );
+        
+        misconception = detectionResult.misconceptionCode || '';
+        cachedExplanation = detectionResult.explanation;
         
         // Determine severity based on confidence and frequency
         if (confidence[0] > 0.8) {
@@ -108,23 +115,21 @@ export const EnhancedQuestionInterface: React.FC<EnhancedQuestionInterfaceProps>
         } else if (confidence[0] > 0.5) {
           misconceptionSeverity = 'medium';
         }
-      }
 
-      // Get intervention data for this misconception - simplified for now
-      if (misconception) {
-        const { data: intervention } = await supabase
-          .from('bootcamp_misconceptions_catalog')
-          .select('remediation_strategy')
-          .eq('misconception_id', misconception)
-          .maybeSingle();
-
-        if (intervention) {
+        // Set intervention details if misconception detected
+        if (misconception) {
           setMisconceptionDetails({
             intervention_type: 'explanation',
-            intervention_data: { steps: ['Review the concept', 'Practice similar problems'] },
-            remediation_strategy: intervention.remediation_strategy || 'Review and practice'
+            intervention_data: { 
+              steps: ['Review the concept', 'Practice similar problems'],
+              explanation: cachedExplanation
+            },
+            remediation_strategy: 'Review and practice'
           });
         }
+      } catch (error) {
+        console.error('Error detecting misconception:', error);
+        // Fallback to basic feedback without misconception detection
       }
     }
 
@@ -343,8 +348,9 @@ export const EnhancedQuestionInterface: React.FC<EnhancedQuestionInterfaceProps>
               onClick={handleSubmitAnswer} 
               className="w-full"
               size="lg"
+              disabled={isDetecting}
             >
-              Submit Answer
+              {isDetecting ? "Analyzing..." : "Submit Answer"}
             </Button>
           )}
 
