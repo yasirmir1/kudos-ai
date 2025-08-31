@@ -72,10 +72,6 @@ export const MisconceptionItem: React.FC<MisconceptionItemProps> = ({
             {misconception.topics.join(', ')}
           </p>
         )}
-        
-        <p className="text-xs text-muted-foreground">
-          Let's see what happened and learn together! 🌟
-        </p>
       </div>
     </div>
   );
