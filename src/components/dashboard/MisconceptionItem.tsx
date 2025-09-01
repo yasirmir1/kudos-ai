@@ -48,31 +48,36 @@ export const MisconceptionItem: React.FC<MisconceptionItemProps> = ({
       className="px-4 py-2 rounded-lg border bg-muted/30 cursor-pointer hover:bg-muted/50 hover:border-primary/50 transition-all duration-200"
       onClick={onClick}
     >
-      {/* Row 1: Badges at top */}
-      <div className="flex justify-end items-center gap-1 mb-2">
-        {getFrequencyBadge(misconception.frequency)}
-        {misconception.fromCache && (
-          <Badge variant="outline" className="text-[10px] px-1 py-0 text-green-600 border-green-300">
-            ⚡
+      {/* Row 1: Topics and badges on same row */}
+      <div className="flex items-center justify-between gap-3 mb-2">
+        {/* Topics on left */}
+        <div className="flex-1 min-w-0">
+          {misconception.topics && misconception.topics.length > 0 && (
+            <p className="text-xs text-muted-foreground truncate">
+              {misconception.topics.join(', ')}
+            </p>
+          )}
+        </div>
+        
+        {/* Badges on right */}
+        <div className="flex items-center gap-1 flex-shrink-0">
+          {getFrequencyBadge(misconception.frequency)}
+          {misconception.fromCache && (
+            <Badge variant="outline" className="text-[10px] px-1 py-0 text-green-600 border-green-300">
+              ⚡
+            </Badge>
+          )}
+          <Badge variant="destructive" className="text-[10px] px-1 py-0">
+            {Math.round((misconception.frequency / (misconception.frequency + 10)) * 100)}%
           </Badge>
-        )}
-        <Badge variant="destructive" className="text-[10px] px-1 py-0">
-          {Math.round((misconception.frequency / (misconception.frequency + 10)) * 100)}%
-        </Badge>
-        <Badge variant="secondary" className="text-[10px] px-1 py-0">
-          {misconception.frequency}
-        </Badge>
+          <Badge variant="secondary" className="text-[10px] px-1 py-0">
+            {misconception.frequency}
+          </Badge>
+        </div>
       </div>
       
-      {/* Row 2: Content using full width */}
+      {/* Row 2: Main content using full width */}
       <div className="w-full">
-        {/* Topics */}
-        {misconception.topics && misconception.topics.length > 0 && (
-          <p className="text-xs text-muted-foreground mb-1 w-full">
-            {misconception.topics.join(', ')}
-          </p>
-        )}
-        
         <p className="text-xs font-medium text-foreground w-full leading-relaxed">
           {kidFriendlyLabel}
         </p>
