@@ -302,7 +302,7 @@ const Dashboard = () => {
 
 
       {/* Performance Details */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <div className="space-y-6">
         {/* Your Strengths */}
         <DashboardCard
           title="Your Strengths"
