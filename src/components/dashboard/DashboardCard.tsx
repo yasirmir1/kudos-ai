@@ -20,7 +20,7 @@ export const DashboardCard: React.FC<DashboardCardProps> = ({
   className = ""
 }) => {
   return (
-    <Card className={`h-[500px] flex flex-col ${className}`}>
+    <Card className={`h-[350px] flex flex-col ${className}`}>
       <CardHeader className="pb-4 flex-shrink-0">
         <div className="flex items-center mb-3">
           <Icon className={`h-6 w-6 mr-4 ${iconColor}`} />
