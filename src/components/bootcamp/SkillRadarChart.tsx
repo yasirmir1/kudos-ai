@@ -241,7 +241,7 @@ export const SkillRadarChart: React.FC = () => {
               </h4>
               <div className="space-y-1">
                 {strengths.map((skill, index) => (
-                  <div key={skill.skill} className="flex items-center gap-1">
+                  <div key={skill.skill} className="flex items-center justify-between">
                     <span className="text-xs font-medium">{skill.skill}</span>
                     <span className="text-xs font-bold text-green-600">{skill.current}%</span>
                   </div>
@@ -257,7 +257,7 @@ export const SkillRadarChart: React.FC = () => {
               </h4>
               <div className="space-y-1">
                 {weaknesses.map((skill, index) => (
-                  <div key={skill.skill} className="flex items-center gap-1">
+                  <div key={skill.skill} className="flex items-center justify-between">
                     <span className="text-xs font-medium">{skill.skill}</span>
                     <span className="text-xs font-bold text-orange-600">{skill.current}%</span>
                   </div>
