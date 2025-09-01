@@ -46,30 +46,31 @@ export const TopicItem: React.FC<TopicItemProps> = ({
 
   return (
     <div 
-      className={`px-4 py-2 rounded-lg border transition-all duration-200 ${
+      className={`px-4 py-2 rounded-lg border transition-all duration-200 relative ${
         isClickable 
           ? 'cursor-pointer hover:bg-muted/50 hover:border-primary/50' 
           : 'bg-muted/20'
       }`}
       onClick={onClick}
     >
-      <div className="flex items-center justify-between h-full">
-        <div className="flex flex-col min-w-0 flex-1 pr-2" style={{ justifyContent: showClickHint ? 'center' : 'center' }}>
-          <p className="text-xs font-medium text-foreground break-words" style={{ marginBottom: showClickHint ? '4px' : '0' }}>
-            {topic}
-          </p>
-          {showClickHint && (
-            <span className="text-xs text-primary">Click to practice</span>
-          )}
-        </div>
-        <div className="flex items-center gap-2 flex-shrink-0">
-          <Badge variant={getBadgeVariant()} className="text-xs">
-            {accuracyPercent}%
-          </Badge>
-          <Badge variant="secondary" className="text-xs">
-            {displayCount}
-          </Badge>
-        </div>
+      {/* Badges in top right */}
+      <div className="absolute top-2 right-2 flex items-center gap-1 flex-shrink-0">
+        <Badge variant={getBadgeVariant()} className="text-[10px] px-1 py-0">
+          {accuracyPercent}%
+        </Badge>
+        <Badge variant="secondary" className="text-[10px] px-1 py-0">
+          {displayCount}
+        </Badge>
+      </div>
+      
+      {/* Content with right padding to avoid overlap */}
+      <div className="pr-24">
+        <p className="text-xs font-medium text-foreground break-words" style={{ marginBottom: showClickHint ? '4px' : '0' }}>
+          {topic}
+        </p>
+        {showClickHint && (
+          <span className="text-xs text-primary">Click to practice</span>
+        )}
       </div>
     </div>
   );
