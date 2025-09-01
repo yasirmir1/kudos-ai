@@ -162,13 +162,11 @@ export const MisconceptionReviewModal: React.FC<MisconceptionReviewModalProps> =
             
 
             {/* Topics */}
-            {misconception.topics.length > 0 && <div>
-                <p className="font-medium mb-2 text-xs">Related Topics:</p>
-                <div className="flex flex-wrap gap-2">
-                  {misconception.topics.map((topic, index) => <Badge key={index} variant="outline" className="text-xs">
-                      {topic.length > 25 ? `${topic.substring(0, 25)}...` : topic}
-                    </Badge>)}
-                </div>
+            {misconception.topics.length > 0 && <div className="flex items-center gap-2 flex-wrap">
+                <p className="font-medium text-xs text-muted-foreground">Related Topics:</p>
+                {misconception.topics.map((topic, index) => <Badge key={index} variant="outline" className="text-xs px-1.5 py-0.5">
+                    {topic.length > 20 ? `${topic.substring(0, 20)}...` : topic}
+                  </Badge>)}
               </div>}
           </div>
 
