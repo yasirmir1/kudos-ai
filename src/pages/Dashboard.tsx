@@ -303,67 +303,73 @@ const Dashboard = () => {
 
       {/* Performance Details */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Your Strengths */}
-        <DashboardCard
-          title="Your Strengths"
-          subtitle="Topics where you're performing well"
-          icon={Award}
-          iconColor="text-green-600"
-        >
-          {performance.filter(topic => topic.accuracy >= 0.5).slice(0, 5).map((topic, index) => (
-            <TopicItem
-              key={topic.topic}
-              topic={topic.topic}
-              accuracy={topic.accuracy}
-              attempts={topic.total_attempts}
-              index={index}
-              type="strength"
-            />
-          ))}
-          {performance.filter(topic => topic.accuracy >= 0.5).length === 0 && (
-            <EmptyState
-              message="Complete some practice questions to see your strengths!"
-              icon={<Award className="h-8 w-8" />}
-            />
-          )}
-        </DashboardCard>
+        {/* Left Column: Strengths and Focus Areas */}
+        <div className="space-y-6">
+          {/* Your Strengths */}
+          <DashboardCard
+            title="Your Strengths"
+            subtitle="Topics where you're performing well"
+            icon={Award}
+            iconColor="text-green-600"
+            className="h-[280px]"
+          >
+            {performance.filter(topic => topic.accuracy >= 0.5).slice(0, 5).map((topic, index) => (
+              <TopicItem
+                key={topic.topic}
+                topic={topic.topic}
+                accuracy={topic.accuracy}
+                attempts={topic.total_attempts}
+                index={index}
+                type="strength"
+              />
+            ))}
+            {performance.filter(topic => topic.accuracy >= 0.5).length === 0 && (
+              <EmptyState
+                message="Complete some practice questions to see your strengths!"
+                icon={<Award className="h-8 w-8" />}
+              />
+            )}
+          </DashboardCard>
 
-        {/* Focus Areas */}
-        <DashboardCard
-          title="Focus Areas"
-          subtitle="Topics that need more attention"
-          icon={Target}
-          iconColor="text-yellow-600"
-        >
-          {needsWork.map((topic, index) => (
-            <TopicItem
-              key={topic.topic}
-              topic={topic.topic}
-              accuracy={topic.accuracy}
-              attempts={topic.attempts}
-              index={index}
-              type="focus"
-              onClick={() => {
-                setSelectedFocusArea(topic);
-                setFocusAreaQuestionsOpen(true);
-              }}
-              showClickHint={true}
-            />
-          ))}
-          {needsWork.length === 0 && (
-            <EmptyState
-              message="Great job! No weak areas identified yet."
-              icon={<Target className="h-8 w-8" />}
-            />
-          )}
-        </DashboardCard>
+          {/* Focus Areas */}
+          <DashboardCard
+            title="Focus Areas"
+            subtitle="Topics that need more attention"
+            icon={Target}
+            iconColor="text-yellow-600"
+            className="h-[280px]"
+          >
+            {needsWork.map((topic, index) => (
+              <TopicItem
+                key={topic.topic}
+                topic={topic.topic}
+                accuracy={topic.accuracy}
+                attempts={topic.attempts}
+                index={index}
+                type="focus"
+                onClick={() => {
+                  setSelectedFocusArea(topic);
+                  setFocusAreaQuestionsOpen(true);
+                }}
+                showClickHint={true}
+              />
+            ))}
+            {needsWork.length === 0 && (
+              <EmptyState
+                message="Great job! No weak areas identified yet."
+                icon={<Target className="h-8 w-8" />}
+              />
+            )}
+          </DashboardCard>
+        </div>
 
-        {/* Misconceptions */}
+        {/* Right Column: Misconceptions */}
         <DashboardCard
           title="Misconceptions"
           subtitle="Common mistakes to watch out for"
           icon={Clock}
           iconColor="text-red-600"
+          className="h-[600px]"
         >
           {loadingExplanations && misconceptions.length > 0 && (
             <LoadingState message="Analyzing misconceptions..." />
