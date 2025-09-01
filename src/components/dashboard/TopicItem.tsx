@@ -64,8 +64,8 @@ export const TopicItem: React.FC<TopicItemProps> = ({
       </div>
       
       {/* Content row - full width */}
-      <div>
-        <p className="text-xs font-medium text-foreground break-words" style={{ marginBottom: showClickHint ? '4px' : '0' }}>
+      <div className="w-full">
+        <p className="text-xs font-medium text-foreground w-full leading-relaxed" style={{ marginBottom: showClickHint ? '4px' : '0' }}>
           {topic}
         </p>
         {showClickHint && (
