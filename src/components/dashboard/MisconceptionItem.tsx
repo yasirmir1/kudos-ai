@@ -45,15 +45,15 @@ export const MisconceptionItem: React.FC<MisconceptionItemProps> = ({
 
   return (
     <div 
-      className="px-3 py-2 rounded-lg border bg-muted/30 cursor-pointer hover:bg-muted/50 hover:border-primary/50 transition-all duration-200"
+      className="px-4 py-3 rounded-lg border bg-muted/30 cursor-pointer hover:bg-muted/50 hover:border-primary/50 transition-all duration-200"
       onClick={onClick}
     >
       {/* Row 1: Topics and badges on same row */}
-      <div className="flex items-start justify-between gap-2 mb-1">
+      <div className="flex items-start justify-between gap-3 mb-3">
         {/* Topics on left - allow wrapping */}
         <div className="flex-1 min-w-0">
           {misconception.topics && misconception.topics.length > 0 && (
-            <p className="text-[10px] text-muted-foreground break-words leading-tight">
+            <p className="text-xs text-muted-foreground break-words leading-relaxed">
               {misconception.topics.join(', ')}
             </p>
           )}
@@ -63,14 +63,14 @@ export const MisconceptionItem: React.FC<MisconceptionItemProps> = ({
         <div className="flex items-center gap-1 flex-shrink-0">
           {getFrequencyBadge(misconception.frequency)}
           {misconception.fromCache && (
-            <Badge variant="outline" className="text-[9px] px-1 py-0 text-green-600 border-green-300">
+            <Badge variant="outline" className="text-[10px] px-1 py-0 text-green-600 border-green-300">
               ⚡
             </Badge>
           )}
-          <Badge variant="destructive" className="text-[9px] px-1 py-0">
+          <Badge variant="destructive" className="text-[10px] px-1 py-0">
             {Math.round((misconception.frequency / (misconception.frequency + 10)) * 100)}%
           </Badge>
-          <Badge variant="secondary" className="text-[9px] px-1 py-0">
+          <Badge variant="secondary" className="text-[10px] px-1 py-0">
             {misconception.frequency}
           </Badge>
         </div>
@@ -78,7 +78,7 @@ export const MisconceptionItem: React.FC<MisconceptionItemProps> = ({
       
       {/* Row 2: Main content using full width */}
       <div className="w-full">
-        <p className="text-xs font-medium text-foreground w-full leading-tight break-words">
+        <p className="text-xs font-medium text-foreground w-full leading-relaxed break-words">
           {kidFriendlyLabel}
         </p>
       </div>
