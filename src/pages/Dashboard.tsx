@@ -375,7 +375,7 @@ const Dashboard = () => {
             <LoadingState message="Analyzing misconceptions..." />
           )}
           
-          {!cacheLoading && !loadingExplanations && (cachedMisconceptions.length > 0 ? cachedMisconceptions : misconceptions).slice(0, 3).map((misconception, index) => {
+          {!cacheLoading && !loadingExplanations && (cachedMisconceptions.length > 0 ? cachedMisconceptions : misconceptions).slice(0, 5).map((misconception, index) => {
             const kidFriendlyLabel = formatMisconceptionForKids(misconception.red_herring);
             return (
               <MisconceptionItem
