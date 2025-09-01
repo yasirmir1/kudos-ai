@@ -6,8 +6,9 @@ import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Progress } from '@/components/ui/progress';
 import { TrendingUp, AlertTriangle, Target, BarChart3, Loader2, Brain, Shield, Zap, Heart, Star, BookOpen } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
-import { useToast } from '@/components/ui/use-toast';
+import { useToast } from '@/hooks/use-toast';
 import { getFriendlyMisconceptionName } from '@/lib/misconceptionLabels';
+import { MisconceptionReviewModal } from './MisconceptionReviewModal';
 
 interface MisconceptionPattern {
   misconception_code: string;
@@ -50,6 +51,8 @@ export const MisconceptionPatternAnalysis: React.FC<MisconceptionPatternAnalysis
 }) => {
   const [analysis, setAnalysis] = useState<PatternAnalysis | null>(null);
   const [loading, setLoading] = useState(false);
+  const [selectedMisconception, setSelectedMisconception] = useState<MisconceptionPattern | null>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const { toast } = useToast();
 
   const analyzePatterns = async () => {
@@ -128,6 +131,25 @@ export const MisconceptionPatternAnalysis: React.FC<MisconceptionPatternAnalysis
       case 'medium': return Target;
       default: return Shield;
     }
+  };
+
+  const handleMisconceptionClick = (pattern: MisconceptionPattern) => {
+    setSelectedMisconception(pattern);
+    setIsModalOpen(true);
+  };
+
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+    setSelectedMisconception(null);
+  };
+
+  const handleStartPractice = () => {
+    // This could navigate to practice mode or start a focused practice session
+    toast({
+      title: "Practice Mode",
+      description: "Starting focused practice for this area...",
+    });
+    handleCloseModal();
   };
 
   if (loading) {
@@ -262,7 +284,11 @@ export const MisconceptionPatternAnalysis: React.FC<MisconceptionPatternAnalysis
               const Icon = getPatternIcon(pattern.pattern_type);
               const SeverityIcon = getSeverityIcon(pattern.severity);
               return (
-                <div key={index} className="p-3 rounded-lg border bg-card">
+                <div 
+                  key={index} 
+                  className="p-3 rounded-lg border bg-card cursor-pointer hover:bg-muted/50 hover:border-primary/50 transition-all duration-200"
+                  onClick={() => handleMisconceptionClick(pattern)}
+                >
                   <div className="flex items-start justify-between mb-2">
                      <div className="flex items-center gap-2 flex-1">
                        <Icon className="h-4 w-4 text-muted-foreground flex-shrink-0" />
@@ -308,6 +334,11 @@ export const MisconceptionPatternAnalysis: React.FC<MisconceptionPatternAnalysis
                       )}
                     </div>
                   )}
+                  
+                  {/* Click hint */}
+                  <div className="mt-2 text-xs text-primary opacity-75">
+                    Click to review and practice
+                  </div>
                 </div>
               );
             })}
@@ -378,6 +409,14 @@ export const MisconceptionPatternAnalysis: React.FC<MisconceptionPatternAnalysis
           )}
         </Button>
       </div>
+
+      {/* Misconception Review Modal */}
+      <MisconceptionReviewModal
+        misconception={selectedMisconception}
+        isOpen={isModalOpen}
+        onClose={handleCloseModal}
+        onStartPractice={handleStartPractice}
+      />
     </div>
   );
 };
