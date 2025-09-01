@@ -27,7 +27,7 @@ export const DashboardNavigation: React.FC<DashboardNavigationProps> = ({
   
   const allNavItems: NavItem[] = [{
     id: 'overview',
-    label: 'Overview',
+    label: 'Home',
     icon: Home
   }, {
     id: 'practice',
@@ -57,27 +57,22 @@ export const DashboardNavigation: React.FC<DashboardNavigationProps> = ({
   };
   return <nav className="bg-card border-b border-border shadow-sm sticky top-0 z-10">
       <div className="container mx-auto px-4">
-        <div className="flex items-center justify-between h-16">
-          <div className="flex items-center space-x-8">
-            {/* Main Navigation */}
-            <div className="hidden lg:flex space-x-1">
-              {navItems.map(item => <button key={item.id} onClick={() => setCurrentView(item.id)} className={`flex items-center space-x-1 px-3 py-2 rounded-md text-sm font-medium transition-colors ${currentView === item.id ? 'bg-primary/10 text-primary' : 'text-muted-foreground hover:text-foreground hover:bg-muted'}`}>
-                  <item.icon className="h-4 w-4" />
-                  <span>{item.label}</span>
-                </button>)}
-            </div>
-            
-            {/* Mobile Navigation */}
-            <div className="lg:hidden flex space-x-1">
-              {navItems.slice(0, 4).map(item => <button key={item.id} onClick={() => setCurrentView(item.id)} className={`flex items-center space-x-1 px-2 py-2 rounded-md text-xs font-medium transition-colors ${currentView === item.id ? 'bg-primary/10 text-primary' : 'text-muted-foreground hover:text-foreground hover:bg-muted'}`}>
-                  <item.icon className="h-4 w-4" />
-                  <span className="hidden sm:inline">{item.label}</span>
-                </button>)}
-            </div>
+        <div className="flex items-center justify-center h-16">
+          {/* Main Navigation */}
+          <div className="hidden lg:flex space-x-1">
+            {navItems.map(item => <button key={item.id} onClick={() => setCurrentView(item.id)} className={`flex items-center space-x-1 px-3 py-2 rounded-md text-sm font-medium transition-colors ${currentView === item.id ? 'bg-primary/10 text-primary' : 'text-muted-foreground hover:text-foreground hover:bg-muted'}`}>
+                <item.icon className="h-4 w-4" />
+                <span>{item.label}</span>
+              </button>)}
           </div>
           
-          {/* User Info Section */}
-          
+          {/* Mobile Navigation */}
+          <div className="lg:hidden flex space-x-1">
+            {navItems.slice(0, 4).map(item => <button key={item.id} onClick={() => setCurrentView(item.id)} className={`flex items-center space-x-1 px-2 py-2 rounded-md text-xs font-medium transition-colors ${currentView === item.id ? 'bg-primary/10 text-primary' : 'text-muted-foreground hover:text-foreground hover:bg-muted'}`}>
+                <item.icon className="h-4 w-4" />
+                <span className="hidden sm:inline">{item.label}</span>
+              </button>)}
+          </div>
         </div>
       </div>
     </nav>;
