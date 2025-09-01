@@ -46,15 +46,15 @@ export const TopicItem: React.FC<TopicItemProps> = ({
 
   return (
     <div 
-      className={`px-4 py-2 rounded-lg border transition-all duration-200 relative ${
+      className={`px-4 py-2 rounded-lg border transition-all duration-200 ${
         isClickable 
           ? 'cursor-pointer hover:bg-muted/50 hover:border-primary/50' 
           : 'bg-muted/20'
       }`}
       onClick={onClick}
     >
-      {/* Badges in top right */}
-      <div className="absolute top-2 right-2 flex items-center gap-1 flex-shrink-0">
+      {/* Badges row */}
+      <div className="flex justify-end items-center gap-1 mb-2">
         <Badge variant={getBadgeVariant()} className="text-[10px] px-1 py-0">
           {accuracyPercent}%
         </Badge>
@@ -63,8 +63,8 @@ export const TopicItem: React.FC<TopicItemProps> = ({
         </Badge>
       </div>
       
-      {/* Content with minimal right padding */}
-      <div className="pr-2">
+      {/* Content row - full width */}
+      <div>
         <p className="text-xs font-medium text-foreground break-words" style={{ marginBottom: showClickHint ? '4px' : '0' }}>
           {topic}
         </p>
