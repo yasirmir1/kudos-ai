@@ -44,7 +44,7 @@ export default function Report() {
   const { user } = useAuth();
   const { selectedAgeGroup } = useAgeGroup();
   const { toast } = useToast();
-  const [currentView, setCurrentView] = useState<'insights' | 'analytics'>('insights');
+  const [currentView, setCurrentView] = useState<'insights' | 'analytics'>('analytics');
   const [topics, setTopics] = useState<StudiedTopic[]>([]);
   const [loading, setLoading] = useState(false);
   const [explanation, setExplanation] = useState<string | null>(null);

@@ -42,7 +42,7 @@ const Dashboard = () => {
     selectedAgeGroup
   } = useAgeGroup();
   const navigate = useNavigate();
-  const [currentView, setCurrentView] = useState('report');
+  const [currentView, setCurrentView] = useState('overview');
   const [performance, setPerformance] = useState<PerformanceData[]>([]);
   const [weakTopics, setWeakTopics] = useState<WeakTopic[]>([]);
   const [misconceptions, setMisconceptions] = useState<any[]>([]);
