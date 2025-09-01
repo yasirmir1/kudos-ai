@@ -45,37 +45,37 @@ export const MisconceptionItem: React.FC<MisconceptionItemProps> = ({
 
   return (
     <div 
-      className="px-4 py-2 rounded-lg border bg-muted/30 cursor-pointer hover:bg-muted/50 hover:border-primary/50 transition-all duration-200"
+      className="px-4 py-2 rounded-lg border bg-muted/30 cursor-pointer hover:bg-muted/50 hover:border-primary/50 transition-all duration-200 relative"
       onClick={onClick}
     >
-      <div className="flex items-center justify-between gap-3">
-        <div className="flex flex-col min-w-0 flex-1">
-          {/* Topics */}
-          {misconception.topics && misconception.topics.length > 0 && (
-            <p className="text-xs text-muted-foreground truncate mb-1">
-              {misconception.topics.join(', ')}
-            </p>
-          )}
-          
-          <p className="text-xs font-medium text-foreground line-clamp-2 leading-tight">
-            {kidFriendlyLabel}
+      {/* Badges in top right */}
+      <div className="absolute top-2 right-2 flex items-center gap-1 flex-shrink-0">
+        {getFrequencyBadge(misconception.frequency)}
+        {misconception.fromCache && (
+          <Badge variant="outline" className="text-[10px] px-1 py-0 text-green-600 border-green-300">
+            ⚡
+          </Badge>
+        )}
+        <Badge variant="destructive" className="text-[10px] px-1 py-0">
+          {Math.round((misconception.frequency / (misconception.frequency + 10)) * 100)}%
+        </Badge>
+        <Badge variant="secondary" className="text-[10px] px-1 py-0">
+          {misconception.frequency}
+        </Badge>
+      </div>
+      
+      {/* Content with right padding to avoid overlap */}
+      <div className="pr-32">
+        {/* Topics */}
+        {misconception.topics && misconception.topics.length > 0 && (
+          <p className="text-xs text-muted-foreground truncate mb-1">
+            {misconception.topics.join(', ')}
           </p>
-        </div>
+        )}
         
-        <div className="flex items-center gap-1 flex-shrink-0">
-          {getFrequencyBadge(misconception.frequency)}
-          {misconception.fromCache && (
-            <Badge variant="outline" className="text-[10px] px-1 py-0 text-green-600 border-green-300">
-              ⚡
-            </Badge>
-          )}
-          <Badge variant="destructive" className="text-[10px] px-1 py-0">
-            {Math.round((misconception.frequency / (misconception.frequency + 10)) * 100)}%
-          </Badge>
-          <Badge variant="secondary" className="text-[10px] px-1 py-0">
-            {misconception.frequency}
-          </Badge>
-        </div>
+        <p className="text-xs font-medium text-foreground line-clamp-2 leading-tight">
+          {kidFriendlyLabel}
+        </p>
       </div>
     </div>
   );
