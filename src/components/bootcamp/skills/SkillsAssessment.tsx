@@ -56,7 +56,7 @@ export const SkillsAssessment: React.FC = () => {
       const radarData = Object.entries(skillsMap).map(([skill, data]) => ({
         skill: skill.replace(/_/g, ' '),
         current: Math.round(data.proficiency * 100),
-        target: 85, // Target proficiency
+        target: 100, // Target proficiency set to 100 like in the design
         category: data.category
       }));
 
@@ -73,15 +73,13 @@ export const SkillsAssessment: React.FC = () => {
   if (loading) {
     return (
       <Card className="h-full">
-        <CardContent className="p-4">
-          <div className="space-y-4">
-            <h3 className="flex items-center gap-2 text-base font-semibold">
-              <Brain className="h-4 w-4" />
-              Skills Assessment
-            </h3>
-            <div className="flex items-center justify-center h-64">
-              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
-            </div>
+        <CardContent className="p-8">
+          <div className="flex items-center mb-6">
+            <Brain className="h-8 w-8 text-blue-800 mr-3" />
+            <h1 className="text-2xl font-bold text-gray-800">Skills Assessment</h1>
+          </div>
+          <div className="flex items-center justify-center h-64">
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
           </div>
         </CardContent>
       </Card>
@@ -89,26 +87,22 @@ export const SkillsAssessment: React.FC = () => {
   }
 
   return (
-    <Card className="h-full">
-      <CardContent className="p-4">
-        <div className="space-y-4">
-          {/* Compact Header */}
-          <div>
-            <h3 className="flex items-center gap-2 text-base font-semibold">
-              <Brain className="h-4 w-4" />
-              Skills Assessment
-            </h3>
+    <Card className="h-full shadow-sm border border-gray-200">
+      <CardContent className="p-8">
+        <div className="flex items-center mb-6">
+          <Brain className="h-8 w-8 text-blue-800 mr-3" />
+          <h1 className="text-2xl font-bold text-gray-800">Skills Assessment</h1>
+        </div>
+        
+        <div className="grid grid-cols-1 md:grid-cols-12 gap-8">
+          <div className="md:col-span-5">
+            <div className="space-y-8">
+              <StrengthsList strengths={strengths} />
+              <FocusAreasList weaknesses={weaknesses} />
+            </div>
           </div>
           
-          {/* Three Column Layout */}
-          <div className="grid grid-cols-3 gap-4">
-            {/* Top Strengths */}
-            <StrengthsList strengths={strengths} />
-
-            {/* Focus Areas */}
-            <FocusAreasList weaknesses={weaknesses} />
-
-            {/* Radar Chart */}
+          <div className="md:col-span-7">
             <SkillRadarChart data={skillsData} />
           </div>
         </div>

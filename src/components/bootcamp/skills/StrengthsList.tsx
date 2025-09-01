@@ -8,16 +8,16 @@ interface StrengthsListProps {
 
 export const StrengthsList: React.FC<StrengthsListProps> = ({ strengths }) => {
   return (
-    <div className="space-y-2">
-      <h4 className="text-xs font-semibold text-green-700 flex items-center gap-1">
-        <TrendingUp className="h-3 w-3" />
-        Top Strengths
-      </h4>
-      <div className="space-y-1">
+    <div>
+      <div className="flex items-center mb-4">
+        <TrendingUp className="h-5 w-5 text-green-500 mr-2" />
+        <h2 className="text-lg font-semibold text-gray-700">Top Strengths</h2>
+      </div>
+      <div className="space-y-2">
         {strengths.map((skill, index) => (
-          <div key={skill.skill} className="flex items-center">
-            <span className="text-xs font-medium">{skill.skill}</span>
-            <span className="text-xs font-bold text-green-600 ml-auto">{skill.current}%</span>
+          <div key={skill.skill} className="flex items-baseline">
+            <p className="text-gray-600 flex-grow">{skill.skill}</p>
+            <p className="font-semibold text-green-500 ml-2">{skill.current}%</p>
           </div>
         ))}
       </div>

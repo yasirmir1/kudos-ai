@@ -2,14 +2,14 @@ import { RadarDataPoint, OverallStrength } from './types';
 
 export const getDefaultSkillsData = (): RadarDataPoint[] => {
   return [
-    { skill: 'Number Operations', current: 65, target: 85, category: 'Arithmetic' },
-    { skill: 'Algebraic Thinking', current: 72, target: 85, category: 'Algebra' },
-    { skill: 'Geometric Reasoning', current: 58, target: 85, category: 'Geometry' },
-    { skill: 'Data Analysis', current: 70, target: 85, category: 'Statistics' },
-    { skill: 'Problem Solving', current: 68, target: 85, category: 'Application' },
-    { skill: 'Fraction Skills', current: 62, target: 85, category: 'Number' },
-    { skill: 'Measurement', current: 75, target: 85, category: 'Practical' },
-    { skill: 'Pattern Recognition', current: 69, target: 85, category: 'Logic' }
+    { skill: 'Number Operations', current: 80, target: 100, category: 'Arithmetic' },
+    { skill: 'Algebraic Thinking', current: 50, target: 100, category: 'Algebra' },
+    { skill: 'Geometric Reasoning', current: 60, target: 100, category: 'Geometry' },
+    { skill: 'Data Analysis', current: 35, target: 100, category: 'Statistics' },
+    { skill: 'Problem Solving', current: 40, target: 100, category: 'Application' },
+    { skill: 'Fraction Skills', current: 33, target: 100, category: 'Number' },
+    { skill: 'Measurement', current: 50, target: 100, category: 'Practical' },
+    { skill: 'Pattern Recognition', current: 50, target: 100, category: 'Logic' }
   ];
 };
 
