@@ -275,14 +275,20 @@ export const SkillRadarChart: React.FC = () => {
                   <PolarGrid />
                   <PolarAngleAxis 
                     dataKey="skill" 
-                    tick={{ fontSize: 10, textAnchor: 'middle' }}
+                    tick={{ 
+                      fontSize: 11, 
+                      textAnchor: 'middle',
+                      fill: 'hsl(var(--foreground))',
+                      fontWeight: 600,
+                      filter: 'drop-shadow(0px 1px 2px rgba(0,0,0,0.8))'
+                    }}
                     className="text-xs"
                     tickFormatter={(value) => value}
                   />
                   <PolarRadiusAxis 
                     angle={90} 
                     domain={[0, 100]} 
-                    tick={{ fontSize: 8 }}
+                    tick={{ fontSize: 8, fill: 'hsl(var(--muted-foreground))' }}
                     tickCount={5}
                   />
                   <Radar
