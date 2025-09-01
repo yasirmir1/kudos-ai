@@ -63,8 +63,8 @@ export const TopicItem: React.FC<TopicItemProps> = ({
         </Badge>
       </div>
       
-      {/* Content with right padding to avoid overlap */}
-      <div className="pr-24">
+      {/* Content with minimal right padding */}
+      <div className="pr-2">
         <p className="text-xs font-medium text-foreground break-words" style={{ marginBottom: showClickHint ? '4px' : '0' }}>
           {topic}
         </p>
