@@ -22,7 +22,6 @@ import { DashboardNavigation, DashboardCard, TopicItem, MisconceptionItem, Empty
 import { useMisconceptionCache } from '@/hooks/useMisconceptionCache';
 import Practice from './Practice';
 import Curriculum from './Curriculum';
-import Analytics from './Analytics';
 import Report from './Report';
 interface PerformanceData {
   topic: string;
@@ -276,8 +275,6 @@ const Dashboard = () => {
         return <Practice />;
       case 'curriculum':
         return <Curriculum />;
-      case 'analytics':
-        return <Analytics />;
       case 'report':
         return <Report />;
       default:

@@ -38,10 +38,6 @@ export const DashboardNavigation: React.FC<DashboardNavigationProps> = ({
     label: 'Curriculum',
     icon: BookOpen
   }, {
-    id: 'analytics',
-    label: 'Analytics',
-    icon: BarChart3
-  }, {
     id: 'report',
     label: 'Report',
     icon: FileText
