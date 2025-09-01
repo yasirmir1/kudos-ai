@@ -57,12 +57,14 @@ export const TopicItem: React.FC<TopicItemProps> = ({
       <div className="flex items-center justify-between gap-3">
         {/* Column 1: Content - takes available space */}
         <div className="flex-1 min-w-0">
-          <p className="text-xs font-medium text-foreground w-full leading-relaxed" style={{ marginBottom: showClickHint ? '4px' : '0' }}>
-            {topic}
-          </p>
-          {showClickHint && (
-            <span className="text-xs text-primary">Click to practice</span>
-          )}
+          <div className="flex items-center justify-between">
+            <p className="text-xs font-medium text-foreground leading-relaxed">
+              {topic}
+            </p>
+            {showClickHint && (
+              <span className="text-xs text-primary ml-2">Click to practice</span>
+            )}
+          </div>
         </div>
         
         {/* Column 2: Badges - just enough space */}
