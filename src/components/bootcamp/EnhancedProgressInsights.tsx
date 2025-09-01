@@ -306,7 +306,8 @@ export const EnhancedProgressInsights: React.FC = () => {
                       variant={pattern.severity === 'high' ? 'destructive' : 
                               pattern.severity === 'medium' ? 'secondary' : 'outline'}
                     >
-                      {pattern.severity}
+                      {pattern.severity === 'high' || pattern.severity === 'critical' ? 'Needs Focus' :
+                       pattern.severity === 'medium' ? 'Working On It' : 'Getting Better'}
                     </Badge>
                   </div>
                 </div>
