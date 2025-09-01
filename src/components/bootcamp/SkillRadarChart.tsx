@@ -235,7 +235,42 @@ export const SkillRadarChart: React.FC = () => {
       </CardHeader>
       <CardContent>
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          {/* Radar Chart - Left Side */}
+          {/* Skills Summary - Left Side */}
+          <div className="space-y-6">
+            {/* Top Strengths */}
+            <div className="space-y-3">
+              <h4 className="text-sm font-semibold text-green-700 flex items-center gap-1">
+                <TrendingUp className="h-4 w-4" />
+                Top Strengths
+              </h4>
+              <div className="space-y-2">
+                {strengths.map((skill, index) => (
+                  <div key={skill.skill} className="flex items-center justify-between">
+                    <span className="text-sm font-medium">{skill.skill}</span>
+                    <span className="text-sm font-bold text-green-600">{skill.current}%</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Focus Areas */}
+            <div className="space-y-3">
+              <h4 className="text-sm font-semibold text-orange-700 flex items-center gap-1">
+                <TrendingDown className="h-4 w-4" />
+                Focus Areas
+              </h4>
+              <div className="space-y-2">
+                {weaknesses.map((skill, index) => (
+                  <div key={skill.skill} className="flex items-center justify-between">
+                    <span className="text-sm font-medium">{skill.skill}</span>
+                    <span className="text-sm font-bold text-orange-600">{skill.current}%</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          {/* Radar Chart - Right Side */}
           <div className="lg:col-span-2">
             <div className="h-64">
               <ResponsiveContainer width="100%" height="100%">
@@ -274,41 +309,6 @@ export const SkillRadarChart: React.FC = () => {
                   />
                 </RadarChart>
               </ResponsiveContainer>
-            </div>
-          </div>
-
-          {/* Skills Summary - Right Side */}
-          <div className="space-y-6">
-            {/* Top Strengths */}
-            <div className="space-y-3">
-              <h4 className="text-sm font-semibold text-green-700 flex items-center gap-1">
-                <TrendingUp className="h-4 w-4" />
-                Top Strengths
-              </h4>
-              <div className="space-y-2">
-                {strengths.map((skill, index) => (
-                  <div key={skill.skill} className="flex items-center justify-between">
-                    <span className="text-sm font-medium">{skill.skill}</span>
-                    <span className="text-sm font-bold text-green-600">{skill.current}%</span>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            {/* Focus Areas */}
-            <div className="space-y-3">
-              <h4 className="text-sm font-semibold text-orange-700 flex items-center gap-1">
-                <TrendingDown className="h-4 w-4" />
-                Focus Areas
-              </h4>
-              <div className="space-y-2">
-                {weaknesses.map((skill, index) => (
-                  <div key={skill.skill} className="flex items-center justify-between">
-                    <span className="text-sm font-medium">{skill.skill}</span>
-                    <span className="text-sm font-bold text-orange-600">{skill.current}%</span>
-                  </div>
-                ))}
-              </div>
             </div>
           </div>
         </div>
