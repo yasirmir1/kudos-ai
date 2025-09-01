@@ -352,40 +352,38 @@ export default function Report() {
   return (
     <div>
       <div className="container mx-auto p-6">
-        <div className="mb-8">
-          <div className="flex items-center justify-between">
-            <div>
-              <h1 className="text-3xl font-bold flex items-center gap-3">
-                <BarChart3 className="h-8 w-8 text-primary" />
-                Learning Report
-              </h1>
-              <p className="text-muted-foreground mt-2">
-                Comprehensive overview of your learning journey and performance insights
-              </p>
-            </div>
-            
-            {/* Toggle between Insights and Analytics */}
-            <div className="flex items-center bg-muted rounded-lg p-1">
-              <Button
-                variant={currentView === 'insights' ? 'default' : 'ghost'}
-                size="sm"
-                onClick={() => setCurrentView('insights')}
-                className={currentView === 'insights' ? '' : 'text-muted-foreground'}
-              >
-                <Lightbulb className="h-4 w-4 mr-2" />
-                Insights
-              </Button>
-              <Button
-                variant={currentView === 'analytics' ? 'default' : 'ghost'}
-                size="sm"
-                onClick={() => setCurrentView('analytics')}
-                className={currentView === 'analytics' ? '' : 'text-muted-foreground'}
-              >
-                <TrendingUp className="h-4 w-4 mr-2" />
-                Analytics
-              </Button>
-            </div>
+        {/* Toggle between Insights and Analytics - Centered Above Title */}
+        <div className="flex justify-center mb-6">
+          <div className="flex items-center bg-muted rounded-lg p-1">
+            <Button
+              variant={currentView === 'insights' ? 'default' : 'ghost'}
+              size="sm"
+              onClick={() => setCurrentView('insights')}
+              className={currentView === 'insights' ? '' : 'text-muted-foreground'}
+            >
+              <Lightbulb className="h-4 w-4 mr-2" />
+              Insights
+            </Button>
+            <Button
+              variant={currentView === 'analytics' ? 'default' : 'ghost'}
+              size="sm"
+              onClick={() => setCurrentView('analytics')}
+              className={currentView === 'analytics' ? '' : 'text-muted-foreground'}
+            >
+              <TrendingUp className="h-4 w-4 mr-2" />
+              Analytics
+            </Button>
           </div>
+        </div>
+
+        <div className="mb-8">
+          <h1 className="text-3xl font-bold flex items-center justify-center gap-3">
+            <BarChart3 className="h-8 w-8 text-primary" />
+            Learning Report
+          </h1>
+          <p className="text-muted-foreground mt-2 text-center">
+            Comprehensive overview of your learning journey and performance insights
+          </p>
         </div>
 
         {currentView === 'insights' ? (
