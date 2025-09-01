@@ -381,9 +381,6 @@ export default function Report() {
             <BarChart3 className="h-8 w-8 text-primary" />
             Learning Report
           </h1>
-          <p className="text-muted-foreground mt-2">
-            Comprehensive overview of your learning journey and performance insights
-          </p>
         </div>
 
         {currentView === 'insights' ? (
