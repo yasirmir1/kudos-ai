@@ -78,7 +78,7 @@ export const MisconceptionItem: React.FC<MisconceptionItemProps> = ({
       
       {/* Row 2: Main content using full width */}
       <div className="w-full">
-        <p className="text-[10px] font-medium text-foreground w-full leading-relaxed break-words">
+        <p className="text-[8px] font-medium text-foreground w-full leading-relaxed break-words">
           {kidFriendlyLabel}
         </p>
       </div>
