@@ -23,21 +23,21 @@ export const MisconceptionItem: React.FC<MisconceptionItemProps> = ({
       return (
         <div className="flex items-center gap-1">
           <Circle className="w-2 h-2 fill-red-500 text-red-500" />
-          <Badge variant="destructive" className="text-[10px] px-1 py-0">High</Badge>
+          <Badge variant="destructive" className="text-[10px] px-1 py-0">Needs Focus</Badge>
         </div>
       );
     } else if (frequency >= 3) {
       return (
         <div className="flex items-center gap-1">
           <Circle className="w-2 h-2 fill-yellow-500 text-yellow-500" />
-          <Badge variant="secondary" className="text-[10px] px-1 py-0">Medium</Badge>
+          <Badge variant="secondary" className="text-[10px] px-1 py-0">Working On It</Badge>
         </div>
       );
     } else {
       return (
         <div className="flex items-center gap-1">
           <Circle className="w-2 h-2 fill-green-500 text-green-500" />
-          <Badge variant="outline" className="text-[10px] px-1 py-0">Low</Badge>
+          <Badge variant="outline" className="text-[10px] px-1 py-0">Getting Better</Badge>
         </div>
       );
     }
