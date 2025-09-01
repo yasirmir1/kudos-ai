@@ -376,12 +376,6 @@ export default function Report() {
           </div>
         </div>
 
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold flex items-center gap-3">
-            <BarChart3 className="h-8 w-8 text-primary" />
-            Learning Report
-          </h1>
-        </div>
 
         {currentView === 'insights' ? (
           <div className="space-y-6">
