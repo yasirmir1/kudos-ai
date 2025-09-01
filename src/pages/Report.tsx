@@ -9,6 +9,7 @@ import { useAuth } from '@/hooks/useAuth';
 import { useToast } from '@/hooks/use-toast';
 import { InteractiveInsights } from '@/components/InteractiveInsights';
 import { MisconceptionPatternAnalysis } from '@/components/report/MisconceptionPatternAnalysis';
+import { SkillRadarChart } from '@/components/bootcamp/SkillRadarChart';
 import { useAgeGroup } from '@/contexts/AgeGroupContext';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, BarChart, Bar, PieChart as RechartsPieChart, Cell, Pie } from 'recharts';
 
@@ -584,6 +585,9 @@ export default function Report() {
                     </CardContent>
                   </Card>
                 </div>
+
+                {/* Skills Radar Chart - Full Width */}
+                <SkillRadarChart />
 
                 {/* Charts */}
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
