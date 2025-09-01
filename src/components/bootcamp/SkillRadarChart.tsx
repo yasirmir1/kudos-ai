@@ -37,59 +37,30 @@ export const SkillRadarChart: React.FC = () => {
   const fetchSkillsData = async () => {
     try {
       setLoading(true);
-      
-      // Get current student ID
-      const { data: studentData } = await supabase.rpc('get_current_student_id');
-      
-      if (!studentData) {
-        // Fallback: calculate skills from performance data
-        await calculateSkillsFromPerformance();
-        return;
-      }
-
-      // Try to get skills data from bootcamp_student_skills
-      const { data: skillsFromTable, error: skillsError } = await supabase
-        .from('bootcamp_student_skills')
-        .select('*')
-        .eq('student_id', studentData);
-
-      if (skillsError) {
-        console.error('Error fetching skills:', skillsError);
-        await calculateSkillsFromPerformance();
-        return;
-      }
-
-      if (skillsFromTable && skillsFromTable.length > 0) {
-        const processedSkills = processSkillsData(skillsFromTable);
-        setSkillsData(processedSkills);
-        calculateOverallStrength(processedSkills);
-      } else {
-        // Fallback to performance calculation
-        await calculateSkillsFromPerformance();
-      }
+      await calculateSkillsFromDailyModeData();
     } catch (error) {
       console.error('Error in fetchSkillsData:', error);
-      await calculateSkillsFromPerformance();
+      setSkillsData(getDefaultSkillsData());
     } finally {
       setLoading(false);
     }
   };
 
-  const calculateSkillsFromPerformance = async () => {
+  const calculateSkillsFromDailyModeData = async () => {
     try {
-      // Get performance data and map to mathematical skills
-      const { data: performanceData, error } = await supabase
-        .from('student_performance')
-        .select('topic, accuracy, total_attempts')
+      // Get student answers data from daily mode
+      const { data: answersData, error } = await supabase
+        .from('student_answers')
+        .select('topic, subtopic, is_correct, answered_at')
         .eq('student_id', user?.id);
 
       if (error) {
-        console.error('Error fetching performance data:', error);
+        console.error('Error fetching student answers:', error);
         setSkillsData(getDefaultSkillsData());
         return;
       }
 
-      const skillsMap = mapTopicsToSkills(performanceData || []);
+      const skillsMap = mapDailyModeTopicsToSkills(answersData || []);
       const radarData = Object.entries(skillsMap).map(([skill, data]) => ({
         skill: skill.replace(/_/g, ' '),
         current: Math.round(data.proficiency * 100),
@@ -100,21 +71,12 @@ export const SkillRadarChart: React.FC = () => {
       setSkillsData(radarData);
       calculateOverallStrength(radarData);
     } catch (error) {
-      console.error('Error calculating skills from performance:', error);
+      console.error('Error calculating skills from daily mode data:', error);
       setSkillsData(getDefaultSkillsData());
     }
   };
 
-  const processSkillsData = (skills: any[]): RadarDataPoint[] => {
-    return skills.map(skill => ({
-      skill: skill.skill_name?.replace(/_/g, ' ') || 'Unknown',
-      current: Math.round((skill.proficiency_level || 0) * 100),
-      target: 85,
-      category: skill.skill_category || 'General'
-    }));
-  };
-
-  const mapTopicsToSkills = (performance: any[]) => {
+  const mapDailyModeTopicsToSkills = (answers: any[]) => {
     const skillsMap: Record<string, { proficiency: number; category: string; attempts: number }> = {};
 
     // Initialize core mathematical skills
@@ -134,10 +96,24 @@ export const SkillRadarChart: React.FC = () => {
       skillsMap[skill.name] = { proficiency: 0.5, category: skill.category, attempts: 0 };
     });
 
-    // Map performance data to skills
-    performance.forEach(perf => {
-      const topic = perf.topic?.toLowerCase() || '';
+    // Group answers by topic and calculate accuracy
+    const topicStats: Record<string, { correct: number; total: number }> = {};
+    
+    answers.forEach(answer => {
+      const topic = answer.topic?.toLowerCase() || '';
+      if (!topicStats[topic]) {
+        topicStats[topic] = { correct: 0, total: 0 };
+      }
+      topicStats[topic].total += 1;
+      if (answer.is_correct) {
+        topicStats[topic].correct += 1;
+      }
+    });
+
+    // Map topics to skills based on accuracy
+    Object.entries(topicStats).forEach(([topic, stats]) => {
       let targetSkill = '';
+      const accuracy = stats.total > 0 ? stats.correct / stats.total : 0.5;
 
       if (topic.includes('number') && (topic.includes('addition') || topic.includes('subtraction') || topic.includes('multiplication') || topic.includes('division'))) {
         targetSkill = 'Number_Operations';
@@ -155,15 +131,15 @@ export const SkillRadarChart: React.FC = () => {
         targetSkill = 'Problem_Solving'; // Default for unmapped topics
       }
 
-      if (skillsMap[targetSkill]) {
+      if (skillsMap[targetSkill] && stats.total >= 3) { // Only update if enough attempts
         const currentData = skillsMap[targetSkill];
-        const weightedAccuracy = (currentData.proficiency * currentData.attempts + perf.accuracy * perf.total_attempts) / 
-                                (currentData.attempts + perf.total_attempts);
+        const weightedAccuracy = (currentData.proficiency * currentData.attempts + accuracy * stats.total) / 
+                                (currentData.attempts + stats.total);
         
         skillsMap[targetSkill] = {
           proficiency: weightedAccuracy,
           category: currentData.category,
-          attempts: currentData.attempts + perf.total_attempts
+          attempts: currentData.attempts + stats.total
         };
       }
     });
