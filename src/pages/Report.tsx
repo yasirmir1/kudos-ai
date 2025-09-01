@@ -356,15 +356,6 @@ export default function Report() {
         <div className="flex justify-center mb-6">
           <div className="flex items-center bg-muted rounded-lg p-1">
             <Button
-              variant={currentView === 'insights' ? 'default' : 'ghost'}
-              size="sm"
-              onClick={() => setCurrentView('insights')}
-              className={currentView === 'insights' ? '' : 'text-muted-foreground'}
-            >
-              <Lightbulb className="h-4 w-4 mr-2" />
-              Insights
-            </Button>
-            <Button
               variant={currentView === 'analytics' ? 'default' : 'ghost'}
               size="sm"
               onClick={() => setCurrentView('analytics')}
@@ -372,6 +363,15 @@ export default function Report() {
             >
               <TrendingUp className="h-4 w-4 mr-2" />
               Analytics
+            </Button>
+            <Button
+              variant={currentView === 'insights' ? 'default' : 'ghost'}
+              size="sm"
+              onClick={() => setCurrentView('insights')}
+              className={currentView === 'insights' ? '' : 'text-muted-foreground'}
+            >
+              <Lightbulb className="h-4 w-4 mr-2" />
+              Insights
             </Button>
           </div>
         </div>
