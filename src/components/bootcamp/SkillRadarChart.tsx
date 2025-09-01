@@ -230,10 +230,9 @@ export const SkillRadarChart: React.FC = () => {
             </CardTitle>
             <CardDescription>Mathematical skills proficiency across key areas</CardDescription>
           </div>
-          {getOverallBadge()}
         </div>
       </CardHeader>
-      <CardContent>
+      <CardContent className="pt-2">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* Skills Summary - Left Side */}
           <div className="space-y-6">
@@ -272,7 +271,7 @@ export const SkillRadarChart: React.FC = () => {
 
           {/* Radar Chart - Right Side */}
           <div className="lg:col-span-2">
-            <div className="h-80">
+            <div className="h-96">
               <ResponsiveContainer width="100%" height="100%">
                 <RadarChart data={skillsData}>
                   <PolarGrid />
