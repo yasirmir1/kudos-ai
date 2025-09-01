@@ -76,12 +76,22 @@ export const MisconceptionPatternsCard: React.FC<MisconceptionPatternsCardProps>
     }
   }, [studentId]);
 
+  const getSeverityLabel = (severity: string) => {
+    switch (severity) {
+      case 'critical': return 'Needs Focus';
+      case 'high': return 'Needs Focus';
+      case 'medium': return 'Working On It';
+      case 'low': return 'Getting Better';
+      default: return 'Working On It';
+    }
+  };
+
   const getSeverityColor = (severity: string) => {
     switch (severity) {
       case 'critical': return 'destructive';
-      case 'high': return 'secondary';
-      case 'medium': return 'outline';
-      default: return 'secondary';
+      case 'high': return 'destructive';
+      case 'medium': return 'secondary';
+      default: return 'outline';
     }
   };
 
@@ -181,7 +191,7 @@ export const MisconceptionPatternsCard: React.FC<MisconceptionPatternsCardProps>
                     {pattern.misconception_code.replace(/[[\]"]/g, '')}
                   </span>
                   <Badge variant={getSeverityColor(pattern.severity)} className="text-xs">
-                    {pattern.severity}
+                    {getSeverityLabel(pattern.severity)}
                   </Badge>
                 </div>
                 <div className="flex items-center gap-2">
