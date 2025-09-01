@@ -271,12 +271,13 @@ export const SkillRadarChart: React.FC = () => {
           <div className="lg:col-span-2">
             <div className="h-96">
               <ResponsiveContainer width="100%" height="100%">
-                <RadarChart data={skillsData}>
+                <RadarChart data={skillsData} margin={{ top: 40, right: 80, bottom: 40, left: 80 }}>
                   <PolarGrid />
                   <PolarAngleAxis 
                     dataKey="skill" 
                     tick={{ fontSize: 10, textAnchor: 'middle' }}
                     className="text-xs"
+                    tickFormatter={(value) => value}
                   />
                   <PolarRadiusAxis 
                     angle={90} 
