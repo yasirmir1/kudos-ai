@@ -67,41 +67,63 @@ export const MisconceptionReviewModal: React.FC<MisconceptionReviewModalProps> =
     }
   };
 
-  const getRecommendations = (misconceptionCode: string) => {
-    // Map misconception codes to helpful recommendations
-    const recommendations: { [key: string]: string[] } = {
-      '[\"Algebra_IncorrectOperation\"]': [
-        'Practice identifying the correct inverse operation for each step',
-        'Use visual methods like balance scales to understand equality',
-        'Work through problems step-by-step with clear annotations'
-      ],
-      'MixedNumbers_ImproperConversion': [
-        'Practice converting between mixed numbers and improper fractions regularly',
-        'Use visual fraction models to understand the relationship',
-        'Break down the conversion process into clear steps'
-      ],
-      '[\"Rounding_IncorrectDirection\"]': [
-        'Remember: 5 or more rounds up, 4 or less rounds down',
-        'Practice with number lines to visualize rounding',
-        'Focus on identifying the key digit that determines rounding direction'
-      ],
-      '[\"Decimals_IncorrectPlaceValueShift\"]': [
-        'Practice multiplying and dividing by powers of 10 with place value charts',
-        'Remember: multiply = move right, divide = move left',
-        'Use concrete examples with money to make it relatable'
-      ]
+  const getStructuredExplanation = (misconceptionCode: string) => {
+    // Map misconception codes to structured explanations with emojis
+    const explanations: { [key: string]: {
+      whatHappens: string;
+      whyTricky: string;
+      howToTackle: string;
+      showsUpIn: string;
+    } } = {
+      '[\"Algebra_IncorrectOperation\"]': {
+        whatHappens: 'You might confuse addition with subtraction or multiplication with division when solving equations, especially when dealing with inverse operations.',
+        whyTricky: 'Algebra requires keeping track of multiple steps, and small slips can lead to big errors—it\'s like solving a puzzle where one wrong piece throws everything off!',
+        howToTackle: 'Write down each step clearly, and always double-check which operation you\'re using. Ask yourself, "Am I undoing what\'s being done to the variable?"',
+        showsUpIn: 'Algebra, solving equations.'
+      },
+      'MixedNumbers_ImproperConversion': {
+        whatHappens: 'You might convert mixed numbers to improper fractions incorrectly, or vice versa, by forgetting to multiply the whole number by the denominator.',
+        whyTricky: 'Mixed numbers combine whole numbers and fractions, making it easy to miss a step in the conversion process.',
+        howToTackle: 'Remember the formula: (whole × denominator) + numerator = new numerator. Use visual models to see the relationship clearly.',
+        showsUpIn: 'Fractions, mixed numbers, and fraction operations.'
+      },
+      '[\"Rounding_IncorrectDirection\"]': {
+        whatHappens: 'You might round a number like 4,550 down to 4,500 instead of up to 4,600 because the tens digit feels "small."',
+        whyTricky: 'Rounding rules depend on the digit *after* your target place value, and it\'s easy to focus on the wrong digit.',
+        howToTackle: 'Circle the digit you\'re rounding to, then look *only* at the digit to its right. If it\'s 5 or more, round up!',
+        showsUpIn: 'Place value, estimating numbers.'
+      },
+      '[\"Decimals_IncorrectPlaceValueShift\"]': {
+        whatHappens: 'When multiplying or dividing by 10, 100, etc., you might move the decimal point the wrong way (e.g., turning 0.35 into 0.0035 instead of 3.5).',
+        whyTricky: 'Decimals don\'t "feel" like whole numbers, and the direction of the shift can be confusing.',
+        howToTackle: 'Think of it like jumping on a number line: Multiplying moves the decimal *right* (making the number bigger), dividing moves it *left* (making it smaller).',
+        showsUpIn: 'Decimals, metric conversions.'
+      },
+      '[\"PrimeNumbers_OddNumberConfusion\"]': {
+        whatHappens: 'You might think all odd numbers are prime (like 9 or 15), but primes *only* have two factors: 1 and themselves!',
+        whyTricky: 'Many primes *are* odd, but not all odds are primes—it\'s a sneaky overlap.',
+        howToTackle: 'Test divisibility! If a number has *any* factors other than 1 and itself (e.g., 9 = 3 × 3), it\'s not prime.',
+        showsUpIn: 'Number theory, factoring.'
+      },
+      '[\"Percentage_IncorrectOperation\"]': {
+        whatHappens: 'You might divide 20 by 80 instead of finding 20% *of* 80, or add them (20 + 80 = 100).',
+        whyTricky: '"Percent of" implies multiplication, but the word "percent" can make you think of division.',
+        howToTackle: 'Remember: "%" means "per hundred." To find 20% of 80, calculate 0.20 × 80 = 16.',
+        showsUpIn: 'Percentages, ratios.'
+      }
     };
 
-    return recommendations[misconceptionCode] || [
-      'Practice with similar problems to build understanding',
-      'Work through examples step-by-step',
-      'Ask for help when concepts are unclear'
-    ];
+    return explanations[misconceptionCode] || {
+      whatHappens: 'This is a common mistake that many students make when learning this concept.',
+      whyTricky: 'Mathematical concepts can be challenging because they often build on previous knowledge and require careful attention to detail.',
+      howToTackle: 'Practice with similar problems, work through examples step-by-step, and don\'t hesitate to ask for help when needed.',
+      showsUpIn: 'Various mathematical topics and problem-solving situations.'
+    };
   };
 
   const PatternIcon = getPatternIcon(misconception.pattern_type);
   const friendlyName = getFriendlyMisconceptionName(misconception.misconception_code);
-  const recommendations = getRecommendations(misconception.misconception_code);
+  const explanation = getStructuredExplanation(misconception.misconception_code);
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
@@ -175,22 +197,57 @@ export const MisconceptionReviewModal: React.FC<MisconceptionReviewModalProps> =
             )}
           </div>
 
-          {/* Recommendations */}
+          {/* Structured Explanation */}
           <div className="space-y-4">
             <h4 className="font-medium flex items-center gap-2">
               <Lightbulb className="h-5 w-5 text-yellow-600" />
-              How to Improve
+              Understanding This Challenge
             </h4>
             
-            <div className="space-y-3">
-              {recommendations.map((recommendation, index) => (
-                <Alert key={index} className="border-blue-200 bg-blue-50">
-                  <BookOpen className="h-4 w-4 text-blue-600" />
-                  <AlertDescription className="p-1">
-                    <strong>Tip {index + 1}:</strong> {recommendation}
-                  </AlertDescription>
-                </Alert>
-              ))}
+            <div className="space-y-4">
+              {/* What Usually Happens */}
+              <div className="p-4 rounded-lg border bg-card">
+                <div className="flex items-start gap-3 mb-2">
+                  <span className="text-2xl">🤔</span>
+                  <h5 className="font-semibold text-blue-700">What usually happens</h5>
+                </div>
+                <p className="text-sm text-muted-foreground ml-11">
+                  {explanation.whatHappens}
+                </p>
+              </div>
+
+              {/* Why This Is Tricky */}
+              <div className="p-4 rounded-lg border bg-card">
+                <div className="flex items-start gap-3 mb-2">
+                  <span className="text-2xl">💡</span>
+                  <h5 className="font-semibold text-purple-700">Why this is tricky</h5>
+                </div>
+                <p className="text-sm text-muted-foreground ml-11">
+                  {explanation.whyTricky}
+                </p>
+              </div>
+
+              {/* How to Tackle It */}
+              <div className="p-4 rounded-lg border bg-card">
+                <div className="flex items-start gap-3 mb-2">
+                  <span className="text-2xl">🛠️</span>
+                  <h5 className="font-semibold text-green-700">How to tackle it</h5>
+                </div>
+                <p className="text-sm text-muted-foreground ml-11">
+                  {explanation.howToTackle}
+                </p>
+              </div>
+
+              {/* Shows Up In */}
+              <div className="p-4 rounded-lg border bg-card">
+                <div className="flex items-start gap-3 mb-2">
+                  <span className="text-2xl">📚</span>
+                  <h5 className="font-semibold text-orange-700">Shows up in</h5>
+                </div>
+                <p className="text-sm text-muted-foreground ml-11">
+                  {explanation.showsUpIn}
+                </p>
+              </div>
             </div>
 
             {misconception.severity === 'critical' && (
