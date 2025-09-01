@@ -191,22 +191,22 @@ export const MisconceptionPatternAnalysis: React.FC<MisconceptionPatternAnalysis
             Understanding how your child learns best and where they might need a little extra support
           </CardDescription>
         </CardHeader>
-        <CardContent className="space-y-6">
+        <CardContent className="space-y-8">
           {/* Summary Stats */}
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            <div className="text-center p-3 rounded-lg bg-muted/30">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+            <div className="text-center p-4 rounded-lg bg-muted/30">
               <div className="text-2xl font-bold text-primary">{analysis.analysis_summary.total_patterns}</div>
               <div className="text-sm text-muted-foreground">Learning Areas</div>
             </div>
-            <div className="text-center p-3 rounded-lg bg-red-50 border border-red-200">
+            <div className="text-center p-4 rounded-lg bg-red-50 border border-red-200">
               <div className="text-2xl font-bold text-red-600">{analysis.analysis_summary.critical_count}</div>
               <div className="text-sm text-red-600">Need Focus</div>
             </div>
-            <div className="text-center p-3 rounded-lg bg-orange-50 border border-orange-200">
+            <div className="text-center p-4 rounded-lg bg-orange-50 border border-orange-200">
               <div className="text-2xl font-bold text-orange-600">{analysis.analysis_summary.emerging_count}</div>
               <div className="text-sm text-orange-600">Getting Better</div>
             </div>
-            <div className="text-center p-3 rounded-lg bg-blue-50 border border-blue-200">
+            <div className="text-center p-4 rounded-lg bg-blue-50 border border-blue-200">
               <div className="text-2xl font-bold text-blue-600">
                 {analysis.problematic_topics.length}
               </div>
@@ -218,7 +218,7 @@ export const MisconceptionPatternAnalysis: React.FC<MisconceptionPatternAnalysis
           {analysis.critical_patterns.length > 0 && (
             <Alert className="border-orange-200 bg-orange-50">
               <Heart className="h-4 w-4 text-orange-600" />
-              <AlertDescription>
+              <AlertDescription className="p-1">
                 <strong>Gentle reminder:</strong> Your child might benefit from some extra practice in {analysis.critical_patterns.length} area{analysis.critical_patterns.length > 1 ? 's' : ''}. A little focused attention can make a big difference! 💪
               </AlertDescription>
             </Alert>
@@ -226,19 +226,21 @@ export const MisconceptionPatternAnalysis: React.FC<MisconceptionPatternAnalysis
 
           {/* Parent-Friendly Recommendations */}
           {analysis.recommendations.length > 0 && (
-            <div className="space-y-3">
-              <h4 className="font-medium flex items-center gap-2">
-                <BookOpen className="h-4 w-4 text-blue-600" />
+            <div className="space-y-4">
+              <h4 className="font-medium flex items-center gap-2 text-lg">
+                <BookOpen className="h-5 w-5 text-blue-600" />
                 Helpful Suggestions for You
               </h4>
-              {analysis.recommendations.map((rec, index) => (
-                <Alert key={index} className={rec.priority === 1 ? "border-blue-200 bg-blue-50" : "border-green-200 bg-green-50"}>
-                  <BookOpen className="h-4 w-4 text-blue-600" />
-                  <AlertDescription>
-                    <strong>{rec.title.replace('Critical', 'Important').replace('Patterns', 'Learning Areas')}:</strong> {rec.description.replace('misconceptions', 'concepts your child is working on').replace('intervention', 'extra practice')}
-                  </AlertDescription>
-                </Alert>
-              ))}
+              <div className="space-y-3">
+                {analysis.recommendations.map((rec, index) => (
+                  <Alert key={index} className={rec.priority === 1 ? "border-blue-200 bg-blue-50 p-4" : "border-green-200 bg-green-50 p-4"}>
+                    <BookOpen className="h-4 w-4 text-blue-600" />
+                    <AlertDescription className="p-1">
+                      <strong>{rec.title.replace('Critical', 'Important').replace('Patterns', 'Learning Areas')}:</strong> {rec.description.replace('misconceptions', 'concepts your child is working on').replace('intervention', 'extra practice')}
+                    </AlertDescription>
+                  </Alert>
+                ))}
+              </div>
             </div>
           )}
         </CardContent>
