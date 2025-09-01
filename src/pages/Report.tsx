@@ -377,11 +377,11 @@ export default function Report() {
         </div>
 
         <div className="mb-8">
-          <h1 className="text-3xl font-bold flex items-center justify-center gap-3">
+          <h1 className="text-3xl font-bold flex items-center gap-3">
             <BarChart3 className="h-8 w-8 text-primary" />
             Learning Report
           </h1>
-          <p className="text-muted-foreground mt-2 text-center">
+          <p className="text-muted-foreground mt-2">
             Comprehensive overview of your learning journey and performance insights
           </p>
         </div>
