@@ -45,15 +45,15 @@ export const MisconceptionItem: React.FC<MisconceptionItemProps> = ({
 
   return (
     <div 
-      className="px-4 py-2 rounded-lg border bg-muted/30 cursor-pointer hover:bg-muted/50 hover:border-primary/50 transition-all duration-200"
+      className="px-4 py-3 rounded-lg border bg-muted/30 cursor-pointer hover:bg-muted/50 hover:border-primary/50 transition-all duration-200"
       onClick={onClick}
     >
       {/* Row 1: Topics and badges on same row */}
-      <div className="flex items-center justify-between gap-3 mb-2">
-        {/* Topics on left */}
+      <div className="flex items-start justify-between gap-3 mb-3">
+        {/* Topics on left - allow wrapping */}
         <div className="flex-1 min-w-0">
           {misconception.topics && misconception.topics.length > 0 && (
-            <p className="text-xs text-muted-foreground truncate">
+            <p className="text-xs text-muted-foreground break-words leading-relaxed">
               {misconception.topics.join(', ')}
             </p>
           )}
@@ -78,7 +78,7 @@ export const MisconceptionItem: React.FC<MisconceptionItemProps> = ({
       
       {/* Row 2: Main content using full width */}
       <div className="w-full">
-        <p className="text-xs font-medium text-foreground w-full leading-relaxed">
+        <p className="text-xs font-medium text-foreground w-full leading-relaxed break-words">
           {kidFriendlyLabel}
         </p>
       </div>
