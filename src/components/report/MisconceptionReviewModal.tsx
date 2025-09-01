@@ -114,9 +114,9 @@ export const MisconceptionReviewModal: React.FC<MisconceptionReviewModalProps> =
     };
 
     return explanations[misconceptionCode] || {
-      whatHappens: 'This is a common mistake that many students make when learning this concept.',
-      whyTricky: 'Mathematical concepts can be challenging because they often build on previous knowledge and require careful attention to detail.',
-      howToTackle: 'Practice with similar problems, work through examples step-by-step, and don\'t hesitate to ask for help when needed.',
+      whatHappens: 'You might approach this concept in a way that seems logical but leads to incorrect results, often because of a small misunderstanding in the process.',
+      whyTricky: 'Math concepts build on each other like a tower of blocks—when one piece is shaky, it affects everything above it. Sometimes what feels "right" actually needs a different approach.',
+      howToTackle: 'Take your time to understand the underlying rule or pattern. Work through examples step-by-step, and don\'t hesitate to ask questions when something doesn\'t click!',
       showsUpIn: 'Various mathematical topics and problem-solving situations.'
     };
   };
