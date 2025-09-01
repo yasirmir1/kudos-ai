@@ -53,24 +53,27 @@ export const TopicItem: React.FC<TopicItemProps> = ({
       }`}
       onClick={onClick}
     >
-      {/* Badges row */}
-      <div className="flex justify-end items-center gap-1 mb-2">
-        <Badge variant={getBadgeVariant()} className="text-[10px] px-1 py-0">
-          {accuracyPercent}%
-        </Badge>
-        <Badge variant="secondary" className="text-[10px] px-1 py-0">
-          {displayCount}
-        </Badge>
-      </div>
-      
-      {/* Content row - full width */}
-      <div className="w-full">
-        <p className="text-xs font-medium text-foreground w-full leading-relaxed" style={{ marginBottom: showClickHint ? '4px' : '0' }}>
-          {topic}
-        </p>
-        {showClickHint && (
-          <span className="text-xs text-primary">Click to practice</span>
-        )}
+      {/* 2 Column Layout: Text on left, badges on right */}
+      <div className="flex items-center justify-between gap-3">
+        {/* Column 1: Content - takes available space */}
+        <div className="flex-1 min-w-0">
+          <p className="text-xs font-medium text-foreground w-full leading-relaxed" style={{ marginBottom: showClickHint ? '4px' : '0' }}>
+            {topic}
+          </p>
+          {showClickHint && (
+            <span className="text-xs text-primary">Click to practice</span>
+          )}
+        </div>
+        
+        {/* Column 2: Badges - just enough space */}
+        <div className="flex items-center gap-1 flex-shrink-0">
+          <Badge variant={getBadgeVariant()} className="text-[10px] px-1 py-0">
+            {accuracyPercent}%
+          </Badge>
+          <Badge variant="secondary" className="text-[10px] px-1 py-0">
+            {displayCount}
+          </Badge>
+        </div>
       </div>
     </div>
   );

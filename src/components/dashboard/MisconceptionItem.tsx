@@ -45,11 +45,11 @@ export const MisconceptionItem: React.FC<MisconceptionItemProps> = ({
 
   return (
     <div 
-      className="px-4 py-2 rounded-lg border bg-muted/30 cursor-pointer hover:bg-muted/50 hover:border-primary/50 transition-all duration-200 relative"
+      className="px-4 py-2 rounded-lg border bg-muted/30 cursor-pointer hover:bg-muted/50 hover:border-primary/50 transition-all duration-200"
       onClick={onClick}
     >
-      {/* Badges in top right */}
-      <div className="absolute top-2 right-2 flex items-center gap-1 flex-shrink-0">
+      {/* Row 1: Badges at top */}
+      <div className="flex justify-end items-center gap-1 mb-2">
         {getFrequencyBadge(misconception.frequency)}
         {misconception.fromCache && (
           <Badge variant="outline" className="text-[10px] px-1 py-0 text-green-600 border-green-300">
@@ -64,16 +64,16 @@ export const MisconceptionItem: React.FC<MisconceptionItemProps> = ({
         </Badge>
       </div>
       
-      {/* Content with right padding to avoid overlap */}
-      <div className="pr-32">
+      {/* Row 2: Content using full width */}
+      <div className="w-full">
         {/* Topics */}
         {misconception.topics && misconception.topics.length > 0 && (
-          <p className="text-xs text-muted-foreground truncate mb-1">
+          <p className="text-xs text-muted-foreground mb-1 w-full">
             {misconception.topics.join(', ')}
           </p>
         )}
         
-        <p className="text-xs font-medium text-foreground line-clamp-2 leading-tight">
+        <p className="text-xs font-medium text-foreground w-full leading-relaxed">
           {kidFriendlyLabel}
         </p>
       </div>
