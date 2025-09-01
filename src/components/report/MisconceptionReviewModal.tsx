@@ -6,7 +6,6 @@ import { Button } from '@/components/ui/button';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { TrendingUp, AlertTriangle, Target, BarChart3, Brain, BookOpen, Lightbulb, ArrowRight } from 'lucide-react';
 import { getFriendlyMisconceptionName } from '@/lib/misconceptionLabels';
-
 interface MisconceptionPattern {
   misconception_code: string;
   frequency: number;
@@ -15,14 +14,12 @@ interface MisconceptionPattern {
   topics: string[];
   trend: 'increasing' | 'stable' | 'decreasing';
 }
-
 interface MisconceptionReviewModalProps {
   misconception: MisconceptionPattern | null;
   isOpen: boolean;
   onClose: () => void;
   onStartPractice?: () => void;
 }
-
 export const MisconceptionReviewModal: React.FC<MisconceptionReviewModalProps> = ({
   misconception,
   isOpen,
@@ -30,51 +27,64 @@ export const MisconceptionReviewModal: React.FC<MisconceptionReviewModalProps> =
   onStartPractice
 }) => {
   if (!misconception) return null;
-
   const getSeverityColor = (severity: string) => {
     switch (severity) {
-      case 'critical': return 'bg-red-100 text-red-800 border-red-200';
-      case 'high': return 'bg-orange-100 text-orange-800 border-orange-200';
-      case 'medium': return 'bg-blue-100 text-blue-800 border-blue-200';
-      default: return 'bg-green-100 text-green-800 border-green-200';
+      case 'critical':
+        return 'bg-red-100 text-red-800 border-red-200';
+      case 'high':
+        return 'bg-orange-100 text-orange-800 border-orange-200';
+      case 'medium':
+        return 'bg-blue-100 text-blue-800 border-blue-200';
+      default:
+        return 'bg-green-100 text-green-800 border-green-200';
     }
   };
-
   const getSeverityLabel = (severity: string) => {
     switch (severity) {
-      case 'critical': return 'Needs Focus';
-      case 'high': return 'Working On It';
-      case 'medium': return 'Learning';
-      default: return 'Improving';
+      case 'critical':
+        return 'Needs Focus';
+      case 'high':
+        return 'Working On It';
+      case 'medium':
+        return 'Learning';
+      default:
+        return 'Improving';
     }
   };
-
   const getPatternIcon = (type: string) => {
     switch (type) {
-      case 'persistent': return AlertTriangle;
-      case 'recurring': return TrendingUp;
-      case 'developing': return Target;
-      default: return BarChart3;
+      case 'persistent':
+        return AlertTriangle;
+      case 'recurring':
+        return TrendingUp;
+      case 'developing':
+        return Target;
+      default:
+        return BarChart3;
     }
   };
-
   const getSeverityProgress = (severity: string) => {
     switch (severity) {
-      case 'critical': return 100;
-      case 'high': return 75;
-      case 'medium': return 50;
-      default: return 25;
+      case 'critical':
+        return 100;
+      case 'high':
+        return 75;
+      case 'medium':
+        return 50;
+      default:
+        return 25;
     }
   };
-
   const getStructuredExplanation = (misconceptionCode: string) => {
     // Map misconception codes to structured explanations with emojis
-    const explanations: { [key: string]: {
-      whatHappens: string;
-      whyTricky: string;
-      howToTackle: string;
-      showsUpIn: string;
-    } } = {
+    const explanations: {
+      [key: string]: {
+        whatHappens: string;
+        whyTricky: string;
+        howToTackle: string;
+        showsUpIn: string;
+      };
+    } = {
       '[\"Algebra_IncorrectOperation\"]': {
         whatHappens: 'You might confuse addition with subtraction or multiplication with division when solving equations, especially when dealing with inverse operations.',
         whyTricky: 'Algebra requires keeping track of multiple steps, and small slips can lead to big errors—it\'s like solving a puzzle where one wrong piece throws everything off!',
@@ -112,7 +122,6 @@ export const MisconceptionReviewModal: React.FC<MisconceptionReviewModalProps> =
         showsUpIn: 'Percentages, ratios.'
       }
     };
-
     return explanations[misconceptionCode] || {
       whatHappens: 'You might approach this concept in a way that seems logical but leads to incorrect results, often because of a small misunderstanding in the process.',
       whyTricky: 'Math concepts build on each other like a tower of blocks—when one piece is shaky, it affects everything above it. Sometimes what feels "right" actually needs a different approach.',
@@ -120,13 +129,10 @@ export const MisconceptionReviewModal: React.FC<MisconceptionReviewModalProps> =
       showsUpIn: 'Various mathematical topics and problem-solving situations.'
     };
   };
-
   const PatternIcon = getPatternIcon(misconception.pattern_type);
   const friendlyName = getFriendlyMisconceptionName(misconception.misconception_code);
   const explanation = getStructuredExplanation(misconception.misconception_code);
-
-  return (
-    <Dialog open={isOpen} onOpenChange={onClose}>
+  return <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-3">
@@ -152,49 +158,23 @@ export const MisconceptionReviewModal: React.FC<MisconceptionReviewModalProps> =
                 <Badge className={`text-xs ${getSeverityColor(misconception.severity)}`}>
                   {getSeverityLabel(misconception.severity)}
                 </Badge>
-                {misconception.trend === 'increasing' && (
-                  <TrendingUp className="h-4 w-4 text-orange-500" />
-                )}
+                {misconception.trend === 'increasing' && <TrendingUp className="h-4 w-4 text-orange-500" />}
               </div>
             </div>
 
-            <div className="grid grid-cols-2 gap-4 mb-4">
-              <div className="text-center p-3 rounded-lg bg-muted/30">
-                <div className="text-2xl font-bold text-primary">{misconception.frequency}</div>
-                <div className="text-sm text-muted-foreground">Times Seen</div>
-              </div>
-              <div className="text-center p-3 rounded-lg bg-muted/30">
-                <div className="text-lg font-bold text-primary capitalize">{misconception.pattern_type}</div>
-                <div className="text-sm text-muted-foreground">Pattern Type</div>
-              </div>
-            </div>
+            
 
-            <div className="mb-4">
-              <div className="flex justify-between items-center mb-2">
-                <span className="text-sm font-medium">Understanding Level</span>
-                <span className="text-sm text-muted-foreground">
-                  {100 - getSeverityProgress(misconception.severity)}% mastered
-                </span>
-              </div>
-              <Progress 
-                value={100 - getSeverityProgress(misconception.severity)} 
-                className="h-2"
-              />
-            </div>
+            
 
             {/* Topics */}
-            {misconception.topics.length > 0 && (
-              <div>
-                <p className="text-sm font-medium mb-2">Related Topics:</p>
+            {misconception.topics.length > 0 && <div>
+                <p className="font-medium mb-2 text-xs">Related Topics:</p>
                 <div className="flex flex-wrap gap-2">
-                  {misconception.topics.map((topic, index) => (
-                    <Badge key={index} variant="outline" className="text-xs">
+                  {misconception.topics.map((topic, index) => <Badge key={index} variant="outline" className="text-xs">
                       {topic.length > 25 ? `${topic.substring(0, 25)}...` : topic}
-                    </Badge>
-                  ))}
+                    </Badge>)}
                 </div>
-              </div>
-            )}
+              </div>}
           </div>
 
           {/* Structured Explanation */}
@@ -250,15 +230,13 @@ export const MisconceptionReviewModal: React.FC<MisconceptionReviewModalProps> =
               </div>
             </div>
 
-            {misconception.severity === 'critical' && (
-              <Alert className="border-orange-200 bg-orange-50">
+            {misconception.severity === 'critical' && <Alert className="border-orange-200 bg-orange-50">
                 <AlertTriangle className="h-4 w-4 text-orange-600" />
                 <AlertDescription className="p-1">
                   <strong>Priority Area:</strong> This concept needs immediate attention. 
                   Consider focusing extra practice time here for the best improvement.
                 </AlertDescription>
-              </Alert>
-            )}
+              </Alert>}
           </div>
 
           {/* Action Buttons */}
@@ -266,15 +244,12 @@ export const MisconceptionReviewModal: React.FC<MisconceptionReviewModalProps> =
             <Button onClick={onClose} variant="outline" className="flex-1">
               Close
             </Button>
-            {onStartPractice && (
-              <Button onClick={onStartPractice} className="flex-1">
+            {onStartPractice && <Button onClick={onStartPractice} className="flex-1">
                 <ArrowRight className="h-4 w-4 mr-2" />
                 Start Practice
-              </Button>
-            )}
+              </Button>}
           </div>
         </div>
       </DialogContent>
-    </Dialog>
-  );
+    </Dialog>;
 };
