@@ -221,21 +221,19 @@ export const SkillRadarChart: React.FC = () => {
 
   return (
     <Card className="h-full">
-      <CardHeader>
-        <div className="flex items-center justify-between">
-          <div>
-            <CardTitle className="flex items-center gap-2">
-              <Brain className="h-5 w-5" />
-              Skills Assessment
-            </CardTitle>
-            <CardDescription>Mathematical skills proficiency across key areas</CardDescription>
-          </div>
-        </div>
-      </CardHeader>
-      <CardContent className="pt-2">
+      <CardContent className="pt-6">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* Skills Summary - Left Side */}
           <div className="space-y-6">
+            {/* Header */}
+            <div>
+              <h3 className="flex items-center gap-2 text-lg font-semibold">
+                <Brain className="h-5 w-5" />
+                Skills Assessment
+              </h3>
+              <p className="text-sm text-muted-foreground">Mathematical skills proficiency across key areas</p>
+            </div>
+            
             {/* Top Strengths */}
             <div className="space-y-3">
               <h4 className="text-sm font-semibold text-green-700 flex items-center gap-1">
