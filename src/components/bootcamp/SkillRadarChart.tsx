@@ -279,8 +279,7 @@ export const SkillRadarChart: React.FC = () => {
                       fontSize: 11, 
                       textAnchor: 'middle',
                       fill: 'hsl(var(--foreground))',
-                      fontWeight: 600,
-                      filter: 'drop-shadow(0px 1px 2px rgba(0,0,0,0.8))'
+                      fontWeight: 600
                     }}
                     className="text-xs"
                     tickFormatter={(value) => value}
