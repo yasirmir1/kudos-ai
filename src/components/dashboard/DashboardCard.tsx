@@ -28,8 +28,8 @@ export const DashboardCard: React.FC<DashboardCardProps> = ({
         </div>
         <p className="text-base text-muted-foreground">{subtitle}</p>
       </CardHeader>
-      <CardContent className="flex-1 overflow-hidden px-8">
-        <div className="h-full overflow-y-auto space-y-4">
+      <CardContent className="flex-1 overflow-hidden px-6">
+        <div className="h-full overflow-y-auto space-y-2">
           {children}
         </div>
       </CardContent>
