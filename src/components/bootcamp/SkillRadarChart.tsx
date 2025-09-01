@@ -257,108 +257,83 @@ export const SkillRadarChart: React.FC = () => {
           {getOverallBadge()}
         </div>
       </CardHeader>
-      <CardContent className="space-y-6">
-        {/* Radar Chart */}
-        <div className="h-64">
-          <ResponsiveContainer width="100%" height="100%">
-            <RadarChart data={skillsData}>
-              <PolarGrid />
-              <PolarAngleAxis 
-                dataKey="skill" 
-                tick={{ fontSize: 10, textAnchor: 'middle' }}
-                className="text-xs"
-              />
-              <PolarRadiusAxis 
-                angle={90} 
-                domain={[0, 100]} 
-                tick={{ fontSize: 8 }}
-                tickCount={5}
-              />
-              <Radar
-                name="Current Level"
-                dataKey="current"
-                stroke="hsl(var(--primary))"
-                fill="hsl(var(--primary))"
-                fillOpacity={0.3}
-                strokeWidth={2}
-              />
-              <Radar
-                name="Target Level"
-                dataKey="target"
-                stroke="hsl(var(--muted-foreground))"
-                fill="transparent"
-                strokeWidth={1}
-                strokeDasharray="5 5"
-              />
-              <Legend 
-                wrapperStyle={{ fontSize: '12px' }}
-                iconType="line"
-              />
-            </RadarChart>
-          </ResponsiveContainer>
-        </div>
-
-        {/* Skills Summary */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {/* Strengths */}
-          <div className="space-y-2">
-            <h4 className="text-sm font-medium text-green-700 flex items-center gap-1">
-              <TrendingUp className="h-4 w-4" />
-              Top Strengths
-            </h4>
-            <div className="space-y-1">
-              {strengths.map((skill, index) => (
-                <div key={skill.skill} className="flex items-center justify-between text-xs">
-                  <span className="font-medium">{skill.skill}</span>
-                  <div className="flex items-center gap-1">
-                    <span className="text-green-600">{skill.current}%</span>
-                    {getTrendIcon(skill.current, skill.target)}
-                  </div>
-                </div>
-              ))}
+      <CardContent>
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          {/* Radar Chart - Left Side */}
+          <div className="lg:col-span-2">
+            <div className="h-64">
+              <ResponsiveContainer width="100%" height="100%">
+                <RadarChart data={skillsData}>
+                  <PolarGrid />
+                  <PolarAngleAxis 
+                    dataKey="skill" 
+                    tick={{ fontSize: 10, textAnchor: 'middle' }}
+                    className="text-xs"
+                  />
+                  <PolarRadiusAxis 
+                    angle={90} 
+                    domain={[0, 100]} 
+                    tick={{ fontSize: 8 }}
+                    tickCount={5}
+                  />
+                  <Radar
+                    name="Current Level"
+                    dataKey="current"
+                    stroke="hsl(var(--primary))"
+                    fill="hsl(var(--primary))"
+                    fillOpacity={0.3}
+                    strokeWidth={2}
+                  />
+                  <Radar
+                    name="Target Level"
+                    dataKey="target"
+                    stroke="hsl(var(--muted-foreground))"
+                    fill="transparent"
+                    strokeWidth={1}
+                    strokeDasharray="5 5"
+                  />
+                  <Legend 
+                    wrapperStyle={{ fontSize: '12px' }}
+                    iconType="line"
+                  />
+                </RadarChart>
+              </ResponsiveContainer>
             </div>
           </div>
 
-          {/* Areas for Growth */}
-          <div className="space-y-2">
-            <h4 className="text-sm font-medium text-orange-700 flex items-center gap-1">
-              <TrendingDown className="h-4 w-4" />
-              Focus Areas
-            </h4>
-            <div className="space-y-1">
-              {weaknesses.map((skill, index) => (
-                <div key={skill.skill} className="flex items-center justify-between text-xs">
-                  <span className="font-medium">{skill.skill}</span>
-                  <div className="flex items-center gap-1">
-                    <span className="text-orange-600">{skill.current}%</span>
-                    {getTrendIcon(skill.current, skill.target)}
+          {/* Skills Summary - Right Side */}
+          <div className="space-y-6">
+            {/* Top Strengths */}
+            <div className="space-y-3">
+              <h4 className="text-sm font-semibold text-green-700 flex items-center gap-1">
+                <TrendingUp className="h-4 w-4" />
+                Top Strengths
+              </h4>
+              <div className="space-y-2">
+                {strengths.map((skill, index) => (
+                  <div key={skill.skill} className="flex items-center justify-between">
+                    <span className="text-sm font-medium">{skill.skill}</span>
+                    <span className="text-sm font-bold text-green-600">{skill.current}%</span>
                   </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-
-        {/* Skills Grid */}
-        <div className="space-y-2">
-          <h4 className="text-sm font-medium">All Skills Overview</h4>
-          <div className="grid grid-cols-2 gap-2">
-            {skillsData.map((skill) => (
-              <div key={skill.skill} className="flex items-center justify-between p-2 rounded-lg bg-muted/30 text-xs">
-                <span className="font-medium truncate" title={skill.skill}>
-                  {skill.skill}
-                </span>
-                <div className="flex items-center gap-1 flex-shrink-0">
-                  <span className={`font-bold ${
-                    skill.current >= 75 ? 'text-green-600' : 
-                    skill.current >= 60 ? 'text-yellow-600' : 'text-red-600'
-                  }`}>
-                    {skill.current}%
-                  </span>
-                  {getTrendIcon(skill.current, skill.target)}
-                </div>
+                ))}
               </div>
-            ))}
+            </div>
+
+            {/* Focus Areas */}
+            <div className="space-y-3">
+              <h4 className="text-sm font-semibold text-orange-700 flex items-center gap-1">
+                <TrendingDown className="h-4 w-4" />
+                Focus Areas
+              </h4>
+              <div className="space-y-2">
+                {weaknesses.map((skill, index) => (
+                  <div key={skill.skill} className="flex items-center justify-between">
+                    <span className="text-sm font-medium">{skill.skill}</span>
+                    <span className="text-sm font-bold text-orange-600">{skill.current}%</span>
+                  </div>
+                ))}
+              </div>
+            </div>
           </div>
         </div>
       </CardContent>
