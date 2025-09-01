@@ -150,16 +150,11 @@ export const MisconceptionReviewModal: React.FC<MisconceptionReviewModalProps> =
             <div className="flex items-start justify-between mb-3">
               <div className="flex items-center gap-3 flex-1">
                 <PatternIcon className="h-5 w-5 text-muted-foreground flex-shrink-0" />
-                <h3 className="font-medium text-lg leading-tight">
+                <h3 className="text-lg leading-tight font-semibold">
                   {friendlyName}
                 </h3>
               </div>
-              <div className="flex items-center gap-2 flex-shrink-0">
-                <Badge className={`text-xs ${getSeverityColor(misconception.severity)}`}>
-                  {getSeverityLabel(misconception.severity)}
-                </Badge>
-                {misconception.trend === 'increasing' && <TrendingUp className="h-4 w-4 text-orange-500" />}
-              </div>
+              
             </div>
 
             
