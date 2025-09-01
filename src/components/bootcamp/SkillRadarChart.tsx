@@ -221,73 +221,74 @@ export const SkillRadarChart: React.FC = () => {
 
   return (
     <Card className="h-full">
-      <CardContent className="pt-6">
-        <div className="space-y-6">
-          {/* Header */}
+      <CardContent className="p-4">
+        <div className="space-y-4">
+          {/* Compact Header */}
           <div>
-            <h3 className="flex items-center gap-2 text-lg font-semibold">
-              <Brain className="h-5 w-5" />
+            <h3 className="flex items-center gap-2 text-base font-semibold">
+              <Brain className="h-4 w-4" />
               Skills Assessment
             </h3>
-            <p className="text-sm text-muted-foreground">Mathematical skills proficiency across key areas</p>
           </div>
           
-          {/* Top Strengths */}
-          <div className="space-y-3">
-            <h4 className="text-sm font-semibold text-green-700 flex items-center gap-1">
-              <TrendingUp className="h-4 w-4" />
-              Top Strengths
-            </h4>
+          {/* Strengths and Focus Areas in Two Columns */}
+          <div className="grid grid-cols-2 gap-4">
+            {/* Top Strengths */}
             <div className="space-y-2">
-              {strengths.map((skill, index) => (
-                <div key={skill.skill} className="flex items-center justify-between">
-                  <span className="text-sm font-medium">{skill.skill}</span>
-                  <span className="text-sm font-bold text-green-600">{skill.current}%</span>
-                </div>
-              ))}
+              <h4 className="text-xs font-semibold text-green-700 flex items-center gap-1">
+                <TrendingUp className="h-3 w-3" />
+                Top Strengths
+              </h4>
+              <div className="space-y-1">
+                {strengths.map((skill, index) => (
+                  <div key={skill.skill} className="flex items-center justify-between">
+                    <span className="text-xs font-medium">{skill.skill}</span>
+                    <span className="text-xs font-bold text-green-600">{skill.current}%</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Focus Areas */}
+            <div className="space-y-2">
+              <h4 className="text-xs font-semibold text-orange-700 flex items-center gap-1">
+                <TrendingDown className="h-3 w-3" />
+                Focus Areas
+              </h4>
+              <div className="space-y-1">
+                {weaknesses.map((skill, index) => (
+                  <div key={skill.skill} className="flex items-center justify-between">
+                    <span className="text-xs font-medium">{skill.skill}</span>
+                    <span className="text-xs font-bold text-orange-600">{skill.current}%</span>
+                  </div>
+                ))}
+              </div>
             </div>
           </div>
 
-          {/* Focus Areas */}
-          <div className="space-y-3">
-            <h4 className="text-sm font-semibold text-orange-700 flex items-center gap-1">
-              <TrendingDown className="h-4 w-4" />
-              Focus Areas
-            </h4>
-            <div className="space-y-2">
-              {weaknesses.map((skill, index) => (
-                <div key={skill.skill} className="flex items-center justify-between">
-                  <span className="text-sm font-medium">{skill.skill}</span>
-                  <span className="text-sm font-bold text-orange-600">{skill.current}%</span>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          {/* Radar Chart */}
-          <div className="h-96">
+          {/* Compact Radar Chart */}
+          <div className="h-72">
             <ResponsiveContainer width="100%" height="100%">
-              <RadarChart data={skillsData} margin={{ top: 60, right: 120, bottom: 60, left: 120 }}>
+              <RadarChart data={skillsData} margin={{ top: 20, right: 40, bottom: 20, left: 40 }}>
                 <PolarGrid />
                 <PolarAngleAxis 
                   dataKey="skill" 
                   tick={{ 
-                    fontSize: 11, 
+                    fontSize: 9, 
                     textAnchor: 'middle',
                     fill: 'hsl(var(--foreground))',
-                    fontWeight: 600
+                    fontWeight: 500
                   }}
-                  className="text-xs"
-                  tickFormatter={(value) => value}
+                  tickFormatter={(value) => value.length > 12 ? `${value.substring(0, 12)}...` : value}
                 />
                 <PolarRadiusAxis 
                   angle={90} 
                   domain={[0, 100]} 
-                  tick={{ fontSize: 8, fill: 'hsl(var(--muted-foreground))' }}
-                  tickCount={5}
+                  tick={{ fontSize: 7, fill: 'hsl(var(--muted-foreground))' }}
+                  tickCount={4}
                 />
                 <Radar
-                  name="Current Level"
+                  name="Current"
                   dataKey="current"
                   stroke="hsl(var(--primary))"
                   fill="hsl(var(--primary))"
@@ -295,15 +296,15 @@ export const SkillRadarChart: React.FC = () => {
                   strokeWidth={2}
                 />
                 <Radar
-                  name="Target Level"
+                  name="Target"
                   dataKey="target"
                   stroke="hsl(var(--muted-foreground))"
                   fill="transparent"
                   strokeWidth={1}
-                  strokeDasharray="5 5"
+                  strokeDasharray="3 3"
                 />
                 <Legend 
-                  wrapperStyle={{ fontSize: '12px' }}
+                  wrapperStyle={{ fontSize: '10px', paddingTop: '8px' }}
                   iconType="line"
                 />
               </RadarChart>
