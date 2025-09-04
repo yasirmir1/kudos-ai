@@ -46,36 +46,35 @@ export const TopicItem: React.FC<TopicItemProps> = ({
 
   return (
     <div 
-      className={`px-4 py-3 rounded-lg border transition-all duration-200 ${
+      className={`px-4 py-2 rounded-lg border transition-all duration-200 ${
         isClickable 
           ? 'cursor-pointer hover:bg-muted/50 hover:border-primary/50' 
           : 'bg-muted/20'
       }`}
       onClick={onClick}
     >
-      <div className="flex items-center justify-between gap-4">
-        {/* Topic name */}
+      {/* 2 Column Layout: Text on left, badges on right */}
+      <div className="flex items-center justify-between gap-3">
+        {/* Column 1: Content - takes available space */}
         <div className="flex-1 min-w-0">
-          <p className="text-sm font-medium text-foreground">
-            {topic}
-          </p>
-          {showClickHint && (
-            <span className="text-xs text-primary">Click to practice</span>
-          )}
+          <div className="flex items-center gap-3">
+            <p className="text-xs font-medium text-foreground leading-relaxed flex-1 min-w-0">
+              {topic}
+            </p>
+            {showClickHint && (
+              <span className="text-xs text-primary flex-shrink-0 whitespace-nowrap">Click to practice</span>
+            )}
+          </div>
         </div>
         
-        {/* Percentage and count - larger for focus areas */}
-        <div className="flex items-center gap-3 flex-shrink-0">
-          <p className={`font-semibold ${
-            type === 'focus' ? 'text-lg' : 'text-sm'
-          } ${getAccuracyColor()}`}>
+        {/* Column 2: Badges - just enough space */}
+        <div className="flex items-center gap-1 flex-shrink-0">
+          <Badge variant={getBadgeVariant()} className="text-[10px] px-1 py-0">
             {accuracyPercent}%
-          </p>
-          <p className={`font-medium text-muted-foreground ${
-            type === 'focus' ? 'text-base' : 'text-sm'
-          }`}>
+          </Badge>
+          <Badge variant="secondary" className="text-[10px] px-1 py-0">
             {displayCount}
-          </p>
+          </Badge>
         </div>
       </div>
     </div>
