@@ -297,113 +297,66 @@ const Dashboard = () => {
         </div>
       </div>
 
-      {/* Stats Overview */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-        <div className="bg-card p-4 rounded-lg shadow-sm cursor-pointer hover:shadow-md transition-shadow" onClick={() => setQuestionHistoryOpen(true)}>
-          <div className="flex justify-between items-center">
-            <h3 className="text-sm font-medium text-muted-foreground">Total Questions</h3>
-            <Target className="text-muted-foreground h-5 w-5" />
-          </div>
-          <p className="text-3xl font-bold text-foreground mt-2">{totalQuestions}</p>
-          <p className="text-xs text-muted-foreground mt-2">Questions completed</p>
-        </div>
-
-        <div className="bg-card p-4 rounded-lg shadow-sm cursor-pointer hover:shadow-md transition-shadow" onClick={() => setTopicAccuracyOpen(true)}>
-          <div className="flex justify-between items-center">
-            <h3 className="text-sm font-medium text-muted-foreground">Overall Accuracy</h3>
-            <TrendingUp className="text-muted-foreground h-5 w-5" />
-          </div>
-          <div className="flex items-center mt-2">
-            <p className="text-3xl font-bold text-success mr-2">{Math.round(overallAccuracy * 100)}%</p>
-            <div className="w-full bg-muted rounded-full h-2">
-              <div className="bg-success h-2 rounded-full" style={{ width: `${overallAccuracy * 100}%` }}></div>
-            </div>
-          </div>
-          <p className="text-xs text-muted-foreground mt-2">By topic</p>
-        </div>
-
-        <div className="bg-card p-4 rounded-lg shadow-sm cursor-pointer hover:shadow-md transition-shadow" onClick={() => setTopicsStudiedOpen(true)}>
-          <div className="flex justify-between items-center">
-            <h3 className="text-sm font-medium text-muted-foreground">Topics Studied</h3>
-            <BookOpen className="text-muted-foreground h-5 w-5" />
-          </div>
-          <p className="text-3xl font-bold text-foreground mt-2">{performance.length}</p>
-          <p className="text-xs text-muted-foreground mt-2">Different topics</p>
-        </div>
-
-        <div className="bg-card p-4 rounded-lg shadow-sm cursor-pointer hover:shadow-md transition-shadow" onClick={() => setSessionsModalOpen(true)}>
-          <div className="flex justify-between items-center">
-            <h3 className="text-sm font-medium text-muted-foreground">Sessions</h3>
-            <Calendar className="text-muted-foreground h-5 w-5" />
-          </div>
-          <p className="text-3xl font-bold text-foreground mt-2">{totalSessions}</p>
-          <p className="text-xs text-muted-foreground mt-2">Practice sessions</p>
-        </div>
-      </div>
-
       {/* Performance Details */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Left Column: Strengths and Focus Areas */}
-        <div className="space-y-6">
-          {/* Your Strengths */}
-          <DashboardCard
-            title="Your Strengths"
-            subtitle="Topics where you're performing well"
-            icon={Award}
-            iconColor="text-green-600"
-            className="h-[280px]"
-          >
-            {performance.filter(topic => topic.accuracy >= 0.5).slice(0, 5).map((topic, index) => (
-              <TopicItem
-                key={topic.topic}
-                topic={topic.topic}
-                accuracy={topic.accuracy}
-                attempts={topic.total_attempts}
-                index={index}
-                type="strength"
-              />
-            ))}
-            {performance.filter(topic => topic.accuracy >= 0.5).length === 0 && (
-              <EmptyState
-                message="Complete some practice questions to see your strengths!"
-                icon={<Award className="h-8 w-8" />}
-              />
-            )}
-          </DashboardCard>
+      <div className="space-y-6">
+        {/* Focus Areas */}
+        <DashboardCard
+          title="Focus Areas"
+          subtitle="Topics that need more attention"
+          icon={Target}
+          iconColor="text-red-600"
+          className="h-[280px]"
+        >
+          {needsWork.map((topic, index) => (
+            <TopicItem
+              key={topic.topic}
+              topic={topic.topic}
+              accuracy={topic.accuracy}
+              attempts={topic.attempts}
+              index={index}
+              type="focus"
+              onClick={() => {
+                setSelectedFocusArea(topic);
+                setFocusAreaQuestionsOpen(true);
+              }}
+              showClickHint={true}
+            />
+          ))}
+          {needsWork.length === 0 && (
+            <EmptyState
+              message="Great job! No weak areas identified yet."
+              icon={<Target className="h-8 w-8" />}
+            />
+          )}
+        </DashboardCard>
 
-          {/* Focus Areas */}
-          <DashboardCard
-            title="Focus Areas"
-            subtitle="Topics that need more attention"
-            icon={Target}
-            iconColor="text-yellow-600"
-            className="h-[280px]"
-          >
-            {needsWork.map((topic, index) => (
-              <TopicItem
-                key={topic.topic}
-                topic={topic.topic}
-                accuracy={topic.accuracy}
-                attempts={topic.attempts}
-                index={index}
-                type="focus"
-                onClick={() => {
-                  setSelectedFocusArea(topic);
-                  setFocusAreaQuestionsOpen(true);
-                }}
-                showClickHint={true}
-              />
-            ))}
-            {needsWork.length === 0 && (
-              <EmptyState
-                message="Great job! No weak areas identified yet."
-                icon={<Target className="h-8 w-8" />}
-              />
-            )}
-          </DashboardCard>
-        </div>
+        {/* Your Strengths */}
+        <DashboardCard
+          title="Your Strengths"
+          subtitle="Topics where you're performing well"
+          icon={Award}
+          iconColor="text-green-600"
+          className="h-[280px]"
+        >
+          {performance.filter(topic => topic.accuracy >= 0.5).slice(0, 5).map((topic, index) => (
+            <TopicItem
+              key={topic.topic}
+              topic={topic.topic}
+              accuracy={topic.accuracy}
+              attempts={topic.total_attempts}
+              index={index}
+              type="strength"
+            />
+          ))}
+          {performance.filter(topic => topic.accuracy >= 0.5).length === 0 && (
+            <EmptyState
+              message="Complete some practice questions to see your strengths!"
+              icon={<Award className="h-8 w-8" />}
+            />
+          )}
+        </DashboardCard>
 
-        {/* Right Column: Misconceptions */}
+        {/* Misconceptions - Full Width */}
         <DashboardCard
           title="Misconceptions"
           subtitle="Common mistakes to watch out for"
