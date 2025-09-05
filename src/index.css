@@ -8,67 +8,71 @@ All colors MUST be HSL.
 
 @layer base {
   :root {
-    /* Clean white background with subtle warmth */
-    --background: 0 0% 100%;
-    --foreground: 220 80% 15%;
+    /* Clean gray-50 background like the design */
+    --background: 210 20% 98%;
+    --foreground: 215 25% 27%;
 
     --card: 0 0% 100%;
-    --card-foreground: 220 80% 15%;
+    --card-foreground: 215 25% 27%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 220 80% 15%;
+    --popover-foreground: 215 25% 27%;
 
-    /* KUDOS blue primary colors */
-    --primary: 220 80% 50%;
+    /* Blue-600 primary like the design */
+    --primary: 217 91% 60%;
     --primary-foreground: 0 0% 100%;
-    --primary-glow: 220 85% 60%;
+    --primary-glow: 217 91% 70%;
 
-    /* Better contrast secondary */
-    --secondary: 220 30% 92%;
-    --secondary-foreground: 220 80% 20%;
+    /* Gray secondary tones */
+    --secondary: 214 32% 91%;
+    --secondary-foreground: 215 25% 27%;
 
-    /* Improved muted tones */
-    --muted: 220 20% 94%;
-    --muted-foreground: 220 30% 35%;
+    /* Muted gray tones */
+    --muted: 214 32% 91%;
+    --muted-foreground: 215 16% 47%;
 
-    /* Better contrast accent */
-    --accent: 220 40% 90%;
-    --accent-foreground: 220 80% 20%;
+    /* Accent same as primary */
+    --accent: 217 91% 60%;
+    --accent-foreground: 0 0% 100%;
 
     /* Professional red destructive */
-    --destructive: 0 70% 55%;
-    --destructive-foreground: 0 0% 100%;
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 98%;
 
-    /* Clean borders and inputs */
-    --border: 220 20% 85%;
-    --input: 220 20% 85%;
-    --ring: 220 80% 50%;
+    /* Gray borders like the design */
+    --border: 214 32% 91%;
+    --input: 214 32% 91%;
+    --ring: 217 91% 60%;
 
     --radius: 0.75rem;
     
-    /* Clean blue and white gradients */
-    --gradient-primary: linear-gradient(135deg, hsl(220 80% 50%), hsl(220 85% 60%));
-    --gradient-learning: linear-gradient(180deg, hsl(0 0% 100%), hsl(220 20% 96%));
-    --gradient-success: linear-gradient(135deg, hsl(120 60% 55%), hsl(140 70% 60%));
-    --gradient-warning: linear-gradient(135deg, hsl(40 85% 60%), hsl(50 90% 65%));
-    --gradient-focus: linear-gradient(135deg, hsl(220 60% 55%), hsl(220 70% 65%));
-    --gradient-misconception: linear-gradient(135deg, hsl(220 70% 60%), hsl(220 80% 70%));
+    /* Success and warning colors */
+    --success: 142 76% 36%;
+    --success-foreground: 0 0% 98%;
+    --warning: 38 92% 50%;
+    --warning-foreground: 0 0% 98%;
     
-    /* Enhanced animations and shadows */
+    /* Blue-themed gradients */
+    --gradient-primary: linear-gradient(135deg, hsl(217 91% 60%), hsl(217 91% 70%));
+    --gradient-blue-light: linear-gradient(135deg, hsl(217 100% 97%), hsl(217 100% 94%));
+    --gradient-success: linear-gradient(135deg, hsl(142 76% 36%), hsl(142 76% 45%));
+    --gradient-warning: linear-gradient(135deg, hsl(38 92% 50%), hsl(38 92% 60%));
+    
+    /* Clean shadows with subtle blue tint */
     --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    --shadow-learning: 0 10px 30px -10px hsl(220 80% 50% / 0.3);
-    --shadow-card: 0 4px 20px -4px hsl(220 80% 25% / 0.08);
-    --shadow-glow: 0 0 40px hsl(220 85% 60% / 0.4);
+    --shadow-card: 0 1px 3px 0 hsl(0 0% 0% / 0.1);
+    --shadow-soft: 0 1px 2px 0 hsl(217 91% 60% / 0.05);
+    --shadow-medium: 0 4px 6px -1px hsl(217 91% 60% / 0.1);
 
     /* Sidebar colors with blue theme */
     --sidebar-background: 0 0% 100%;
-    --sidebar-foreground: 220 80% 20%;
-    --sidebar-primary: 220 80% 50%;
+    --sidebar-foreground: 215 25% 27%;
+    --sidebar-primary: 217 91% 60%;
     --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 220 30% 92%;
-    --sidebar-accent-foreground: 220 80% 20%;
-    --sidebar-border: 220 20% 85%;
-    --sidebar-ring: 220 80% 50%;
+    --sidebar-accent: 214 32% 91%;
+    --sidebar-accent-foreground: 215 25% 27%;
+    --sidebar-border: 214 32% 91%;
+    --sidebar-ring: 217 91% 60%;
   }
 
   .dark {
@@ -180,5 +184,6 @@ All colors MUST be HSL.
 
   body {
     @apply bg-background text-foreground;
+    font-family: 'Roboto', -apple-system, BlinkMacSystemFont, sans-serif;
   }
 }

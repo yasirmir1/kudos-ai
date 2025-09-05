@@ -48,66 +48,68 @@ export const WeeklyTestPerformanceCard: React.FC<WeeklyTestPerformanceCardProps>
   };
 
   return (
-    <div className="bg-card rounded-xl shadow-sm border p-6">
-      <h2 className="text-lg font-semibold text-foreground mb-4">Weekly Test Performance</h2>
+    <div className="bg-card border border-muted rounded-xl p-5 shadow-card">
+      <h2 className="text-lg font-medium text-foreground mb-6">Weekly Test Performance</h2>
       
       {/* Stats Grid */}
-      <div className="grid grid-cols-2 gap-4 mb-6">
-        <div className="text-center">
-          <div className="flex items-center justify-center mb-1">
-            <Calendar className="h-4 w-4 text-primary mr-1" />
-            <span className="text-2xl font-bold text-foreground">{activeWeeks}</span>
+      <div className="grid grid-cols-2 gap-6 mb-6">
+        <div className="flex items-center justify-between">
+          <div>
+            <p className="text-sm text-muted-foreground">Active Weeks</p>
+            <p className="text-3xl font-bold text-foreground">{activeWeeks}</p>
           </div>
-          <p className="text-xs text-muted-foreground">Active Weeks</p>
+          <div className="bg-primary/10 p-3 rounded-full">
+            <Calendar className="h-5 w-5 text-primary" />
+          </div>
         </div>
         
-        <div className="text-center">
-          <div className="flex items-center justify-center mb-1">
-            <TrendingUp className="h-4 w-4 text-warning mr-1" />
-            <span className="text-2xl font-bold text-foreground">{averageScore}%</span>
+        <div className="flex items-center justify-between">
+          <div>
+            <p className="text-sm text-muted-foreground">Average Score</p>
+            <p className="text-3xl font-bold text-foreground">{averageScore}%</p>
           </div>
-          <p className="text-xs text-muted-foreground">Average Score</p>
+          <div className="bg-primary/10 p-3 rounded-full">
+            <TrendingUp className="h-5 w-5 text-primary" />
+          </div>
         </div>
         
-        <div className="text-center">
-          <div className="flex items-center justify-center mb-1">
-            <Trophy className="h-4 w-4 text-success mr-1" />
-            <span className="text-2xl font-bold text-foreground">{bestWeek}%</span>
+        <div className="flex items-center justify-between">
+          <div>
+            <p className="text-sm text-muted-foreground">Best Week</p>
+            <p className="text-3xl font-bold text-foreground">{bestWeek}%</p>
           </div>
-          <p className="text-xs text-muted-foreground">Best Week</p>
+          <div className="bg-primary/10 p-3 rounded-full">
+            <Trophy className="h-5 w-5 text-primary" />
+          </div>
         </div>
         
-        <div className="text-center">
-          <div className="flex items-center justify-center mb-1">
-            <Flame className="h-4 w-4 text-orange-500 mr-1" />
-            <span className="text-2xl font-bold text-foreground">{weekStreak}</span>
+        <div className="flex items-center justify-between">
+          <div>
+            <p className="text-sm text-muted-foreground">Week Streak</p>
+            <p className="text-3xl font-bold text-foreground">{weekStreak}</p>
           </div>
-          <p className="text-xs text-muted-foreground">Week Streak</p>
+          <div className="bg-primary/10 p-3 rounded-full">
+            <Flame className="h-5 w-5 text-primary" />
+          </div>
         </div>
       </div>
 
-      {/* Start Weekly Challenge Button */}
+      {/* Action Buttons */}
       {onStartWeeklyChallenge && (
-        <div className="pt-4 border-t border-muted">
+        <div className="space-y-3">
           <button
             onClick={onStartWeeklyChallenge} 
-            className="w-full bg-gradient-to-r from-primary to-primary/80 text-primary-foreground rounded-lg p-4 flex items-center justify-between hover:from-primary/90 hover:to-primary/70 transition-colors"
+            className="w-full bg-primary text-primary-foreground font-medium py-3 px-6 rounded-lg flex items-center justify-center text-lg hover:bg-primary/90 transition-colors"
           >
-            <div className="flex items-center space-x-3">
-              <Play className="h-5 w-5" />
-              <span className="font-medium">Start Weekly Challenge</span>
-            </div>
-            <ChevronRight className="h-5 w-5" />
+            Start Weekly Challenge
+            <Play className="ml-2 h-5 w-5" />
           </button>
           <button 
             onClick={onReviewMistakes}
-            className="w-full mt-3 bg-muted text-muted-foreground rounded-lg p-4 flex items-center justify-between hover:bg-muted/80 transition-colors"
+            className="w-full bg-muted text-muted-foreground rounded-lg py-3 px-6 flex items-center justify-center hover:bg-muted/80 transition-colors"
           >
-            <div className="flex items-center space-x-3">
-              <RefreshCw className="h-5 w-5" />
-              <span className="font-medium">Review Mistakes</span>
-            </div>
-            <ChevronRight className="h-5 w-5" />
+            Review Mistakes
+            <RefreshCw className="ml-2 h-5 w-5" />
           </button>
         </div>
       )}

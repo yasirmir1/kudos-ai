@@ -241,21 +241,15 @@ export const Dashboard: React.FC<DashboardProps> = ({
     if (accuracy >= 70) return 'text-warning';
     return 'text-destructive';
   };
-  return <div className="space-y-6">
-      <div className="bg-card rounded-xl shadow-sm border p-6">
-        <div className="flex items-center justify-between">
-          <div>
-            <h1 className="text-2xl font-bold text-foreground mb-2">
-              Welcome back, {user.name}! 🎯
-            </h1>
-            <p className="text-muted-foreground">You're making great progress. Keep up the momentum!</p>
-          </div>
-          
-        </div>
+  return <div className="space-y-8">
+      {/* Welcome Section with Blue Border */}
+      <div className="bg-card border-2 border-primary/20 rounded-xl p-6 shadow-card">
+        <h2 className="text-2xl font-medium text-foreground mb-1">Welcome back, {user.name}! 👋</h2>
+        <p className="text-muted-foreground">You're making great progress. Keep up the momentum!</p>
       </div>
 
       {/* Performance Cards */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <WeeklyTestPerformanceCard 
           {...weeklyTestData} 
           onStartWeeklyChallenge={() => setCurrentView('practice')} 
@@ -280,8 +274,6 @@ export const Dashboard: React.FC<DashboardProps> = ({
         hasStarted={false} 
         onStartLearning={onStartLearning} 
       />
-
-
 
       <WeeklyProgressChart />
 
