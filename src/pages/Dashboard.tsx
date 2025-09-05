@@ -5,7 +5,7 @@ import { Progress } from '@/components/ui/progress';
 import { Badge } from '@/components/ui/badge';
 import { useAuth } from '@/hooks/useAuth';
 import { supabase } from '@/integrations/supabase/client';
-import { Target, TrendingUp, Clock, Calendar, BookOpen, Play, Circle, Award } from 'lucide-react';
+import { Target, TrendingUp, Clock, Calendar, BookOpen, Play, Circle, Award, FileText } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { QuestionHistoryModal } from '@/components/QuestionHistoryModal';
 import { TopicAccuracyModal } from '@/components/TopicAccuracyModal';
@@ -283,20 +283,25 @@ const Dashboard = () => {
   };
   const renderOverview = () => <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
       {/* Ready to learn section */}
-      <div className="bg-gradient-to-r from-blue-600 to-blue-700 rounded-2xl p-8 text-center mb-8 shadow-lg">
-        <h1 className="text-3xl font-bold text-white mb-3">Ready to learn?</h1>
-        <p className="text-blue-100 text-lg mb-8 max-w-2xl mx-auto">
-          Your adaptive learning system has prepared personalized {selectedAgeGroup} questions.
-        </p>
-        <div className="flex flex-col sm:flex-row justify-center items-center gap-4">
-          <Button 
-            onClick={startLearning} 
-            className="bg-white text-blue-600 hover:bg-blue-50 font-semibold px-8 py-3 rounded-full shadow-md transition-all duration-200 text-lg min-w-[200px]"
-          >
-            <Play className="mr-2 h-5 w-5" />
-            Start Practice Session
-          </Button>
-          <WorksheetGeneratorModal />
+      <div className="bg-primary rounded-3xl shadow-2xl p-12 mb-8">
+        <div className="text-center text-primary-foreground">
+          <h1 className="text-5xl font-bold mb-4 tracking-tight">Ready to learn?</h1>
+          <p className="text-xl text-primary-foreground/80 mb-10">
+            Your adaptive learning system has prepared personalized {selectedAgeGroup} questions.
+          </p>
+          <div className="flex flex-col sm:flex-row justify-center items-center space-y-4 sm:space-y-0 sm:space-x-6">
+            <Button 
+              onClick={startLearning} 
+              className="bg-background text-primary font-semibold py-4 px-8 rounded-full shadow-lg hover:bg-background/90 focus:ring-4 focus:ring-primary/30 transition-all duration-300 ease-in-out transform hover:-translate-y-1 w-full sm:w-auto"
+            >
+              <Play className="mr-3 h-5 w-5" />
+              Start Practice
+            </Button>
+            <Button className="bg-transparent text-primary-foreground font-semibold py-4 px-8 rounded-full border-2 border-primary-foreground/40 hover:bg-primary-foreground/10 hover:border-primary-foreground/60 focus:ring-4 focus:ring-primary/30 transition-all duration-300 ease-in-out transform hover:-translate-y-1 w-full sm:w-auto">
+              <FileText className="mr-3 h-5 w-5" />
+              Generate Worksheet
+            </Button>
+          </div>
         </div>
       </div>
 
