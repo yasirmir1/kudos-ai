@@ -671,9 +671,12 @@ const Practice = () => {
       </div>;
   }
   if (questions.length === 0 && !loading && !showSessionStartModal) {
-    // Immediately redirect to home to avoid showing "no questions" screen
-    navigate('/');
-    return null;
+    return <div className="min-h-screen bg-background flex items-center justify-center">
+        <div className="text-center space-y-4">
+          <p className="text-muted-foreground">No questions available at the moment.</p>
+          <Button onClick={() => navigate('/dashboard')}>Return to Dashboard</Button>
+        </div>
+      </div>;
   }
   if (sessionComplete) {
     const accuracy = answeredQuestions.length > 0 ? Math.round(score / answeredQuestions.length * 100) : 0;
@@ -715,7 +718,7 @@ const Practice = () => {
         isOpen={showSessionStartModal}
         onClose={() => {
           setShowSessionStartModal(false);
-          navigate('/');
+          navigate('/dashboard');
         }}
         onStart={handleSessionStart}
       />
@@ -729,7 +732,7 @@ const Practice = () => {
         isOpen={showSessionStartModal}
         onClose={() => {
           setShowSessionStartModal(false);
-          navigate('/');
+          navigate('/dashboard');
         }}
         onStart={handleSessionStart}
       />
