@@ -1,9 +1,9 @@
 import React from 'react';
-import { Play, BookOpen, BarChart3, Home, FileText, Zap, Star, User } from 'lucide-react';
+import { Play, BookOpen, BarChart3, Home, FileText, Zap, Star, User, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import { useAuth } from '@/hooks/useAuth';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 interface NavItem {
   id: string;
   label: string;
@@ -21,6 +21,11 @@ export const DashboardNavigation: React.FC<DashboardNavigationProps> = ({
     user
   } = useAuth();
   const location = useLocation();
+  const navigate = useNavigate();
+  
+  const handleExit = () => {
+    navigate('/');
+  };
   
   // Check if we're in bootcamp mode
   const isBootcampRoute = location.pathname.startsWith('/bootcamp');
@@ -57,7 +62,18 @@ export const DashboardNavigation: React.FC<DashboardNavigationProps> = ({
   };
   return <nav className="bg-card border-b border-border shadow-sm sticky top-0 z-10">
       <div className="container mx-auto px-4">
-        <div className="flex items-center justify-center h-16">
+        <div className="flex items-center justify-between h-16">
+          {/* Exit Button */}
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={handleExit}
+            className="text-muted-foreground hover:text-foreground"
+          >
+            <X className="h-4 w-4 mr-2" />
+            Exit
+          </Button>
+
           {/* Main Navigation */}
           <div className="hidden lg:flex space-x-1">
             {navItems.map(item => <button key={item.id} onClick={() => setCurrentView(item.id)} className={`flex items-center justify-start space-x-1 px-3 py-2 rounded-md text-sm font-medium transition-colors ${currentView === item.id ? 'bg-primary/10 text-primary' : 'text-muted-foreground hover:text-foreground hover:bg-muted'}`}>
@@ -73,6 +89,9 @@ export const DashboardNavigation: React.FC<DashboardNavigationProps> = ({
                 <span className="hidden sm:inline">{item.label}</span>
               </button>)}
           </div>
+
+          {/* Spacer for layout balance */}
+          <div className="w-16"></div>
         </div>
       </div>
     </nav>;
