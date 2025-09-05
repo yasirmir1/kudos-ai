@@ -375,7 +375,7 @@ export const WorksheetGeneratorModal = () => {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button className="bg-blue-500 hover:bg-blue-600 text-white font-semibold px-8 py-3 rounded-full shadow-md transition-all duration-200 text-lg min-w-[200px]">
+        <Button className="bg-white/10 hover:bg-white/20 text-white border border-white/30 hover:border-white/50 font-semibold px-8 py-3 rounded-full shadow-md transition-all duration-200 text-lg min-w-[200px]">
           <FileText className="h-5 w-5 mr-2" />
           <span>Generate Worksheets</span>
         </Button>
