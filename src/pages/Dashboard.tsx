@@ -283,21 +283,21 @@ const Dashboard = () => {
   };
   const renderOverview = () => <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
       {/* Ready to learn section */}
-      <div className="bg-primary rounded-3xl shadow-2xl p-12 mb-8">
-        <div className="text-center text-primary-foreground">
-          <h1 className="text-5xl font-bold mb-4 tracking-tight">Ready to learn?</h1>
-          <p className="text-xl text-primary-foreground/80 mb-10">
-            Your adaptive learning system has prepared personalized {selectedAgeGroup} questions.
+      <div className="bg-gradient-to-r from-blue-500 to-purple-600 rounded-3xl shadow-lg p-12 mb-8">
+        <div className="text-center text-white">
+          <h1 className="text-5xl font-bold mb-6 tracking-tight">Ready to learn?</h1>
+          <p className="text-xl text-white/80 mb-10">
+            Your adaptive learning system has prepared personalized 11+ questions.
           </p>
           <div className="flex flex-col sm:flex-row justify-center items-center space-y-4 sm:space-y-0 sm:space-x-6">
             <Button 
               onClick={startLearning} 
-              className="bg-background text-primary font-semibold py-4 px-8 rounded-full shadow-lg hover:bg-background/90 focus:ring-4 focus:ring-primary/30 transition-all duration-300 ease-in-out transform hover:-translate-y-1 w-full sm:w-auto"
+              className="bg-white text-blue-600 font-semibold py-4 px-8 rounded-full shadow-lg hover:bg-gray-50 transition-all duration-300 w-full sm:w-auto"
             >
               <Play className="mr-3 h-5 w-5" />
               Start Practice
             </Button>
-            <Button className="bg-transparent text-primary-foreground font-semibold py-4 px-8 rounded-full border-2 border-primary-foreground/40 hover:bg-primary-foreground/10 hover:border-primary-foreground/60 focus:ring-4 focus:ring-primary/30 transition-all duration-300 ease-in-out transform hover:-translate-y-1 w-full sm:w-auto">
+            <Button className="bg-transparent text-white font-semibold py-4 px-8 rounded-full border-2 border-white/30 hover:bg-white/10 hover:border-white/50 transition-all duration-300 w-full sm:w-auto">
               <FileText className="mr-3 h-5 w-5" />
               Generate Worksheet
             </Button>
