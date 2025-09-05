@@ -717,7 +717,7 @@ const Practice = () => {
         isOpen={showSessionStartModal}
         onClose={() => {
           setShowSessionStartModal(false);
-          // Stay on practice page instead of redirecting to dashboard
+          navigate('/');
         }}
         onStart={handleSessionStart}
       />
@@ -731,7 +731,7 @@ const Practice = () => {
         isOpen={showSessionStartModal}
         onClose={() => {
           setShowSessionStartModal(false);
-          // Stay on practice page instead of redirecting to dashboard
+          navigate('/');
         }}
         onStart={handleSessionStart}
       />
