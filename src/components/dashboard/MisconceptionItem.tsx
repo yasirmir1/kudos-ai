@@ -66,14 +66,14 @@ export const MisconceptionItem: React.FC<MisconceptionItemProps> = ({
         </div>
         
         {/* Circular progress and frequency with increased spacing */}
-        <div className="flex items-center gap-6 flex-shrink-0">
+        <div className="flex items-center gap-6 flex-shrink-0 pr-2">
           <CircularProgress
             value={errorRate}
             size={48}
             color="destructive"
           />
           <span className="text-xl font-medium text-foreground">
-            {misconception.frequency}
+            {misconception.frequency}x
           </span>
         </div>
       </div>

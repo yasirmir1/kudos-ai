@@ -61,14 +61,14 @@ export const TopicItem: React.FC<TopicItemProps> = ({
         </div>
         
         {/* Circular progress and count with increased spacing */}
-        <div className="flex items-center gap-6 flex-shrink-0">
+        <div className="flex items-center gap-6 flex-shrink-0 pr-2">
           <CircularProgress
             value={accuracyPercent}
             size={48}
             color={getProgressColor()}
           />
           <span className="text-xl font-medium text-foreground">
-            {displayCount}
+            {displayCount}x
           </span>
         </div>
       </div>
