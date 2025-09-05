@@ -283,14 +283,17 @@ const Dashboard = () => {
   };
   const renderOverview = () => <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
       {/* Ready to learn section */}
-      <div className="bg-card rounded-lg shadow-sm p-8 text-center mb-8 py-[40px] my-[5px]">
-        <h1 className="text-3xl font-bold text-foreground">Ready to learn?</h1>
-        <p className="mt-3 text-base text-muted-foreground">
+      <div className="bg-gradient-to-r from-blue-600 to-blue-700 rounded-2xl p-8 text-center mb-8 shadow-lg">
+        <h1 className="text-3xl font-bold text-white mb-3">Ready to learn?</h1>
+        <p className="text-blue-100 text-lg mb-8 max-w-2xl mx-auto">
           Your adaptive learning system has prepared personalized {selectedAgeGroup} questions.
         </p>
-        <div className="mt-6 flex flex-col sm:flex-row justify-center items-center space-y-4 sm:space-y-0 sm:space-x-4">
-          <Button onClick={startLearning} className="flex items-center justify-center bg-primary text-primary-foreground font-semibold px-6 py-3 rounded-lg shadow-md hover:bg-primary/90 transition-colors text-base w-full sm:w-auto">
-            <Play className="mr-2 h-4 w-4" />
+        <div className="flex flex-col sm:flex-row justify-center items-center gap-4">
+          <Button 
+            onClick={startLearning} 
+            className="bg-white text-blue-600 hover:bg-blue-50 font-semibold px-8 py-3 rounded-full shadow-md transition-all duration-200 text-lg min-w-[200px]"
+          >
+            <Play className="mr-2 h-5 w-5" />
             Start Practice Session
           </Button>
           <WorksheetGeneratorModal />
