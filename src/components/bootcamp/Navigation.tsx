@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { BarChart3, Brain, TrendingUp, Zap, Star, Plus, GraduationCap, Settings, Trophy, HelpCircle, Medal, PieChart } from 'lucide-react';
+import { Home, Lightbulb, Edit, FileText, TrendingUp, Flame, Star } from 'lucide-react';
 
 interface NavItem {
   id: string;
@@ -32,22 +32,22 @@ export const Navigation: React.FC<NavigationProps> = ({
     {
       id: 'dashboard',
       label: 'Home',
-      icon: BarChart3
+      icon: Home
     },
     {
       id: 'learn',
       label: 'Learn',
-      icon: GraduationCap
+      icon: Lightbulb
     },
     {
       id: 'practice',
       label: 'Practice',
-      icon: Brain
+      icon: Edit
     },
     {
       id: 'mocktest',
       label: 'Mock Test',
-      icon: Star
+      icon: FileText
     },
     {
       id: 'progress',
@@ -56,87 +56,36 @@ export const Navigation: React.FC<NavigationProps> = ({
     },
   ];
   return (
-    <nav className="bg-card shadow-sm border-b sticky top-0 z-50">
-      <div className="container mx-auto px-4">
-        <div className="flex items-center justify-between h-16">
-          <div className="flex items-center space-x-8">
-            <div className="hidden lg:flex space-x-1">
-              {navItems.slice(0, 8).map(item => (
-                <button 
-                  key={item.id} 
-                  onClick={() => {
-                    if (item.href) {
-                      window.location.href = item.href;
-                    } else {
-                      setCurrentView(item.id);
-                    }
-                  }}
-                  className={`flex items-center space-x-1 px-3 py-2 rounded-md text-sm font-medium transition-colors ${
-                    currentView === item.id 
-                      ? 'bg-primary/10 text-primary' 
-                      : 'text-muted-foreground hover:text-foreground hover:bg-muted'
-                  }`}
-                >
-                  <item.icon className="h-4 w-4" />
-                  <span>{item.label}</span>
-                </button>
-              ))}
-            </div>
-            
-            <div className="lg:hidden flex space-x-1">
-              {navItems.slice(0, 4).map(item => (
-                <button 
-                  key={item.id} 
-                  onClick={() => setCurrentView(item.id)} 
-                  className={`flex items-center space-x-1 px-2 py-2 rounded-md text-xs font-medium transition-colors ${
-                    currentView === item.id 
-                      ? 'bg-primary/10 text-primary' 
-                      : 'text-muted-foreground hover:text-foreground hover:bg-muted'
-                  }`}
-                >
-                  <item.icon className="h-4 w-4" />
-                  <span className="hidden sm:inline">{item.label}</span>
-                </button>
-              ))}
-            </div>
-          </div>
-          
-          <div className="flex items-center space-x-4">
-            <div className="flex items-center space-x-2 text-sm">
-              <Zap className="h-4 w-4 text-yellow-500" />
-              <span className="font-medium">{user.streakDays} day streak</span>
-            </div>
-            <div className="flex items-center space-x-2 text-sm">
-              <Star className="h-4 w-4 text-primary" />
-              <span className="font-medium">{user.totalPoints}</span>
-            </div>
-            
-            {/* Secondary nav items as dropdown or icons */}
-            <div className="hidden lg:flex space-x-1">
-              {navItems.slice(8).map(item => (
-                <button 
-                  key={item.id} 
-                  onClick={() => {
-                    if (item.href) {
-                      window.location.href = item.href;
-                    } else {
-                      setCurrentView(item.id);
-                    }
-                  }}
-                  className={`p-2 rounded-md transition-colors ${
-                    currentView === item.id 
-                      ? 'bg-primary/10 text-primary' 
-                      : 'text-muted-foreground hover:text-foreground hover:bg-muted'
-                  }`}
-                  title={item.label}
-                >
-                  <item.icon className="h-4 w-4" />
-                </button>
-              ))}
-            </div>
-          </div>
+    <main className="container mx-auto px-6 py-8">
+      <nav className="flex items-center justify-between border-b border-border pb-4">
+        <div className="flex space-x-2">
+          {navItems.map(item => (
+            <button
+              key={item.id}
+              onClick={() => {
+                if (item.href) {
+                  window.location.href = item.href;
+                } else {
+                  setCurrentView(item.id);
+                }
+              }}
+              className={`px-4 py-2 text-sm font-medium rounded-md flex items-center transition-colors ${
+                currentView === item.id
+                  ? 'text-primary bg-primary/10 border border-primary/20'
+                  : 'text-muted-foreground hover:bg-muted hover:text-foreground'
+              }`}
+            >
+              <item.icon className="h-4 w-4 mr-2" />
+              {item.label}
+            </button>
+          ))}
         </div>
-      </div>
-    </nav>
+        <div className="flex items-center space-x-2 text-sm text-muted-foreground">
+          <Flame className="h-4 w-4 text-orange-500" />
+          <span>{user.streakDays} day streak</span>
+          <span className="font-bold text-foreground">{user.totalPoints}</span>
+        </div>
+      </nav>
+    </main>
   );
 };

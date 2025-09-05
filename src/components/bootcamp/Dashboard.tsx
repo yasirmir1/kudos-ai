@@ -4,6 +4,7 @@ import { WeeklyProgressChart } from './WeeklyProgressChart';
 import { WeeklyTestPerformanceCard } from './WeeklyTestPerformanceCard';
 import { MockTestPerformanceCard } from './MockTestPerformanceCard';
 import { LearningJourneyCard } from './LearningJourneyCard';
+import { UpcomingWeeks } from './UpcomingWeeks';
 import { ReviewMistakesModal } from './ReviewMistakesModal';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -242,10 +243,35 @@ export const Dashboard: React.FC<DashboardProps> = ({
     return 'text-destructive';
   };
   return <div className="space-y-8">
-      {/* Welcome Section with Blue Border */}
-      <div className="bg-card border-2 border-primary/20 rounded-xl p-6 shadow-card">
-        <h2 className="text-2xl font-medium text-foreground mb-1">Welcome back, {user.name}! 👋</h2>
-        <p className="text-muted-foreground">You're making great progress. Keep up the momentum!</p>
+      {/* Welcome Section */}
+      <div className="bg-background border border-border rounded-lg p-6 mt-6 shadow-card">
+        <h2 className="text-xl font-semibold text-foreground">Welcome back, {user.name}! 👋</h2>
+        <p className="text-muted-foreground mt-1">You're making great progress. Keep up the momentum!</p>
+      </div>
+
+      {/* Quick Stats */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mt-6">
+        {quickStats.map((stat, index) => (
+          <div key={stat.label} className="bg-background border border-border rounded-lg p-6 flex items-center justify-between shadow-card">
+            <div>
+              <p className="text-sm text-muted-foreground">{stat.label}</p>
+              <p className="text-3xl font-bold text-foreground mt-2">{stat.value}</p>
+            </div>
+            <div className={`rounded-full p-3 ${
+              stat.color === 'primary' ? 'bg-blue-100' :
+              stat.color === 'success' ? 'bg-green-100' :
+              stat.color === 'secondary' ? 'bg-purple-100' :
+              stat.color === 'warning' ? 'bg-yellow-100' : 'bg-blue-100'
+            }`}>
+              <stat.icon className={`h-8 w-8 ${
+                stat.color === 'primary' ? 'text-blue-600' :
+                stat.color === 'success' ? 'text-green-600' :
+                stat.color === 'secondary' ? 'text-purple-600' :
+                stat.color === 'warning' ? 'text-yellow-600' : 'text-blue-600'
+              }`} />
+            </div>
+          </div>
+        ))}
       </div>
 
       {/* Performance Cards */}
@@ -269,13 +295,14 @@ export const Dashboard: React.FC<DashboardProps> = ({
       </div>
 
       {/* Learning Journey */}
-      <LearningJourneyCard 
-        currentWeek={1} 
-        hasStarted={false} 
-        onStartLearning={onStartLearning} 
-      />
-
-      <WeeklyProgressChart />
+      <div className="mt-8 grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <LearningJourneyCard 
+          currentWeek={1} 
+          hasStarted={false} 
+          onStartLearning={onStartLearning} 
+        />
+        <UpcomingWeeks />
+      </div>
 
       {/* Review Mistakes Modal */}
       <ReviewMistakesModal 
