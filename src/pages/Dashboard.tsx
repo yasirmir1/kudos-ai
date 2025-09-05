@@ -89,11 +89,7 @@ const Dashboard = () => {
       loadDashboardData();
     }
   }, [user, selectedAgeGroup]);
-  useEffect(() => {
-    if (misconceptions.length > 0 && user) {
-      loadMisconceptionExplanations();
-    }
-  }, [misconceptions, user]);
+  // Removed expensive misconception explanations API call - using local formatting instead
   const loadDashboardData = async () => {
     try {
       // Load performance data by calculating from age-group filtered answers
@@ -217,44 +213,7 @@ const Dashboard = () => {
   const startLearning = () => {
     setCurrentView('practice');
   };
-  const loadMisconceptionExplanations = async () => {
-    if (!user || misconceptions.length === 0) return;
-    setLoadingExplanations(true);
-    try {
-      const {
-        data,
-        error
-      } = await supabase.functions.invoke('explain-misconceptions', {
-        body: {
-          student_id: user.id
-        }
-      });
-      if (error) {
-        console.error('Error getting explanations:', error);
-        return;
-      }
-      if (data?.explanation) {
-        // Parse the structured response to extract individual misconception labels
-        const explanationText = data.explanation;
-        const labeledMisconceptions: {
-          [key: string]: string;
-        } = {};
-
-        // Simple parsing to extract human-readable labels
-        misconceptions.forEach(misconception => {
-          const variable = misconception.red_herring;
-          // Create a human-readable label by formatting the variable name
-          const humanLabel = variable?.replace(/_/g, ' ').replace(/([a-z])([A-Z])/g, '$1 $2').toLowerCase().replace(/\b\w/g, l => l.toUpperCase()).trim() || 'Unknown Misconception';
-          labeledMisconceptions[variable] = humanLabel;
-        });
-        setMisconceptionExplanations(labeledMisconceptions);
-      }
-    } catch (error) {
-      console.error('Error loading misconception explanations:', error);
-    } finally {
-      setLoadingExplanations(false);
-    }
-  };
+  // Simplified - removed expensive API call, using local formatting
   const formatMisconceptionForKids = (redHerring: string) => {
     return getFriendlyMisconceptionName(redHerring);
   };
@@ -391,18 +350,14 @@ const Dashboard = () => {
         </div>
 
         {/* Misconceptions - Full Width */}
-        <DashboardCard
+          <DashboardCard
           title="Misconceptions"
           subtitle="Common mistakes to watch out for"
           icon={Clock}
           iconColor="text-red-600"
           className="h-[600px]"
         >
-          {loadingExplanations && misconceptions.length > 0 && (
-            <LoadingState message="Analyzing misconceptions..." />
-          )}
-          
-          {!cacheLoading && !loadingExplanations && (cachedMisconceptions.length > 0 ? cachedMisconceptions : misconceptions).slice(0, 5).map((misconception, index) => {
+          {misconceptions.slice(0, 5).map((misconception, index) => {
             const kidFriendlyLabel = formatMisconceptionForKids(misconception.red_herring);
             return (
               <MisconceptionItem
