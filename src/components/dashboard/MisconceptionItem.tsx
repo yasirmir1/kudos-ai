@@ -51,10 +51,10 @@ export const MisconceptionItem: React.FC<MisconceptionItemProps> = ({
       className="px-4 py-4 rounded-lg border bg-muted/30 cursor-pointer hover:bg-muted/50 hover:border-primary/50 transition-all duration-200"
       onClick={onClick}
     >
-      <div className="flex items-center justify-between gap-4">
+      <div className="flex items-center justify-between gap-6">
         {/* Misconception content */}
         <div className="flex-1 min-w-0">
-          <p className="text-sm font-medium text-foreground leading-relaxed mb-1">
+          <p className="text-base font-medium text-foreground leading-relaxed mb-1">
             {kidFriendlyLabel}
           </p>
           <span className="text-sm text-primary">Click to practice</span>
@@ -65,15 +65,15 @@ export const MisconceptionItem: React.FC<MisconceptionItemProps> = ({
           )}
         </div>
         
-        {/* Circular progress and frequency */}
-        <div className="flex items-center gap-3 flex-shrink-0">
+        {/* Circular progress and frequency with increased spacing */}
+        <div className="flex items-center gap-6 flex-shrink-0">
           <CircularProgress
             value={errorRate}
             size={48}
             color="destructive"
           />
-          <span className="text-lg font-medium text-muted-foreground">
-            {misconception.frequency}x
+          <span className="text-xl font-medium text-foreground">
+            {misconception.frequency}
           </span>
         </div>
       </div>

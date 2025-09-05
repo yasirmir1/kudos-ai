@@ -49,26 +49,26 @@ export const TopicItem: React.FC<TopicItemProps> = ({
       }`}
       onClick={onClick}
     >
-      <div className="flex items-center justify-between gap-4">
+      <div className="flex items-center justify-between gap-6">
         {/* Topic name and click hint */}
         <div className="flex-1 min-w-0">
-          <p className="text-sm font-medium text-foreground leading-relaxed">
+          <p className="text-base font-medium text-foreground leading-relaxed mb-1">
             {topic}
           </p>
           {showClickHint && (
-            <span className="text-sm text-primary mt-1 block">Click to practice</span>
+            <span className="text-sm text-primary">Click to practice</span>
           )}
         </div>
         
-        {/* Circular progress and count */}
-        <div className="flex items-center gap-3 flex-shrink-0">
+        {/* Circular progress and count with increased spacing */}
+        <div className="flex items-center gap-6 flex-shrink-0">
           <CircularProgress
             value={accuracyPercent}
             size={48}
             color={getProgressColor()}
           />
-          <span className="text-lg font-medium text-muted-foreground">
-            {displayCount}x
+          <span className="text-xl font-medium text-foreground">
+            {displayCount}
           </span>
         </div>
       </div>
