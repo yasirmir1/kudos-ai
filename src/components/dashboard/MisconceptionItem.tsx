@@ -73,7 +73,7 @@ export const MisconceptionItem: React.FC<MisconceptionItemProps> = ({
             color="destructive"
           />
           <span className="text-lg font-medium text-muted-foreground">
-            {misconception.frequency}
+            {misconception.frequency}x
           </span>
         </div>
       </div>

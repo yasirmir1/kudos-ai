@@ -68,7 +68,7 @@ export const TopicItem: React.FC<TopicItemProps> = ({
             color={getProgressColor()}
           />
           <span className="text-lg font-medium text-muted-foreground">
-            {displayCount}
+            {displayCount}x
           </span>
         </div>
       </div>
