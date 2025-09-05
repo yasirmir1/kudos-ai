@@ -1,5 +1,6 @@
 import React from 'react';
 import { Badge } from '@/components/ui/badge';
+import { CircularProgress } from '@/components/ui/circular-progress';
 
 interface TopicItemProps {
   topic: string;
@@ -33,46 +34,42 @@ export const TopicItem: React.FC<TopicItemProps> = ({
   const displayText = type === 'strength' ? 'correct' : 'mistake';
   const isClickable = !!onClick;
   
-  const getAccuracyColor = () => {
-    if (type === 'strength') return 'text-green-600';
-    if (accuracyPercent >= 50) return 'text-yellow-600';
-    return 'text-red-600';
-  };
-
-  const getBadgeVariant = () => {
-    if (type === 'strength') return 'default';
+  const getProgressColor = () => {
+    if (type === 'strength') return 'success';
+    if (accuracyPercent >= 50) return 'warning';
     return 'destructive';
   };
 
   return (
     <div 
-      className={`px-4 py-3 rounded-lg border transition-all duration-200 ${
+      className={`px-4 py-4 rounded-lg border transition-all duration-200 ${
         isClickable 
           ? 'cursor-pointer hover:bg-muted/50 hover:border-primary/50' 
           : 'bg-muted/20'
       }`}
       onClick={onClick}
     >
-      {/* Layout: Text on left, badges on middle right */}
-      <div className="flex items-center justify-between gap-3 min-h-[40px]">
-        {/* Column 1: Content - takes available space */}
-        <div className="flex-1 min-w-0 flex items-center">
-          <p className="text-xs font-medium text-foreground leading-relaxed flex-1 min-w-0">
+      <div className="flex items-center justify-between gap-4">
+        {/* Topic name and click hint */}
+        <div className="flex-1 min-w-0">
+          <p className="text-sm font-medium text-foreground leading-relaxed">
             {topic}
           </p>
           {showClickHint && (
-            <span className="text-xs text-primary flex-shrink-0 whitespace-nowrap ml-3">Click to practice</span>
+            <span className="text-sm text-primary mt-1 block">Click to practice</span>
           )}
         </div>
         
-        {/* Column 2: Badges - middle right position */}
-        <div className="flex flex-col items-center gap-1 flex-shrink-0">
-          <Badge variant={getBadgeVariant()} className="text-sm px-2 py-1 font-semibold">
-            {accuracyPercent}%
-          </Badge>
-          <Badge variant="secondary" className="text-sm px-2 py-1 font-semibold">
+        {/* Circular progress and count */}
+        <div className="flex items-center gap-3 flex-shrink-0">
+          <CircularProgress
+            value={accuracyPercent}
+            size={48}
+            color={getProgressColor()}
+          />
+          <span className="text-lg font-medium text-muted-foreground">
             {displayCount}
-          </Badge>
+          </span>
         </div>
       </div>
     </div>

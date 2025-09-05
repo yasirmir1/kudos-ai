@@ -1,6 +1,7 @@
 import React from 'react';
 import { Badge } from '@/components/ui/badge';
 import { Circle } from 'lucide-react';
+import { CircularProgress } from '@/components/ui/circular-progress';
 
 interface MisconceptionItemProps {
   misconception: {
@@ -43,44 +44,38 @@ export const MisconceptionItem: React.FC<MisconceptionItemProps> = ({
     }
   };
 
+  const errorRate = Math.round((misconception.frequency / (misconception.frequency + 10)) * 100);
+
   return (
     <div 
-      className="px-4 py-3 rounded-lg border bg-muted/30 cursor-pointer hover:bg-muted/50 hover:border-primary/50 transition-all duration-200"
+      className="px-4 py-4 rounded-lg border bg-muted/30 cursor-pointer hover:bg-muted/50 hover:border-primary/50 transition-all duration-200"
       onClick={onClick}
     >
-      {/* Row 1: Topics and badges on same row */}
-      <div className="flex items-start justify-between gap-3 mb-3">
-        {/* Topics on left - allow wrapping */}
+      <div className="flex items-center justify-between gap-4">
+        {/* Misconception content */}
         <div className="flex-1 min-w-0">
+          <p className="text-sm font-medium text-foreground leading-relaxed mb-1">
+            {kidFriendlyLabel}
+          </p>
+          <span className="text-sm text-primary">Click to practice</span>
           {misconception.topics && misconception.topics.length > 0 && (
-            <p className="text-xs text-muted-foreground break-words leading-relaxed">
+            <p className="text-xs text-muted-foreground mt-2">
               {misconception.topics.join(', ')}
             </p>
           )}
         </div>
         
-        {/* Badges on right */}
-        <div className="flex items-center gap-1 flex-shrink-0">
-          {getFrequencyBadge(misconception.frequency)}
-          {misconception.fromCache && (
-            <Badge variant="outline" className="text-[10px] px-1 py-0 text-green-600 border-green-300">
-              ⚡
-            </Badge>
-          )}
-          <Badge variant="destructive" className="text-[10px] px-1 py-0">
-            {Math.round((misconception.frequency / (misconception.frequency + 10)) * 100)}%
-          </Badge>
-          <Badge variant="secondary" className="text-[10px] px-1 py-0">
+        {/* Circular progress and frequency */}
+        <div className="flex items-center gap-3 flex-shrink-0">
+          <CircularProgress
+            value={errorRate}
+            size={48}
+            color="destructive"
+          />
+          <span className="text-lg font-medium text-muted-foreground">
             {misconception.frequency}
-          </Badge>
+          </span>
         </div>
-      </div>
-      
-      {/* Row 2: Main content using full width */}
-      <div className="w-full">
-        <p className="text-xs font-medium text-foreground w-full leading-relaxed break-words">
-          {kidFriendlyLabel}
-        </p>
       </div>
     </div>
   );
