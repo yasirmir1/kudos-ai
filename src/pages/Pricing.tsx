@@ -245,7 +245,7 @@ const Pricing = () => {
                   <div className="space-y-6 mb-8 flex-1">
                     {(plan.id === 'pass' ? [{
                   title: "Daily Performance Snapshots",
-                  description: "'Daily Mode' gives you a quick, clear view of your child's skills and understanding, so you always know where they stand."
+                  description: "'Daily Practice' gives you a quick, clear view of your child's skills and understanding, so you always know where they stand."
                 }, {
                   title: "Personalized Progress Analytics",
                   description: "Stop guessing which topics to focus on. Our insights show you exactly where your child is improving and which areas need a little more practice."

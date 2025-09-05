@@ -30,7 +30,7 @@ export const Header: React.FC<HeaderProps> = ({
               }`}
             >
               <Sun className="h-4 w-4 mr-2" />
-              Daily Mode
+              Daily Practice
             </Button>
             <Button
               variant={currentMode === 'bootcamp' ? 'default' : 'ghost'}

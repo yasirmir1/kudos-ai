@@ -81,7 +81,7 @@ export const AccessControl = ({
   }
 
   if (!hasFeatureAccess) {
-    const featureName = feature === 'daily_mode' ? 'Daily Mode' : 'Bootcamp';
+    const featureName = feature === 'daily_mode' ? 'Daily Practice' : 'Bootcamp';
     const requiredPlan = feature === 'daily_mode' ? 'Pass' : 'Pass Plus';
 
     return (

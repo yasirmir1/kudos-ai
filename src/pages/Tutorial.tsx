@@ -118,7 +118,7 @@ const Tutorial: React.FC = () => {
     };
     return <Card className="my-[30px]">
         <CardHeader>
-          <CardTitle>Daily Mode vs Bootcamp Mode</CardTitle>
+          <CardTitle>Daily Practice vs Bootcamp Mode</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="overflow-x-auto">
@@ -126,7 +126,7 @@ const Tutorial: React.FC = () => {
               <thead>
                 <tr className="border-b">
                   <th className="text-left p-4">Feature</th>
-                  <th className="text-center p-4">Daily Mode</th>
+                  <th className="text-center p-4">Daily Practice</th>
                   <th className="text-center p-4">Bootcamp Mode</th>
                 </tr>
               </thead>
@@ -366,7 +366,7 @@ We don't just do the marking, we tackle misconceptions at the source.</p>
                           <Target className="w-8 h-8 text-blue-600" />
                         </div>
                         <div className="flex-1 min-w-0">
-                          <CardTitle className="text-xl mb-3">Daily Mode: Smart Practice for Busy Families</CardTitle>
+                          <CardTitle className="text-xl mb-3">Daily Practice: Smart Practice for Busy Families</CardTitle>
                           <CardDescription className="text-blue-600 text-base leading-relaxed">
                             Perfect for children who know the basics but need to strengthen weak spots
                           </CardDescription>
@@ -410,7 +410,7 @@ We don't just do the marking, we tackle misconceptions at the source.</p>
 
                       <div className="flex justify-center pt-6">
                         <Button onClick={() => navigate('/dashboard')} className="h-12 text-base px-8" size="lg">
-                          Try Daily Mode <ArrowRight className="h-5 w-5 ml-2" />
+                          Try Daily Practice <ArrowRight className="h-5 w-5 ml-2" />
                         </Button>
                       </div>
                     </CardContent>
@@ -523,9 +523,9 @@ We don't just do the marking, we tackle misconceptions at the source.</p>
 
             <ComparisonTable />
           </div>;
-      case 'daily-mode':
+      case 'daily-practice':
         return <div className="space-y-8">
-            <FeatureHighlight title="Daily Mode: Smart Practice for Busy Families" description="Flexible daily practice designed to identify and strengthen learning areas" icon={<Calendar className="w-6 h-6" />} badge="15-30 min daily" benefits={["Questions adapt in real-time to your child's performance", "All topics covered systematically to ensure nothing is forgotten", "Misconception tracking identifies specific learning gaps", "Performance analytics show detailed progress by topic and subtopic", "Flexible schedule that fits around school and activities"]} example={{
+            <FeatureHighlight title="Daily Practice: Smart Practice for Busy Families" description="Flexible daily practice designed to identify and strengthen learning areas" icon={<Calendar className="w-6 h-6" />} badge="15-30 min daily" benefits={["Questions adapt in real-time to your child's performance", "All topics covered systematically to ensure nothing is forgotten", "Misconception tracking identifies specific learning gaps", "Performance analytics show detailed progress by topic and subtopic", "Flexible schedule that fits around school and activities"]} example={{
             title: "How it works",
             content: <div className="space-y-3 text-sm">
                     <div className="flex items-start gap-3">
@@ -663,12 +663,12 @@ We don't just do the marking, we tackle misconceptions at the source.</p>
                           2
                         </Badge>
                         <div>
-                          <h4 className="font-medium mb-3">Choose between Daily Mode or Bootcamp</h4>
+                          <h4 className="font-medium mb-3">Choose between Daily Practice or Bootcamp</h4>
                           <p className="text-sm text-muted-foreground mb-4">Select the learning approach that best fits your goals and schedule</p>
                           <div className="bg-muted/50 rounded-lg p-3">
                             <div className="text-sm mb-2">Tips:</div>
                             <ul className="text-sm text-muted-foreground space-y-1">
-                              <li>• Daily Mode for flexible practice</li>
+                              <li>• Daily Practice for flexible practice</li>
                               <li>• Bootcamp for structured 11+ preparation</li>
                             </ul>
                           </div>
@@ -858,8 +858,8 @@ We don't just do the marking, we tackle misconceptions at the source.</p>
           label: 'Overview',
           icon: <Eye className="w-4 h-4" />
         }, {
-          id: 'daily-mode',
-          label: 'Daily Mode',
+          id: 'daily-practice',
+          label: 'Daily Practice',
           icon: <Calendar className="w-4 h-4" />
         }, {
           id: 'bootcamp-mode',

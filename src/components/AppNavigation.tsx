@@ -167,7 +167,7 @@ export const AppNavigation: React.FC<AppNavigationProps> = ({
                   )}
                 >
                   <Calendar className="h-4 w-4" />
-                  <span>Daily Mode</span>
+                  <span>Daily Practice</span>
                 </Button>
                 <Button 
                   variant={isBootcampRoute && !isProfileRoute ? "default" : "ghost"} 

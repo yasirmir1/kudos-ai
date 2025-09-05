@@ -29,7 +29,7 @@ export const SkillsAssessment: React.FC = () => {
   const fetchSkillsData = async () => {
     try {
       setLoading(true);
-      await calculateSkillsFromDailyModeData();
+      await calculateSkillsFromDailyPracticeData();
     } catch (error) {
       console.error('Error in fetchSkillsData:', error);
       setSkillsData(getDefaultSkillsData());
@@ -38,9 +38,9 @@ export const SkillsAssessment: React.FC = () => {
     }
   };
 
-  const calculateSkillsFromDailyModeData = async () => {
+  const calculateSkillsFromDailyPracticeData = async () => {
     try {
-      // Get student answers data from daily mode
+      // Get student answers data from daily practice
       const { data: answersData, error } = await supabase
         .from('student_answers')
         .select('topic, subtopic, is_correct, answered_at')
@@ -63,7 +63,7 @@ export const SkillsAssessment: React.FC = () => {
       setSkillsData(radarData);
       setOverallStrength(calculateOverallStrength(radarData));
     } catch (error) {
-      console.error('Error calculating skills from daily mode data:', error);
+      console.error('Error calculating skills from daily practice data:', error);
       setSkillsData(getDefaultSkillsData());
     }
   };

@@ -43,7 +43,7 @@ export const DashboardNavigation: React.FC<DashboardNavigationProps> = ({
     icon: FileText
   }];
 
-  // Filter out curriculum tab in daily mode
+  // Filter out curriculum tab in daily practice
   const navItems = allNavItems.filter(item => 
     item.id !== 'curriculum' || isBootcampRoute
   );
