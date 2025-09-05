@@ -670,12 +670,9 @@ const Practice = () => {
       </div>;
   }
   if (questions.length === 0 && !loading && !showSessionStartModal) {
-    return <div className="min-h-screen bg-background flex items-center justify-center">
-        <div className="text-center space-y-4">
-          <p className="text-muted-foreground">No questions available at the moment.</p>
-          <Button onClick={() => navigate('/')}>Return to Home</Button>
-        </div>
-      </div>;
+    // Immediately redirect to home to avoid showing "no questions" screen
+    navigate('/');
+    return null;
   }
   if (sessionComplete) {
     const accuracy = answeredQuestions.length > 0 ? Math.round(score / answeredQuestions.length * 100) : 0;
