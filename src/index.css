@@ -18,10 +18,10 @@ All colors MUST be HSL.
     --popover: 0 0% 100%;
     --popover-foreground: 215 25% 27%;
 
-    /* Purple-600 primary replacing blue */
-    --primary: 267 84% 60%;
+    /* Primary theme color #4f46e6 */
+    --primary: 247 77% 59%;
     --primary-foreground: 0 0% 100%;
-    --primary-glow: 267 84% 70%;
+    --primary-glow: 247 77% 69%;
 
     /* Gray secondary tones */
     --secondary: 214 32% 91%;
@@ -31,8 +31,8 @@ All colors MUST be HSL.
     --muted: 214 32% 91%;
     --muted-foreground: 215 16% 47%;
 
-    /* Accent same as primary - purple */
-    --accent: 267 84% 60%;
+    /* Accent same as primary - #4f46e6 */
+    --accent: 247 77% 59%;
     --accent-foreground: 0 0% 100%;
 
     /* Professional red destructive */
@@ -42,7 +42,7 @@ All colors MUST be HSL.
     /* Gray borders like the design */
     --border: 214 32% 91%;
     --input: 214 32% 91%;
-    --ring: 267 84% 60%;
+    --ring: 247 77% 59%;
 
     --radius: 0.75rem;
     
@@ -52,27 +52,27 @@ All colors MUST be HSL.
     --warning: 38 92% 50%;
     --warning-foreground: 0 0% 98%;
     
-    /* Purple-themed gradients */
-    --gradient-primary: linear-gradient(135deg, hsl(267 84% 60%), hsl(267 84% 70%));
-    --gradient-purple-light: linear-gradient(135deg, hsl(267 100% 97%), hsl(267 100% 94%));
+    /* Custom theme gradients with #4f46e6 */
+    --gradient-primary: linear-gradient(135deg, hsl(247 77% 59%), hsl(247 77% 69%));
+    --gradient-purple-light: linear-gradient(135deg, hsl(247 100% 97%), hsl(247 100% 94%));
     --gradient-success: linear-gradient(135deg, hsl(142 76% 36%), hsl(142 76% 45%));
     --gradient-warning: linear-gradient(135deg, hsl(38 92% 50%), hsl(38 92% 60%));
     
-    /* Clean shadows with subtle purple tint */
+    /* Clean shadows with custom theme tint */
     --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     --shadow-card: 0 1px 3px 0 hsl(0 0% 0% / 0.1);
-    --shadow-soft: 0 1px 2px 0 hsl(267 84% 60% / 0.05);
-    --shadow-medium: 0 4px 6px -1px hsl(267 84% 60% / 0.1);
+    --shadow-soft: 0 1px 2px 0 hsl(247 77% 59% / 0.05);
+    --shadow-medium: 0 4px 6px -1px hsl(247 77% 59% / 0.1);
 
-    /* Sidebar colors with purple theme */
+    /* Sidebar colors with custom theme */
     --sidebar-background: 0 0% 100%;
     --sidebar-foreground: 215 25% 27%;
-    --sidebar-primary: 267 84% 60%;
+    --sidebar-primary: 247 77% 59%;
     --sidebar-primary-foreground: 0 0% 100%;
     --sidebar-accent: 214 32% 91%;
     --sidebar-accent-foreground: 215 25% 27%;
     --sidebar-border: 214 32% 91%;
-    --sidebar-ring: 267 84% 60%;
+    --sidebar-ring: 247 77% 59%;
   }
 
   .dark {
@@ -86,10 +86,10 @@ All colors MUST be HSL.
     --popover: 270 40% 10%;
     --popover-foreground: 0 0% 95%;
 
-    /* Bright purple for dark mode */
-    --primary: 270 85% 65%;
-    --primary-foreground: 270 50% 8%;
-    --primary-glow: 270 90% 75%;
+    /* Bright custom theme for dark mode */
+    --primary: 247 85% 65%;
+    --primary-foreground: 247 50% 8%;
+    --primary-glow: 247 90% 75%;
 
     /* Better contrast dark secondary */
     --secondary: 270 30% 20%;
@@ -110,17 +110,17 @@ All colors MUST be HSL.
     /* Dark borders */
     --border: 270 20% 18%;
     --input: 270 20% 18%;
-    --ring: 270 85% 65%;
+    --ring: 247 85% 65%;
 
     /* Dark sidebar */
     --sidebar-background: 270 40% 10%;
     --sidebar-foreground: 0 0% 90%;
-    --sidebar-primary: 270 85% 65%;
-    --sidebar-primary-foreground: 270 50% 8%;
+    --sidebar-primary: 247 85% 65%;
+    --sidebar-primary-foreground: 247 50% 8%;
     --sidebar-accent: 270 30% 20%;
     --sidebar-accent-foreground: 0 0% 90%;
     --sidebar-border: 270 20% 18%;
-    --sidebar-ring: 270 85% 65%;
+    --sidebar-ring: 247 85% 65%;
   }
 }
 
