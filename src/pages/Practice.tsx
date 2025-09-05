@@ -673,7 +673,7 @@ const Practice = () => {
     return <div className="min-h-screen bg-background flex items-center justify-center">
         <div className="text-center space-y-4">
           <p className="text-muted-foreground">No questions available at the moment.</p>
-          <Button onClick={() => navigate('/')}>Return to Dashboard</Button>
+          <Button onClick={() => navigate('/')}>Return to Home</Button>
         </div>
       </div>;
   }
