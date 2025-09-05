@@ -16,11 +16,11 @@ export default {
 			screens: {
 				'2xl': '1400px'
 			}
-		},
-		extend: {
-			fontFamily: {
-				sans: ['Roboto', 'Inter', '-apple-system', 'BlinkMacSystemFont', 'sans-serif'],
-			},
+    },
+    extend: {
+      fontFamily: {
+        sans: ['Inter', 'system-ui', '-apple-system', 'sans-serif'],
+      },
 			colors: {
 				border: 'hsl(var(--border))',
 				input: 'hsl(var(--input))',

@@ -12,15 +12,15 @@ export const EmptyState: React.FC<EmptyStateProps> = ({
   icon
 }) => {
   return (
-    <div className="flex flex-col items-center justify-center py-8 text-center">
+    <div className="flex flex-col items-center justify-center py-12 text-center">
       {icon && (
-        <div className="mb-3 text-muted-foreground/50">
+        <div className="mb-4 text-muted-foreground/50">
           {icon}
         </div>
       )}
-      <p className="text-sm text-muted-foreground mb-1">{message}</p>
+      <p className="text-base font-medium text-muted-foreground mb-2">{message}</p>
       {submessage && (
-        <p className="text-xs text-muted-foreground/70">{submessage}</p>
+        <p className="text-sm text-muted-foreground/70">{submessage}</p>
       )}
     </div>
   );

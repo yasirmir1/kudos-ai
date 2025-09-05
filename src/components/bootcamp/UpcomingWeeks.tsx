@@ -25,12 +25,12 @@ export const UpcomingWeeks: React.FC = () => {
       <div className="space-y-4">
         {upcomingWeeks.map((week) => (
           <div key={week.week} className="bg-background p-4 rounded-lg border border-border">
-            <div className="flex items-center justify-between">
-              <span className="text-sm font-semibold text-foreground">Week {week.week}</span>
+            <div className="flex items-center justify-between mb-2">
+              <span className="text-base font-semibold text-foreground">Week {week.week}</span>
               <span className="text-xs font-medium bg-muted text-muted-foreground px-2 py-1 rounded-full">Foundation</span>
             </div>
-            <p className="text-base font-semibold text-foreground mt-2">{week.title}</p>
-            <div className="mt-2 flex flex-wrap gap-2">
+            <p className="text-base font-semibold text-foreground mb-3">{week.title}</p>
+            <div className="flex flex-wrap gap-2">
               {week.tags.map((tag) => (
                 <span key={tag} className="text-xs bg-primary/10 text-primary px-2 py-1 rounded-md">
                   {tag}

@@ -58,31 +58,31 @@ export const LearningJourneyCard: React.FC<LearningJourneyCardProps> = ({
         </div>
       </div>
       <div>
-        <div className="mb-2">
+        <div className="mb-3">
           <span className="text-sm font-semibold text-primary">Week {currentWeek}</span>
           <span className="ml-2 text-xs font-medium bg-primary/10 text-primary px-2 py-1 rounded-full">Foundation</span>
         </div>
         <h4 className="text-xl font-bold text-foreground">Number & Place Value - Week 1</h4>
-        <p className="text-sm text-muted-foreground mt-1">Number & Place Value • Multi-Topic</p>
+        <p className="text-base text-muted-foreground mt-2">Number & Place Value • Multi-Topic</p>
       </div>
 
       <div className="mt-6">
-        <p className="text-sm font-semibold text-foreground">This week covers:</p>
-        <ul className="mt-3 space-y-2 text-sm text-muted-foreground">
+        <p className="text-base font-semibold text-foreground mb-4">This week covers:</p>
+        <ul className="space-y-3 text-base text-muted-foreground">
           <li className="flex items-start">
-            <Check className="h-4 w-4 text-primary mr-2 mt-px flex-shrink-0" />
+            <Check className="h-4 w-4 text-primary mr-3 mt-1 flex-shrink-0" />
             Reading and Writing Large Numbers
           </li>
           <li className="flex items-start">
-            <Check className="h-4 w-4 text-primary mr-2 mt-px flex-shrink-0" />
+            <Check className="h-4 w-4 text-primary mr-3 mt-1 flex-shrink-0" />
             Rounding Numbers
           </li>
           <li className="flex items-start">
-            <Check className="h-4 w-4 text-primary mr-2 mt-px flex-shrink-0" />
+            <Check className="h-4 w-4 text-primary mr-3 mt-1 flex-shrink-0" />
             Place Value Understanding
           </li>
           <li className="flex items-start">
-            <Check className="h-4 w-4 text-primary mr-2 mt-px flex-shrink-0" />
+            <Check className="h-4 w-4 text-primary mr-3 mt-1 flex-shrink-0" />
             Number Sequences
           </li>
         </ul>

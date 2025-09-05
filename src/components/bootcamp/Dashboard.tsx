@@ -242,19 +242,19 @@ export const Dashboard: React.FC<DashboardProps> = ({
     if (accuracy >= 70) return 'text-warning';
     return 'text-destructive';
   };
-  return <div className="space-y-8">
+  return <div className="space-y-6">
       {/* Welcome Section */}
-      <div className="bg-background border border-border rounded-lg p-6 mt-6 shadow-card">
+      <div className="bg-background border border-border rounded-lg p-6 shadow-card">
         <h2 className="text-xl font-semibold text-foreground">Welcome back, {user.name}! 👋</h2>
-        <p className="text-muted-foreground mt-1">You're making great progress. Keep up the momentum!</p>
+        <p className="text-base text-muted-foreground mt-1">You're making great progress. Keep up the momentum!</p>
       </div>
 
       {/* Quick Stats */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mt-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         {quickStats.map((stat, index) => (
           <div key={stat.label} className="bg-background border border-border rounded-lg p-6 flex items-center justify-between shadow-card">
             <div>
-              <p className="text-sm text-muted-foreground">{stat.label}</p>
+              <p className="text-sm font-medium text-muted-foreground">{stat.label}</p>
               <p className="text-3xl font-bold text-foreground mt-2">{stat.value}</p>
             </div>
             <div className={`rounded-full p-3 ${
@@ -295,7 +295,7 @@ export const Dashboard: React.FC<DashboardProps> = ({
       </div>
 
       {/* Learning Journey */}
-      <div className="mt-8 grid grid-cols-1 lg:grid-cols-3 gap-8">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <LearningJourneyCard 
           currentWeek={1} 
           hasStarted={false} 
