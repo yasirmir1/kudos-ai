@@ -83,7 +83,7 @@ export default {
 			},
 			backgroundImage: {
 				'gradient-primary': 'var(--gradient-primary)',
-				'gradient-blue-light': 'var(--gradient-blue-light)',
+				'gradient-purple-light': 'var(--gradient-purple-light)',
 				'gradient-success': 'var(--gradient-success)',
 				'gradient-warning': 'var(--gradient-warning)',
 			},

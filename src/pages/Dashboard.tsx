@@ -283,16 +283,16 @@ const Dashboard = () => {
   };
   const renderOverview = () => <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
       {/* Ready to learn section */}
-      <div className="bg-indigo-600 rounded-3xl shadow-2xl p-12 mb-8">
-        <div className="text-center text-white">
+      <div className="bg-primary rounded-3xl shadow-2xl p-12 mb-8">
+        <div className="text-center text-primary-foreground">
           <h1 className="text-5xl font-bold mb-4 tracking-tight">Ready to learn?</h1>
-          <p className="text-xl text-indigo-100 mb-10">
+          <p className="text-xl text-primary-foreground/80 mb-10">
             Your adaptive learning system has prepared personalized 11+ questions.
           </p>
           <div className="flex flex-col sm:flex-row justify-center items-center space-y-4 sm:space-y-0 sm:space-x-6">
             <button 
               onClick={startLearning}
-              className="bg-white text-indigo-600 font-semibold py-4 px-8 rounded-full flex items-center justify-center shadow-lg hover:bg-gray-100 focus:outline-none focus:ring-4 focus:ring-indigo-300 transition-all duration-300 ease-in-out transform hover:-translate-y-1 w-full sm:w-auto"
+              className="bg-background text-primary font-semibold py-4 px-8 rounded-full flex items-center justify-center shadow-lg hover:bg-secondary focus:outline-none focus:ring-4 focus:ring-ring transition-all duration-300 ease-in-out transform hover:-translate-y-1 w-full sm:w-auto"
             >
               <svg 
                 className="w-6 h-6 mr-3" 
@@ -304,7 +304,7 @@ const Dashboard = () => {
               Start Practice
             </button>
             <button 
-              className="bg-transparent text-white font-semibold py-4 px-8 rounded-full flex items-center justify-center border-2 border-blue-300 hover:bg-blue-500 hover:border-blue-500 focus:outline-none focus:ring-4 focus:ring-blue-300 transition-all duration-300 ease-in-out transform hover:-translate-y-1 w-full sm:w-auto"
+              className="bg-transparent text-primary-foreground font-semibold py-4 px-8 rounded-full flex items-center justify-center border-2 border-primary-foreground/30 hover:bg-primary-foreground/10 hover:border-primary-foreground/50 focus:outline-none focus:ring-4 focus:ring-ring transition-all duration-300 ease-in-out transform hover:-translate-y-1 w-full sm:w-auto"
             >
               <svg 
                 className="w-6 h-6 mr-3" 
