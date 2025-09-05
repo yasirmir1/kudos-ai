@@ -310,9 +310,9 @@ const Dashboard = () => {
             subtitle="Topics where you're performing well"
             icon={Award}
             iconColor="text-green-600"
-            className="h-[280px]"
+            className="min-h-[340px] h-auto"
           >
-            {performance.filter(topic => topic.accuracy >= 0.5).slice(0, 5).map((topic, index) => (
+            {performance.filter(topic => topic.accuracy >= 0.5).slice(0, 3).map((topic, index) => (
               <TopicItem
                 key={topic.topic}
                 topic={topic.topic}
@@ -336,7 +336,7 @@ const Dashboard = () => {
             subtitle="Topics that need more attention"
             icon={Target}
             iconColor="text-red-600"
-            className="h-[280px]"
+            className="min-h-[340px] h-auto"
           >
             {needsWork.map((topic, index) => (
               <TopicItem
