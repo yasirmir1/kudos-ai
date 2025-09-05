@@ -22,14 +22,12 @@ export const DashboardNavigation: React.FC<DashboardNavigationProps> = ({
   } = useAuth();
   const location = useLocation();
   const navigate = useNavigate();
-  
   const handleExit = () => {
     navigate('/');
   };
-  
+
   // Check if we're in bootcamp mode
   const isBootcampRoute = location.pathname.startsWith('/bootcamp');
-  
   const allNavItems: NavItem[] = [{
     id: 'overview',
     label: 'Home',
@@ -49,9 +47,7 @@ export const DashboardNavigation: React.FC<DashboardNavigationProps> = ({
   }];
 
   // Filter out curriculum tab in daily practice
-  const navItems = allNavItems.filter(item => 
-    item.id !== 'curriculum' || isBootcampRoute
-  );
+  const navItems = allNavItems.filter(item => item.id !== 'curriculum' || isBootcampRoute);
 
   // Mock user stats for dashboard - in real app these would come from props or context
   const userStats = {
@@ -64,15 +60,7 @@ export const DashboardNavigation: React.FC<DashboardNavigationProps> = ({
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between h-16">
           {/* Exit Button */}
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={handleExit}
-            className="text-muted-foreground hover:text-foreground"
-          >
-            <X className="h-4 w-4 mr-2" />
-            Exit
-          </Button>
+          
 
           {/* Main Navigation */}
           <div className="hidden lg:flex space-x-1">
