@@ -720,6 +720,10 @@ const Practice = () => {
           setShowSessionStartModal(false);
           navigate('/dashboard');
         }}
+        onCancel={() => {
+          setShowSessionStartModal(false);
+          navigate('/');
+        }}
         onStart={handleSessionStart}
       />
     </div>;
@@ -733,6 +737,10 @@ const Practice = () => {
         onClose={() => {
           setShowSessionStartModal(false);
           navigate('/dashboard');
+        }}
+        onCancel={() => {
+          setShowSessionStartModal(false);
+          navigate('/');
         }}
         onStart={handleSessionStart}
       />

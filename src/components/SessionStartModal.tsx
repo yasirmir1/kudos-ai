@@ -4,9 +4,10 @@ interface SessionStartModalProps {
   isOpen: boolean;
   onClose: () => void;
   onStart: (questionCount: number, difficulty?: string) => void;
+  onCancel?: () => void;
 }
 
-export const SessionStartModal = ({ isOpen, onClose, onStart }: SessionStartModalProps) => {
+export const SessionStartModal = ({ isOpen, onClose, onStart, onCancel }: SessionStartModalProps) => {
   const [selectedQuestions, setSelectedQuestions] = useState(10);
   
   if (!isOpen) return null;
@@ -89,7 +90,7 @@ export const SessionStartModal = ({ isOpen, onClose, onStart }: SessionStartModa
           {/* Actions */}
           <div className="flex gap-4">
             <button
-              onClick={onClose}
+              onClick={onCancel || onClose}
               className="flex-1 py-4 px-8 text-indigo-600 font-semibold hover:bg-gray-100 rounded-full transition-all duration-300 ease-in-out transform hover:-translate-y-1 border-2 border-indigo-200"
             >
               Cancel
