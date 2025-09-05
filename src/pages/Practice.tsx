@@ -717,7 +717,7 @@ const Practice = () => {
         isOpen={showSessionStartModal}
         onClose={() => {
           setShowSessionStartModal(false);
-          navigate('/');
+          navigate('/dashboard');
         }}
         onStart={handleSessionStart}
       />
@@ -731,7 +731,7 @@ const Practice = () => {
         isOpen={showSessionStartModal}
         onClose={() => {
           setShowSessionStartModal(false);
-          navigate('/');
+          navigate('/dashboard');
         }}
         onStart={handleSessionStart}
       />
