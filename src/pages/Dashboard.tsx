@@ -339,6 +339,15 @@ const Dashboard = () => {
                 attempts={topic.total_attempts}
                 index={index}
                 type="strength"
+                onClick={() => {
+                  setSelectedFocusArea({
+                    topic: topic.topic,
+                    accuracy: topic.accuracy,
+                    attempts: topic.total_attempts
+                  });
+                  setFocusAreaQuestionsOpen(true);
+                }}
+                showClickHint={true}
               />
             ))}
             {performance.filter(topic => topic.accuracy >= 0.5).length === 0 && (
