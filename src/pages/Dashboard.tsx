@@ -65,21 +65,16 @@ const Dashboard = () => {
   const [focusAreaQuestionsOpen, setFocusAreaQuestionsOpen] = useState(false);
   const [selectedFocusArea, setSelectedFocusArea] = useState<any>(null);
   const [sessionsModalOpen, setSessionsModalOpen] = useState(false);
-
+  
   // Get student ID for misconception cache
   const [studentId, setStudentId] = useState<string | null>(null);
-  const {
-    cachedMisconceptions = [],
-    cacheHitRate = 0,
-    isLoading: cacheLoading = false
-  } = useMisconceptionCache(studentId) || {};
+  const { cachedMisconceptions = [], cacheHitRate = 0, isLoading: cacheLoading = false } = useMisconceptionCache(studentId) || {};
+
   useEffect(() => {
     const getStudentId = async () => {
       if (user) {
         try {
-          const {
-            data
-          } = await supabase.rpc('get_current_student_id');
+          const { data } = await supabase.rpc('get_current_student_id');
           setStudentId(data);
         } catch (error) {
           console.error('Error getting student ID:', error);
@@ -88,6 +83,7 @@ const Dashboard = () => {
     };
     getStudentId();
   }, [user]);
+
   useEffect(() => {
     if (user) {
       loadDashboardData();
@@ -287,14 +283,17 @@ const Dashboard = () => {
   };
   const renderOverview = () => <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
       {/* Ready to learn section */}
-      <div className="bg-card rounded-lg shadow-sm p-8 text-center mb-8 py-[40px] my-[5px]">
-        <h1 className="text-3xl font-bold text-foreground">Ready to learn?</h1>
-        <p className="mt-3 text-base text-muted-foreground">
+      <div className="bg-gradient-to-r from-blue-600 to-blue-700 rounded-2xl p-8 text-center mb-8 shadow-lg">
+        <h1 className="text-3xl font-bold text-white mb-3">Ready to learn?</h1>
+        <p className="text-blue-100 text-lg mb-8 max-w-2xl mx-auto">
           Your adaptive learning system has prepared personalized {selectedAgeGroup} questions.
         </p>
-        <div className="mt-6 flex flex-col sm:flex-row justify-center items-center space-y-4 sm:space-y-0 sm:space-x-4">
-          <Button onClick={startLearning} className="flex items-center justify-center bg-primary text-primary-foreground py-3 shadow-md hover:bg-primary/90 transition-colors w-full sm:w-auto font-medium rounded-lg text-sm px-0 mx-0">
-            <Play className="mr-2 h-4 w-4" />
+        <div className="flex flex-col sm:flex-row justify-center items-center gap-4">
+          <Button 
+            onClick={startLearning} 
+            className="bg-white text-blue-600 hover:bg-blue-50 font-semibold px-8 py-3 rounded-full shadow-md transition-all duration-200 text-lg min-w-[200px]"
+          >
+            <Play className="mr-2 h-5 w-5" />
             Start Practice Session
           </Button>
           <WorksheetGeneratorModal />
@@ -306,42 +305,106 @@ const Dashboard = () => {
         {/* Strengths and Focus Areas Row */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {/* Your Strengths - Left */}
-          <DashboardCard title="Your Strengths" subtitle="Topics where you're performing well" icon={Award} iconColor="text-green-600" className="h-[280px]">
-            {performance.filter(topic => topic.accuracy >= 0.5).slice(0, 5).map((topic, index) => <TopicItem key={topic.topic} topic={topic.topic} accuracy={topic.accuracy} attempts={topic.total_attempts} index={index} type="strength" />)}
-            {performance.filter(topic => topic.accuracy >= 0.5).length === 0 && <EmptyState message="Complete some practice questions to see your strengths!" icon={<Award className="h-8 w-8" />} />}
+          <DashboardCard
+            title="Your Strengths"
+            subtitle="Topics where you're performing well"
+            icon={Award}
+            iconColor="text-green-600"
+            className="h-[280px]"
+          >
+            {performance.filter(topic => topic.accuracy >= 0.5).slice(0, 5).map((topic, index) => (
+              <TopicItem
+                key={topic.topic}
+                topic={topic.topic}
+                accuracy={topic.accuracy}
+                attempts={topic.total_attempts}
+                index={index}
+                type="strength"
+              />
+            ))}
+            {performance.filter(topic => topic.accuracy >= 0.5).length === 0 && (
+              <EmptyState
+                message="Complete some practice questions to see your strengths!"
+                icon={<Award className="h-8 w-8" />}
+              />
+            )}
           </DashboardCard>
 
           {/* Focus Areas - Right */}
-          <DashboardCard title="Focus Areas" subtitle="Topics that need more attention" icon={Target} iconColor="text-red-600" className="h-[280px]">
-            {needsWork.map((topic, index) => <TopicItem key={topic.topic} topic={topic.topic} accuracy={topic.accuracy} attempts={topic.attempts} index={index} type="focus" onClick={() => {
-            setSelectedFocusArea(topic);
-            setFocusAreaQuestionsOpen(true);
-          }} showClickHint={true} />)}
-            {needsWork.length === 0 && <EmptyState message="Great job! No weak areas identified yet." icon={<Target className="h-8 w-8" />} />}
+          <DashboardCard
+            title="Focus Areas"
+            subtitle="Topics that need more attention"
+            icon={Target}
+            iconColor="text-red-600"
+            className="h-[280px]"
+          >
+            {needsWork.map((topic, index) => (
+              <TopicItem
+                key={topic.topic}
+                topic={topic.topic}
+                accuracy={topic.accuracy}
+                attempts={topic.attempts}
+                index={index}
+                type="focus"
+                onClick={() => {
+                  setSelectedFocusArea(topic);
+                  setFocusAreaQuestionsOpen(true);
+                }}
+                showClickHint={true}
+              />
+            ))}
+            {needsWork.length === 0 && (
+              <EmptyState
+                message="Great job! No weak areas identified yet."
+                icon={<Target className="h-8 w-8" />}
+              />
+            )}
           </DashboardCard>
         </div>
 
         {/* Misconceptions - Full Width */}
-        <DashboardCard title="Misconceptions" subtitle="Common mistakes to watch out for" icon={Clock} iconColor="text-red-600" className="h-[600px]">
-          {loadingExplanations && misconceptions.length > 0 && <LoadingState message="Analyzing misconceptions..." />}
+        <DashboardCard
+          title="Misconceptions"
+          subtitle="Common mistakes to watch out for"
+          icon={Clock}
+          iconColor="text-red-600"
+          className="h-[600px]"
+        >
+          {loadingExplanations && misconceptions.length > 0 && (
+            <LoadingState message="Analyzing misconceptions..." />
+          )}
           
           {!cacheLoading && !loadingExplanations && (cachedMisconceptions.length > 0 ? cachedMisconceptions : misconceptions).slice(0, 5).map((misconception, index) => {
-          const kidFriendlyLabel = formatMisconceptionForKids(misconception.red_herring);
-          return <MisconceptionItem key={`${misconception.red_herring}-${index}`} misconception={misconception} kidFriendlyLabel={kidFriendlyLabel} onClick={() => {
-            setSelectedMisconceptionForQuestions(misconception);
-            setMisconceptionQuestionsOpen(true);
-          }} />;
-        })}
+            const kidFriendlyLabel = formatMisconceptionForKids(misconception.red_herring);
+            return (
+              <MisconceptionItem
+                key={`${misconception.red_herring}-${index}`}
+                misconception={misconception}
+                kidFriendlyLabel={kidFriendlyLabel}
+                onClick={() => {
+                  setSelectedMisconceptionForQuestions(misconception);
+                  setMisconceptionQuestionsOpen(true);
+                }}
+              />
+            );
+          })}
           
-          {misconceptions.length === 0 && <EmptyState message="Complete some practice questions to identify misconceptions." icon={<Clock className="h-8 w-8" />} />}
+          {misconceptions.length === 0 && (
+            <EmptyState
+              message="Complete some practice questions to identify misconceptions."
+              icon={<Clock className="h-8 w-8" />}
+            />
+          )}
 
           {/* Cache Performance Indicator */}
-          {cacheHitRate > 0 && <div className="mt-4 p-2 rounded-md bg-green-50 border border-green-200">
+          {cacheHitRate > 0 && (
+            <div className="mt-4 p-2 rounded-md bg-green-50 border border-green-200">
               <div className="text-xs text-green-800 flex items-center gap-1">
                 <div className="h-2 w-2 rounded-full bg-green-500"></div>
                 Cache hit rate: {cacheHitRate.toFixed(0)}% • Reduced API calls by ~80%
               </div>
-            </div>}
+            </div>
+          )}
         </DashboardCard>
       </div>
 
