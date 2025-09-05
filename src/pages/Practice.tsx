@@ -655,6 +655,7 @@ const Practice = () => {
     setStartTime(new Date());
     setSessionRecorded(false); // Reset session recorded flag for new session
     setCurrentSessionId(null); // Reset session ID for new session
+    setShowSessionStartModal(false); // Close the modal
     
     // Create a new session record when starting
     await createNewSession();

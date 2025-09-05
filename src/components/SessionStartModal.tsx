@@ -14,7 +14,6 @@ export const SessionStartModal = ({ isOpen, onClose, onStart }: SessionStartModa
   const handleStartPractice = () => {
     console.log(`Starting practice with ${selectedQuestions} questions`);
     onStart(selectedQuestions);
-    onClose();
   };
 
   return (
