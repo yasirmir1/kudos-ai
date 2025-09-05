@@ -1,10 +1,4 @@
-import { useState } from 'react';
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Settings, BookOpen } from 'lucide-react';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import React, { useState } from 'react';
 
 interface SessionStartModalProps {
   isOpen: boolean;
@@ -13,103 +7,103 @@ interface SessionStartModalProps {
 }
 
 export const SessionStartModal = ({ isOpen, onClose, onStart }: SessionStartModalProps) => {
-  const [selectedCount, setSelectedCount] = useState<number>(10);
-  const [showSettings, setShowSettings] = useState(false);
-  const [selectedDifficulty, setSelectedDifficulty] = useState<string>('mixed');
+  const [selectedQuestions, setSelectedQuestions] = useState(10);
+  
+  if (!isOpen) return null;
 
-  const handleStart = () => {
-    onStart(selectedCount, selectedDifficulty === 'mixed' ? undefined : selectedDifficulty);
+  const handleStartPractice = () => {
+    console.log(`Starting practice with ${selectedQuestions} questions`);
+    onStart(selectedQuestions);
     onClose();
   };
 
   return (
-    <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-md">
-        <DialogHeader className="relative">
-          <Button
-            variant="ghost"
-            size="sm"
-            className="absolute -top-2 -left-2 h-8 w-8 p-0"
-            onClick={() => setShowSettings(!showSettings)}
-          >
-            <Settings className="h-4 w-4" />
-          </Button>
-          <DialogTitle className="text-center">Start Practice Session</DialogTitle>
-        </DialogHeader>
-        
-        <div className="space-y-6 pt-4">
-          {showSettings && (
-            <Card className="bg-muted/30">
-              <CardContent className="p-4">
-                <div className="space-y-3">
-                  <label className="text-sm font-medium">Difficulty Level</label>
-                  <Select value={selectedDifficulty} onValueChange={setSelectedDifficulty}>
-                    <SelectTrigger>
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="mixed">Mixed (Recommended)</SelectItem>
-                      <SelectItem value="Easy">Easy</SelectItem>
-                      <SelectItem value="Medium">Medium</SelectItem>
-                      <SelectItem value="Hard">Hard</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-              </CardContent>
-            </Card>
-          )}
-
-          <div className="space-y-4">
-            <h3 className="text-base font-medium text-center">Choose number of questions</h3>
-            
-            <div className="grid grid-cols-2 gap-4">
-              <Card 
-                className={`cursor-pointer transition-all hover:bg-accent/50 ${
-                  selectedCount === 10 ? 'ring-2 ring-primary bg-primary/5' : ''
-                }`}
-                onClick={() => setSelectedCount(10)}
-              >
-                <CardContent className="p-6 text-center">
-                  <div className="space-y-2">
-                    <div className="text-2xl font-bold text-primary">10</div>
-                    <div className="text-sm text-muted-foreground">Questions</div>
-                    <Badge variant="secondary" className="text-xs">Quick session</Badge>
-                  </div>
-                </CardContent>
-              </Card>
-
-              <Card 
-                className={`cursor-pointer transition-all hover:bg-accent/50 ${
-                  selectedCount === 20 ? 'ring-2 ring-primary bg-primary/5' : ''
-                }`}
-                onClick={() => setSelectedCount(20)}
-              >
-                <CardContent className="p-6 text-center">
-                  <div className="space-y-2">
-                    <div className="text-2xl font-bold text-primary">20</div>
-                    <div className="text-sm text-muted-foreground">Questions</div>
-                    <Badge variant="secondary" className="text-xs">Full session</Badge>
-                  </div>
-                </CardContent>
-              </Card>
+    <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
+      <div className="bg-white rounded-3xl shadow-2xl max-w-md w-full">
+        {/* Header */}
+        <div className="flex items-center justify-between p-8 pb-0">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 bg-indigo-100 rounded-full flex items-center justify-center">
+              <svg className="w-6 h-6 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+              </svg>
             </div>
+            <h2 className="text-2xl font-bold text-gray-900 tracking-tight">Start Practice Session</h2>
+          </div>
+          <button 
+            onClick={onClose}
+            className="p-2 hover:bg-gray-100 rounded-full transition-all duration-300 transform hover:rotate-90"
+          >
+            <svg className="w-6 h-6 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
+        </div>
+
+        {/* Content */}
+        <div className="p-8">
+          <h3 className="text-lg font-semibold text-gray-700 mb-6">Choose number of questions</h3>
+          
+          <div className="grid grid-cols-2 gap-4 mb-8">
+            {/* 10 Questions Option */}
+            <button
+              onClick={() => setSelectedQuestions(10)}
+              className={`rounded-2xl p-6 border-2 transition-all duration-300 transform hover:-translate-y-1 ${
+                selectedQuestions === 10 
+                  ? 'border-indigo-600 bg-indigo-50 shadow-lg' 
+                  : 'border-gray-200 hover:border-gray-300 hover:shadow-md'
+              }`}
+            >
+              <div className="text-4xl font-bold text-indigo-600 mb-2">10</div>
+              <div className="text-base font-semibold text-gray-700">Questions</div>
+              <div className="text-sm text-gray-500 mt-1">Quick session</div>
+            </button>
+
+            {/* 20 Questions Option */}
+            <button
+              onClick={() => setSelectedQuestions(20)}
+              className={`rounded-2xl p-6 border-2 transition-all duration-300 transform hover:-translate-y-1 ${
+                selectedQuestions === 20 
+                  ? 'border-indigo-600 bg-indigo-50 shadow-lg' 
+                  : 'border-gray-200 hover:border-gray-300 hover:shadow-md'
+              }`}
+            >
+              <div className="text-4xl font-bold text-indigo-600 mb-2">20</div>
+              <div className="text-base font-semibold text-gray-700">Questions</div>
+              <div className="text-sm text-gray-500 mt-1">Full session</div>
+            </button>
           </div>
 
-          <div className="flex items-center justify-center space-x-2 text-sm text-muted-foreground">
-            <BookOpen className="h-4 w-4" />
-            <span>Personalized questions based on your progress</span>
+          {/* Info Section */}
+          <div className="flex items-center gap-3 p-4 bg-indigo-50 rounded-2xl mb-8">
+            <div className="w-8 h-8 bg-indigo-100 rounded-full flex items-center justify-center flex-shrink-0">
+              <svg className="w-5 h-5 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+            </div>
+            <p className="text-sm font-medium text-indigo-700">
+              Personalized questions based on your progress
+            </p>
           </div>
 
-          <div className="flex space-x-3">
-            <Button variant="outline" onClick={onClose} className="flex-1">
+          {/* Actions */}
+          <div className="flex gap-4">
+            <button
+              onClick={onClose}
+              className="flex-1 py-4 px-8 text-indigo-600 font-semibold hover:bg-gray-100 rounded-full transition-all duration-300 ease-in-out transform hover:-translate-y-1 border-2 border-indigo-200"
+            >
               Cancel
-            </Button>
-            <Button onClick={handleStart} className="flex-1">
+            </button>
+            <button
+              onClick={handleStartPractice}
+              className="flex-1 py-4 px-8 bg-indigo-600 text-white font-semibold hover:bg-indigo-700 rounded-full transition-all duration-300 ease-in-out transform hover:-translate-y-1 shadow-lg hover:shadow-xl focus:outline-none focus:ring-4 focus:ring-indigo-300"
+            >
               Start Practice
-            </Button>
+            </button>
           </div>
         </div>
-      </DialogContent>
-    </Dialog>
+      </div>
+    </div>
   );
 };
