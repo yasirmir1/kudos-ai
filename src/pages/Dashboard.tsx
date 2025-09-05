@@ -283,24 +283,38 @@ const Dashboard = () => {
   };
   const renderOverview = () => <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
       {/* Ready to learn section */}
-      <div className="bg-gradient-to-r from-blue-500 to-purple-600 rounded-3xl shadow-lg p-12 mb-8">
+      <div className="bg-indigo-600 rounded-3xl shadow-2xl p-12 mb-8">
         <div className="text-center text-white">
-          <h1 className="text-5xl font-bold mb-6 tracking-tight">Ready to learn?</h1>
-          <p className="text-xl text-white/80 mb-10">
+          <h1 className="text-5xl font-bold mb-4 tracking-tight">Ready to learn?</h1>
+          <p className="text-xl text-indigo-100 mb-10">
             Your adaptive learning system has prepared personalized 11+ questions.
           </p>
           <div className="flex flex-col sm:flex-row justify-center items-center space-y-4 sm:space-y-0 sm:space-x-6">
-            <Button 
-              onClick={startLearning} 
-              className="bg-white text-blue-600 font-semibold py-4 px-8 rounded-full shadow-lg hover:bg-gray-50 transition-all duration-300 w-full sm:w-auto"
+            <button 
+              onClick={startLearning}
+              className="bg-white text-indigo-600 font-semibold py-4 px-8 rounded-full flex items-center justify-center shadow-lg hover:bg-gray-100 focus:outline-none focus:ring-4 focus:ring-indigo-300 transition-all duration-300 ease-in-out transform hover:-translate-y-1 w-full sm:w-auto"
             >
-              <Play className="mr-3 h-5 w-5" />
+              <svg 
+                className="w-6 h-6 mr-3" 
+                fill="currentColor" 
+                viewBox="0 0 24 24"
+              >
+                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 14.5v-9l6 4.5-6 4.5z"/>
+              </svg>
               Start Practice
-            </Button>
-            <Button className="bg-transparent text-white font-semibold py-4 px-8 rounded-full border-2 border-white/30 hover:bg-white/10 hover:border-white/50 transition-all duration-300 w-full sm:w-auto">
-              <FileText className="mr-3 h-5 w-5" />
+            </button>
+            <button 
+              className="bg-transparent text-white font-semibold py-4 px-8 rounded-full flex items-center justify-center border-2 border-blue-300 hover:bg-blue-500 hover:border-blue-500 focus:outline-none focus:ring-4 focus:ring-blue-300 transition-all duration-300 ease-in-out transform hover:-translate-y-1 w-full sm:w-auto"
+            >
+              <svg 
+                className="w-6 h-6 mr-3" 
+                fill="currentColor" 
+                viewBox="0 0 24 24"
+              >
+                <path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/>
+              </svg>
               Generate Worksheet
-            </Button>
+            </button>
           </div>
         </div>
       </div>
