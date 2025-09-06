@@ -1,22 +1,6 @@
 import { useState } from 'react';
 import { BulkQuestionGenerator } from '@/components/BulkQuestionGenerator';
-import {
-  Dashboard,
-  EnhancedPracticeSession,
-  ProgressView,
-  TopicsView,
-  LearnView,
-  StudentAnalytics,
-  QuestionManager,
-  AnalyticsDashboard,
-  Navigation,
-  AchievementCenter,
-  
-  HelpCenter,
-  PracticeReport,
-  MockTest,
-  BulkCurriculumGenerator
-} from '@/components/bootcamp';
+import { Dashboard, EnhancedPracticeSession, ProgressView, TopicsView, LearnView, StudentAnalytics, QuestionManager, AnalyticsDashboard, Navigation, AchievementCenter, HelpCenter, PracticeReport, MockTest, BulkCurriculumGenerator } from '@/components/bootcamp';
 import { useBootcampData } from '@/hooks/useBootcampData';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
@@ -52,7 +36,6 @@ const Bootcamp = () => {
       alert(`Error: ${result.message}`);
     }
   };
-
   const handleStartLearning = (week: number) => {
     setSelectedWeek(week);
     setCurrentView('learn');
@@ -67,12 +50,10 @@ const Bootcamp = () => {
         </div>
       </div>;
   }
-  return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50">
+  return <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50">
       <Navigation currentView={currentView} setCurrentView={setCurrentView} user={user} />
       <main className="container mx-auto px-4 py-6">
-        {error && (
-          <div className="max-w-2xl mx-auto mb-6">
+        {error && <div className="max-w-2xl mx-auto mb-6">
             <div className="bg-white rounded-3xl shadow-xl overflow-hidden">
               <div className="p-6">
                 <Alert className="border-red-200 bg-red-50">
@@ -83,13 +64,13 @@ const Bootcamp = () => {
                 </Alert>
               </div>
             </div>
-          </div>
-        )}
+          </div>}
         
         <div className="max-w-6xl mx-auto">
-          {currentView === 'dashboard' && (
-            <div className="bg-white rounded-3xl shadow-xl overflow-hidden">
-              <div className="relative px-8 py-8" style={{ backgroundColor: '#5947e8' }}>
+          {currentView === 'dashboard' && <div className="bg-white rounded-3xl shadow-xl overflow-hidden">
+              <div className="relative px-8 py-8" style={{
+            backgroundColor: '#5947e8'
+          }}>
                 
                 <div className="relative z-10">
                   <div className="flex items-center gap-6 mb-3">
@@ -100,7 +81,7 @@ const Bootcamp = () => {
                     </div>
                     <div className="pb-4">
                       <h1 className="text-4xl font-bold text-white mb-3">Welcome back, {user.name}!</h1>
-                      <p className="text-indigo-100 text-lg">Continue your learning journey</p>
+                      
                     </div>
                   </div>
                   
@@ -130,55 +111,39 @@ const Bootcamp = () => {
               <div className="p-8">
                 <Dashboard user={user} setCurrentView={setCurrentView} onStartLearning={handleStartLearning} />
               </div>
-            </div>
-          )}
+            </div>}
           
-          {currentView === 'practice' && (
-            <div className="bg-white rounded-3xl shadow-xl overflow-hidden">
+          {currentView === 'practice' && <div className="bg-white rounded-3xl shadow-xl overflow-hidden">
               <EnhancedPracticeSession />
-            </div>
-          )}
+            </div>}
           
-          {currentView === 'mocktest' && (
-            <div className="bg-white rounded-3xl shadow-xl overflow-hidden">
+          {currentView === 'mocktest' && <div className="bg-white rounded-3xl shadow-xl overflow-hidden">
               <MockTest />
-            </div>
-          )}
+            </div>}
           
-          {currentView === 'learn' && (
-            <div className="bg-white rounded-3xl shadow-xl overflow-hidden">
+          {currentView === 'learn' && <div className="bg-white rounded-3xl shadow-xl overflow-hidden">
               <LearnView selectedWeek={selectedWeek} onWeekChange={setSelectedWeek} />
-            </div>
-          )}
+            </div>}
           
-          {currentView === 'progress' && (
-            <div className="bg-white rounded-3xl shadow-xl overflow-hidden">
+          {currentView === 'progress' && <div className="bg-white rounded-3xl shadow-xl overflow-hidden">
               <ProgressView />
-            </div>
-          )}
+            </div>}
           
-          {currentView === 'topics' && (
-            <div className="bg-white rounded-3xl shadow-xl overflow-hidden">
+          {currentView === 'topics' && <div className="bg-white rounded-3xl shadow-xl overflow-hidden">
               <TopicsView setCurrentView={setCurrentView} />
-            </div>
-          )}
+            </div>}
           
-          {currentView === 'achievements' && (
-            <div className="bg-white rounded-3xl shadow-xl overflow-hidden">
+          {currentView === 'achievements' && <div className="bg-white rounded-3xl shadow-xl overflow-hidden">
               <AchievementCenter />
-            </div>
-          )}
+            </div>}
           
-          {currentView === 'report' && (
-            <div className="bg-white rounded-3xl shadow-xl overflow-hidden">
+          {currentView === 'report' && <div className="bg-white rounded-3xl shadow-xl overflow-hidden">
               <PracticeReport />
-            </div>
-          )}
+            </div>}
           
           {currentView === 'settings' && (window.location.href = '/settings')}
         </div>
       </main>
-    </div>
-  );
+    </div>;
 };
 export default Bootcamp;
