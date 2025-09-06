@@ -296,6 +296,16 @@ export const Dashboard: React.FC<DashboardProps> = ({
         ))}
       </div>
 
+      {/* Learning Journey */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <LearningJourneyCard 
+          currentWeek={1} 
+          hasStarted={false} 
+          onStartLearning={onStartLearning} 
+        />
+        <UpcomingWeeks />
+      </div>
+
       {/* Performance Cards */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <WeeklyTestPerformanceCard 
@@ -314,16 +324,6 @@ export const Dashboard: React.FC<DashboardProps> = ({
             setReviewMistakesOpen(true);
           }}
         />
-      </div>
-
-      {/* Learning Journey */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <LearningJourneyCard 
-          currentWeek={1} 
-          hasStarted={false} 
-          onStartLearning={onStartLearning} 
-        />
-        <UpcomingWeeks />
       </div>
 
       {/* Review Mistakes Modal */}
