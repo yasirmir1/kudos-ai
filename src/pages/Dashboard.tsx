@@ -404,10 +404,12 @@ const Dashboard = () => {
       <SessionsModal open={sessionsModalOpen} onOpenChange={setSessionsModalOpen} />
       <WorksheetGeneratorModal />
     </div>;
-  return <div>
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-primary/5 via-background to-secondary/5">
       <DashboardNavigation currentView={currentView} setCurrentView={setCurrentView} />
       
       {renderCurrentView()}
-    </div>;
+    </div>
+  );
 };
 export default Dashboard;
