@@ -244,14 +244,14 @@ export const Dashboard: React.FC<DashboardProps> = ({
   };
   return <div className="space-y-6">
       {/* Welcome Section */}
-      <div className="bg-white border border-gray-200 rounded-lg p-6">
+      <div className="bg-card border border-border rounded-lg p-6 shadow-card">
         <div className="flex items-center gap-4 mb-3">
-          <div className="w-12 h-12 bg-blue-50 rounded-2xl flex items-center justify-center">
-            <Brain className="w-7 h-7 text-blue-600" />
+          <div className="w-12 h-12 bg-primary/10 rounded-2xl flex items-center justify-center">
+            <Brain className="w-7 h-7 text-primary" />
           </div>
           <div>
-            <h1 className="text-2xl font-bold text-gray-900">Welcome back, {user.name}! 👋</h1>
-            <p className="text-gray-600 text-sm">Continue your learning journey</p>
+            <h1 className="text-2xl font-bold text-foreground">Welcome back, {user.name}! 👋</h1>
+            <p className="text-muted-foreground text-sm">Continue your learning journey</p>
           </div>
         </div>
         
@@ -275,7 +275,7 @@ export const Dashboard: React.FC<DashboardProps> = ({
       {/* Quick Stats */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         {quickStats.map((stat, index) => (
-          <div key={stat.label} className="bg-background border border-border rounded-lg p-6 flex items-center justify-between shadow-card">
+          <div key={stat.label} className="bg-card border border-border rounded-lg p-6 flex items-center justify-between shadow-card">
             <div>
               <p className="text-sm font-medium text-muted-foreground">{stat.label}</p>
               <p className="text-3xl font-bold text-foreground mt-2">{stat.value}</p>
