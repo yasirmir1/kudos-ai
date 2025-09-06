@@ -90,9 +90,6 @@ const Bootcamp = () => {
           {currentView === 'dashboard' && (
             <div className="bg-white rounded-3xl shadow-xl overflow-hidden">
               <div className="relative bg-gradient-to-r from-indigo-500 to-purple-600 px-8 py-8">
-                {/* Decorative circles */}
-                <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full -mr-16 -mt-16"></div>
-                <div className="absolute bottom-0 left-0 w-24 h-24 bg-white/10 rounded-full -ml-12 -mb-12"></div>
                 
                 <div className="relative z-10">
                   <div className="flex items-center gap-4 mb-3">
