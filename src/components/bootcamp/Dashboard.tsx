@@ -275,22 +275,6 @@ export const Dashboard: React.FC<DashboardProps> = ({
             }}>Continue your learning journey</p>
           </div>
         </div>
-        
-        {/* Quick Stats Badges */}
-        <div className="flex flex-wrap gap-2">
-          <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-muted text-muted-foreground rounded-full text-sm font-medium">
-            <Shield className="w-4 h-4" />
-            {user.level}
-          </span>
-          <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-muted text-muted-foreground rounded-full text-sm font-medium">
-            <Award className="w-4 h-4" />
-            {user.streakDays} day streak
-          </span>
-          <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-muted text-muted-foreground rounded-full text-sm font-medium">
-            <Target className="w-4 h-4" />
-            {user.accuracy}% accuracy
-          </span>
-        </div>
       </div>
 
       {/* Quick Stats */}
