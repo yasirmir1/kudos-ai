@@ -59,26 +59,6 @@ export const MockTestPerformanceCard: React.FC<MockTestPerformanceCardProps> = (
     }}>
       <h2 className="text-lg font-medium text-foreground mb-6">Mock Test Performance</h2>
       
-      {/* Action Buttons */}
-      {onStartMockTest && (
-        <div className="space-y-3 mb-6">
-          <button
-            onClick={onStartMockTest} 
-            className="w-full bg-primary text-primary-foreground font-medium py-3 px-6 rounded-lg flex items-center justify-center text-lg hover:bg-primary/90 transition-colors"
-          >
-            11+ Mock Test
-            <span className="ml-auto text-sm bg-white/20 px-2 py-1 rounded text-xs">60 min</span>
-          </button>
-          <button 
-            onClick={onReviewMistakes}
-            className="w-full bg-muted text-muted-foreground rounded-lg py-3 px-6 flex items-center justify-center hover:bg-muted/80 transition-colors"
-          >
-            Review Mistakes
-            <RefreshCw className="ml-2 h-5 w-5" />
-          </button>
-        </div>
-      )}
-
       {/* Stats Grid */}
       <div className="grid grid-cols-2 gap-6 mb-6">
         <div className="flex items-center justify-between">
@@ -121,6 +101,26 @@ export const MockTestPerformanceCard: React.FC<MockTestPerformanceCardProps> = (
           </div>
         </div>
       </div>
+
+      {/* Action Buttons */}
+      {onStartMockTest && (
+        <div className="space-y-3">
+          <button
+            onClick={onStartMockTest} 
+            className="w-full bg-primary text-primary-foreground font-medium py-3 px-6 rounded-lg flex items-center justify-center text-lg hover:bg-primary/90 transition-colors"
+          >
+            11+ Mock Test
+            <span className="ml-auto text-sm bg-white/20 px-2 py-1 rounded text-xs">60 min</span>
+          </button>
+          <button 
+            onClick={onReviewMistakes}
+            className="w-full bg-muted text-muted-foreground rounded-lg py-3 px-6 flex items-center justify-center hover:bg-muted/80 transition-colors"
+          >
+            Review Mistakes
+            <RefreshCw className="ml-2 h-5 w-5" />
+          </button>
+        </div>
+      )}
     </div>
   );
 };
