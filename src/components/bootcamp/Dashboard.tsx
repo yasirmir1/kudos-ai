@@ -256,7 +256,7 @@ export const Dashboard: React.FC<DashboardProps> = ({
               key={stat.label} 
               onClick={onClick}
               className={`${isClickable 
-                ? 'text-white cursor-pointer transition-all duration-300 font-semibold shadow-lg hover:shadow-xl hover:scale-105 transform rounded-lg py-4 px-8 flex items-center justify-between'
+                ? 'text-white cursor-pointer transition-all duration-300 font-semibold shadow-lg hover:shadow-xl hover:scale-105 transform rounded-lg py-4 px-8 flex items-center justify-center text-lg'
                 : 'bg-card border border-border text-card-foreground shadow-card rounded-lg p-6 flex items-center justify-between'
               }`}
               style={isClickable ? {
@@ -265,12 +265,17 @@ export const Dashboard: React.FC<DashboardProps> = ({
               } : {}}
             >
               {isClickable && (
-                <ArrowRight className="mr-2 h-5 w-5 text-white" />
+                <>
+                  <ArrowRight className="mr-2 h-5 w-5 text-white" />
+                  <span className="text-lg font-semibold text-white">{stat.label}</span>
+                </>
               )}
-              <div className="flex-1">
-                <p className={`${isClickable ? 'text-lg font-semibold text-white' : 'text-sm font-medium text-muted-foreground'}`}>{stat.label}</p>
-                {!isClickable && <p className="text-3xl font-bold text-foreground mt-2">{stat.value}</p>}
-              </div>
+              {!isClickable && (
+                <div className="flex-1">
+                  <p className="text-sm font-medium text-muted-foreground">{stat.label}</p>
+                  <p className="text-3xl font-bold text-foreground mt-2">{stat.value}</p>
+                </div>
+              )}
               {!isClickable && (
                 <div className={`rounded-full p-3 ${stat.color === 'primary' ? 'bg-blue-100' : 'bg-green-100'} flex items-center gap-2`}>
                   <stat.icon className={`h-8 w-8 ${stat.color === 'primary' ? 'text-blue-600' : 'text-green-600'}`} />
