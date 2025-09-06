@@ -56,31 +56,26 @@ export const DashboardNavigation: React.FC<DashboardNavigationProps> = ({
     streakDays: 7,
     totalPoints: 2450
   };
-  return <nav className="bg-card border-b border-border shadow-sm sticky top-0 z-10">
-      <div className="container mx-auto px-4">
-        <div className="flex items-center justify-between h-16">
-          {/* Exit Button */}
-          
-
-          {/* Main Navigation */}
-          <div className="hidden lg:flex space-x-1">
-            {navItems.map(item => <button key={item.id} onClick={() => setCurrentView(item.id)} className={`flex items-center justify-start space-x-1 px-3 py-2 rounded-md text-sm font-medium transition-colors ${currentView === item.id ? 'bg-primary/10 text-primary' : 'text-muted-foreground hover:text-foreground hover:bg-muted'}`}>
-                <item.icon className="h-4 w-4" />
-                <span>{item.label}</span>
-              </button>)}
-          </div>
-          
-          {/* Mobile Navigation */}
-          <div className="lg:hidden flex space-x-1">
-            {navItems.slice(0, 4).map(item => <button key={item.id} onClick={() => setCurrentView(item.id)} className={`flex items-center justify-start space-x-1 px-2 py-2 rounded-md text-xs font-medium transition-colors ${currentView === item.id ? 'bg-primary/10 text-primary' : 'text-muted-foreground hover:text-foreground hover:bg-muted'}`}>
-                <item.icon className="h-4 w-4" />
-                <span className="hidden sm:inline">{item.label}</span>
-              </button>)}
-          </div>
-
-          {/* Spacer for layout balance */}
-          <div className="w-16"></div>
+  return (
+    <main className="container mx-auto px-6 py-4">
+      <nav className="flex items-center justify-between border-b border-border pb-3">
+        <div className="flex space-x-1">
+          {navItems.map(item => (
+            <button
+              key={item.id}
+              onClick={() => setCurrentView(item.id)}
+              className={`px-3 py-1.5 text-sm font-medium rounded-md flex items-center transition-colors ${
+                currentView === item.id
+                  ? 'text-primary bg-primary/10 border border-primary/20'
+                  : 'text-muted-foreground hover:bg-muted hover:text-foreground'
+              }`}
+            >
+              <item.icon className="h-4 w-4 mr-1.5" />
+              {item.label}
+            </button>
+          ))}
         </div>
-      </div>
-    </nav>;
+      </nav>
+    </main>
+  );
 };
