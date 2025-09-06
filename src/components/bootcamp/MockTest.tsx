@@ -422,71 +422,159 @@ export const MockTest: React.FC = () => {
 
   if (testState.status === 'instructions') {
     return (
-      <div className="max-w-4xl mx-auto p-6">
-        <Card className="p-8">
-          <div className="text-center mb-8">
-            <Flag className="h-16 w-16 text-primary mx-auto mb-4" />
-            <h1 className="text-3xl font-bold text-foreground mb-4">11+ Mock Test</h1>
-            <p className="text-muted-foreground text-lg">
-              Complete practice examination under timed conditions
-            </p>
-          </div>
-
-          <div className="grid md:grid-cols-2 gap-6 mb-8">
-            <div className="bg-muted rounded-lg p-6">
-              <h3 className="font-semibold text-foreground mb-4">Test Information</h3>
-              <div className="space-y-3 text-sm">
-                <div className="flex justify-between">
-                  <span>Questions:</span>
-                  <span className="font-medium">50</span>
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 flex items-center justify-center p-4">
+        <div className="max-w-2xl w-full">
+          {/* Main Card */}
+          <div className="bg-white rounded-3xl shadow-xl overflow-hidden">
+            {/* Header Section */}
+            <div className="relative bg-gradient-to-r from-indigo-500 to-purple-600 px-8 py-8">
+              {/* Decorative circles */}
+              <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full -mr-16 -mt-16"></div>
+              <div className="absolute bottom-0 left-0 w-24 h-24 bg-white/10 rounded-full -ml-12 -mb-12"></div>
+              
+              <div className="relative z-10">
+                <div className="flex items-center gap-4 mb-3">
+                  <div className="w-12 h-12 bg-white/20 backdrop-blur rounded-2xl flex items-center justify-center">
+                    <svg className="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+                    </svg>
+                  </div>
+                  <div>
+                    <h1 className="text-2xl font-bold text-white">11+ Mock Test</h1>
+                    <p className="text-indigo-100 text-sm">Practice under real exam conditions</p>
+                  </div>
                 </div>
-                <div className="flex justify-between">
-                  <span>Time Limit:</span>
-                  <span className="font-medium">60 minutes</span>
-                </div>
-                <div className="flex justify-between">
-                  <span>Topics:</span>
-                  <span className="font-medium">All areas</span>
-                </div>
-                <div className="flex justify-between">
-                  <span>Question Types:</span>
-                  <span className="font-medium">Multiple choice</span>
+                
+                {/* Quick Stats Badges */}
+                <div className="flex flex-wrap gap-2">
+                  <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-white/20 backdrop-blur text-white rounded-full text-sm font-medium">
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                    60 min
+                  </span>
+                  <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-white/20 backdrop-blur text-white rounded-full text-sm font-medium">
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                    50 questions
+                  </span>
+                  <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-white/20 backdrop-blur text-white rounded-full text-sm font-medium">
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+                    </svg>
+                    All topics
+                  </span>
                 </div>
               </div>
             </div>
 
-            <div className="bg-muted rounded-lg p-6">
-              <h3 className="font-semibold text-foreground mb-4">Instructions</h3>
-              <ul className="space-y-2 text-sm text-muted-foreground">
-                <li>• Read each question carefully</li>
-                <li>• You can navigate between questions</li>
-                <li>• Mark questions for review if needed</li>
-                <li>• Submit before time runs out</li>
-                <li>• No calculators allowed</li>
-              </ul>
+            {/* Body Content */}
+            <div className="p-8">
+              {/* Key Information Grid */}
+              <div className="grid grid-cols-3 gap-4 mb-6">
+                <div className="text-center p-4 bg-blue-50 rounded-2xl">
+                  <div className="text-3xl font-bold text-blue-600 mb-1">50</div>
+                  <div className="text-xs text-gray-600 font-medium">Questions</div>
+                </div>
+                <div className="text-center p-4 bg-purple-50 rounded-2xl">
+                  <div className="text-3xl font-bold text-purple-600 mb-1">60</div>
+                  <div className="text-xs text-gray-600 font-medium">Minutes</div>
+                </div>
+                <div className="text-center p-4 bg-green-50 rounded-2xl">
+                  <div className="text-3xl font-bold text-green-600 mb-1">70%</div>
+                  <div className="text-xs text-gray-600 font-medium">Pass Mark</div>
+                </div>
+              </div>
+
+              {/* What to Expect Section */}
+              <div className="mb-6">
+                <h2 className="text-sm font-bold text-gray-900 mb-3 flex items-center gap-2">
+                  <span className="w-6 h-6 bg-indigo-100 rounded-lg flex items-center justify-center">
+                    <svg className="w-4 h-4 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                  </span>
+                  What to expect
+                </h2>
+                <div className="space-y-2">
+                  <div className="flex items-center gap-3">
+                    <span className="w-2 h-2 bg-indigo-400 rounded-full"></span>
+                    <span className="text-sm text-gray-600">Multiple choice questions from all 11+ topics</span>
+                  </div>
+                  <div className="flex items-center gap-3">
+                    <span className="w-2 h-2 bg-indigo-400 rounded-full"></span>
+                    <span className="text-sm text-gray-600">Timer starts immediately and cannot be paused</span>
+                  </div>
+                  <div className="flex items-center gap-3">
+                    <span className="w-2 h-2 bg-indigo-400 rounded-full"></span>
+                    <span className="text-sm text-gray-600">Review and change answers before submitting</span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Tips Row */}
+              <div className="flex gap-2 mb-6">
+                <div className="flex-1 flex items-center gap-2 p-3 bg-amber-50 border border-amber-200 rounded-xl">
+                  <svg className="w-5 h-5 text-amber-600 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                    <path d="M10 2a6 6 0 00-6 6v3.586l-.707.707A1 1 0 004 14h12a1 1 0 00.707-1.707L16 11.586V8a6 6 0 00-6-6zM10 18a3 3 0 01-3-3h6a3 3 0 01-3 3z"/>
+                  </svg>
+                  <span className="text-xs text-amber-800 font-medium">No calculator allowed</span>
+                </div>
+                <div className="flex-1 flex items-center gap-2 p-3 bg-blue-50 border border-blue-200 rounded-xl">
+                  <svg className="w-5 h-5 text-blue-600 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                    <path fillRule="evenodd" d="M6.267 3.455a3.066 3.066 0 001.745-.723 3.066 3.066 0 013.976 0 3.066 3.066 0 001.745.723 3.066 3.066 0 012.812 2.812c.051.643.304 1.254.723 1.745a3.066 3.066 0 010 3.976 3.066 3.066 0 00-.723 1.745 3.066 3.066 0 01-2.812 2.812 3.066 3.066 0 00-1.745.723 3.066 3.066 0 01-3.976 0 3.066 3.066 0 00-1.745-.723 3.066 3.066 0 01-2.812-2.812 3.066 3.066 0 00-.723-1.745 3.066 3.066 0 010-3.976 3.066 3.066 0 00.723-1.745 3.066 3.066 0 012.812-2.812zm7.44 5.252a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd"/>
+                  </svg>
+                  <span className="text-xs text-blue-800 font-medium">Progress auto-saved</span>
+                </div>
+              </div>
+
+              {/* Action Buttons */}
+              <div className="flex gap-3">
+                <button className="flex-1 py-3 px-6 bg-gray-100 text-gray-700 rounded-xl font-semibold hover:bg-gray-200 transition-colors">
+                  Practice Mode
+                </button>
+                <button
+                  onClick={startTest}
+                  disabled={isLoading || dbLoading || !student}
+                  className={`flex-1 py-3 px-6 rounded-xl font-semibold transition-all flex items-center justify-center gap-2 ${
+                    isLoading || dbLoading || !student
+                      ? 'bg-gray-200 text-gray-400 cursor-not-allowed' 
+                      : 'bg-indigo-600 text-white hover:bg-indigo-700 hover:shadow-lg transform hover:scale-[1.02]'
+                  }`}
+                >
+                  {isLoading ? (
+                    <>
+                      <svg className="animate-spin h-4 w-4" fill="none" viewBox="0 0 24 24">
+                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                      </svg>
+                      Loading Questions...
+                    </>
+                  ) : dbLoading ? (
+                    'Preparing...'
+                  ) : !student ? (
+                    'Please log in to start'
+                  ) : (
+                    <>
+                      Start Exam Mode
+                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                      </svg>
+                    </>
+                  )}
+                </button>
+              </div>
             </div>
           </div>
 
-          <Alert className="mb-6">
-            <AlertCircle className="h-4 w-4" />
-            <AlertDescription>
-              Once started, the timer continues even if you exit. You can resume your test anytime before the 60 minutes expire. Progress is automatically saved.
-            </AlertDescription>
-          </Alert>
-
-          <div className="text-center">
-            <Button 
-              onClick={startTest} 
-              disabled={isLoading || dbLoading || !student}
-              className="px-8 py-3 text-lg"
-            >
-              {isLoading ? 'Loading Questions...' : 
-               dbLoading ? 'Preparing...' :
-               !student ? 'Please log in to start' :
-               'Start Mock Test'}
-            </Button>
+          {/* Bottom Helper Text */}
+          <div className="text-center mt-4">
+            <p className="text-sm text-gray-500">
+              Need help? Check our <button className="text-indigo-600 font-medium hover:underline">exam tips guide</button>
+            </p>
           </div>
-        </Card>
+        </div>
       </div>
     );
   }
