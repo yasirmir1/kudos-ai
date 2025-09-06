@@ -199,12 +199,12 @@ export const Dashboard: React.FC<DashboardProps> = ({
     label: 'Practice Questions',
     value: 'Start Now',
     icon: FileText,
-    color: 'secondary'
+    color: 'cyan'
   }, {
     label: 'Mock Test',
     value: 'Take Test',
     icon: ClipboardCheck,
-    color: 'warning'
+    color: 'orange'
   }, {
     label: 'Questions Today',
     value: user.questionsToday.toString(),
@@ -269,9 +269,9 @@ export const Dashboard: React.FC<DashboardProps> = ({
                 <p className="text-sm font-medium text-muted-foreground">{stat.label}</p>
                 <p className="text-3xl font-bold text-foreground mt-2">{stat.value}</p>
               </div>
-              <div className={`rounded-full p-3 ${stat.color === 'primary' ? 'bg-blue-100' : stat.color === 'success' ? 'bg-green-100' : stat.color === 'secondary' ? 'bg-purple-100' : stat.color === 'warning' ? 'bg-yellow-100' : 'bg-blue-100'} flex items-center gap-2`}>
-                <stat.icon className={`h-8 w-8 ${stat.color === 'primary' ? 'text-blue-600' : stat.color === 'success' ? 'text-green-600' : stat.color === 'secondary' ? 'text-purple-600' : stat.color === 'warning' ? 'text-yellow-600' : 'text-blue-600'}`} />
-                {isClickable && <ArrowRight className={`h-5 w-5 ${stat.color === 'secondary' ? 'text-purple-600' : 'text-yellow-600'}`} />}
+              <div className={`rounded-full p-3 ${stat.color === 'primary' ? 'bg-blue-100' : stat.color === 'success' ? 'bg-green-100' : stat.color === 'cyan' ? 'bg-cyan-100' : stat.color === 'orange' ? 'bg-orange-100' : 'bg-blue-100'} flex items-center gap-2`}>
+                <stat.icon className={`h-8 w-8 ${stat.color === 'primary' ? 'text-blue-600' : stat.color === 'success' ? 'text-green-600' : stat.color === 'cyan' ? 'text-cyan-600' : stat.color === 'orange' ? 'text-orange-600' : 'text-blue-600'}`} />
+                {isClickable && <ArrowRight className={`h-5 w-5 ${stat.color === 'cyan' ? 'text-cyan-600' : 'text-orange-600'}`} />}
               </div>
             </Component>
           );
