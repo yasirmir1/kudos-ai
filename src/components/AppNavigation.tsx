@@ -163,7 +163,7 @@ export const AppNavigation: React.FC<AppNavigationProps> = ({
                     "flex items-center space-x-2 px-4 py-1.5 rounded-full text-sm font-medium transition-colors",
                     !isBootcampRoute && !isProfileRoute
                       ? "bg-primary text-primary-foreground shadow-sm" 
-                      : "text-muted-foreground hover:text-foreground"
+                      : "text-muted-foreground hover:text-white"
                   )}
                 >
                   <Calendar className="h-4 w-4" />
@@ -177,7 +177,7 @@ export const AppNavigation: React.FC<AppNavigationProps> = ({
                     "flex items-center space-x-2 px-4 py-1.5 rounded-full text-sm font-medium transition-colors",
                     isBootcampRoute && !isProfileRoute
                       ? "bg-primary text-primary-foreground shadow-sm" 
-                      : "text-muted-foreground hover:text-foreground"
+                      : "text-muted-foreground hover:text-white"
                   )}
                 >
                   <Target className="h-4 w-4" />

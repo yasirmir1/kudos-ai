@@ -26,7 +26,7 @@ export const Header: React.FC<HeaderProps> = ({
               className={`px-4 py-1 text-sm flex items-center rounded-full transition-colors ${
                 currentMode === 'daily' 
                   ? 'text-muted-foreground' 
-                  : 'text-muted-foreground hover:text-foreground'
+                  : 'text-muted-foreground hover:text-white'
               }`}
             >
               <Sun className="h-4 w-4 mr-2" />
@@ -39,7 +39,7 @@ export const Header: React.FC<HeaderProps> = ({
               className={`px-4 py-1 text-sm flex items-center rounded-full transition-colors ${
                 currentMode === 'bootcamp' 
                   ? 'bg-primary text-primary-foreground' 
-                  : 'text-muted-foreground hover:text-foreground'
+                  : 'text-muted-foreground hover:text-white'
               }`}
             >
               <School className="h-4 w-4 mr-2" />
