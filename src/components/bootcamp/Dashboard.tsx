@@ -244,33 +244,31 @@ export const Dashboard: React.FC<DashboardProps> = ({
   };
   return <div className="space-y-6">
       {/* Welcome Section */}
-      <div className="relative bg-gradient-to-r from-indigo-500 to-purple-600 px-12 py-10 rounded-2xl overflow-hidden">
-        <div className="relative z-10">
-          <div className="flex items-center gap-4 mb-3">
-            <div className="w-12 h-12 bg-white/20 backdrop-blur rounded-2xl flex items-center justify-center">
-              <Brain className="w-7 h-7 text-white" />
-            </div>
-            <div>
-              <h1 className="text-2xl font-bold text-white">Welcome back, {user.name}! 👋</h1>
-              <p className="text-indigo-100 text-sm">Continue your learning journey</p>
-            </div>
+      <div className="bg-background border border-border rounded-lg p-6 shadow-card">
+        <div className="flex items-center gap-4 mb-3">
+          <div className="w-12 h-12 bg-primary/10 rounded-2xl flex items-center justify-center">
+            <Brain className="w-7 h-7 text-primary" />
           </div>
-          
-          {/* Quick Stats Badges */}
-          <div className="flex flex-wrap gap-2">
-            <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-white/20 backdrop-blur text-white rounded-full text-sm font-medium">
-              <Shield className="w-4 h-4" />
-              {user.level}
-            </span>
-            <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-white/20 backdrop-blur text-white rounded-full text-sm font-medium">
-              <Award className="w-4 h-4" />
-              {user.streakDays} day streak
-            </span>
-            <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-white/20 backdrop-blur text-white rounded-full text-sm font-medium">
-              <Target className="w-4 h-4" />
-              {user.accuracy}% accuracy
-            </span>
+          <div>
+            <h1 className="text-2xl font-bold text-foreground">Welcome back, {user.name}! 👋</h1>
+            <p className="text-muted-foreground text-sm">Continue your learning journey</p>
           </div>
+        </div>
+        
+        {/* Quick Stats Badges */}
+        <div className="flex flex-wrap gap-2">
+          <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-muted text-muted-foreground rounded-full text-sm font-medium">
+            <Shield className="w-4 h-4" />
+            {user.level}
+          </span>
+          <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-muted text-muted-foreground rounded-full text-sm font-medium">
+            <Award className="w-4 h-4" />
+            {user.streakDays} day streak
+          </span>
+          <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-muted text-muted-foreground rounded-full text-sm font-medium">
+            <Target className="w-4 h-4" />
+            {user.accuracy}% accuracy
+          </span>
         </div>
       </div>
 
