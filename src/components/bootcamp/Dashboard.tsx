@@ -196,6 +196,11 @@ export const Dashboard: React.FC<DashboardProps> = ({
     icon: Target,
     color: 'success'
   }, {
+    label: 'Questions Today',
+    value: user.questionsToday.toString(),
+    icon: Brain,
+    color: 'primary'
+  }, {
     label: 'Practice Questions',
     value: 'Start Now',
     icon: FileText,
@@ -205,11 +210,6 @@ export const Dashboard: React.FC<DashboardProps> = ({
     value: 'Take Test',
     icon: ClipboardCheck,
     color: 'orange'
-  }, {
-    label: 'Questions Today',
-    value: user.questionsToday.toString(),
-    icon: Brain,
-    color: 'primary'
   }];
   const getColorClasses = (color: string) => {
     switch (color) {
