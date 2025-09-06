@@ -113,7 +113,17 @@ export const WeeklyTestPerformanceCard: React.FC<WeeklyTestPerformanceCardProps>
           </button>
           <button 
             onClick={onReviewMistakes}
-            className="w-full bg-muted text-muted-foreground rounded-lg py-3 px-6 flex items-center justify-center hover:bg-muted/80 transition-colors"
+            className="w-full rounded-lg py-3 px-6 flex items-center justify-center transition-colors"
+            style={{
+              backgroundColor: 'hsl(var(--purple-light))',
+              color: 'hsl(var(--purple-light-foreground))'
+            }}
+            onMouseOver={(e) => {
+              e.currentTarget.style.backgroundColor = 'hsl(var(--purple-light) / 0.8)';
+            }}
+            onMouseOut={(e) => {
+              e.currentTarget.style.backgroundColor = 'hsl(var(--purple-light))';
+            }}
           >
             Review Mistakes
             <RefreshCw className="ml-2 h-5 w-5" />

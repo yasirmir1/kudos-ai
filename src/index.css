@@ -52,6 +52,10 @@ All colors MUST be HSL.
     --warning: 38 92% 50%;
     --warning-foreground: 0 0% 98%;
     
+    /* Light purple for secondary actions */
+    --purple-light: 247 77% 85%;
+    --purple-light-foreground: 247 77% 35%;
+    
     /* Custom theme gradients with #4f46e6 */
     --gradient-primary: linear-gradient(135deg, hsl(247 77% 59%), hsl(247 77% 69%));
     --gradient-purple-light: linear-gradient(135deg, hsl(247 100% 97%), hsl(247 100% 94%));
@@ -111,6 +115,10 @@ All colors MUST be HSL.
     --border: 270 20% 18%;
     --input: 270 20% 18%;
     --ring: 247 85% 65%;
+
+    /* Light purple for secondary actions */
+    --purple-light: 247 85% 30%;
+    --purple-light-foreground: 247 85% 85%;
 
     /* Dark sidebar */
     --sidebar-background: 270 40% 10%;
