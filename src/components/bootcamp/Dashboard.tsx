@@ -271,7 +271,7 @@ export const Dashboard: React.FC<DashboardProps> = ({
             }}
           >
             <ArrowRight className="mr-2 h-4 w-4 text-white" />
-            <span className="text-base font-semibold text-white">Try a Mock Test</span>
+            <span className="text-base font-semibold text-white">11+ Mock Test</span>
           </button>
         </div>
       </div>
