@@ -89,7 +89,7 @@ const Bootcamp = () => {
         <div className="max-w-6xl mx-auto">
           {currentView === 'dashboard' && (
             <div className="bg-white rounded-3xl shadow-xl overflow-hidden">
-              <div className="relative bg-gradient-to-r from-indigo-500 to-purple-600 px-8 py-8">
+              <div className="relative bg-gradient-to-r from-purple-500 via-purple-600 to-indigo-600 px-8 py-8">
                 
                 <div className="relative z-10">
                   <div className="flex items-center gap-4 mb-3">
