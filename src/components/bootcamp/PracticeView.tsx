@@ -1,11 +1,16 @@
 import React, { useState } from 'react';
 import { PracticeHomepage } from './PracticeHomepage';
+import { PracticeCoverPage } from './PracticeCoverPage';
 import { EnhancedPracticeSession } from './EnhancedPracticeSession';
 
 export const PracticeView: React.FC = () => {
-  const [currentMode, setCurrentMode] = useState<'homepage' | 'session'>('homepage');
+  const [currentMode, setCurrentMode] = useState<'homepage' | 'cover' | 'session'>('homepage');
 
   const handleStartPractice = () => {
+    setCurrentMode('cover');
+  };
+
+  const handleStartSession = () => {
     setCurrentMode('session');
   };
 
@@ -30,6 +35,17 @@ export const PracticeView: React.FC = () => {
           </button>
         </div>
         <EnhancedPracticeSession />
+      </div>
+    );
+  }
+
+  if (currentMode === 'cover') {
+    return (
+      <div className="p-6">
+        <PracticeCoverPage 
+          onStartPractice={handleStartSession}
+          onBackToHomepage={handleBackToHomepage}
+        />
       </div>
     );
   }
