@@ -49,7 +49,7 @@ export const LearningJourneyCard: React.FC<LearningJourneyCardProps> = ({
   ];
 
   return (
-    <div className="w-full bg-background border border-border rounded-lg p-4 shadow-card" style={{ 
+    <div className="w-full bg-background border border-border rounded-lg p-6 shadow-card" style={{ 
       background: 'hsl(var(--card))', 
       borderColor: 'hsl(var(--border))', 
       color: 'hsl(var(--card-foreground))',
@@ -57,28 +57,30 @@ export const LearningJourneyCard: React.FC<LearningJourneyCardProps> = ({
       position: 'relative',
       zIndex: 1
     }}>
-      <div className="flex items-center justify-between">
-        <div className="flex-1">
-          <div className="flex items-center gap-4 mb-2">
-            <div className="flex items-center gap-2">
-              <span className="text-sm font-semibold text-primary">Week {currentWeek}</span>
-              <span className="text-xs font-medium bg-primary/10 text-primary px-2 py-1 rounded-full">Foundation</span>
-            </div>
-            <div className="flex items-center text-sm text-muted-foreground">
-              <span className="text-sm mr-1">🎯</span>
-              <span>Foundation</span>
-            </div>
-          </div>
-          <h4 className="text-xl font-bold text-foreground">Number & Place Value</h4>
-          <p className="text-sm text-muted-foreground">Multi-Topic Learning Module</p>
+      <div className="grid grid-cols-4 gap-6 items-center">
+        {/* Week Badge */}
+        <div className="flex flex-col items-center">
+          <div className="text-3xl font-bold text-primary mb-1">Week {currentWeek}</div>
+          <div className="text-xs font-medium bg-primary/10 text-primary px-3 py-1 rounded-full">Foundation</div>
         </div>
         
-        <div className="ml-6">
+        {/* Topic Information */}
+        <div className="col-span-2">
+          <div className="flex items-center gap-2 mb-2">
+            <span className="text-lg">🎯</span>
+            <span className="text-sm text-muted-foreground">Multi-Topic Learning Module</span>
+          </div>
+          <h3 className="text-2xl font-bold text-foreground mb-1">Number & Place Value</h3>
+          <p className="text-sm text-muted-foreground">Master essential number concepts and place value understanding</p>
+        </div>
+        
+        {/* Action Button */}
+        <div className="flex justify-end">
           <button 
-            className="bg-primary text-primary-foreground font-semibold py-3 px-6 rounded-lg hover:bg-primary/90 transition-colors flex items-center justify-center"
+            className="bg-primary text-primary-foreground font-semibold py-4 px-8 rounded-lg hover:bg-primary/90 transition-colors flex items-center justify-center text-lg"
             onClick={() => onStartLearning(currentWeek)}
           >
-            <ArrowRight className="mr-2 h-4 w-4" />
+            <ArrowRight className="mr-2 h-5 w-5" />
             Start Learning
           </button>
         </div>
