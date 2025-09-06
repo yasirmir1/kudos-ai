@@ -18,11 +18,6 @@ export const PracticeView: React.FC = () => {
     setCurrentMode('homepage');
   };
 
-  const handleReviewMistakes = () => {
-    // This would open a modal or navigate to mistakes review
-    console.log('Review mistakes clicked');
-  };
-
   if (currentMode === 'session') {
     return (
       <div className="p-6">
@@ -51,11 +46,10 @@ export const PracticeView: React.FC = () => {
   }
 
   return (
-    <div className="p-6">
-      <PracticeHomepage 
-        onStartPractice={handleStartPractice}
-        onReviewMistakes={handleReviewMistakes}
-      />
-    </div>
+      <div className="p-6">
+        <PracticeHomepage 
+          onStartPractice={handleStartPractice}
+        />
+      </div>
   );
 };

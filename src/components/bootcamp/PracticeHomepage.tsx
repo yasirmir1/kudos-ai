@@ -1,18 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import { CurrentPracticeCard } from './CurrentPracticeCard';
-import { PracticePerformanceCard } from './PracticePerformanceCard';
+import { PracticeOverviewCard } from './PracticeOverviewCard';
 import { useAuth } from '../../hooks/useAuth';
 import { BootcampAPI } from '../../lib/bootcamp-api';
 import { supabase } from '@/integrations/supabase/client';
 
 interface PracticeHomepageProps {
   onStartPractice: () => void;
-  onReviewMistakes?: () => void;
 }
 
 export const PracticeHomepage: React.FC<PracticeHomepageProps> = ({
-  onStartPractice,
-  onReviewMistakes
+  onStartPractice
 }) => {
   const { user } = useAuth();
   const [loading, setLoading] = useState(true);
@@ -22,12 +20,7 @@ export const PracticeHomepage: React.FC<PracticeHomepageProps> = ({
     progress: 0,
     timeElapsed: '',
     questionsCompleted: 0,
-    totalQuestions: 20,
-    sessionsCompleted: 0,
-    averageAccuracy: 0,
-    bestSession: 0,
-    totalQuestionsAnswered: 0,
-    recentSessions: []
+    totalQuestions: 20
   });
 
   useEffect(() => {
@@ -68,24 +61,6 @@ export const PracticeHomepage: React.FC<PracticeHomepageProps> = ({
         // Calculate statistics
         const responses = responseStats.data || [];
         const practiceResponses = responses.filter(r => r.session_id); // Filter for valid sessions
-        const sessionsCount = new Set(practiceResponses.map(r => r.session_id)).size;
-        const correctAnswers = practiceResponses.filter(r => r.is_correct).length;
-        const averageAccuracy = practiceResponses.length > 0 ? Math.round((correctAnswers / practiceResponses.length) * 100) : 0;
-        
-        // Calculate best session accuracy
-        const sessionStats = new Map();
-        practiceResponses.forEach(r => {
-          if (!sessionStats.has(r.session_id)) {
-            sessionStats.set(r.session_id, { correct: 0, total: 0 });
-          }
-          const stats = sessionStats.get(r.session_id);
-          stats.total++;
-          if (r.is_correct) stats.correct++;
-        });
-
-        const bestSessionAccuracy = Array.from(sessionStats.values())
-          .map(s => Math.round((s.correct / s.total) * 100))
-          .reduce((max, acc) => Math.max(max, acc), 0);
 
         // Check for current active session
         const hasCurrentSession = sessionResponse.data && sessionResponse.data.length > 0;
@@ -113,12 +88,7 @@ export const PracticeHomepage: React.FC<PracticeHomepageProps> = ({
           progress,
           timeElapsed,
           questionsCompleted,
-          totalQuestions,
-          sessionsCompleted: sessionsCount,
-          averageAccuracy,
-          bestSession: bestSessionAccuracy,
-          totalQuestionsAnswered: practiceResponses.length,
-          recentSessions: []
+          totalQuestions
         });
       }
     } catch (error) {
@@ -188,14 +158,8 @@ export const PracticeHomepage: React.FC<PracticeHomepageProps> = ({
           onStartNewSession={onStartPractice}
         />
         
-        <PracticePerformanceCard
-          sessionsCompleted={practiceData.sessionsCompleted}
-          averageAccuracy={practiceData.averageAccuracy}
-          bestSession={practiceData.bestSession}
-          totalQuestions={practiceData.totalQuestionsAnswered}
-          recentSessions={practiceData.recentSessions}
+        <PracticeOverviewCard
           onStartPractice={onStartPractice}
-          onReviewMistakes={onReviewMistakes}
         />
       </div>
     </div>

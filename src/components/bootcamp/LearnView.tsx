@@ -13,6 +13,7 @@ import { LearningExperience } from './LearningExperience';
 import { TopicLearningModal } from './TopicLearningModal';
 import { WeeklyLearningModal } from './WeeklyLearningModal';
 import { QuickPracticeModal } from './QuickPracticeModal';
+import { PracticePerformanceCard } from './PracticePerformanceCard';
 import { useBootcampData } from '@/hooks/useBootcampData';
 import { Target } from 'lucide-react';
 interface Module {
@@ -799,6 +800,34 @@ export const LearnView: React.FC<LearnViewProps> = ({ selectedWeek, onWeekChange
               </CardContent>
             </Card>
           )}
+
+          {/* Practice Performance Card */}
+          <PracticePerformanceCard
+            sessionsCompleted={8}
+            averageAccuracy={78}
+            bestSession={95}
+            totalQuestions={245}
+            recentSessions={[
+              {
+                sessionNumber: 8,
+                date: 'Today',
+                questionsCompleted: 20,
+                accuracy: 85,
+                timeSpent: '28m',
+                status: 'Good'
+              },
+              {
+                sessionNumber: 7,
+                date: 'Yesterday',
+                questionsCompleted: 18,
+                accuracy: 72,
+                timeSpent: '25m',
+                status: 'Needs Improvement'
+              }
+            ]}
+            onStartPractice={() => console.log('Start practice from Learn')}
+            onReviewMistakes={() => console.log('Review mistakes from Learn')}
+          />
 
           {modules.map((module) => {
             const moduleTopics = getTopicsForModule(module.id);
