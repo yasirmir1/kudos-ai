@@ -473,15 +473,15 @@ export const MockTest: React.FC = () => {
         }}>
           {/* Key Information Grid */}
           <div className="grid grid-cols-3 gap-6 mb-8">
-            <div className="text-center p-6 bg-blue-50 rounded-2xl">
+            <div className="text-center p-6 bg-white rounded-2xl">
               <div className="text-3xl font-bold text-blue-600 mb-1">50</div>
               <div className="text-xs text-gray-600 font-medium">Questions</div>
             </div>
-            <div className="text-center p-6 bg-purple-50 rounded-2xl">
+            <div className="text-center p-6 bg-white rounded-2xl">
               <div className="text-3xl font-bold text-purple-600 mb-1">60</div>
               <div className="text-xs text-gray-600 font-medium">Minutes</div>
             </div>
-            <div className="text-center p-6 bg-green-50 rounded-2xl">
+            <div className="text-center p-6 bg-white rounded-2xl">
               <div className="text-3xl font-bold text-green-600 mb-1">70%</div>
               <div className="text-xs text-gray-600 font-medium">Pass Mark</div>
             </div>
@@ -515,13 +515,13 @@ export const MockTest: React.FC = () => {
 
           {/* Tips Row */}
           <div className="flex gap-3 mb-8">
-            <div className="flex-1 flex items-center gap-3 p-4 bg-amber-50 border border-amber-200 rounded-xl">
+            <div className="flex-1 flex items-center gap-3 p-4 bg-white border border-amber-200 rounded-xl">
               <svg className="w-5 h-5 text-amber-600 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
                 <path d="M10 2a6 6 0 00-6 6v3.586l-.707.707A1 1 0 004 14h12a1 1 0 00.707-1.707L16 11.586V8a6 6 0 00-6-6zM10 18a3 3 0 01-3-3h6a3 3 0 01-3 3z"/>
               </svg>
               <span className="text-xs text-amber-800 font-medium">No calculator allowed</span>
             </div>
-            <div className="flex-1 flex items-center gap-3 p-4 bg-blue-50 border border-blue-200 rounded-xl">
+            <div className="flex-1 flex items-center gap-3 p-4 bg-white border border-blue-200 rounded-xl">
               <svg className="w-5 h-5 text-blue-600 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
                 <path fillRule="evenodd" d="M6.267 3.455a3.066 3.066 0 001.745-.723 3.066 3.066 0 013.976 0 3.066 3.066 0 001.745.723 3.066 3.066 0 012.812 2.812c.051.643.304 1.254.723 1.745a3.066 3.066 0 010 3.976 3.066 3.066 0 00-.723 1.745 3.066 3.066 0 01-2.812 2.812 3.066 3.066 0 00-1.745.723 3.066 3.066 0 01-3.976 0 3.066 3.066 0 00-1.745-.723 3.066 3.066 0 01-2.812-2.812 3.066 3.066 0 00-.723-1.745 3.066 3.066 0 010-3.976 3.066 3.066 0 00.723-1.745 3.066 3.066 0 012.812-2.812zm7.44 5.252a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd"/>
               </svg>
