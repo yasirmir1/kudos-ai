@@ -106,10 +106,10 @@ export const WeeklyTestPerformanceCard: React.FC<WeeklyTestPerformanceCardProps>
         <div className="space-y-3">
           <button
             onClick={onStartWeeklyChallenge} 
-            className="w-full bg-muted text-muted-foreground rounded-lg py-3 px-6 flex items-center justify-center hover:bg-muted/80 transition-colors"
+            className="w-full bg-primary text-primary-foreground font-medium py-3 px-6 rounded-lg flex items-center justify-center text-lg hover:bg-primary/90 transition-colors"
           >
             Start Weekly Challenge
-            <RefreshCw className="ml-2 h-5 w-5" />
+            <Play className="ml-2 h-5 w-5" />
           </button>
           <button 
             onClick={onReviewMistakes}
