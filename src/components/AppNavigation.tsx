@@ -154,13 +154,13 @@ export const AppNavigation: React.FC<AppNavigationProps> = ({
 
             {/* Center section - Mode Toggle (absolutely centered) */}
             <div className="absolute left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2">
-              <div className="bg-muted p-1 rounded-full flex items-center">
+              <div className="bg-muted p-1 rounded-full flex items-center gap-1">
                 <Button 
                   variant={!isBootcampRoute && !isProfileRoute ? "default" : "ghost"} 
                   size="sm" 
                   onClick={() => navigate('/dashboard')}
                   className={cn(
-                    "flex items-center space-x-2 px-4 py-1.5 rounded-full text-sm font-medium transition-colors",
+                    "flex items-center justify-center space-x-2 px-6 py-1.5 rounded-full text-sm font-medium transition-colors min-w-[140px]",
                     !isBootcampRoute && !isProfileRoute
                       ? "bg-primary text-primary-foreground shadow-sm" 
                       : "text-muted-foreground hover:text-white"
@@ -174,7 +174,7 @@ export const AppNavigation: React.FC<AppNavigationProps> = ({
                   size="sm" 
                   onClick={() => navigate('/bootcamp')}
                   className={cn(
-                    "flex items-center space-x-2 px-4 py-1.5 rounded-full text-sm font-medium transition-colors",
+                    "flex items-center justify-center space-x-2 px-6 py-1.5 rounded-full text-sm font-medium transition-colors min-w-[140px]",
                     isBootcampRoute && !isProfileRoute
                       ? "bg-primary text-primary-foreground shadow-sm" 
                       : "text-muted-foreground hover:text-white"

@@ -18,12 +18,12 @@ export const Header: React.FC<HeaderProps> = ({
       <div className="container mx-auto px-6 py-4 flex justify-between items-center">
         <div className="flex items-center space-x-8">
           <h1 className="text-2xl font-bold text-primary">KUDOS</h1>
-          <div className="flex items-center bg-muted rounded-full p-1">
+          <div className="flex items-center bg-muted rounded-full p-1 gap-1">
             <Button
               variant={currentMode === 'daily' ? 'ghost' : 'ghost'}
               size="sm"
               onClick={() => onModeChange('daily')}
-              className={`px-4 py-1 text-sm flex items-center rounded-full transition-colors ${
+              className={`px-6 py-1 text-sm flex items-center justify-center rounded-full transition-colors min-w-[140px] ${
                 currentMode === 'daily' 
                   ? 'text-muted-foreground' 
                   : 'text-muted-foreground hover:text-white'
@@ -36,7 +36,7 @@ export const Header: React.FC<HeaderProps> = ({
               variant={currentMode === 'bootcamp' ? 'default' : 'ghost'}
               size="sm"
               onClick={() => onModeChange('bootcamp')}
-              className={`px-4 py-1 text-sm flex items-center rounded-full transition-colors ${
+              className={`px-6 py-1 text-sm flex items-center justify-center rounded-full transition-colors min-w-[140px] ${
                 currentMode === 'bootcamp' 
                   ? 'bg-primary text-primary-foreground' 
                   : 'text-muted-foreground hover:text-white'
