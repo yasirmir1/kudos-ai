@@ -206,7 +206,7 @@ export const Dashboard: React.FC<DashboardProps> = ({
     icon: FileText,
     color: 'cyan'
   }, {
-    label: 'Mock Test',
+    label: 'Try a Mock Test',
     value: '',
     icon: ClipboardCheck,
     color: 'orange'
@@ -241,12 +241,12 @@ export const Dashboard: React.FC<DashboardProps> = ({
       {/* Quick Stats */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         {quickStats.map((stat, index) => {
-          const isClickable = stat.label === 'Weekly Practice' || stat.label === 'Mock Test';
+          const isClickable = stat.label === 'Weekly Practice' || stat.label === 'Try a Mock Test';
           const Component = isClickable ? 'button' : 'div';
           const onClick = isClickable ? () => {
             if (stat.label === 'Weekly Practice') {
               setCurrentView('practice');
-            } else if (stat.label === 'Mock Test') {
+            } else if (stat.label === 'Try a Mock Test') {
               setCurrentView('mocktest');
             }
           } : undefined;
@@ -265,10 +265,10 @@ export const Dashboard: React.FC<DashboardProps> = ({
               } : {}}
             >
               {isClickable && (
-                <ArrowRight className={`h-8 w-8 mr-4 ${stat.label === 'Mock Test' ? 'text-black' : 'text-white'}`} />
+                <ArrowRight className={`h-8 w-8 mr-4 ${stat.label === 'Try a Mock Test' ? 'text-black' : 'text-white'}`} />
               )}
               <div className="flex-1">
-                <p className={`${isClickable ? `text-lg font-semibold ${stat.label === 'Mock Test' ? 'text-black' : 'text-white'}` : 'text-sm font-medium text-muted-foreground'}`}>{stat.label}</p>
+                <p className={`${isClickable ? `text-lg font-semibold ${stat.label === 'Try a Mock Test' ? 'text-black' : 'text-white'}` : 'text-sm font-medium text-muted-foreground'}`}>{stat.label}</p>
                 {!isClickable && <p className="text-3xl font-bold text-foreground mt-2">{stat.value}</p>}
               </div>
               {!isClickable && (
