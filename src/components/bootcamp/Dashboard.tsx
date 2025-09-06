@@ -256,13 +256,13 @@ export const Dashboard: React.FC<DashboardProps> = ({
               key={stat.label} 
               onClick={onClick}
               className={`${isClickable 
-                ? `${stat.color === 'cyan' ? 'bg-cyan-500 hover:bg-cyan-600' : 'bg-orange-500 hover:bg-orange-600'} text-white cursor-pointer transition-colors`
+                ? 'bg-primary text-primary-foreground hover:bg-primary/90 cursor-pointer transition-colors font-semibold'
                 : 'bg-card border border-border text-card-foreground shadow-card'
               } rounded-lg p-6 flex items-center justify-between`}
             >
               <div>
-                <p className={`text-sm font-medium ${isClickable ? 'text-white/80' : 'text-muted-foreground'}`}>{stat.label}</p>
-                <p className={`text-3xl font-bold mt-2 ${isClickable ? 'text-white' : 'text-foreground'}`}>{stat.value}</p>
+                <p className={`text-sm font-medium ${isClickable ? 'text-primary-foreground/80' : 'text-muted-foreground'}`}>{stat.label}</p>
+                <p className={`text-3xl font-bold mt-2 ${isClickable ? 'text-primary-foreground' : 'text-foreground'}`}>{stat.value}</p>
               </div>
               {!isClickable && (
                 <div className={`rounded-full p-3 ${stat.color === 'primary' ? 'bg-blue-100' : 'bg-green-100'} flex items-center gap-2`}>
@@ -270,7 +270,7 @@ export const Dashboard: React.FC<DashboardProps> = ({
                 </div>
               )}
               {isClickable && (
-                <ArrowRight className="h-8 w-8 text-white" />
+                <ArrowRight className="h-8 w-8 text-primary-foreground" />
               )}
             </Component>
           );
