@@ -255,24 +255,23 @@ export const Dashboard: React.FC<DashboardProps> = ({
             <Component 
               key={stat.label} 
               onClick={onClick}
-              className={`bg-card border border-border rounded-lg p-6 flex items-center justify-between shadow-card ${isClickable ? 'cursor-pointer hover:bg-card/80 transition-colors' : ''}`}
-              style={{
-                background: 'hsl(var(--card))',
-                borderColor: 'hsl(var(--border))',
-                color: 'hsl(var(--card-foreground))',
-                boxShadow: 'var(--shadow-card)',
-                position: 'relative',
-                zIndex: 1
-              }}
+              className={`${isClickable 
+                ? `${stat.color === 'cyan' ? 'bg-cyan-500 hover:bg-cyan-600' : 'bg-orange-500 hover:bg-orange-600'} text-white cursor-pointer transition-colors`
+                : 'bg-card border border-border text-card-foreground shadow-card'
+              } rounded-lg p-6 flex items-center justify-between`}
             >
               <div>
-                <p className="text-sm font-medium text-muted-foreground">{stat.label}</p>
-                <p className="text-3xl font-bold text-foreground mt-2">{stat.value}</p>
+                <p className={`text-sm font-medium ${isClickable ? 'text-white/80' : 'text-muted-foreground'}`}>{stat.label}</p>
+                <p className={`text-3xl font-bold mt-2 ${isClickable ? 'text-white' : 'text-foreground'}`}>{stat.value}</p>
               </div>
-              <div className={`rounded-full p-3 ${stat.color === 'primary' ? 'bg-blue-100' : stat.color === 'success' ? 'bg-green-100' : stat.color === 'cyan' ? 'bg-cyan-100' : stat.color === 'orange' ? 'bg-orange-100' : 'bg-blue-100'} flex items-center gap-2`}>
-                <stat.icon className={`h-8 w-8 ${stat.color === 'primary' ? 'text-blue-600' : stat.color === 'success' ? 'text-green-600' : stat.color === 'cyan' ? 'text-cyan-600' : stat.color === 'orange' ? 'text-orange-600' : 'text-blue-600'}`} />
-                {isClickable && <ArrowRight className={`h-5 w-5 ${stat.color === 'cyan' ? 'text-cyan-600' : 'text-orange-600'}`} />}
-              </div>
+              {!isClickable && (
+                <div className={`rounded-full p-3 ${stat.color === 'primary' ? 'bg-blue-100' : 'bg-green-100'} flex items-center gap-2`}>
+                  <stat.icon className={`h-8 w-8 ${stat.color === 'primary' ? 'text-blue-600' : 'text-green-600'}`} />
+                </div>
+              )}
+              {isClickable && (
+                <ArrowRight className="h-8 w-8 text-white" />
+              )}
             </Component>
           );
         })}
