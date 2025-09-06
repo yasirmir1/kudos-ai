@@ -195,11 +195,6 @@ export const Dashboard: React.FC<DashboardProps> = ({
     value: `${user.accuracy}%`,
     icon: Target,
     color: 'success'
-  }, {
-    label: 'Questions Today',
-    value: user.questionsToday.toString(),
-    icon: Brain,
-    color: 'primary'
   }];
   const getColorClasses = (color: string) => {
     switch (color) {
