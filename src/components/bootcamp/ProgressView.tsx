@@ -513,10 +513,6 @@ export const ProgressView: React.FC = () => {
         <WeeklyTestPerformanceContainer />
       </div>
 
-      <div className="bg-card rounded-xl shadow-sm border p-6">
-        <h2 className="text-lg font-semibold text-foreground mb-6">Performance Overview</h2>
-        <PerformanceChart />
-      </div>
 
       {/* Enhanced Analytics & Insights */}
       <div className="space-y-6">
