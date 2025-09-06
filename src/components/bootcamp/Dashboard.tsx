@@ -296,7 +296,14 @@ export const Dashboard: React.FC<DashboardProps> = ({
       {/* Quick Stats */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         {quickStats.map((stat, index) => (
-          <div key={stat.label} className="bg-card border border-border rounded-lg p-6 flex items-center justify-between shadow-card">
+          <div key={stat.label} className="bg-card border border-border rounded-lg p-6 flex items-center justify-between shadow-card" style={{ 
+            background: 'hsl(var(--card))', 
+            borderColor: 'hsl(var(--border))', 
+            color: 'hsl(var(--card-foreground))',
+            boxShadow: 'var(--shadow-card)',
+            position: 'relative',
+            zIndex: 1
+          }}>
             <div>
               <p className="text-sm font-medium text-muted-foreground">{stat.label}</p>
               <p className="text-3xl font-bold text-foreground mt-2">{stat.value}</p>

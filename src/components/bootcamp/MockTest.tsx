@@ -572,7 +572,14 @@ export const MockTest: React.FC = () => {
   if (testState.status === 'completed' && results) {
     return (
       <div className="max-w-4xl mx-auto p-6">
-        <Card className="p-8">
+        <Card className="p-8" style={{ 
+          background: 'hsl(var(--card))', 
+          borderColor: 'hsl(var(--border))', 
+          color: 'hsl(var(--card-foreground))',
+          boxShadow: 'var(--shadow-card)',
+          position: 'relative',
+          zIndex: 1
+        }}>
           <div className="text-center mb-8">
             <CheckCircle className="h-16 w-16 text-green-500 mx-auto mb-4" />
             <h1 className="text-3xl font-bold text-foreground mb-4">Test Completed!</h1>
@@ -664,7 +671,14 @@ export const MockTest: React.FC = () => {
   return (
     <div className="max-w-6xl mx-auto p-6">
       {/* Header with timer and progress */}
-      <Card className="mb-6 p-4">
+      <Card className="mb-6 p-4" style={{ 
+        background: 'hsl(var(--card))', 
+        borderColor: 'hsl(var(--border))', 
+        color: 'hsl(var(--card-foreground))',
+        boxShadow: 'var(--shadow-card)',
+        position: 'relative',
+        zIndex: 1
+      }}>
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-4">
             <div className="text-sm text-muted-foreground">
@@ -701,7 +715,14 @@ export const MockTest: React.FC = () => {
         {/* Question content */}
         <div className="lg:col-span-3">
           {currentQuestion && (
-            <Card className="p-6">
+            <Card className="p-6" style={{ 
+              background: 'hsl(var(--card))', 
+              borderColor: 'hsl(var(--border))', 
+              color: 'hsl(var(--card-foreground))',
+              boxShadow: 'var(--shadow-card)',
+              position: 'relative',
+              zIndex: 1
+            }}>
               <div className="mb-4">
                 <span className="text-sm text-muted-foreground">
                   {currentQuestion.difficulty} • {currentQuestion.topic}
@@ -730,7 +751,14 @@ export const MockTest: React.FC = () => {
           )}
           
           {/* Navigation */}
-          <Card className="mt-6 p-4">
+          <Card className="mt-6 p-4" style={{ 
+            background: 'hsl(var(--card))', 
+            borderColor: 'hsl(var(--border))', 
+            color: 'hsl(var(--card-foreground))',
+            boxShadow: 'var(--shadow-card)',
+            position: 'relative',
+            zIndex: 1
+          }}>
             <div className="flex items-center justify-between">
               <Button
                 variant="outline"
@@ -760,7 +788,14 @@ export const MockTest: React.FC = () => {
 
         {/* Question grid navigation */}
         <div className="lg:col-span-1">
-          <Card className="p-4">
+          <Card className="p-4" style={{ 
+            background: 'hsl(var(--card))', 
+            borderColor: 'hsl(var(--border))', 
+            color: 'hsl(var(--card-foreground))',
+            boxShadow: 'var(--shadow-card)',
+            position: 'relative',
+            zIndex: 1
+          }}>
             <h3 className="font-semibold mb-4">Question Overview</h3>
             <div className="grid grid-cols-5 gap-2">
               {testState.questions.map((_, index) => (

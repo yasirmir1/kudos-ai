@@ -21,7 +21,14 @@ export const TopicAnalysis: React.FC = () => {
       <h3 className="text-lg font-semibold text-foreground mb-4">Topic Performance Analysis</h3>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         {topics.map((topic, index) => (
-          <div key={index} className="bg-card border border-border rounded-lg p-4 hover:border-primary/30 transition-colors">
+          <div key={index} className="bg-card border border-border rounded-lg p-4 hover:border-primary/30 transition-colors" style={{ 
+            background: 'hsl(var(--card))', 
+            borderColor: 'hsl(var(--border))', 
+            color: 'hsl(var(--card-foreground))',
+            boxShadow: 'var(--shadow-card)',
+            position: 'relative',
+            zIndex: 1
+          }}>
             <div className="flex items-center justify-between mb-3">
               <h4 className="font-medium text-foreground">{topic.name}</h4>
               <span className={`text-xs px-2 py-1 rounded-full ${

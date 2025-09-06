@@ -48,7 +48,14 @@ export const WeeklyTestPerformanceCard: React.FC<WeeklyTestPerformanceCardProps>
   };
 
   return (
-    <div className="bg-card border border-muted rounded-xl p-5 shadow-card">
+    <div className="bg-card border border-muted rounded-xl p-5 shadow-card" style={{ 
+      background: 'hsl(var(--card))', 
+      borderColor: 'hsl(var(--border))', 
+      color: 'hsl(var(--card-foreground))',
+      boxShadow: 'var(--shadow-card)',
+      position: 'relative',
+      zIndex: 1
+    }}>
       <h2 className="text-lg font-medium text-foreground mb-6">Weekly Test Performance</h2>
       
       {/* Stats Grid */}

@@ -48,7 +48,14 @@ export const AssignmentManager: React.FC = () => {
 
       <div className="space-y-4">
         {assignments.map((assignment) => (
-          <div key={assignment.id} className="bg-card border border-border rounded-lg p-4">
+          <div key={assignment.id} className="bg-card border border-border rounded-lg p-4" style={{ 
+            background: 'hsl(var(--card))', 
+            borderColor: 'hsl(var(--border))', 
+            color: 'hsl(var(--card-foreground))',
+            boxShadow: 'var(--shadow-card)',
+            position: 'relative',
+            zIndex: 1
+          }}>
             <div className="flex items-center justify-between mb-3">
               <div>
                 <h4 className="font-medium text-foreground">{assignment.title}</h4>

@@ -49,7 +49,14 @@ export const LearningJourneyCard: React.FC<LearningJourneyCardProps> = ({
   ];
 
   return (
-    <div className="lg:col-span-2 bg-background border border-border rounded-lg p-6 shadow-card">
+    <div className="lg:col-span-2 bg-background border border-border rounded-lg p-6 shadow-card" style={{ 
+      background: 'hsl(var(--card))', 
+      borderColor: 'hsl(var(--border))', 
+      color: 'hsl(var(--card-foreground))',
+      boxShadow: 'var(--shadow-card)',
+      position: 'relative',
+      zIndex: 1
+    }}>
       <div className="flex justify-between items-center mb-6">
         <h3 className="text-lg font-semibold text-foreground">Your Learning Journey</h3>
         <div className="flex items-center text-sm text-muted-foreground">
