@@ -140,9 +140,10 @@ export const PracticeHomepage: React.FC<PracticeHomepageProps> = ({
   return (
     <>
       {/* Header Section */}
-      <div className="relative px-12 py-10 rounded-3xl mx-auto max-w-4xl mb-6" style={{ 
+      <div className="relative px-12 py-10 rounded-3xl shadow-2xl mx-auto max-w-4xl mb-6" style={{ 
         background: 'linear-gradient(to right, #6366f1, #9333ea)',
-        minHeight: '200px'
+        minHeight: '200px',
+        boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)'
       }}>
         
         <div className="relative z-10">
@@ -183,7 +184,9 @@ export const PracticeHomepage: React.FC<PracticeHomepageProps> = ({
       </div>
 
       {/* Body Content */}
-      <div className="p-12 rounded-3xl mx-auto max-w-4xl">
+      <div className="p-12 rounded-3xl shadow-2xl mx-auto max-w-4xl" style={{
+        boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)'
+      }}>
         {/* Key Information Grid */}
         <div className="grid grid-cols-3 gap-6 mb-8">
           <div className="text-center p-6 bg-blue-50 rounded-2xl">
