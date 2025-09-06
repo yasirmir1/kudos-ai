@@ -256,7 +256,7 @@ export const Dashboard: React.FC<DashboardProps> = ({
               key={stat.label} 
               onClick={onClick}
               className={`${isClickable 
-                ? 'text-white cursor-pointer transition-all duration-300 font-semibold shadow-lg hover:shadow-xl hover:scale-105 transform rounded-lg p-3 flex items-center justify-between'
+                ? 'text-white cursor-pointer transition-all duration-300 font-semibold shadow-lg hover:shadow-xl hover:scale-105 transform rounded-lg py-4 px-8 flex items-center justify-between'
                 : 'bg-card border border-border text-card-foreground shadow-card rounded-lg p-6 flex items-center justify-between'
               }`}
               style={isClickable ? {
