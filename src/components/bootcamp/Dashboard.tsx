@@ -260,7 +260,7 @@ export const Dashboard: React.FC<DashboardProps> = ({
                 : 'bg-card border border-border text-card-foreground shadow-card rounded-lg p-6 flex items-center justify-between'
               }`}
               style={isClickable ? {
-                backgroundColor: stat.label === 'Weekly Practice' ? '#08c4b4' : '#fbe209',
+                backgroundColor: stat.label === 'Weekly Practice' ? '#3b82f6' : '#fbe209',
                 boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1), 0 2px 4px rgba(0, 0, 0, 0.06)'
               } : {}}
             >
