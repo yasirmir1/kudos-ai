@@ -191,11 +191,6 @@ export const Dashboard: React.FC<DashboardProps> = ({
     }
   };
   const quickStats: QuickStat[] = [{
-    label: 'Questions Today',
-    value: user.questionsToday.toString(),
-    icon: Brain,
-    color: 'primary'
-  }, {
     label: 'Accuracy',
     value: `${user.accuracy}%`,
     icon: Target,
@@ -210,6 +205,11 @@ export const Dashboard: React.FC<DashboardProps> = ({
     value: `${user.weeklyGoal || 85}%`,
     icon: Award,
     color: 'warning'
+  }, {
+    label: 'Questions Today',
+    value: user.questionsToday.toString(),
+    icon: Brain,
+    color: 'primary'
   }];
   const getColorClasses = (color: string) => {
     switch (color) {
