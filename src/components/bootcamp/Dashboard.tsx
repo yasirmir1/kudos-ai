@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Brain, Target, Shield, Award, TrendingUp, AlertCircle, Loader2, BarChart3 } from 'lucide-react';
+import { Brain, Target, Shield, Award, TrendingUp, AlertCircle, Loader2, BarChart3, ArrowRight, FileText, ClipboardCheck } from 'lucide-react';
 import { WeeklyProgressChart } from './WeeklyProgressChart';
 import { WeeklyTestPerformanceCard } from './WeeklyTestPerformanceCard';
 import { MockTestPerformanceCard } from './MockTestPerformanceCard';
@@ -196,14 +196,14 @@ export const Dashboard: React.FC<DashboardProps> = ({
     icon: Target,
     color: 'success'
   }, {
-    label: 'Current Level',
-    value: user.level,
-    icon: Shield,
+    label: 'Practice Questions',
+    value: 'Start Now',
+    icon: FileText,
     color: 'secondary'
   }, {
-    label: 'Weekly Goal',
-    value: `${user.weeklyGoal || 85}%`,
-    icon: Award,
+    label: 'Mock Test',
+    value: 'Take Test',
+    icon: ClipboardCheck,
     color: 'warning'
   }, {
     label: 'Questions Today',
@@ -236,22 +236,42 @@ export const Dashboard: React.FC<DashboardProps> = ({
 
       {/* Quick Stats */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        {quickStats.map((stat, index) => <div key={stat.label} className="bg-card border border-border rounded-lg p-6 flex items-center justify-between shadow-card" style={{
-        background: 'hsl(var(--card))',
-        borderColor: 'hsl(var(--border))',
-        color: 'hsl(var(--card-foreground))',
-        boxShadow: 'var(--shadow-card)',
-        position: 'relative',
-        zIndex: 1
-      }}>
-            <div>
-              <p className="text-sm font-medium text-muted-foreground">{stat.label}</p>
-              <p className="text-3xl font-bold text-foreground mt-2">{stat.value}</p>
-            </div>
-            <div className={`rounded-full p-3 ${stat.color === 'primary' ? 'bg-blue-100' : stat.color === 'success' ? 'bg-green-100' : stat.color === 'secondary' ? 'bg-purple-100' : stat.color === 'warning' ? 'bg-yellow-100' : 'bg-blue-100'}`}>
-              <stat.icon className={`h-8 w-8 ${stat.color === 'primary' ? 'text-blue-600' : stat.color === 'success' ? 'text-green-600' : stat.color === 'secondary' ? 'text-purple-600' : stat.color === 'warning' ? 'text-yellow-600' : 'text-blue-600'}`} />
-            </div>
-          </div>)}
+        {quickStats.map((stat, index) => {
+          const isClickable = stat.label === 'Practice Questions' || stat.label === 'Mock Test';
+          const Component = isClickable ? 'button' : 'div';
+          const onClick = isClickable ? () => {
+            if (stat.label === 'Practice Questions') {
+              setCurrentView('practice');
+            } else if (stat.label === 'Mock Test') {
+              setCurrentView('mocktest');
+            }
+          } : undefined;
+
+          return (
+            <Component 
+              key={stat.label} 
+              onClick={onClick}
+              className={`bg-card border border-border rounded-lg p-6 flex items-center justify-between shadow-card ${isClickable ? 'cursor-pointer hover:bg-card/80 transition-colors' : ''}`}
+              style={{
+                background: 'hsl(var(--card))',
+                borderColor: 'hsl(var(--border))',
+                color: 'hsl(var(--card-foreground))',
+                boxShadow: 'var(--shadow-card)',
+                position: 'relative',
+                zIndex: 1
+              }}
+            >
+              <div>
+                <p className="text-sm font-medium text-muted-foreground">{stat.label}</p>
+                <p className="text-3xl font-bold text-foreground mt-2">{stat.value}</p>
+              </div>
+              <div className={`rounded-full p-3 ${stat.color === 'primary' ? 'bg-blue-100' : stat.color === 'success' ? 'bg-green-100' : stat.color === 'secondary' ? 'bg-purple-100' : stat.color === 'warning' ? 'bg-yellow-100' : 'bg-blue-100'} flex items-center gap-2`}>
+                <stat.icon className={`h-8 w-8 ${stat.color === 'primary' ? 'text-blue-600' : stat.color === 'success' ? 'text-green-600' : stat.color === 'secondary' ? 'text-purple-600' : stat.color === 'warning' ? 'text-yellow-600' : 'text-blue-600'}`} />
+                {isClickable && <ArrowRight className={`h-5 w-5 ${stat.color === 'secondary' ? 'text-purple-600' : 'text-yellow-600'}`} />}
+              </div>
+            </Component>
+          );
+        })}
       </div>
 
       {/* Learning Journey */}
