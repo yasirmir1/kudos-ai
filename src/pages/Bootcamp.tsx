@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { BulkQuestionGenerator } from '@/components/BulkQuestionGenerator';
-import { Dashboard, EnhancedPracticeSession, ProgressView, TopicsView, LearnView, StudentAnalytics, QuestionManager, AnalyticsDashboard, Navigation, AchievementCenter, HelpCenter, PracticeReport, MockTest, BulkCurriculumGenerator } from '@/components/bootcamp';
+import { Dashboard, EnhancedPracticeSession, ProgressView, TopicsView, LearnView, StudentAnalytics, QuestionManager, AnalyticsDashboard, Navigation, AchievementCenter, HelpCenter, PracticeReport, MockTest, BulkCurriculumGenerator, PracticeView } from '@/components/bootcamp';
 import { useBootcampData } from '@/hooks/useBootcampData';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
@@ -92,7 +92,7 @@ const Bootcamp = () => {
             </div>}
           
           {currentView === 'practice' && <div className="bg-white rounded-3xl shadow-xl overflow-hidden">
-              <EnhancedPracticeSession />
+              <PracticeView />
             </div>}
           
           {currentView === 'mocktest' && <div className="bg-white rounded-3xl shadow-xl overflow-hidden">

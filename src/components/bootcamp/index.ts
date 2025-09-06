@@ -3,6 +3,7 @@ export { WeeklyLearningModal } from './WeeklyLearningModal';
 export { Dashboard } from './Dashboard';
 export { Navigation } from './Navigation';
 export { EnhancedPracticeSession } from './EnhancedPracticeSession';
+export { PracticeView } from './PracticeView';
 export { MockTest } from './MockTest';
 export { ProgressView } from './ProgressView';
 export { TopicsView } from './TopicsView';
