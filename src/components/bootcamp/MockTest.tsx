@@ -424,9 +424,9 @@ export const MockTest: React.FC = () => {
     return (
       <>
         {/* Header Section */}
-        <div className="relative px-12 py-10 rounded-3xl shadow-2xl mx-auto max-w-4xl mb-6" style={{ 
+        <div className="relative px-12 py-6 rounded-3xl shadow-2xl mx-auto max-w-4xl mb-4" style={{ 
           background: 'linear-gradient(to right, #6366f1, #9333ea)',
-          minHeight: '200px',
+          minHeight: '140px',
           boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)'
         }}>
           
