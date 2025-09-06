@@ -422,150 +422,151 @@ export const MockTest: React.FC = () => {
 
   if (testState.status === 'instructions') {
     return (
-      <div className="flex items-center justify-center p-6">
-        <div className="max-w-4xl mx-auto">
-          {/* Main Card */}
-          <div className="overflow-hidden">
-            {/* Header Section */}
-            <div className="relative bg-gradient-to-r from-indigo-500 to-purple-600 px-12 py-10">
-              
-              <div className="relative z-10">
-                <div className="flex items-center gap-4 mb-3">
-                  <div className="w-12 h-12 bg-white/20 backdrop-blur rounded-2xl flex items-center justify-center">
-                    <svg className="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
-                    </svg>
-                  </div>
-                  <div>
-                    <h1 className="text-2xl font-bold text-white">11+ Mock Test</h1>
-                    <p className="text-indigo-100 text-sm">Practice under real exam conditions</p>
-                  </div>
-                </div>
-                
-                {/* Quick Stats Badges */}
-                <div className="flex flex-wrap gap-2">
-                  <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-white/20 backdrop-blur text-white rounded-full text-sm font-medium">
-                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                    </svg>
-                    60 min
-                  </span>
-                  <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-white/20 backdrop-blur text-white rounded-full text-sm font-medium">
-                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                    </svg>
-                    50 questions
-                  </span>
-                  <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-white/20 backdrop-blur text-white rounded-full text-sm font-medium">
-                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
-                    </svg>
-                    All topics
-                  </span>
-                </div>
+      <>
+        {/* Header Section */}
+        <div className="relative px-12 py-10 rounded-3xl shadow-2xl mx-auto max-w-4xl mb-6" style={{ 
+          background: 'linear-gradient(to right, #6366f1, #9333ea)',
+          minHeight: '200px',
+          boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)'
+        }}>
+          
+          <div className="relative z-10">
+            <div className="flex items-center gap-4 mb-3">
+              <div className="w-12 h-12 bg-white/20 backdrop-blur rounded-2xl flex items-center justify-center">
+                <svg className="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+                </svg>
+              </div>
+              <div>
+                <h1 className="text-2xl font-bold text-white">11+ Mock Test</h1>
+                <p className="text-indigo-100 text-sm">Practice under real exam conditions</p>
               </div>
             </div>
-
-            {/* Body Content */}
-            <div className="p-12">
-              {/* Key Information Grid */}
-              <div className="grid grid-cols-3 gap-6 mb-8">
-                <div className="text-center p-6 bg-blue-50 rounded-2xl">
-                  <div className="text-3xl font-bold text-blue-600 mb-1">50</div>
-                  <div className="text-xs text-gray-600 font-medium">Questions</div>
-                </div>
-                <div className="text-center p-6 bg-purple-50 rounded-2xl">
-                  <div className="text-3xl font-bold text-purple-600 mb-1">60</div>
-                  <div className="text-xs text-gray-600 font-medium">Minutes</div>
-                </div>
-                <div className="text-center p-6 bg-green-50 rounded-2xl">
-                  <div className="text-3xl font-bold text-green-600 mb-1">70%</div>
-                  <div className="text-xs text-gray-600 font-medium">Pass Mark</div>
-                </div>
-              </div>
-
-              {/* What to Expect Section */}
-              <div className="mb-8">
-                <h2 className="text-sm font-bold text-gray-900 mb-3 flex items-center gap-2">
-                  <span className="w-6 h-6 bg-indigo-100 rounded-lg flex items-center justify-center">
-                    <svg className="w-4 h-4 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                    </svg>
-                  </span>
-                  What to expect
-                </h2>
-                <div className="space-y-2">
-                  <div className="flex items-center gap-3">
-                    <span className="w-2 h-2 bg-indigo-400 rounded-full"></span>
-                    <span className="text-sm text-gray-600">Multiple choice questions from all 11+ topics</span>
-                  </div>
-                  <div className="flex items-center gap-3">
-                    <span className="w-2 h-2 bg-indigo-400 rounded-full"></span>
-                    <span className="text-sm text-gray-600">Timer starts immediately and cannot be paused</span>
-                  </div>
-                  <div className="flex items-center gap-3">
-                    <span className="w-2 h-2 bg-indigo-400 rounded-full"></span>
-                    <span className="text-sm text-gray-600">Review and change answers before submitting</span>
-                  </div>
-                </div>
-              </div>
-
-              {/* Tips Row */}
-              <div className="flex gap-3 mb-8">
-                <div className="flex-1 flex items-center gap-3 p-4 bg-amber-50 border border-amber-200 rounded-xl">
-                  <svg className="w-5 h-5 text-amber-600 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
-                    <path d="M10 2a6 6 0 00-6 6v3.586l-.707.707A1 1 0 004 14h12a1 1 0 00.707-1.707L16 11.586V8a6 6 0 00-6-6zM10 18a3 3 0 01-3-3h6a3 3 0 01-3 3z"/>
-                  </svg>
-                  <span className="text-xs text-amber-800 font-medium">No calculator allowed</span>
-                </div>
-                <div className="flex-1 flex items-center gap-3 p-4 bg-blue-50 border border-blue-200 rounded-xl">
-                  <svg className="w-5 h-5 text-blue-600 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
-                    <path fillRule="evenodd" d="M6.267 3.455a3.066 3.066 0 001.745-.723 3.066 3.066 0 013.976 0 3.066 3.066 0 001.745.723 3.066 3.066 0 012.812 2.812c.051.643.304 1.254.723 1.745a3.066 3.066 0 010 3.976 3.066 3.066 0 00-.723 1.745 3.066 3.066 0 01-2.812 2.812 3.066 3.066 0 00-1.745.723 3.066 3.066 0 01-3.976 0 3.066 3.066 0 00-1.745-.723 3.066 3.066 0 01-2.812-2.812 3.066 3.066 0 00-.723-1.745 3.066 3.066 0 010-3.976 3.066 3.066 0 00.723-1.745 3.066 3.066 0 012.812-2.812zm7.44 5.252a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd"/>
-                  </svg>
-                  <span className="text-xs text-blue-800 font-medium">Progress auto-saved</span>
-                </div>
-              </div>
-
-              {/* Action Buttons */}
-              <div className="flex gap-4">
-                <button className="flex-1 py-4 px-8 bg-gray-100 text-gray-700 rounded-xl font-semibold hover:bg-gray-200 transition-colors text-lg">
-                  Practice Mode
-                </button>
-                <button
-                  onClick={startTest}
-                  disabled={isLoading || dbLoading || !student}
-                  className={`flex-1 py-4 px-8 rounded-xl font-semibold transition-all flex items-center justify-center gap-2 text-lg ${
-                    isLoading || dbLoading || !student
-                      ? 'bg-gray-200 text-gray-400 cursor-not-allowed' 
-                      : 'bg-indigo-600 text-white hover:bg-indigo-700 hover:shadow-lg transform hover:scale-[1.02]'
-                  }`}
-                >
-                  {isLoading ? (
-                    <>
-                      <svg className="animate-spin h-4 w-4" fill="none" viewBox="0 0 24 24">
-                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                      </svg>
-                      Loading Questions...
-                    </>
-                  ) : dbLoading ? (
-                    'Preparing...'
-                  ) : !student ? (
-                    'Please log in to start'
-                  ) : (
-                    <>
-                      Start Exam Mode
-                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                      </svg>
-                    </>
-                  )}
-                </button>
-              </div>
+            
+            {/* Quick Stats Badges */}
+            <div className="flex flex-wrap gap-2">
+              <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-white/20 backdrop-blur text-white rounded-full text-sm font-medium">
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                60 min
+              </span>
+              <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-white/20 backdrop-blur text-white rounded-full text-sm font-medium">
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                50 questions
+              </span>
+              <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-white/20 backdrop-blur text-white rounded-full text-sm font-medium">
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+                </svg>
+                All topics
+              </span>
             </div>
           </div>
         </div>
-      </div>
+
+        {/* Body Content */}
+        <div className="p-12 rounded-3xl shadow-2xl mx-auto max-w-4xl" style={{
+          boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)'
+        }}>
+          {/* Key Information Grid */}
+          <div className="grid grid-cols-3 gap-6 mb-8">
+            <div className="text-center p-6 bg-blue-50 rounded-2xl">
+              <div className="text-3xl font-bold text-blue-600 mb-1">50</div>
+              <div className="text-xs text-gray-600 font-medium">Questions</div>
+            </div>
+            <div className="text-center p-6 bg-purple-50 rounded-2xl">
+              <div className="text-3xl font-bold text-purple-600 mb-1">60</div>
+              <div className="text-xs text-gray-600 font-medium">Minutes</div>
+            </div>
+            <div className="text-center p-6 bg-green-50 rounded-2xl">
+              <div className="text-3xl font-bold text-green-600 mb-1">70%</div>
+              <div className="text-xs text-gray-600 font-medium">Pass Mark</div>
+            </div>
+          </div>
+
+          {/* What to Expect Section */}
+          <div className="mb-8">
+            <h2 className="text-sm font-bold text-gray-900 mb-3 flex items-center gap-2">
+              <span className="w-6 h-6 bg-indigo-100 rounded-lg flex items-center justify-center">
+                <svg className="w-4 h-4 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+              </span>
+              What to expect
+            </h2>
+            <div className="space-y-2">
+              <div className="flex items-center gap-3">
+                <span className="w-2 h-2 bg-indigo-400 rounded-full"></span>
+                <span className="text-sm text-gray-600">Multiple choice questions from all 11+ topics</span>
+              </div>
+              <div className="flex items-center gap-3">
+                <span className="w-2 h-2 bg-indigo-400 rounded-full"></span>
+                <span className="text-sm text-gray-600">Timer starts immediately and cannot be paused</span>
+              </div>
+              <div className="flex items-center gap-3">
+                <span className="w-2 h-2 bg-indigo-400 rounded-full"></span>
+                <span className="text-sm text-gray-600">Review and change answers before submitting</span>
+              </div>
+            </div>
+          </div>
+
+          {/* Tips Row */}
+          <div className="flex gap-3 mb-8">
+            <div className="flex-1 flex items-center gap-3 p-4 bg-amber-50 border border-amber-200 rounded-xl">
+              <svg className="w-5 h-5 text-amber-600 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                <path d="M10 2a6 6 0 00-6 6v3.586l-.707.707A1 1 0 004 14h12a1 1 0 00.707-1.707L16 11.586V8a6 6 0 00-6-6zM10 18a3 3 0 01-3-3h6a3 3 0 01-3 3z"/>
+              </svg>
+              <span className="text-xs text-amber-800 font-medium">No calculator allowed</span>
+            </div>
+            <div className="flex-1 flex items-center gap-3 p-4 bg-blue-50 border border-blue-200 rounded-xl">
+              <svg className="w-5 h-5 text-blue-600 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                <path fillRule="evenodd" d="M6.267 3.455a3.066 3.066 0 001.745-.723 3.066 3.066 0 013.976 0 3.066 3.066 0 001.745.723 3.066 3.066 0 012.812 2.812c.051.643.304 1.254.723 1.745a3.066 3.066 0 010 3.976 3.066 3.066 0 00-.723 1.745 3.066 3.066 0 01-2.812 2.812 3.066 3.066 0 00-1.745.723 3.066 3.066 0 01-3.976 0 3.066 3.066 0 00-1.745-.723 3.066 3.066 0 01-2.812-2.812 3.066 3.066 0 00-.723-1.745 3.066 3.066 0 010-3.976 3.066 3.066 0 00.723-1.745 3.066 3.066 0 012.812-2.812zm7.44 5.252a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd"/>
+              </svg>
+              <span className="text-xs text-blue-800 font-medium">Progress auto-saved</span>
+            </div>
+          </div>
+
+          {/* Action Buttons */}
+          <div className="flex gap-4">
+            <button className="flex-1 py-4 px-8 bg-gray-100 text-gray-700 rounded-xl font-semibold hover:bg-gray-200 transition-colors text-lg">
+              Practice Mode
+            </button>
+            <button
+              onClick={startTest}
+              disabled={isLoading || dbLoading || !student}
+              className={`flex-1 py-4 px-8 rounded-xl font-semibold transition-all flex items-center justify-center gap-2 text-lg ${
+                isLoading || dbLoading || !student
+                  ? 'bg-gray-200 text-gray-400 cursor-not-allowed' 
+                  : 'bg-indigo-600 text-white hover:bg-indigo-700 hover:shadow-lg transform hover:scale-[1.02]'
+              }`}
+            >
+              {isLoading ? (
+                <>
+                  <svg className="animate-spin h-4 w-4" fill="none" viewBox="0 0 24 24">
+                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                  </svg>
+                  Loading Questions...
+                </>
+              ) : dbLoading ? (
+                'Preparing...'
+              ) : !student ? (
+                'Please log in to start'
+              ) : (
+                <>
+                  Start Exam Mode
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                  </svg>
+                </>
+              )}
+            </button>
+          </div>
+        </div>
+      </>
     );
   }
 
