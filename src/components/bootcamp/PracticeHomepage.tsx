@@ -139,24 +139,20 @@ export const PracticeHomepage: React.FC<PracticeHomepageProps> = ({
 
   return (
     <div className="space-y-8">
-      {/* Header Section - Same style as Mock Test */}
-      <div className="text-center space-y-4">
-        <h1 className="text-4xl font-bold text-foreground">Practice Center</h1>
-        <p className="text-xl text-muted-foreground">
-          Continue your learning journey with adaptive practice sessions
-        </p>
+      {/* Header Section - Exact same style as Mock Test */}
+      <div className="text-center space-y-6">
+        <div className="space-y-3">
+          <h1 className="text-4xl font-bold text-foreground">Practice Session</h1>
+          <p className="text-xl text-muted-foreground">
+            Adaptive practice to strengthen your understanding
+          </p>
+        </div>
         
-        {/* Key Info */}
-        <div className="flex items-center justify-center gap-8 text-lg text-muted-foreground mt-6">
-          <div>
-            <span className="font-semibold text-foreground">30 min</span>
-          </div>
-          <div>
-            <span className="font-semibold text-foreground">20 questions</span>
-          </div>
-          <div>
-            <span className="font-semibold text-foreground">Adaptive difficulty</span>
-          </div>
+        {/* Key Info - Same layout as Mock Test */}
+        <div className="space-y-2">
+          <div className="text-lg font-medium text-foreground">30 min</div>
+          <div className="text-lg font-medium text-foreground">20 questions</div>
+          <div className="text-lg font-medium text-foreground">Adaptive difficulty</div>
         </div>
       </div>
 
