@@ -228,52 +228,52 @@ export const Dashboard: React.FC<DashboardProps> = ({
         <LearningJourneyCard currentWeek={1} hasStarted={false} onStartLearning={onStartLearning} />
       </div>
 
-      {/* Quick Stats */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        {quickStats.map((stat, index) => {
-          const isClickable = stat.label === 'Weekly Practice' || stat.label === 'Try a Mock Test';
-          const Component = isClickable ? 'button' : 'div';
-          const onClick = isClickable ? () => {
-            if (stat.label === 'Weekly Practice') {
-              setCurrentView('practice');
-            } else if (stat.label === 'Try a Mock Test') {
-              setCurrentView('mocktest');
-            }
-          } : undefined;
-
-          return (
-            <Component 
+      {/* Quick Stats and CTAs */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        {/* Stats Tiles */}
+        <div className="lg:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-6">
+          {quickStats.map((stat) => (
+            <div 
               key={stat.label} 
-              onClick={onClick}
-              className={`${isClickable 
-                ? 'text-white cursor-pointer transition-all duration-300 font-semibold shadow-lg hover:shadow-xl hover:scale-105 transform rounded-lg py-3 px-6 flex items-center justify-center text-base w-4/5 mx-auto'
-                : 'bg-card border border-border text-card-foreground shadow-card rounded-lg p-6 flex items-center justify-between'
-              }`}
-              style={isClickable ? {
-                backgroundColor: stat.label === 'Weekly Practice' ? '#3b82f6' : '#19bc87',
-                boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1), 0 2px 4px rgba(0, 0, 0, 0.06)'
-              } : {}}
+              className="bg-card border border-border text-card-foreground shadow-card rounded-lg p-6 flex items-center justify-between"
             >
-              {isClickable && (
-                <>
-                  <ArrowRight className="mr-2 h-4 w-4 text-white" />
-                  <span className="text-base font-semibold text-white">{stat.label}</span>
-                </>
-              )}
-              {!isClickable && (
-                <div className="flex-1">
-                  <p className="text-sm font-medium text-muted-foreground">{stat.label}</p>
-                  <p className="text-3xl font-bold text-foreground mt-2">{stat.value}</p>
-                </div>
-              )}
-              {!isClickable && (
-                <div className={`rounded-full p-3 ${stat.color === 'primary' ? 'bg-blue-100' : 'bg-green-100'} flex items-center gap-2`}>
-                  <stat.icon className={`h-8 w-8 ${stat.color === 'primary' ? 'text-blue-600' : 'text-green-600'}`} />
-                </div>
-              )}
-            </Component>
-          );
-        })}
+              <div className="flex-1">
+                <p className="text-sm font-medium text-muted-foreground">{stat.label}</p>
+                <p className="text-3xl font-bold text-foreground mt-2">{stat.value}</p>
+              </div>
+              <div className={`rounded-full p-3 ${stat.color === 'primary' ? 'bg-blue-100' : 'bg-green-100'} flex items-center gap-2`}>
+                <stat.icon className={`h-8 w-8 ${stat.color === 'primary' ? 'text-blue-600' : 'text-green-600'}`} />
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {/* CTA Buttons */}
+        <div className="space-y-4 flex flex-col justify-center">
+          <button 
+            onClick={() => setCurrentView('practice')}
+            className="text-white cursor-pointer transition-all duration-300 font-semibold shadow-lg hover:shadow-xl hover:scale-105 transform rounded-lg py-4 px-6 flex items-center justify-center text-base"
+            style={{
+              backgroundColor: '#3b82f6',
+              boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1), 0 2px 4px rgba(0, 0, 0, 0.06)'
+            }}
+          >
+            <ArrowRight className="mr-2 h-4 w-4 text-white" />
+            <span className="text-base font-semibold text-white">Start Weekly Challenge</span>
+          </button>
+
+          <button 
+            onClick={() => setCurrentView('mocktest')}
+            className="text-white cursor-pointer transition-all duration-300 font-semibold shadow-lg hover:shadow-xl hover:scale-105 transform rounded-lg py-4 px-6 flex items-center justify-center text-base"
+            style={{
+              backgroundColor: '#19bc87',
+              boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1), 0 2px 4px rgba(0, 0, 0, 0.06)'
+            }}
+          >
+            <ArrowRight className="mr-2 h-4 w-4 text-white" />
+            <span className="text-base font-semibold text-white">Try a Mock Test</span>
+          </button>
+        </div>
       </div>
 
       {/* Performance Cards */}
