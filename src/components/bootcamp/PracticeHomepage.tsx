@@ -139,7 +139,7 @@ export const PracticeHomepage: React.FC<PracticeHomepageProps> = ({
 
   return (
     <div className="flex items-center justify-center p-6">
-      <div className="max-w-4xl mx-auto space-y-6">
+      <div className="space-y-6">
         {/* Header Section */}
         <div className="relative px-12 py-10 rounded-3xl shadow-2xl" style={{ 
           background: 'linear-gradient(to right, #6366f1, #9333ea)',
