@@ -425,7 +425,7 @@ export const MockTest: React.FC = () => {
       <div className="flex items-center justify-center p-6">
         <div className="max-w-4xl mx-auto">
           {/* Main Card */}
-          <div className="bg-white rounded-3xl shadow-xl overflow-hidden">
+          <div className="overflow-hidden">
             {/* Header Section */}
             <div className="relative bg-gradient-to-r from-indigo-500 to-purple-600 px-12 py-10">
               
