@@ -187,15 +187,15 @@ export const PracticeHomepage: React.FC<PracticeHomepageProps> = ({
       <div className="p-12 rounded-3xl mx-auto max-w-4xl bg-white">
         {/* Key Information Grid */}
         <div className="grid grid-cols-3 gap-6 mb-8">
-          <div className="text-center p-6 bg-white rounded-2xl">
+          <div className="text-center p-6 bg-blue-50 rounded-2xl">
             <div className="text-3xl font-bold text-blue-600 mb-1">20</div>
             <div className="text-xs text-gray-600 font-medium">Questions</div>
           </div>
-          <div className="text-center p-6 bg-white rounded-2xl">
+          <div className="text-center p-6 bg-purple-50 rounded-2xl">
             <div className="text-3xl font-bold text-purple-600 mb-1">30</div>
             <div className="text-xs text-gray-600 font-medium">Minutes</div>
           </div>
-          <div className="text-center p-6 bg-white rounded-2xl">
+          <div className="text-center p-6 bg-green-50 rounded-2xl">
             <div className="text-3xl font-bold text-green-600 mb-1">70%</div>
             <div className="text-xs text-gray-600 font-medium">Target Accuracy</div>
           </div>
