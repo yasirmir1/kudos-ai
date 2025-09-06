@@ -49,7 +49,7 @@ export const LearningJourneyCard: React.FC<LearningJourneyCardProps> = ({
   ];
 
   return (
-    <div className="lg:col-span-2 bg-background border border-border rounded-lg p-6 shadow-card" style={{ 
+    <div className="lg:col-span-1 bg-background border border-border rounded-lg p-6 shadow-card" style={{ 
       background: 'hsl(var(--card))', 
       borderColor: 'hsl(var(--border))', 
       color: 'hsl(var(--card-foreground))',
@@ -93,6 +93,19 @@ export const LearningJourneyCard: React.FC<LearningJourneyCardProps> = ({
             Number Sequences
           </li>
         </ul>
+      </div>
+
+      {/* Upcoming Weeks Summary */}
+      <div className="mt-6 bg-muted/30 rounded-lg p-4">
+        <p className="text-sm font-semibold text-foreground mb-3">Coming Up:</p>
+        <div className="space-y-2 text-sm text-muted-foreground">
+          <div className="flex justify-between items-center">
+            <span>Week 2-3: Addition, Subtraction, Multiplication & Division</span>
+          </div>
+          <div className="flex justify-between items-center">
+            <span>Week 4: Fractions & Equivalent Forms</span>
+          </div>
+        </div>
       </div>
 
       <div className="mt-8">
