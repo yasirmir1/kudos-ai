@@ -264,7 +264,10 @@ export const Dashboard: React.FC<DashboardProps> = ({
                 boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1), 0 2px 4px rgba(0, 0, 0, 0.06)'
               } : {}}
             >
-              <div>
+              {isClickable && (
+                <ArrowRight className={`h-8 w-8 mr-4 ${stat.label === 'Mock Test' ? 'text-black' : 'text-white'}`} />
+              )}
+              <div className="flex-1">
                 <p className={`${isClickable ? `text-lg font-semibold ${stat.label === 'Mock Test' ? 'text-black' : 'text-white'}` : 'text-sm font-medium text-muted-foreground'}`}>{stat.label}</p>
                 {!isClickable && <p className="text-3xl font-bold text-foreground mt-2">{stat.value}</p>}
               </div>
@@ -272,9 +275,6 @@ export const Dashboard: React.FC<DashboardProps> = ({
                 <div className={`rounded-full p-3 ${stat.color === 'primary' ? 'bg-blue-100' : 'bg-green-100'} flex items-center gap-2`}>
                   <stat.icon className={`h-8 w-8 ${stat.color === 'primary' ? 'text-blue-600' : 'text-green-600'}`} />
                 </div>
-              )}
-              {isClickable && (
-                <ArrowRight className={`h-8 w-8 ${stat.label === 'Mock Test' ? 'text-black' : 'text-white'}`} />
               )}
             </Component>
           );
