@@ -244,9 +244,9 @@ export const Dashboard: React.FC<DashboardProps> = ({
   };
   return <div className="space-y-6">
       {/* Welcome Section */}
-      <div className="bg-background border border-border rounded-lg p-6 shadow-card">
-        <h2 className="text-xl font-semibold text-foreground">Welcome back, {user.name}! 👋</h2>
-        <p className="text-base text-muted-foreground mt-1">You're making great progress. Keep up the momentum!</p>
+      <div className="bg-background border border-border rounded-lg p-8 shadow-card">
+        <h2 className="text-2xl font-semibold text-foreground mb-4">Welcome back, {user.name}! 👋</h2>
+        <p className="text-lg text-muted-foreground">You're making great progress. Keep up the momentum!</p>
       </div>
 
       {/* Quick Stats */}
