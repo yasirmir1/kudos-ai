@@ -264,7 +264,7 @@ export const Dashboard: React.FC<DashboardProps> = ({
               } : {}}
             >
               <div>
-                <p className={`${isClickable ? 'text-lg font-semibold text-white' : 'text-sm font-medium text-muted-foreground'}`}>{stat.label}</p>
+                <p className={`${isClickable ? `text-lg font-semibold ${stat.label === 'Mock Test' ? 'text-black' : 'text-white'}` : 'text-sm font-medium text-muted-foreground'}`}>{stat.label}</p>
                 {!isClickable && <p className="text-3xl font-bold text-foreground mt-2">{stat.value}</p>}
               </div>
               {!isClickable && (
@@ -273,7 +273,7 @@ export const Dashboard: React.FC<DashboardProps> = ({
                 </div>
               )}
               {isClickable && (
-                <ArrowRight className="h-8 w-8 text-white" />
+                <ArrowRight className={`h-8 w-8 ${stat.label === 'Mock Test' ? 'text-black' : 'text-white'}`} />
               )}
             </Component>
           );
