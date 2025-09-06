@@ -65,6 +65,7 @@ const Dashboard = () => {
   const [focusAreaQuestionsOpen, setFocusAreaQuestionsOpen] = useState(false);
   const [selectedFocusArea, setSelectedFocusArea] = useState<any>(null);
   const [sessionsModalOpen, setSessionsModalOpen] = useState(false);
+  const [worksheetModalOpen, setWorksheetModalOpen] = useState(false);
   
   // Get student ID for misconception cache
   const [studentId, setStudentId] = useState<string | null>(null);
@@ -263,6 +264,7 @@ const Dashboard = () => {
               Start Practice
             </button>
             <button 
+              onClick={() => setWorksheetModalOpen(true)}
               className="bg-transparent text-primary-foreground font-semibold py-4 px-8 rounded-full flex items-center justify-center border-2 border-primary-foreground/30 hover:bg-primary-foreground/10 hover:border-primary-foreground/50 focus:outline-none focus:ring-4 focus:ring-ring transition-all duration-300 ease-in-out transform hover:-translate-y-1 w-full sm:w-auto"
             >
               <svg 
@@ -400,6 +402,7 @@ const Dashboard = () => {
       <MisconceptionQuestionsModal open={misconceptionQuestionsOpen} onOpenChange={setMisconceptionQuestionsOpen} misconception={selectedMisconceptionForQuestions} />
       <FocusAreaQuestionsModal open={focusAreaQuestionsOpen} onOpenChange={setFocusAreaQuestionsOpen} focusArea={selectedFocusArea} />
       <SessionsModal open={sessionsModalOpen} onOpenChange={setSessionsModalOpen} />
+      <WorksheetGeneratorModal />
     </div>;
   return <div>
       <DashboardNavigation currentView={currentView} setCurrentView={setCurrentView} />
