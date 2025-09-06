@@ -243,34 +243,6 @@ export const Dashboard: React.FC<DashboardProps> = ({
     return 'text-destructive';
   };
   return <div className="space-y-6">
-      {/* Welcome Section */}
-      <div className="bg-background border border-border rounded-lg p-6 shadow-card">
-        <div className="flex justify-between items-center mb-6">
-          <h3 className="text-lg font-semibold text-foreground">Welcome back, {user.name}! 👋</h3>
-          <div className="flex items-center text-sm text-muted-foreground">
-            <span className="text-sm mr-1">🎯</span>
-            <span>{user.level}</span>
-          </div>
-        </div>
-        <p className="text-base text-muted-foreground">Continue your learning journey</p>
-        
-        {/* Quick stats in welcome section */}
-        <div className="mt-6 grid grid-cols-3 gap-4">
-          <div className="text-center">
-            <p className="text-2xl font-bold text-foreground">{user.streakDays}</p>
-            <p className="text-sm text-muted-foreground">day streak</p>
-          </div>
-          <div className="text-center">
-            <p className="text-2xl font-bold text-foreground">{user.accuracy}%</p>
-            <p className="text-sm text-muted-foreground">accuracy</p>
-          </div>
-          <div className="text-center">
-            <p className="text-2xl font-bold text-foreground">{user.questionsToday}</p>
-            <p className="text-sm text-muted-foreground">questions today</p>
-          </div>
-        </div>
-      </div>
-
       {/* Quick Stats */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         {quickStats.map((stat, index) => (
