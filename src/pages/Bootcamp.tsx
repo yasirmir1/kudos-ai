@@ -95,7 +95,7 @@ const Bootcamp = () => {
               <PracticeView />
             </div>}
           
-          {currentView === 'mocktest' && <div className="overflow-hidden">
+          {currentView === 'mocktest' && <div className="bg-white rounded-3xl shadow-xl overflow-hidden">
               <MockTest />
             </div>}
           
