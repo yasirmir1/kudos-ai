@@ -422,7 +422,7 @@ export const MockTest: React.FC = () => {
 
   if (testState.status === 'instructions') {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 p-6">
+      <div className="flex items-center justify-center p-6">
         <div className="max-w-4xl mx-auto">
           {/* Main Card */}
           <div className="bg-white rounded-3xl shadow-xl overflow-hidden">
