@@ -57,12 +57,6 @@ export const LearningJourneyCard: React.FC<LearningJourneyCardProps> = ({
       position: 'relative',
       zIndex: 1
     }}>
-      {/* Topic Type Header */}
-      <div className="flex items-center gap-2 mb-4">
-        <span className="text-lg">🎯</span>
-        <span className="text-sm text-muted-foreground">Multi-Topic Learning Module</span>
-      </div>
-      
       <div className="grid grid-cols-4 gap-6 items-center">
         {/* Week Badge */}
         <div className="flex flex-col items-center">
@@ -72,6 +66,10 @@ export const LearningJourneyCard: React.FC<LearningJourneyCardProps> = ({
         
         {/* Topic Information */}
         <div className="col-span-2">
+          <div className="flex items-center gap-2 mb-2">
+            <span className="text-lg">🎯</span>
+            <span className="text-sm text-muted-foreground">Multi-Topic Learning Module</span>
+          </div>
           <h3 className="text-2xl font-bold text-foreground mb-1">Number & Place Value</h3>
           <p className="text-sm text-muted-foreground">Master essential number concepts and place value understanding</p>
         </div>
