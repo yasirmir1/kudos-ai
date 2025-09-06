@@ -256,11 +256,12 @@ export const Dashboard: React.FC<DashboardProps> = ({
               key={stat.label} 
               onClick={onClick}
               className={`${isClickable 
-                ? 'text-white cursor-pointer transition-colors font-semibold'
+                ? 'text-white cursor-pointer transition-all duration-300 font-semibold shadow-lg hover:shadow-xl hover:scale-105 transform'
                 : 'bg-card border border-border text-card-foreground shadow-card'
               } rounded-lg p-6 flex items-center justify-between`}
               style={isClickable ? {
-                backgroundColor: stat.label === 'Weekly Practice' ? '#08c4b4' : '#fbe209'
+                backgroundColor: stat.label === 'Weekly Practice' ? '#08c4b4' : '#fbe209',
+                boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1), 0 2px 4px rgba(0, 0, 0, 0.06)'
               } : {}}
             >
               <div>
