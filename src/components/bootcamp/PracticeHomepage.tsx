@@ -140,8 +140,10 @@ export const PracticeHomepage: React.FC<PracticeHomepageProps> = ({
   return (
     <div className="flex items-center justify-center p-6">
       <div className="max-w-4xl mx-auto">
-        {/* Main Card */}
-        <div className="bg-white rounded-3xl shadow-xl overflow-hidden">
+        {/* Main Card - Floating with shadow */}
+        <div className="bg-white rounded-3xl shadow-2xl overflow-hidden" style={{
+          boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25), 0 0 0 1px rgba(255, 255, 255, 0.1)'
+        }}>
           {/* Header Section */}
           <div className="relative px-12 py-10" style={{ 
             background: 'linear-gradient(to right, #6366f1, #9333ea)',
