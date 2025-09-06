@@ -56,9 +56,9 @@ export const Navigation: React.FC<NavigationProps> = ({
     },
   ];
   return (
-    <main className="container mx-auto px-6 py-8">
-      <nav className="flex items-center justify-between border-b border-border pb-4">
-        <div className="flex space-x-2">
+    <main className="container mx-auto px-6 py-4">
+      <nav className="flex items-center justify-between border-b border-border pb-3">
+        <div className="flex space-x-1">
           {navItems.map(item => (
             <button
               key={item.id}
@@ -69,13 +69,13 @@ export const Navigation: React.FC<NavigationProps> = ({
                   setCurrentView(item.id);
                 }
               }}
-              className={`px-4 py-2 text-sm font-medium rounded-md flex items-center transition-colors ${
+              className={`px-3 py-1.5 text-sm font-medium rounded-md flex items-center transition-colors ${
                 currentView === item.id
                   ? 'text-primary bg-primary/10 border border-primary/20'
                   : 'text-muted-foreground hover:bg-muted hover:text-foreground'
               }`}
             >
-              <item.icon className="h-4 w-4 mr-2" />
+              <item.icon className="h-4 w-4 mr-1.5" />
               {item.label}
             </button>
           ))}
