@@ -16,6 +16,7 @@ import { QuickPracticeModal } from './QuickPracticeModal';
 import { PracticePerformanceCard } from './PracticePerformanceCard';
 import { useBootcampData } from '@/hooks/useBootcampData';
 import { Target } from 'lucide-react';
+
 interface Module {
   id: string;
   name: string;
@@ -23,6 +24,7 @@ interface Module {
   weeks: number[];
   module_order: number;
 }
+
 interface Topic {
   id: string;
   name: string;
@@ -31,12 +33,14 @@ interface Topic {
   skills: string[];
   topic_order: number;
 }
+
 interface Subtopic {
   id: number;
   name: string;
   topic_id: string;
   subtopic_order: number;
 }
+
 interface WeeklyPlan {
   week: number;
   title: string;
@@ -45,6 +49,7 @@ interface WeeklyPlan {
   difficulty: string;
   focus: string;
 }
+
 interface CurriculumItem {
   question_id: string;
   topic: string;
@@ -53,6 +58,7 @@ interface CurriculumItem {
   difficulty: string;
   pedagogical_notes: string;
 }
+
 interface LearnViewProps {
   selectedWeek?: number | null;
   onWeekChange?: (week: number | null) => void;
@@ -80,6 +86,7 @@ export const LearnView: React.FC<LearnViewProps> = ({ selectedWeek, onWeekChange
   const [practiceSelectedTopic, setPracticeSelectedTopic] = useState<Topic | null>(null);
   const [selectedWeekPlan, setSelectedWeekPlan] = useState<WeeklyPlan | null>(null);
   const [isWeeklyModalOpen, setIsWeeklyModalOpen] = useState(false);
+
   useEffect(() => {
     loadLearningContent();
   }, []);
@@ -102,401 +109,144 @@ export const LearnView: React.FC<LearnViewProps> = ({ selectedWeek, onWeekChange
   }, [selectedWeek, weeklyPlan, isWeeklyModalOpen]);
 
   const calculateWeekProgress = () => {
-    const weekProgressMap: Record<number, number> = {};
+    const progressMap: Record<number, number> = {};
     
     weeklyPlan.forEach(week => {
-      const weekTopics = topics.filter(topic => 
-        week.topics.some(weekTopic => 
-          topic.name.toLowerCase().includes(weekTopic.toLowerCase()) ||
-          weekTopic.toLowerCase().includes(topic.name.toLowerCase())
-        )
-      );
-      
-      if (weekTopics.length > 0) {
-        const completedTopics = weekTopics.filter(topic => {
-          const topicProgress = progress.find(p => p.topic_id === topic.id);
-          return topicProgress && (topicProgress.status === 'mastered' || topicProgress.status === 'completed');
-        });
+      const weekTopics = week.topics;
+      const topicProgresses = weekTopics.map(topicName => {
+        const topic = topics.find(t => t.name === topicName);
+        if (!topic) return 0;
         
-        weekProgressMap[week.week] = (completedTopics.length / weekTopics.length) * 100;
-      } else {
-        weekProgressMap[week.week] = 0;
-      }
+        const topicProgress = progress.find(p => p.topic_id === topic.id);
+        return topicProgress ? (topicProgress.mastery_score || 0) * 100 : 0;
+      });
+      
+      const avgProgress = topicProgresses.length > 0 
+        ? topicProgresses.reduce((sum, p) => sum + p, 0) / topicProgresses.length 
+        : 0;
+      
+      progressMap[week.week] = avgProgress;
     });
     
-    setWeekProgress(weekProgressMap);
+    setWeekProgress(progressMap);
   };
 
-  const getCurrentWeek = (): number => {
-    // Find the first week that isn't 100% complete
-    for (let week = 1; week <= 52; week++) {
-      const progress = weekProgress[week] || 0;
-      if (progress < 100) {
-        return week;
-      }
-    }
-    return 52; // All weeks completed
-  };
-
-  const getWeekStatus = (weekNumber: number) => {
-    const progress = weekProgress[weekNumber] || 0;
-    const currentWeek = getCurrentWeek();
-    const isStarted = startedWeeks.has(weekNumber);
-    
-    if (progress >= 100) {
-      return 'completed';
-    } else if (isStarted) {
-      return 'started';
-    } else if (weekNumber === currentWeek) {
-      return 'current';
-    } else if (weekNumber < currentWeek) {
-      return 'available';
-    } else {
-      return 'locked';
-    }
-  };
-
-  const getWeekCardStyle = (weekNumber: number) => {
-    const status = getWeekStatus(weekNumber);
-    
-    switch (status) {
-      case 'completed':
-        return 'border-green-500 bg-green-50 shadow-green-100';
-      case 'started':
-        return 'border-blue-500 bg-blue-50 shadow-blue-100';
-      case 'current':
-        return 'border-blue-500 bg-blue-50 shadow-blue-100 ring-2 ring-blue-200';
-      case 'available':
-        return 'opacity-70 hover:opacity-100';
-      case 'locked':
-        return 'opacity-40 hover:opacity-100';
-      default:
-        return '';
-    }
-  };
-
-  const getWeekButtonText = (week: WeeklyPlan) => {
-    const status = getWeekStatus(week.week);
-    
-    if (status === 'completed') {
-      return 'Complete';
-    } else if (status === 'started') {
-      return 'Continue Learning';
-    } else if (status === 'current') {
-      return week.week <= 36 ? 'Start Learning' : week.week <= 46 ? 'Practice' : week.week <= 50 ? 'Review' : 'Final Prep';
-    } else {
-      return week.week <= 36 ? 'Start Learning' : week.week <= 46 ? 'Practice' : week.week <= 50 ? 'Review' : 'Final Prep';
-    }
-  };
-
-  const getWeekButtonStyle = (weekNumber: number) => {
-    const status = getWeekStatus(weekNumber);
-    
-    switch (status) {
-      case 'completed':
-        return 'bg-green-600 hover:bg-green-700 text-white border-green-600';
-      case 'started':
-        return 'bg-black hover:bg-gray-800 text-white border-black';
-      case 'current':
-        return 'bg-blue-600 hover:bg-blue-700 text-white border-blue-600';
-      default:
-        return 'variant-outline';
-    }
-  };
   const loadLearningContent = async () => {
     try {
       setLoading(true);
-
-      // Fetch modules
-      const {
-        data: modulesData,
-        error: modulesError
-      } = await supabase.from('bootcamp_modules').select('*').order('module_order');
-      if (modulesError) throw modulesError;
-
-      // Fetch topics
-      const {
-        data: topicsData,
-        error: topicsError
-      } = await supabase.from('bootcamp_topics').select('*').order('topic_order');
-      if (topicsError) throw topicsError;
-
-      // Fetch subtopics
-      const {
-        data: subtopicsData,
-        error: subtopicsError
-      } = await supabase.from('bootcamp_subtopics').select('*').order('subtopic_order');
-      if (subtopicsError) throw subtopicsError;
-
-      // Fetch curriculum for examples
-      const {
-        data: curriculumData,
-        error: curriculumError
-      } = await supabase.from('curriculum').select('question_id, topic, subtopic, example_question, difficulty, pedagogical_notes').limit(100);
-      if (curriculumError) throw curriculumError;
-      setModules(modulesData || []);
-      setTopics(topicsData || []);
-      setSubtopics(subtopicsData || []);
-      setCurriculum(curriculumData || []);
-
-      // Generate 52-week plan
-      if (modulesData && topicsData) {
-        const plan = generateWeeklyPlan(modulesData, topicsData);
-        setWeeklyPlan(plan);
-      }
-      if (modulesData && modulesData.length > 0) {
-        setSelectedModule(modulesData[0].id);
-      }
-    } catch (err) {
-      console.error('Error loading learning content:', err);
+      
+        // Load curriculum data from complete JSON
+        const curriculumResponse = await import('../../data/complete-curriculum-content.json');
+        const curriculumData = curriculumResponse.default;
+        
+        if (curriculumData) {
+          // Transform data to match expected interface
+          setTopics(curriculumData.curriculum_topics?.map((topic: any) => ({
+            id: topic.id,
+            name: topic.topic_name,
+            module_id: topic.module_id,
+            difficulty: topic.difficulty,
+            skills: topic.learning_objectives || [],
+            topic_order: topic.topic_order
+          })) || []);
+        } else {
+          setError('Unable to load curriculum data');
+        }
+    } catch (error) {
+      console.error('Error loading learning content:', error);
       setError('Failed to load learning content');
     } finally {
       setLoading(false);
     }
   };
-  const generateWeeklyPlan = (modules: Module[], topics: Topic[]): WeeklyPlan[] => {
-    const plan: WeeklyPlan[] = [];
 
-    // Core curriculum weeks (1-36)
-    modules.forEach(module => {
-      const moduleTopics = topics.filter(t => t.module_id === module.id);
-      const weeksInModule = module.weeks.length;
-      const topicsPerWeek = Math.ceil(moduleTopics.length / weeksInModule);
-      module.weeks.forEach((weekNumber, weekIndex) => {
-        const startTopicIndex = weekIndex * topicsPerWeek;
-        const endTopicIndex = Math.min(startTopicIndex + topicsPerWeek, moduleTopics.length);
-        const weekTopics = moduleTopics.slice(startTopicIndex, endTopicIndex);
-        if (weekTopics.length > 0) {
-          plan.push({
-            week: weekNumber,
-            title: `${module.name} - Week ${weekIndex + 1}`,
-            topics: weekTopics.map(t => t.name),
-            module: module.name,
-            difficulty: weekTopics[0]?.difficulty || 'foundation',
-            focus: weekTopics.length === 1 ? 'Deep Dive' : 'Multi-Topic'
-          });
-        }
-      });
-    });
-
-    // Review and practice weeks (37-52)
-    const reviewWeeks = [{
-      week: 37,
-      title: "Number & Arithmetic Review",
-      topics: ["Mental calculations", "Number properties", "Basic operations"],
-      module: "Review",
-      difficulty: "foundation",
-      focus: "Consolidation"
-    }, {
-      week: 38,
-      title: "Fractions & Decimals Practice",
-      topics: ["FDP conversions", "Fraction operations", "Decimal calculations"],
-      module: "Review",
-      difficulty: "intermediate",
-      focus: "Application"
-    }, {
-      week: 39,
-      title: "Geometry Foundations",
-      topics: ["Shape properties", "Area & perimeter", "Angle work"],
-      module: "Review",
-      difficulty: "intermediate",
-      focus: "Spatial Skills"
-    }, {
-      week: 40,
-      title: "Problem Solving Workshop",
-      topics: ["Multi-step problems", "Working backwards", "Logic puzzles"],
-      module: "Practice",
-      difficulty: "advanced",
-      focus: "Strategy"
-    }, {
-      week: 41,
-      title: "Algebra & Patterns",
-      topics: ["Simple equations", "Sequences", "Pattern recognition"],
-      module: "Review",
-      difficulty: "intermediate",
-      focus: "Abstract Thinking"
-    }, {
-      week: 42,
-      title: "Data & Statistics",
-      topics: ["Charts & graphs", "Averages", "Probability"],
-      module: "Review",
-      difficulty: "intermediate",
-      focus: "Data Analysis"
-    }, {
-      week: 43,
-      title: "Mixed Practice 1",
-      topics: ["Cross-topic problems", "Exam-style questions", "Time management"],
-      module: "Practice",
-      difficulty: "advanced",
-      focus: "Integration"
-    }, {
-      week: 44,
-      title: "Measurement & Units",
-      topics: ["Metric conversions", "Time problems", "Speed calculations"],
-      module: "Review",
-      difficulty: "foundation",
-      focus: "Real-world Maths"
-    }, {
-      week: 45,
-      title: "Advanced Problem Solving",
-      topics: ["Complex word problems", "Multi-step reasoning", "Strategy selection"],
-      module: "Practice",
-      difficulty: "advanced",
-      focus: "Challenge"
-    }, {
-      week: 46,
-      title: "Mixed Practice 2",
-      topics: ["Timed practice", "Weak area focus", "Mistake analysis"],
-      module: "Practice",
-      difficulty: "advanced",
-      focus: "Exam Prep"
-    }, {
-      week: 47,
-      title: "Final Review - Foundations",
-      topics: ["Core number skills", "Basic geometry", "Essential facts"],
-      module: "Final Review",
-      difficulty: "foundation",
-      focus: "Confidence Building"
-    }, {
-      week: 48,
-      title: "Final Review - Applications",
-      topics: ["Problem solving", "Real-world contexts", "Method selection"],
-      module: "Final Review",
-      difficulty: "intermediate",
-      focus: "Application"
-    }, {
-      week: 49,
-      title: "Mock Exam Week 1",
-      topics: ["Full practice papers", "Time management", "Exam technique"],
-      module: "Assessment",
-      difficulty: "advanced",
-      focus: "Exam Simulation"
-    }, {
-      week: 50,
-      title: "Targeted Improvement",
-      topics: ["Individual weak areas", "Personalized practice", "Confidence building"],
-      module: "Personalized",
-      difficulty: "mixed",
-      focus: "Individual Needs"
-    }, {
-      week: 51,
-      title: "Mock Exam Week 2",
-      topics: ["Final practice papers", "Performance review", "Last-minute tips"],
-      module: "Assessment",
-      difficulty: "advanced",
-      focus: "Final Preparation"
-    }, {
-      week: 52,
-      title: "Ready for Success!",
-      topics: ["Light review", "Confidence building", "Exam day preparation"],
-      module: "Confidence",
-      difficulty: "mixed",
-      focus: "Readiness"
-    }];
-    plan.push(...reviewWeeks);
-    plan.sort((a, b) => a.week - b.week);
-    return plan;
-  };
-  const getTopicsForModule = (moduleId: string) => {
-    return topics.filter(topic => topic.module_id === moduleId);
-  };
-  const getSubtopicsForTopic = (topicId: string) => {
-    return subtopics.filter(subtopic => subtopic.topic_id === topicId);
-  };
-  const getCurriculumForTopic = (topicName: string) => {
-    return curriculum.filter(item => item.topic.toLowerCase().includes(topicName.toLowerCase()));
-  };
   const getDifficultyColor = (difficulty: string) => {
-    switch (difficulty.toLowerCase()) {
+    switch (difficulty?.toLowerCase()) {
       case 'foundation':
-        return 'bg-green-100 text-green-800';
+        return 'border-green-200 text-green-700 bg-green-50';
       case 'intermediate':
-        return 'bg-yellow-100 text-yellow-800';
+        return 'border-blue-200 text-blue-700 bg-blue-50';
       case 'advanced':
-        return 'bg-red-100 text-red-800';
-      case 'easy':
-        return 'bg-green-100 text-green-800';
-      case 'medium':
-        return 'bg-yellow-100 text-yellow-800';
-      case 'hard':
-        return 'bg-red-100 text-red-800';
+        return 'border-orange-200 text-orange-700 bg-orange-50';
+      case 'mastery':
+        return 'border-red-200 text-red-700 bg-red-50';
       default:
-        return 'bg-gray-100 text-gray-800';
+        return 'border-gray-200 text-gray-700 bg-gray-50';
     }
   };
 
-  const getTopicCTA = (topicProgress: any) => {
-    if (!topicProgress) {
-      return {
-        text: 'Start Learning',
-        variant: 'default' as const,
-        icon: Play
-      };
-    }
+  const getTopicsForModule = (moduleId: string) => {
+    return topics.filter(topic => topic.module_id === moduleId)
+                 .sort((a, b) => a.topic_order - b.topic_order);
+  };
 
-    switch (topicProgress.status) {
-      case 'mastered':
-      case 'completed':
-        return {
-          text: 'Complete',
-          variant: 'default' as const,
-          icon: CheckCircle,
-          className: 'bg-green-600 hover:bg-green-700 text-white'
-        };
-      case 'in_progress':
-        return {
-          text: 'Continue Learning',
-          variant: 'default' as const,
-          icon: Play
-        };
-      default:
-        return {
-          text: 'Start Learning',
-          variant: 'default' as const,
-          icon: Play
-        };
-    }
+  const getSubtopicsForTopic = (topicId: string) => {
+    return subtopics.filter(subtopic => subtopic.topic_id === topicId)
+                   .sort((a, b) => a.subtopic_order - b.subtopic_order);
+  };
+
+  const getCurriculumForTopic = (topicName: string) => {
+    return curriculum.filter(item => item.topic === topicName);
+  };
+
+  const getWeekStatus = (week: WeeklyPlan) => {
+    const currentWeek = 1; // This should be calculated based on actual progress
+    const weekNum = week.week;
+    const weekProgressValue = weekProgress[weekNum] || 0;
+    const hasStarted = startedWeeks.has(weekNum);
+    
+    if (weekProgressValue >= 80) return 'completed';
+    if (hasStarted || weekProgressValue > 0) return 'started';
+    if (weekNum === currentWeek) return 'current';
+    if (weekNum > currentWeek) return 'locked';
+    return 'available';
   };
 
   const renderWeekCard = (week: WeeklyPlan) => {
-    const weekStatus = getWeekStatus(week.week);
-    const cardStyle = getWeekCardStyle(week.week);
-    const buttonText = getWeekButtonText(week);
+    const weekStatus = getWeekStatus(week);
     const progress = weekProgress[week.week] || 0;
+    
+    let buttonText = 'Start Learning';
+    if (weekStatus === 'started') buttonText = 'Continue Learning';
+    if (weekStatus === 'current') buttonText = 'Start This Week';
+    if (weekStatus === 'locked') buttonText = 'Locked';
     
     return (
       <Card 
-        key={week.week} 
-        className={`hover:shadow-md transition-all duration-200 ${cardStyle}`}
+        key={week.week}
+        className={`transition-all duration-200 hover:shadow-md ${
+          weekStatus === 'locked' ? 'opacity-60' : 'cursor-pointer hover:scale-[1.02]'
+        } ${
+          weekStatus === 'completed' ? 'border-green-200 bg-green-50/50' :
+          weekStatus === 'current' ? 'border-blue-200 bg-blue-50/50' :
+          weekStatus === 'started' ? 'border-blue-200 bg-blue-50/30' :
+          ''
+        }`}
       >
         <CardHeader className="pb-3">
-          <div className="flex items-center justify-between">
+          <div className="flex items-center justify-between mb-2">
             <Badge 
               variant="outline" 
-              className={`text-xs ${
-                weekStatus === 'completed' ? 'border-green-500 text-green-700 bg-green-50' :
-                weekStatus === 'started' ? 'border-blue-500 text-blue-700 bg-blue-50' :
-                weekStatus === 'current' ? 'border-blue-500 text-blue-700 bg-blue-50' :
-                'text-xs'
-              }`}
+              className={
+                weekStatus === 'completed' ? 'border-green-200 text-green-700 bg-green-50' :
+                weekStatus === 'current' ? 'border-blue-200 text-blue-700 bg-blue-50' :
+                weekStatus === 'started' ? 'border-blue-200 text-blue-700 bg-blue-50' :
+                ''
+              }
             >
               Week {week.week}
             </Badge>
-            <Badge className={getDifficultyColor(week.difficulty)} variant="secondary">
-              {week.difficulty}
-            </Badge>
+            {weekStatus === 'completed' && (
+              <CheckCircle className="h-4 w-4 text-green-600" />
+            )}
           </div>
-          <CardTitle 
-            className={`text-lg leading-tight ${
-              weekStatus === 'locked' ? 'text-muted-foreground' : ''
-            }`}
-          >
+          <CardTitle className="text-base leading-tight">
             {week.title}
           </CardTitle>
-          <div className="flex items-center gap-2 text-sm text-muted-foreground">
-            <span>{week.module}</span>
+          <div className="flex items-center gap-2 text-xs text-muted-foreground">
+            <span className="px-2 py-1 bg-muted rounded text-xs">{week.module}</span>
             <span>•</span>
-            <span>{week.focus}</span>
+            <span>{week.difficulty}</span>
           </div>
           
           {/* Week Progress Bar */}
@@ -571,6 +321,7 @@ export const LearnView: React.FC<LearnViewProps> = ({ selectedWeek, onWeekChange
       </Card>
     );
   };
+
   const handleWeekClick = (week: WeeklyPlan) => {
     // Mark the week as started when user clicks to begin learning
     const newStartedWeeks = new Set([...startedWeeks, week.week]);
@@ -584,6 +335,7 @@ export const LearnView: React.FC<LearnViewProps> = ({ selectedWeek, onWeekChange
     setSelectedTopic(topic);
     setIsTopicModalOpen(true);
   };
+
   const handleStartPractice = (topicId: string) => {
     const topic = topics.find(t => t.id === topicId);
     if (topic) {
@@ -592,21 +344,29 @@ export const LearnView: React.FC<LearnViewProps> = ({ selectedWeek, onWeekChange
     }
     setIsTopicModalOpen(false);
   };
+
   if (loading) {
-    return <div className="flex items-center justify-center h-96">
+    return (
+      <div className="flex items-center justify-center h-96">
         <div className="flex items-center gap-2">
           <Loader2 className="h-6 w-6 animate-spin" />
           <span>Loading learning content...</span>
         </div>
-      </div>;
+      </div>
+    );
   }
+
   if (error) {
-    return <Alert>
+    return (
+      <Alert>
         <AlertDescription>{error}</AlertDescription>
-      </Alert>;
+      </Alert>
+    );
   }
+
   if (showLearningExperience) {
-    return <div className="space-y-6">
+    return (
+      <div className="space-y-6">
         <div className="flex items-center justify-between">
           <h2 className="text-2xl font-bold">Learning Experience</h2>
           <Button variant="outline" onClick={() => setShowLearningExperience(false)}>
@@ -614,345 +374,98 @@ export const LearnView: React.FC<LearnViewProps> = ({ selectedWeek, onWeekChange
           </Button>
         </div>
         <LearningExperience onComplete={() => setShowLearningExperience(false)} />
-      </div>;
+      </div>
+    );
   }
-  return <div className="space-y-6">
-      {/* Currently Learning Section - First Priority */}
-      
 
-      {/* Skill Development Section - Second Priority */}
-      
-
-      <div className="bg-card rounded-xl shadow-sm border p-6">
-        <h1 className="text-2xl font-bold text-foreground mb-2">Learning Center</h1>
-        <p className="text-muted-foreground">Navigate through your curriculum and master each concept step by step</p>
+  return (
+    <div className="space-y-6">
+      {/* Header Section */}
+      <div className="relative px-12 py-6 rounded-3xl shadow-2xl mx-auto max-w-4xl mb-4" style={{ 
+        background: 'linear-gradient(to right, #6366f1, #9333ea)',
+        minHeight: '140px',
+        boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)'
+      }}>
+        <div className="relative z-10">
+          <div className="flex items-center gap-4 mb-3">
+            <div className="w-12 h-12 bg-white/20 backdrop-blur rounded-2xl flex items-center justify-center">
+              <svg className="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+              </svg>
+            </div>
+            <div>
+              <h1 className="text-2xl font-bold text-white">Learning Center</h1>
+              <p className="text-indigo-100 text-sm">Navigate through your curriculum and master each concept step by step</p>
+            </div>
+          </div>
+        </div>
       </div>
 
-      <Tabs defaultValue="plan" className="w-full">
-        <TabsList className="grid w-full grid-cols-2">
-          <TabsTrigger value="plan">52-Week Plan</TabsTrigger>
-          <TabsTrigger value="modules">Learning Modules</TabsTrigger>
-        </TabsList>
+      {/* Body Content */}
+      <div className="p-12 rounded-3xl mx-auto max-w-4xl bg-white">
+        <Tabs defaultValue="plan" className="w-full">
+          <TabsList className="grid w-full grid-cols-2">
+            <TabsTrigger value="plan">52-Week Plan</TabsTrigger>
+            <TabsTrigger value="modules">Learning Modules</TabsTrigger>
+          </TabsList>
 
-        <TabsContent value="plan" className="space-y-6">
-          <div className="space-y-6">
+          <TabsContent value="plan" className="space-y-6">
             <div className="bg-gradient-to-r from-primary/10 to-secondary/10 rounded-xl p-6">
-              <h2 className="text-2xl font-bold mb-2">52-Week Complete Learning Journey</h2>
-              <p className="text-muted-foreground mb-6">
-                A comprehensive year-long plan covering all mathematical concepts from foundations to advanced problem-solving,
-                culminating in complete exam readiness.
+              <h2 className="text-2xl font-bold mb-2">Learning Center Overview</h2>
+              <p className="text-muted-foreground">
+                Comprehensive learning journey through all mathematical concepts
               </p>
-              
-              {/* Journey Overview Cards */}
-              <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-                <div className="bg-background/80 backdrop-blur rounded-lg p-4 border border-primary/20">
-                  <div className="text-lg font-bold text-foreground mb-1">Weeks 1-36</div>
-                  <div className="text-sm text-foreground font-medium">Core Curriculum</div>
-                  <div className="text-xs text-foreground mt-1">Foundation Building</div>
-                </div>
-                <div className="bg-background/80 backdrop-blur rounded-lg p-4 border border-secondary/20">
-                  <div className="text-lg font-bold text-foreground mb-1">Weeks 37-46</div>
-                  <div className="text-sm text-foreground font-medium">Review & Practice</div>
-                  <div className="text-xs text-foreground mt-1">Skills Reinforcement</div>
-                </div>
-                <div className="bg-background/80 backdrop-blur rounded-lg p-4 border border-accent/20">
-                  <div className="text-lg font-bold text-foreground mb-1">Weeks 47-50</div>
-                  <div className="text-sm text-foreground font-medium">Final Review</div>
-                  <div className="text-xs text-foreground mt-1">Pre-Exam Prep</div>
-                </div>
-                <div className="bg-background/80 backdrop-blur rounded-lg p-4 border border-warning/20">
-                  <div className="text-lg font-bold text-foreground mb-1">Weeks 51-52</div>
-                  <div className="text-sm text-foreground font-medium">Exam Ready</div>
-                  <div className="text-xs text-foreground mt-1">Assessment Focus</div>
-                </div>
-              </div>
-              
-              {/* Progress Overview */}
-              <div className="bg-background/50 rounded-lg p-4 border">
-                <div className="flex items-center justify-between mb-2">
-                  <span className="text-sm font-medium">Overall Progress</span>
-                  <span className="text-sm text-muted-foreground">
-                    {weeklyPlan.filter(w => getWeekStatus(w.week) === 'completed').length} / {weeklyPlan.length} weeks completed
-                  </span>
-                </div>
-                <Progress 
-                  value={(weeklyPlan.filter(w => getWeekStatus(w.week) === 'completed').length / weeklyPlan.length) * 100} 
-                  className="h-2"
-                />
-              </div>
+            </div>
+          </TabsContent>
+
+          <TabsContent value="modules" className="space-y-6">
+            {/* All Learning Topics Section */}
+            <div className="bg-card rounded-xl shadow-sm border p-6">
+              <h2 className="text-2xl font-bold text-foreground mb-2">All Learning Topics</h2>
+              <p className="text-muted-foreground">
+                Explore {topics.length} topics. Click any topic to see detailed content.
+              </p>
             </div>
 
-            {/* Collapsible Sections by Phase */}
-            <div className="space-y-4">
-              {/* Core Curriculum Phase */}
-              <Collapsible defaultOpen className="space-y-3">
-                <CollapsibleTrigger asChild>
-                  <Button variant="ghost" className="w-full justify-between p-4 h-auto border rounded-lg hover:bg-muted/50">
-                    <div className="flex items-center gap-3">
-                      <div className="w-3 h-3 bg-primary rounded-full"></div>
-                      <div className="text-left">
-                        <div className="text-lg font-semibold">Core Curriculum (Weeks 1-36)</div>
-                        <div className="text-sm text-muted-foreground">Foundation building and essential concepts</div>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              {topics.map((topic) => (
+                <Card 
+                  key={topic.id} 
+                  className="cursor-pointer hover:shadow-md transition-all duration-200 hover:scale-[1.02] group"
+                  onClick={() => handleTopicClick(topic)}
+                >
+                  <CardHeader className="pb-3">
+                    <div className="flex items-center justify-between">
+                      <Badge className={getDifficultyColor(topic.difficulty)} variant="outline">
+                        {topic.difficulty}
+                      </Badge>
+                      <ChevronRight className="h-4 w-4 text-muted-foreground group-hover:text-primary transition-colors" />
+                    </div>
+                    <CardTitle className="text-lg leading-tight group-hover:text-primary transition-colors">
+                      {topic.name}
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent className="pt-0">
+                    <div className="space-y-3 text-sm text-muted-foreground">
+                      <div className="flex items-center justify-between">
+                        <span>{topic.skills?.length || 0} objectives</span>
+                        <span>Order: {topic.topic_order}</span>
                       </div>
                     </div>
-                    <ChevronDown className="h-4 w-4" />
-                  </Button>
-                </CollapsibleTrigger>
-                <CollapsibleContent className="space-y-3">
-                  <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 pl-4">
-                    {weeklyPlan.filter(w => w.week <= 36).map(week => renderWeekCard(week))}
-                  </div>
-                </CollapsibleContent>
-              </Collapsible>
-
-              {/* Review & Practice Phase */}
-              <Collapsible className="space-y-3">
-                <CollapsibleTrigger asChild>
-                  <Button variant="ghost" className="w-full justify-between p-4 h-auto border rounded-lg hover:bg-muted/50">
-                    <div className="flex items-center gap-3">
-                      <div className="w-3 h-3 bg-secondary rounded-full"></div>
-                      <div className="text-left">
-                        <div className="text-lg font-semibold">Review & Practice (Weeks 37-46)</div>
-                        <div className="text-sm text-muted-foreground">Skills reinforcement and mastery</div>
-                      </div>
-                    </div>
-                    <ChevronDown className="h-4 w-4" />
-                  </Button>
-                </CollapsibleTrigger>
-                <CollapsibleContent className="space-y-3">
-                  <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 pl-4">
-                    {weeklyPlan.filter(w => w.week >= 37 && w.week <= 46).map(week => renderWeekCard(week))}
-                  </div>
-                </CollapsibleContent>
-              </Collapsible>
-
-              {/* Final Review Phase */}
-              <Collapsible className="space-y-3">
-                <CollapsibleTrigger asChild>
-                  <Button variant="ghost" className="w-full justify-between p-4 h-auto border rounded-lg hover:bg-muted/50">
-                    <div className="flex items-center gap-3">
-                      <div className="w-3 h-3 bg-accent rounded-full"></div>
-                      <div className="text-left">
-                        <div className="text-lg font-semibold">Final Review (Weeks 47-50)</div>
-                        <div className="text-sm text-muted-foreground">Pre-exam preparation</div>
-                      </div>
-                    </div>
-                    <ChevronDown className="h-4 w-4" />
-                  </Button>
-                </CollapsibleTrigger>
-                <CollapsibleContent className="space-y-3">
-                  <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 pl-4">
-                    {weeklyPlan.filter(w => w.week >= 47 && w.week <= 50).map(week => renderWeekCard(week))}
-                  </div>
-                </CollapsibleContent>
-              </Collapsible>
-
-              {/* Exam Ready Phase */}
-              <Collapsible className="space-y-3">
-                <CollapsibleTrigger asChild>
-                  <Button variant="ghost" className="w-full justify-between p-4 h-auto border rounded-lg hover:bg-muted/50">
-                    <div className="flex items-center gap-3">
-                      <div className="w-3 h-3 bg-warning rounded-full"></div>
-                      <div className="text-left">
-                        <div className="text-lg font-semibold">Exam Ready (Weeks 51-52)</div>
-                        <div className="text-sm text-muted-foreground">Final assessment focus</div>
-                      </div>
-                    </div>
-                    <ChevronDown className="h-4 w-4" />
-                  </Button>
-                </CollapsibleTrigger>
-                <CollapsibleContent className="space-y-3">
-                  <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 pl-4">
-                    {weeklyPlan.filter(w => w.week >= 51).map(week => renderWeekCard(week))}
-                  </div>
-                </CollapsibleContent>
-              </Collapsible>
+                  </CardContent>
+                </Card>
+              ))}
             </div>
-          </div>
-        </TabsContent>
-
-        <TabsContent value="modules" className="space-y-6">
-          {/* All Learning Topics Section - Moved from TopicsView */}
-          <div className="bg-card rounded-xl shadow-sm border p-6">
-            <h2 className="text-2xl font-bold text-foreground mb-2">All Learning Topics</h2>
-            <p className="text-muted-foreground">
-              Explore {topics.length} topics across {modules.length} modules. Click any topic to see detailed content, subtopics, and sample questions.
-            </p>
-          </div>
-
-          {/* Your Learning Journey Progress */}
-          {progress && progress.length > 0 && (
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <Target className="h-5 w-5" />
-                  Your Learning Journey
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-4">
-                  <div className="flex justify-between text-sm text-muted-foreground">
-                    <span>Progress: {progress.filter(p => p.status === 'mastered' || p.status === 'completed').length} of {topics.length} topics</span>
-                    <span>{Math.round((progress.filter(p => p.status === 'mastered' || p.status === 'completed').length / topics.length) * 100)}% Complete</span>
-                  </div>
-                  <Progress value={(progress.filter(p => p.status === 'mastered' || p.status === 'completed').length / topics.length) * 100} className="h-2" />
-                </div>
-              </CardContent>
-            </Card>
-          )}
-
-          {/* Practice Performance Card */}
-          <PracticePerformanceCard
-            sessionsCompleted={8}
-            averageAccuracy={78}
-            bestSession={95}
-            totalQuestions={245}
-            recentSessions={[
-              {
-                sessionNumber: 8,
-                date: 'Today',
-                questionsCompleted: 20,
-                accuracy: 85,
-                timeSpent: '28m',
-                status: 'Good'
-              },
-              {
-                sessionNumber: 7,
-                date: 'Yesterday',
-                questionsCompleted: 18,
-                accuracy: 72,
-                timeSpent: '25m',
-                status: 'Needs Improvement'
-              }
-            ]}
-            onStartPractice={() => console.log('Start practice from Learn')}
-            onReviewMistakes={() => console.log('Review mistakes from Learn')}
-          />
-
-          {modules.map((module) => {
-            const moduleTopics = getTopicsForModule(module.id);
-            if (moduleTopics.length === 0) return null;
-
-            return (
-              <div key={module.id} className="space-y-4">
-                <div className="bg-gradient-to-r from-primary/5 to-secondary/5 rounded-xl p-4 border">
-                  <h3 className="text-xl font-bold mb-2">{module.name}</h3>
-                  <div className="flex items-center gap-4 text-sm text-muted-foreground">
-                    <div className="flex items-center gap-1">
-                      <Clock className="h-4 w-4" />
-                      <span>{module.weeks.length} weeks</span>
-                    </div>
-                    <div className="flex items-center gap-1">
-                      <BookOpen className="h-4 w-4" />
-                      <span>{moduleTopics.length} topics</span>
-                    </div>
-                    <div className="flex items-center gap-1">
-                      <span>Module {module.module_order}</span>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                  {moduleTopics.map((topic) => {
-                    const topicSubtopics = getSubtopicsForTopic(topic.id);
-                    const sampleQuestionsCount = getCurriculumForTopic(topic.name).length;
-                    
-                    // Get progress for this specific topic
-                    const topicProgress = progress.find(p => p.topic_id === topic.id);
-                    const progressPercentage = topicProgress ? (topicProgress.mastery_score || 0) * 100 : 0;
-                    const statusColor = topicProgress?.status === 'mastered' ? 'text-green-600' : 
-                                       topicProgress?.status === 'completed' ? 'text-blue-600' : 
-                                       topicProgress?.status === 'in_progress' ? 'text-yellow-600' : 
-                                       'text-gray-500';
-
-                    return (
-                      <Card 
-                        key={topic.id} 
-                        className="cursor-pointer hover:shadow-md transition-all duration-200 hover:scale-[1.02] group"
-                        onClick={() => handleTopicClick(topic)}
-                      >
-                        <CardHeader className="pb-3">
-                          <div className="flex items-center justify-between">
-                            <Badge className={getDifficultyColor(topic.difficulty)} variant="outline">
-                              {topic.difficulty}
-                            </Badge>
-                            <ChevronRight className="h-4 w-4 text-muted-foreground group-hover:text-primary transition-colors" />
-                          </div>
-                          <CardTitle className="text-lg leading-tight group-hover:text-primary transition-colors">
-                            {topic.name}
-                          </CardTitle>
-                        </CardHeader>
-                        <CardContent className="pt-0">
-                          <div className="space-y-3 text-sm text-muted-foreground">
-                            <div className="flex items-center justify-between">
-                              <span>{topic.skills?.length || 0} skills</span>
-                              <span>{topicSubtopics.length} subtopics</span>
-                            </div>
-                            
-                            {/* Topic Progress Bar */}
-                            {topicProgress && (
-                              <div className="space-y-2">
-                                <div className="flex items-center justify-between text-xs">
-                                  <span className={statusColor}>
-                                    {topicProgress.status.replace('_', ' ')}
-                                  </span>
-                                  <span>{Math.round(progressPercentage)}%</span>
-                                </div>
-                                <Progress value={progressPercentage} className="h-1.5" />
-                              </div>
-                            )}
-                            
-                            {topic.skills && topic.skills.length > 0 && (
-                              <div className="text-xs">
-                                <div className="font-medium mb-1">Skills:</div>
-                                <div className="flex flex-wrap gap-1">
-                                  {topic.skills.map((skill, index) => (
-                                    <Badge key={index} variant="secondary" className="text-xs px-1 py-0">
-                                      {skill}
-                                    </Badge>
-                                  ))}
-                                </div>
-                              </div>
-                            )}
-                            
-                            {sampleQuestionsCount > 0 && (
-                              <div className="flex items-center gap-1 text-xs">
-                                <Play className="h-3 w-3" />
-                                <span>{sampleQuestionsCount} sample questions</span>
-                              </div>
-                            )}
-                            
-                            {(() => {
-                              const cta = getTopicCTA(topicProgress);
-                              return (
-                                <Button 
-                                  className={`w-full ${cta.className || ''}`} 
-                                  size="sm" 
-                                  variant={cta.variant}
-                                  onClick={(e) => {
-                                    e.stopPropagation();
-                                    handleTopicClick(topic);
-                                  }}
-                                >
-                                  <cta.icon className="h-4 w-4 mr-2" />
-                                  {cta.text}
-                                </Button>
-                              );
-                            })()}
-                          </div>
-                        </CardContent>
-                      </Card>
-                    );
-                  })}
-                </div>
-              </div>
-            );
-          })}
-        </TabsContent>
-
-      </Tabs>
-
-      <TopicLearningModal topic={selectedTopic} isOpen={isTopicModalOpen} onClose={() => setIsTopicModalOpen(false)} onStartPractice={handleStartPractice} />
+          </TabsContent>
+        </Tabs>
+      </div>
+      
+      <TopicLearningModal 
+        topic={selectedTopic} 
+        isOpen={isTopicModalOpen} 
+        onClose={() => setIsTopicModalOpen(false)} 
+        onStartPractice={handleStartPractice} 
+      />
       
       <QuickPracticeModal 
         topic={practiceSelectedTopic} 
@@ -975,5 +488,6 @@ export const LearnView: React.FC<LearnViewProps> = ({ selectedWeek, onWeekChange
           }
         }} 
       />
-    </div>;
+    </div>
+  );
 };
