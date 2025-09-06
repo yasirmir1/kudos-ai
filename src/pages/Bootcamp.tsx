@@ -91,11 +91,11 @@ const Bootcamp = () => {
               </div>
             </div>}
           
-          {currentView === 'practice' && <div className="rounded-3xl shadow-xl overflow-hidden">
+          {currentView === 'practice' && <div>
               <PracticeView />
             </div>}
           
-          {currentView === 'mocktest' && <div className="bg-white rounded-3xl shadow-xl overflow-hidden">
+          {currentView === 'mocktest' && <div>
               <MockTest />
             </div>}
           
