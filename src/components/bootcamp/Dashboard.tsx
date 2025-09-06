@@ -265,7 +265,7 @@ export const Dashboard: React.FC<DashboardProps> = ({
               } : {}}
             >
               {isClickable && (
-                <ArrowRight className="h-6 w-6 mr-2 text-white" />
+                <ArrowRight className="mr-2 h-5 w-5 text-white" />
               )}
               <div className="flex-1">
                 <p className={`${isClickable ? 'text-lg font-semibold text-white' : 'text-sm font-medium text-muted-foreground'}`}>{stat.label}</p>
