@@ -138,8 +138,8 @@ export const AppNavigation: React.FC<AppNavigationProps> = ({
   return (
     <>
       <header className="border-b bg-card/50 backdrop-blur-sm">
-        <div className="container mx-auto px-0 py-[15px] pr-12">
-          <div className="flex justify-between items-center">
+        <div className="container mx-auto px-0 py-6 pr-12">
+          <div className="flex justify-between items-center h-full">
             {/* Left section - Back button or Logo */}
             <div className="flex items-center space-x-4">
               {showBackButton ? <Button variant="ghost" onClick={() => navigate(backButtonPath)}>
