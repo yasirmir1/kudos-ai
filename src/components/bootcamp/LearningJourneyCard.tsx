@@ -49,7 +49,7 @@ export const LearningJourneyCard: React.FC<LearningJourneyCardProps> = ({
   ];
 
   return (
-    <div className="lg:col-span-1 bg-background border border-border rounded-lg p-6 shadow-card" style={{ 
+    <div className="lg:col-span-1 bg-background border border-border rounded-lg p-4 shadow-card max-w-sm" style={{ 
       background: 'hsl(var(--card))', 
       borderColor: 'hsl(var(--border))', 
       color: 'hsl(var(--card-foreground))',
@@ -57,63 +57,55 @@ export const LearningJourneyCard: React.FC<LearningJourneyCardProps> = ({
       position: 'relative',
       zIndex: 1
     }}>
-      <div className="flex justify-between items-center mb-6">
-        <h3 className="text-lg font-semibold text-foreground">Your Learning Journey</h3>
-        <div className="flex items-center text-sm text-muted-foreground">
-          <span className="text-sm mr-1">🎯</span>
+      <div className="flex justify-between items-center mb-4">
+        <h3 className="text-sm font-semibold text-foreground">Your Learning Journey</h3>
+        <div className="flex items-center text-xs text-muted-foreground">
+          <span className="text-xs mr-1">🎯</span>
           <span>Foundation</span>
         </div>
       </div>
       <div>
-        <div className="mb-3">
-          <span className="text-sm font-semibold text-primary">Week {currentWeek}</span>
-          <span className="ml-2 text-xs font-medium bg-primary/10 text-primary px-2 py-1 rounded-full">Foundation</span>
+        <div className="mb-2">
+          <span className="text-xs font-semibold text-primary">Week {currentWeek}</span>
+          <span className="ml-2 text-xs font-medium bg-primary/10 text-primary px-1.5 py-0.5 rounded-full">Foundation</span>
         </div>
-        <h4 className="text-xl font-bold text-foreground">Number & Place Value - Week 1</h4>
-        <p className="text-base text-muted-foreground mt-2">Number & Place Value • Multi-Topic</p>
+        <h4 className="text-lg font-bold text-foreground">Number & Place Value</h4>
+        <p className="text-sm text-muted-foreground mt-1">Multi-Topic</p>
       </div>
 
-      <div className="mt-6">
-        <p className="text-base font-semibold text-foreground mb-4">This week covers:</p>
-        <ul className="space-y-3 text-base text-muted-foreground">
+      <div className="mt-4">
+        <p className="text-sm font-semibold text-foreground mb-2">This week covers:</p>
+        <ul className="space-y-1 text-sm text-muted-foreground">
           <li className="flex items-start">
-            <Check className="h-4 w-4 text-primary mr-3 mt-1 flex-shrink-0" />
-            Reading and Writing Large Numbers
+            <Check className="h-3 w-3 text-primary mr-2 mt-0.5 flex-shrink-0" />
+            Large Numbers
           </li>
           <li className="flex items-start">
-            <Check className="h-4 w-4 text-primary mr-3 mt-1 flex-shrink-0" />
-            Rounding Numbers
+            <Check className="h-3 w-3 text-primary mr-2 mt-0.5 flex-shrink-0" />
+            Rounding
           </li>
           <li className="flex items-start">
-            <Check className="h-4 w-4 text-primary mr-3 mt-1 flex-shrink-0" />
-            Place Value Understanding
-          </li>
-          <li className="flex items-start">
-            <Check className="h-4 w-4 text-primary mr-3 mt-1 flex-shrink-0" />
-            Number Sequences
+            <Check className="h-3 w-3 text-primary mr-2 mt-0.5 flex-shrink-0" />
+            Place Value
           </li>
         </ul>
       </div>
 
       {/* Upcoming Weeks Summary */}
-      <div className="mt-6 bg-muted/30 rounded-lg p-4">
-        <p className="text-sm font-semibold text-foreground mb-3">Coming Up:</p>
-        <div className="space-y-2 text-sm text-muted-foreground">
-          <div className="flex justify-between items-center">
-            <span>Week 2-3: Addition, Subtraction, Multiplication & Division</span>
-          </div>
-          <div className="flex justify-between items-center">
-            <span>Week 4: Fractions & Equivalent Forms</span>
-          </div>
+      <div className="mt-4 bg-muted/30 rounded-lg p-3">
+        <p className="text-xs font-semibold text-foreground mb-2">Coming Up:</p>
+        <div className="space-y-1 text-xs text-muted-foreground">
+          <div>Week 2-3: Addition & Multiplication</div>
+          <div>Week 4: Fractions</div>
         </div>
       </div>
 
-      <div className="mt-8">
+      <div className="mt-4">
         <button 
-          className="w-full bg-primary text-primary-foreground font-semibold py-3 px-4 rounded-lg hover:bg-primary/90 transition-colors flex items-center justify-center"
+          className="w-full bg-primary text-primary-foreground font-semibold py-2 px-3 rounded-lg hover:bg-primary/90 transition-colors flex items-center justify-center text-sm"
           onClick={() => onStartLearning(currentWeek)}
         >
-          <ArrowRight className="mr-2 h-4 w-4" />
+          <ArrowRight className="mr-1 h-3 w-3" />
           Start Learning
         </button>
       </div>
