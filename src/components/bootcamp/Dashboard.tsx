@@ -256,9 +256,12 @@ export const Dashboard: React.FC<DashboardProps> = ({
               key={stat.label} 
               onClick={onClick}
               className={`${isClickable 
-                ? `${stat.label === 'Practice Questions' ? 'bg-blue-600 hover:bg-blue-700' : 'bg-orange-500 hover:bg-orange-600'} text-white cursor-pointer transition-colors font-semibold`
+                ? `${stat.label === 'Mock Test' ? 'bg-orange-500 hover:bg-orange-600' : ''} text-white cursor-pointer transition-colors font-semibold`
                 : 'bg-card border border-border text-card-foreground shadow-card'
               } rounded-lg p-6 flex items-center justify-between`}
+              style={isClickable && stat.label === 'Practice Questions' ? {
+                backgroundColor: '#4F92E0'
+              } : {}}
             >
               <div>
                 <p className={`text-sm font-medium ${isClickable ? 'text-white/80' : 'text-muted-foreground'}`}>{stat.label}</p>
