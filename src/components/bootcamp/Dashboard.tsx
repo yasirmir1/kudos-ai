@@ -201,8 +201,8 @@ export const Dashboard: React.FC<DashboardProps> = ({
     icon: Brain,
     color: 'primary'
   }, {
-    label: 'Practice Questions',
-    value: 'Start Now',
+    label: 'Weekly Practice Session',
+    value: '',
     icon: FileText,
     color: 'cyan'
   }, {
@@ -241,10 +241,10 @@ export const Dashboard: React.FC<DashboardProps> = ({
       {/* Quick Stats */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         {quickStats.map((stat, index) => {
-          const isClickable = stat.label === 'Practice Questions' || stat.label === 'Mock Test';
+          const isClickable = stat.label === 'Weekly Practice Session' || stat.label === 'Mock Test';
           const Component = isClickable ? 'button' : 'div';
           const onClick = isClickable ? () => {
-            if (stat.label === 'Practice Questions') {
+            if (stat.label === 'Weekly Practice Session') {
               setCurrentView('practice');
             } else if (stat.label === 'Mock Test') {
               setCurrentView('mocktest');
@@ -260,7 +260,7 @@ export const Dashboard: React.FC<DashboardProps> = ({
                 : 'bg-card border border-border text-card-foreground shadow-card'
               } rounded-lg p-6 flex items-center justify-between`}
               style={isClickable ? {
-                backgroundColor: stat.label === 'Practice Questions' ? '#08c4b4' : '#FF9A00'
+                backgroundColor: stat.label === 'Weekly Practice Session' ? '#08c4b4' : '#FF9A00'
               } : {}}
             >
               <div>
