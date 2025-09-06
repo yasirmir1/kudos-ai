@@ -248,33 +248,6 @@ export const Dashboard: React.FC<DashboardProps> = ({
           ))}
         </div>
 
-        {/* CTA Buttons */}
-        <div className="space-y-4 flex flex-col justify-center">
-          <button 
-            onClick={() => setCurrentView('practice')}
-            className="text-white cursor-pointer transition-all duration-300 font-semibold shadow-lg hover:shadow-xl hover:scale-105 transform rounded-lg py-4 px-6 flex items-center justify-center text-base"
-            style={{
-              backgroundColor: '#3b82f6',
-              boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1), 0 2px 4px rgba(0, 0, 0, 0.06)'
-            }}
-          >
-            <ArrowRight className="mr-2 h-4 w-4 text-white" />
-            <span className="text-base font-semibold text-white">Start Weekly Challenge</span>
-          </button>
-
-          <button 
-            onClick={() => setCurrentView('mocktest')}
-            className="text-white cursor-pointer transition-all duration-300 font-semibold shadow-lg hover:shadow-xl hover:scale-105 transform rounded-lg py-4 px-6 flex items-center justify-center text-base"
-            style={{
-              backgroundColor: '#19bc87',
-              boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1), 0 2px 4px rgba(0, 0, 0, 0.06)'
-            }}
-          >
-            <ArrowRight className="mr-2 h-4 w-4 text-white" />
-            <span className="text-base font-semibold text-white">11+ Mock Test</span>
-            <span className="ml-auto text-sm bg-white/20 px-2 py-1 rounded text-xs">60 min</span>
-          </button>
-        </div>
       </div>
 
       {/* Performance Cards */}
