@@ -185,7 +185,7 @@ export const PracticeHomepage: React.FC<PracticeHomepageProps> = ({
         </div>
 
         {/* Body Content */}
-        <div className="p-12 bg-white rounded-3xl shadow-2xl" style={{
+        <div className="p-12 rounded-3xl shadow-2xl" style={{
           boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)'
         }}>
           {/* Key Information Grid */}
