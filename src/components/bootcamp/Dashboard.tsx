@@ -244,14 +244,35 @@ export const Dashboard: React.FC<DashboardProps> = ({
   };
   return <div className="space-y-6">
       {/* Welcome Section */}
-      <div className="bg-card border border-border rounded-lg p-6 shadow-card">
+      <div className="bg-card border border-border rounded-lg p-6 shadow-card" style={{ 
+        background: 'hsl(var(--card))', 
+        borderColor: 'hsl(var(--border))', 
+        color: 'hsl(var(--card-foreground))',
+        boxShadow: 'var(--shadow-card)',
+        position: 'relative',
+        zIndex: 1
+      }}>
         <div className="flex items-center gap-4 mb-3">
-          <div className="w-12 h-12 bg-primary/10 rounded-2xl flex items-center justify-center">
-            <Brain className="w-7 h-7 text-primary" />
+          <div className="w-12 h-12 bg-primary/10 rounded-2xl flex items-center justify-center" style={{
+            backgroundColor: 'hsl(var(--primary) / 0.1)',
+            borderRadius: '1rem'
+          }}>
+            <Brain className="w-7 h-7 text-primary" style={{ color: 'hsl(var(--primary))' }} />
           </div>
           <div>
-            <h1 className="text-2xl font-bold text-foreground">Welcome back, {user.name}! 👋</h1>
-            <p className="text-muted-foreground text-sm">Continue your learning journey</p>
+            <h1 className="text-2xl font-bold text-foreground" style={{ 
+              color: 'hsl(var(--foreground))', 
+              fontSize: '1.5rem', 
+              fontWeight: '700',
+              margin: '0',
+              padding: '0'
+            }}>Welcome back, {user.name}! 👋</h1>
+            <p className="text-muted-foreground text-sm" style={{ 
+              color: 'hsl(var(--muted-foreground))', 
+              fontSize: '0.875rem',
+              margin: '0',
+              padding: '0'
+            }}>Continue your learning journey</p>
           </div>
         </div>
         
