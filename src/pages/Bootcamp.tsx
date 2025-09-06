@@ -99,7 +99,7 @@ const Bootcamp = () => {
                       </svg>
                     </div>
                     <div className="pb-4">
-                      <h1 className="text-2xl font-bold text-white">Welcome back, {user.name}!</h1>
+                      <h1 className="text-2xl font-bold text-white mb-2">Welcome back, {user.name}!</h1>
                       <p className="text-indigo-100 text-sm">Continue your learning journey</p>
                     </div>
                   </div>
