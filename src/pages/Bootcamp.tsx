@@ -91,7 +91,7 @@ const Bootcamp = () => {
               </div>
             </div>}
           
-          {currentView === 'practice' && <div className="rounded-3xl shadow-xl overflow-hidden">
+          {currentView === 'practice' && <div className="overflow-hidden">
               <PracticeView />
             </div>}
           
