@@ -233,6 +233,10 @@ export const Dashboard: React.FC<DashboardProps> = ({
   return <div className="space-y-6">
       {/* Welcome Section */}
       
+      {/* Learning Journey */}
+      <div className="grid grid-cols-1 lg:grid-cols-1 gap-6">
+        <LearningJourneyCard currentWeek={1} hasStarted={false} onStartLearning={onStartLearning} />
+      </div>
 
       {/* Quick Stats */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -272,11 +276,6 @@ export const Dashboard: React.FC<DashboardProps> = ({
             </Component>
           );
         })}
-      </div>
-
-      {/* Learning Journey */}
-      <div className="grid grid-cols-1 lg:grid-cols-1 gap-6">
-        <LearningJourneyCard currentWeek={1} hasStarted={false} onStartLearning={onStartLearning} />
       </div>
 
       {/* Performance Cards */}
