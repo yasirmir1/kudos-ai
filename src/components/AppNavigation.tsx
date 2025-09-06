@@ -148,7 +148,7 @@ export const AppNavigation: React.FC<AppNavigationProps> = ({
                   onClick={() => navigate('/')} 
                   className="flex items-center space-x-2 hover:opacity-80 transition-opacity"
                 >
-                  <img src="/lovable-uploads/343d37bc-a8af-452f-b2b9-250214aa6175.png" alt="Kudos Academy" className="h-16 w-auto" />
+                  <img src="/lovable-uploads/343d37bc-a8af-452f-b2b9-250214aa6175.png" alt="Kudos Academy" className="h-20 w-auto" />
                 </button>}
             </div>
 
