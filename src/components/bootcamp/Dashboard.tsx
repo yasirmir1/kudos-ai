@@ -4,7 +4,6 @@ import { WeeklyProgressChart } from './WeeklyProgressChart';
 import { WeeklyTestPerformanceCard } from './WeeklyTestPerformanceCard';
 import { MockTestPerformanceCard } from './MockTestPerformanceCard';
 import { LearningJourneyCard } from './LearningJourneyCard';
-
 import { ReviewMistakesModal } from './ReviewMistakesModal';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -226,22 +225,7 @@ export const Dashboard: React.FC<DashboardProps> = ({
       {/* Quick Stats and CTAs */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Stats Tiles */}
-        <div className="lg:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-6">
-          {quickStats.map((stat) => (
-            <div 
-              key={stat.label} 
-              className="bg-card border border-border text-card-foreground shadow-card rounded-lg p-6 flex items-center justify-between"
-            >
-              <div className="flex-1">
-                <p className="text-sm font-medium text-muted-foreground">{stat.label}</p>
-                <p className="text-3xl font-bold text-foreground mt-2">{stat.value}</p>
-              </div>
-              <div className={`rounded-full p-3 ${stat.color === 'primary' ? 'bg-blue-100' : 'bg-green-100'} flex items-center gap-2`}>
-                <stat.icon className={`h-8 w-8 ${stat.color === 'primary' ? 'text-blue-600' : 'text-green-600'}`} />
-              </div>
-            </div>
-          ))}
-        </div>
+        
 
       </div>
 
