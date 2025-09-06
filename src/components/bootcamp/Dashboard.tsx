@@ -207,7 +207,7 @@ export const Dashboard: React.FC<DashboardProps> = ({
     color: 'cyan'
   }, {
     label: 'Mock Test',
-    value: 'Take Test',
+    value: '',
     icon: ClipboardCheck,
     color: 'orange'
   }];
@@ -264,8 +264,8 @@ export const Dashboard: React.FC<DashboardProps> = ({
               } : {}}
             >
               <div>
-                <p className={`text-sm font-medium ${isClickable ? 'text-white/80' : 'text-muted-foreground'}`}>{stat.label}</p>
-                <p className={`${isClickable ? 'text-lg font-semibold text-white' : 'text-3xl font-bold text-foreground'} mt-2`}>{stat.value}</p>
+                <p className={`${isClickable ? 'text-lg font-semibold text-white' : 'text-sm font-medium text-muted-foreground'}`}>{stat.label}</p>
+                {!isClickable && <p className="text-3xl font-bold text-foreground mt-2">{stat.value}</p>}
               </div>
               {!isClickable && (
                 <div className={`rounded-full p-3 ${stat.color === 'primary' ? 'bg-blue-100' : 'bg-green-100'} flex items-center gap-2`}>
