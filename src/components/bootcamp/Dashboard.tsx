@@ -272,6 +272,7 @@ export const Dashboard: React.FC<DashboardProps> = ({
           >
             <ArrowRight className="mr-2 h-4 w-4 text-white" />
             <span className="text-base font-semibold text-white">11+ Mock Test</span>
+            <span className="ml-auto text-sm bg-white/20 px-2 py-1 rounded text-xs">60 min</span>
           </button>
         </div>
       </div>
