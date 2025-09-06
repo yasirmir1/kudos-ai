@@ -244,17 +244,30 @@ export const Dashboard: React.FC<DashboardProps> = ({
   };
   return <div className="space-y-6">
       {/* Welcome Section */}
-      <div className="relative bg-gradient-to-r from-purple-600 via-purple-700 to-indigo-700 rounded-2xl p-8 shadow-lg overflow-hidden">
-        {/* Bubble Effects */}
-        <div className="absolute top-4 right-8 w-16 h-16 bg-white/10 rounded-full"></div>
-        <div className="absolute bottom-6 left-12 w-12 h-12 bg-white/5 rounded-full"></div>
-        <div className="absolute top-1/2 right-1/4 w-8 h-8 bg-white/8 rounded-full"></div>
-        <div className="absolute bottom-4 right-16 w-6 h-6 bg-white/6 rounded-full"></div>
+      <div className="bg-background border border-border rounded-lg p-6 shadow-card">
+        <div className="flex justify-between items-center mb-6">
+          <h3 className="text-lg font-semibold text-foreground">Welcome back, {user.name}! 👋</h3>
+          <div className="flex items-center text-sm text-muted-foreground">
+            <span className="text-sm mr-1">🎯</span>
+            <span>{user.level}</span>
+          </div>
+        </div>
+        <p className="text-base text-muted-foreground">Continue your learning journey</p>
         
-        {/* Content */}
-        <div className="relative z-10">
-          <h2 className="text-3xl font-bold text-white mb-4">Welcome back, {user.name}! 👋</h2>
-          <p className="text-lg text-white/90">Continue your learning journey</p>
+        {/* Quick stats in welcome section */}
+        <div className="mt-6 grid grid-cols-3 gap-4">
+          <div className="text-center">
+            <p className="text-2xl font-bold text-foreground">{user.streakDays}</p>
+            <p className="text-sm text-muted-foreground">day streak</p>
+          </div>
+          <div className="text-center">
+            <p className="text-2xl font-bold text-foreground">{user.accuracy}%</p>
+            <p className="text-sm text-muted-foreground">accuracy</p>
+          </div>
+          <div className="text-center">
+            <p className="text-2xl font-bold text-foreground">{user.questionsToday}</p>
+            <p className="text-sm text-muted-foreground">questions today</p>
+          </div>
         </div>
       </div>
 
