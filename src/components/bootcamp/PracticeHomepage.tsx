@@ -143,7 +143,10 @@ export const PracticeHomepage: React.FC<PracticeHomepageProps> = ({
         {/* Main Card */}
         <div className="bg-white rounded-3xl shadow-xl overflow-hidden">
           {/* Header Section */}
-          <div className="relative bg-gradient-to-r from-indigo-500 to-purple-600 px-12 py-10">
+          <div className="relative px-12 py-10" style={{ 
+            background: 'linear-gradient(to right, #6366f1, #9333ea)',
+            minHeight: '200px'
+          }}>
             
             <div className="relative z-10">
               <div className="flex items-center gap-4 mb-3">
