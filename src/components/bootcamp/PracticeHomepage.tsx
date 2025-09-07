@@ -99,7 +99,7 @@ export const PracticeHomepage: React.FC<PracticeHomepageProps> = ({
     return <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <div className="bg-card border border-muted rounded-xl p-6 animate-pulse">
           <div className="h-6 bg-muted rounded mb-4"></div>
-          <div className="space-y-3">
+          <div className="space-y-3 bg-violet-500 rounded-3xl">
             <div className="h-4 bg-muted rounded"></div>
             <div className="h-4 bg-muted rounded w-3/4"></div>
             <div className="h-4 bg-muted rounded w-1/2"></div>
@@ -118,11 +118,11 @@ export const PracticeHomepage: React.FC<PracticeHomepageProps> = ({
   }
   return <>
       {/* Header Section */}
-      <div style={{
+      <div className="relative px-12 py-6 rounded-3xl shadow-2xl mx-auto max-w-4xl mb-4" style={{
       background: 'linear-gradient(to right, #6366f1, #9333ea)',
       minHeight: '140px',
       boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)'
-    }} className="relative px-12 py-6 rounded-3xl shadow-2xl mx-auto max-w-4xl mb-4 bg-indigo-600">
+    }}>
         
         <div className="relative z-10">
           <div className="flex items-center gap-4 mb-3">
