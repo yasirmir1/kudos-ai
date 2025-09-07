@@ -4,15 +4,15 @@ import { PracticeOverviewCard } from './PracticeOverviewCard';
 import { useAuth } from '../../hooks/useAuth';
 import { BootcampAPI } from '../../lib/bootcamp-api';
 import { supabase } from '@/integrations/supabase/client';
-
 interface PracticeHomepageProps {
   onStartPractice: () => void;
 }
-
 export const PracticeHomepage: React.FC<PracticeHomepageProps> = ({
   onStartPractice
 }) => {
-  const { user } = useAuth();
+  const {
+    user
+  } = useAuth();
   const [loading, setLoading] = useState(true);
   const [practiceData, setPracticeData] = useState({
     hasCurrentSession: false,
@@ -22,41 +22,29 @@ export const PracticeHomepage: React.FC<PracticeHomepageProps> = ({
     questionsCompleted: 0,
     totalQuestions: 20
   });
-
   useEffect(() => {
     if (user) {
       loadPracticeData();
     }
   }, [user]);
-
   const loadPracticeData = async () => {
     if (!user) return;
-    
     setLoading(true);
     try {
       const studentProfile = await BootcampAPI.getStudentProfile(user.id);
       if (studentProfile) {
         // Get practice session data
         const [sessionResponse, responseStats] = await Promise.all([
-          // Check for active sessions
-          supabase
-            .from('bootcamp_learning_sessions')
-            .select('*')
-            .eq('student_id', studentProfile.student_id)
-            .eq('session_type', 'practice')
-            .order('created_at', { ascending: false })
-            .limit(1),
-          
-          // Get overall practice statistics
-          supabase
-            .from('bootcamp_student_responses')
-            .select(`
+        // Check for active sessions
+        supabase.from('bootcamp_learning_sessions').select('*').eq('student_id', studentProfile.student_id).eq('session_type', 'practice').order('created_at', {
+          ascending: false
+        }).limit(1),
+        // Get overall practice statistics
+        supabase.from('bootcamp_student_responses').select(`
               is_correct,
               session_id,
               created_at
-            `)
-            .eq('student_id', studentProfile.student_id)
-        ]);
+            `).eq('student_id', studentProfile.student_id)]);
 
         // Calculate statistics
         const responses = responseStats.data || [];
@@ -69,19 +57,16 @@ export const PracticeHomepage: React.FC<PracticeHomepageProps> = ({
         let timeElapsed = '';
         let questionsCompleted = 0;
         let totalQuestions = 20;
-        
         if (hasCurrentSession) {
           const currentSession = sessionResponse.data[0];
           // Get questions for current session
           const currentResponses = practiceResponses.filter(r => r.session_id === currentSession.session_id);
-          progress = currentResponses.length > 0 ? (currentResponses.length / 20) * 100 : 0;
-          
+          progress = currentResponses.length > 0 ? currentResponses.length / 20 * 100 : 0;
           currentTopic = 'Mixed Topics';
           timeElapsed = calculateTimeElapsed(currentSession.created_at);
           questionsCompleted = currentResponses.length;
           totalQuestions = 20;
         }
-
         setPracticeData({
           hasCurrentSession,
           currentTopic,
@@ -97,13 +82,11 @@ export const PracticeHomepage: React.FC<PracticeHomepageProps> = ({
       setLoading(false);
     }
   };
-
   const calculateTimeElapsed = (startTime: string): string => {
     const start = new Date(startTime);
     const now = new Date();
     const diffMs = now.getTime() - start.getTime();
     const diffMins = Math.floor(diffMs / 60000);
-    
     if (diffMins < 60) {
       return `${diffMins} min`;
     } else {
@@ -112,10 +95,8 @@ export const PracticeHomepage: React.FC<PracticeHomepageProps> = ({
       return `${hours}h ${mins}m`;
     }
   };
-
   if (loading) {
-    return (
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+    return <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <div className="bg-card border border-muted rounded-xl p-6 animate-pulse">
           <div className="h-6 bg-muted rounded mb-4"></div>
           <div className="space-y-3">
@@ -133,18 +114,15 @@ export const PracticeHomepage: React.FC<PracticeHomepageProps> = ({
             <div className="h-20 bg-muted rounded"></div>
           </div>
         </div>
-      </div>
-    );
+      </div>;
   }
-
-  return (
-    <>
+  return <>
       {/* Header Section */}
-      <div className="relative px-12 py-6 rounded-3xl shadow-2xl mx-auto max-w-4xl mb-4" style={{ 
-        background: 'linear-gradient(to right, #6366f1, #9333ea)',
-        minHeight: '140px',
-        boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)'
-      }}>
+      <div style={{
+      background: 'linear-gradient(to right, #6366f1, #9333ea)',
+      minHeight: '140px',
+      boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)'
+    }} className="relative px-12 py-6 rounded-3xl shadow-2xl mx-auto max-w-4xl mb-4 bg-indigo-600">
         
         <div className="relative z-10">
           <div className="flex items-center gap-4 mb-3">
@@ -231,13 +209,13 @@ export const PracticeHomepage: React.FC<PracticeHomepageProps> = ({
         <div className="flex gap-3 mb-8">
           <div className="flex-1 flex items-center gap-3 p-4 bg-white border border-amber-200 rounded-xl">
             <svg className="w-5 h-5 text-amber-600 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
-              <path d="M10 2a6 6 0 00-6 6v3.586l-.707.707A1 1 0 004 14h12a1 1 0 00.707-1.707L16 11.586V8a6 6 0 00-6-6zM10 18a3 3 0 01-3-3h6a3 3 0 01-3 3z"/>
+              <path d="M10 2a6 6 0 00-6 6v3.586l-.707.707A1 1 0 004 14h12a1 1 0 00.707-1.707L16 11.586V8a6 6 0 00-6-6zM10 18a3 3 0 01-3-3h6a3 3 0 01-3 3z" />
             </svg>
             <span className="text-xs text-amber-800 font-medium">Immediate feedback provided</span>
           </div>
           <div className="flex-1 flex items-center gap-3 p-4 bg-white border border-blue-200 rounded-xl">
             <svg className="w-5 h-5 text-blue-600 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
-              <path fillRule="evenodd" d="M6.267 3.455a3.066 3.066 0 001.745-.723 3.066 3.066 0 013.976 0 3.066 3.066 0 001.745.723 3.066 3.066 0 012.812 2.812c.051.643.304 1.254.723 1.745a3.066 3.066 0 010 3.976 3.066 3.066 0 00-.723 1.745 3.066 3.066 0 01-2.812 2.812 3.066 3.066 0 00-1.745.723 3.066 3.066 0 01-3.976 0 3.066 3.066 0 00-1.745-.723 3.066 3.066 0 01-2.812-2.812 3.066 3.066 0 00-.723-1.745 3.066 3.066 0 010-3.976 3.066 3.066 0 00.723-1.745 3.066 3.066 0 012.812-2.812zm7.44 5.252a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd"/>
+              <path fillRule="evenodd" d="M6.267 3.455a3.066 3.066 0 001.745-.723 3.066 3.066 0 013.976 0 3.066 3.066 0 001.745.723 3.066 3.066 0 012.812 2.812c.051.643.304 1.254.723 1.745a3.066 3.066 0 010 3.976 3.066 3.066 0 00-.723 1.745 3.066 3.066 0 01-2.812 2.812 3.066 3.066 0 00-1.745.723 3.066 3.066 0 01-3.976 0 3.066 3.066 0 00-1.745-.723 3.066 3.066 0 01-2.812-2.812 3.066 3.066 0 00-.723-1.745 3.066 3.066 0 010-3.976 3.066 3.066 0 00.723-1.745 3.066 3.066 0 012.812-2.812zm7.44 5.252a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
             </svg>
             <span className="text-xs text-blue-800 font-medium">Progress auto-saved</span>
           </div>
@@ -248,10 +226,7 @@ export const PracticeHomepage: React.FC<PracticeHomepageProps> = ({
           <button className="flex-1 py-4 px-8 bg-gray-100 text-gray-700 rounded-xl font-semibold hover:bg-gray-200 transition-colors text-lg">
             Quick Review
           </button>
-          <button
-            onClick={onStartPractice}
-            className="flex-1 py-4 px-8 rounded-xl font-semibold transition-all flex items-center justify-center gap-2 text-lg bg-indigo-600 text-white hover:bg-indigo-700 hover:shadow-lg transform hover:scale-[1.02]"
-          >
+          <button onClick={onStartPractice} className="flex-1 py-4 px-8 rounded-xl font-semibold transition-all flex items-center justify-center gap-2 text-lg bg-indigo-600 text-white hover:bg-indigo-700 hover:shadow-lg transform hover:scale-[1.02]">
             Start Practice Session
             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
@@ -259,6 +234,5 @@ export const PracticeHomepage: React.FC<PracticeHomepageProps> = ({
           </button>
         </div>
       </div>
-    </>
-  );
+    </>;
 };
