@@ -70,7 +70,7 @@ const Bootcamp = () => {
           {currentView === 'dashboard' && <div className="bg-white rounded-3xl shadow-xl overflow-hidden">
               <div style={{
             backgroundColor: '#5947e8'
-          }} className="relative px-8 py-8 rounded-t-3xl !bg-zinc-100 border border-purple-500">
+          }} className="relative px-8 py-8 rounded-t-3xl !bg-zinc-100 border-t border-x border-purple-500">
                 
                 <div className="relative z-10 flex items-center justify-between h-full">
                   {/* Left side - Welcome message and icon */}
