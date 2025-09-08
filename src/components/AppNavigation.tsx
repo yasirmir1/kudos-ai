@@ -148,14 +148,14 @@ export const AppNavigation: React.FC<AppNavigationProps> = ({
 
             {/* Center section - Mode Toggle (absolutely centered) */}
             <div className="absolute left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2">
-              <div className="bg-muted p-1 rounded-full flex items-center gap-1">
+              <div className="bg-muted p-1 rounded-full flex items-center gap-1 hover:text-white ">
                 <Button variant={!isBootcampRoute && !isProfileRoute ? "default" : "ghost"} size="sm" onClick={() => navigate('/dashboard')} className={cn("flex items-center justify-center space-x-2 px-6 py-1.5 rounded-full text-sm font-medium transition-colors min-w-[140px]", !isBootcampRoute && !isProfileRoute ? "bg-primary text-primary-foreground shadow-sm" : "text-muted-foreground hover:text-foreground")}>
                   <Calendar className="h-4 w-4" />
-                  <span>Daily Practice</span>
+                  <span className="button-hover">Daily Practice</span>
                 </Button>
                 <Button variant={isBootcampRoute && !isProfileRoute ? "default" : "ghost"} size="sm" onClick={() => navigate('/bootcamp')} className={cn("flex items-center justify-center space-x-2 px-6 py-1.5 rounded-full text-sm font-medium transition-colors min-w-[140px]", isBootcampRoute && !isProfileRoute ? "bg-primary text-primary-foreground shadow-sm" : "text-muted-foreground hover:text-foreground")}>
                   <Target className="h-4 w-4" />
-                  <span className="hover:text-white ">Bootcamp</span>
+                  <span className="">Bootcamp</span>
                 </Button>
               </div>
             </div>
