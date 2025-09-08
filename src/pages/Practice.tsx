@@ -55,9 +55,7 @@ const Practice = () => {
     isCorrect: boolean;
     timeTaken: number;
   }[]>([]);
-  const {
-    isOverlayActive
-  } = useSubscriptionOverlay();
+  const { isOverlayActive } = useSubscriptionOverlay();
   const [showSessionStartModal, setShowSessionStartModal] = useState(!isOverlayActive);
   const [sessionQuestionCount, setSessionQuestionCount] = useState(10);
   const [sessionDifficulty, setSessionDifficulty] = useState<string | undefined>(undefined);
@@ -65,7 +63,7 @@ const Practice = () => {
   const [currentSessionId, setCurrentSessionId] = useState<string | null>(null);
   useEffect(() => {
     setSessionStartTime(new Date());
-
+    
     // If overlay is active, bypass modal and start with 10 questions
     if (isOverlayActive) {
       setShowSessionStartModal(false);
@@ -110,47 +108,47 @@ const Practice = () => {
       console.log('🎯 Loading bootcamp questions for student:', user?.id);
 
       // First get the student's bootcamp ID
-      const {
-        data: student,
-        error: studentError
-      } = await supabase.from('bootcamp_students').select('student_id').eq('user_id', user?.id).single();
+      const { data: student, error: studentError } = await supabase
+        .from('bootcamp_students')
+        .select('student_id')
+        .eq('user_id', user?.id)
+        .single();
+
       if (studentError || !student) {
         console.error('❌ Error getting student data:', studentError);
         toast({
           title: "Error",
           description: "Could not find student profile. Please try again.",
-          variant: "destructive"
+          variant: "destructive",
         });
         return;
       }
+
       console.log('📚 Student ID:', student.student_id);
 
       // Use the main app's adaptive questions function (not bootcamp)
-      const {
-        data: questionsData,
-        error
-      } = await supabase.rpc('get_adaptive_questions_enhanced', {
-        p_student_id: user.id,
-        // Use user.id directly, not student profile
+      const { data: questionsData, error } = await supabase.rpc('get_adaptive_questions_enhanced', {
+        p_student_id: user.id, // Use user.id directly, not student profile
         p_count: questionCount
       });
-      console.log('🔍 Questions response:', {
-        questionsData,
-        error
-      });
+
+      console.log('🔍 Questions response:', { questionsData, error });
+
       if (error) {
         console.error('❌ Error calling bootcamp question manager:', error);
         toast({
           title: "Error loading questions",
           description: "Failed to load practice questions. Please try again.",
-          variant: "destructive"
+          variant: "destructive",
         });
         return;
       }
+
       if (questionsData && questionsData.length > 0) {
         const questions: Question[] = questionsData.map((item: any) => {
           // Parse the question_data field which contains the actual question
           const q = typeof item.question_data === 'string' ? JSON.parse(item.question_data) : item.question_data;
+          
           return {
             question_id: q.question_id,
             topic: q.topic || 'General',
@@ -165,11 +163,13 @@ const Practice = () => {
             pedagogical_notes: q.pedagogical_notes
           };
         });
+        
         console.log(`✅ Loaded ${questions.length} adaptive questions`);
         console.log('📊 Question breakdown:', {
           topics: [...new Set(questions.map(q => q.topic))],
           difficulties: [...new Set(questions.map(q => q.difficulty))]
         });
+        
         setQuestions(questions);
       } else {
         console.log('⚠️ No adaptive questions returned, falling back to random questions');
@@ -181,7 +181,7 @@ const Practice = () => {
       toast({
         title: "Error",
         description: "Failed to load practice questions. Please try again.",
-        variant: "destructive"
+        variant: "destructive",
       });
     } finally {
       setLoading(false);
@@ -192,28 +192,34 @@ const Practice = () => {
   const loadRandomQuestions = async (ageGroup: 'year 2-3' | 'year 4-5' | '11+' = 'year 4-5', questionCount: number = 20, difficulty?: string) => {
     try {
       console.log('🔄 Using fallback random question selection');
-
+      
       // Get all question IDs the user has already answered to ensure no repeats
-      const {
-        data: answeredQuestions
-      } = await supabase.from('student_answers').select('question_id').eq('student_id', user?.id);
+      const { data: answeredQuestions } = await supabase
+        .from('student_answers')
+        .select('question_id')
+        .eq('student_id', user?.id);
       const answeredQuestionIds = answeredQuestions?.map(q => q.question_id) || [];
 
       // Get random questions from ALL topics that the user has never seen for their age group
-      let query = supabase.from('curriculum').select('*').eq('age_group', ageGroup).limit(questionCount);
+      let query = supabase
+        .from('curriculum')
+        .select('*')
+        .eq('age_group', ageGroup)
+        .limit(questionCount);
+      
       if (answeredQuestionIds.length > 0) {
         query = query.not('question_id', 'in', `(${answeredQuestionIds.map(id => `'${id}'`).join(',')})`);
       }
       if (difficulty) {
         query = query.eq('difficulty', difficulty);
       }
-      const {
-        data: newQuestions,
-        error: newError
-      } = await query;
+      
+      const { data: newQuestions, error: newError } = await query;
+      
       if (newError) {
         throw newError;
       }
+
       let questions: Question[] = [];
       if (newQuestions && newQuestions.length > 0) {
         // Format questions and shuffle them randomly for variety
@@ -221,19 +227,24 @@ const Practice = () => {
           ...q,
           options: Array.isArray(q.options) ? q.options : typeof q.options === 'string' ? JSON.parse(q.options) : Object.values(q.options || {})
         })).sort(() => Math.random() - 0.5);
+
         console.log(`📚 Loaded ${questions.length} random questions from ${new Set(questions.map(q => q.topic)).size} different topics`);
       } else {
         console.log('⚠️ No new questions available, need to generate more');
         await generateAdditionalQuestions();
 
         // After generation, try loading questions again
-        let freshQuery = supabase.from('curriculum').select('*').not('question_id', 'in', answeredQuestionIds.length > 0 ? `(${answeredQuestionIds.map(id => `'${id}'`).join(',')})` : '()').limit(questionCount);
+        let freshQuery = supabase
+          .from('curriculum')
+          .select('*')
+          .not('question_id', 'in', answeredQuestionIds.length > 0 ? `(${answeredQuestionIds.map(id => `'${id}'`).join(',')})` : '()')
+          .limit(questionCount);
+        
         if (difficulty) {
           freshQuery = freshQuery.eq('difficulty', difficulty);
         }
-        const {
-          data: freshQuestions
-        } = await freshQuery;
+        
+        const { data: freshQuestions } = await freshQuery;
         if (freshQuestions && freshQuestions.length > 0) {
           questions = freshQuestions.map(q => ({
             ...q,
@@ -444,7 +455,7 @@ const Practice = () => {
       });
     } finally {
       setGeneratingQuestions(false);
-
+      
       // Auto-advance if user clicked next while generation was in progress
       if (pendingAutoAdvance) {
         setPendingAutoAdvance(false);
@@ -477,6 +488,7 @@ const Practice = () => {
     // Proceed with normal next question logic
     advanceToNextQuestion();
   };
+
   const handleNextQuestionAfterGeneration = async () => {
     // Reload questions to include newly generated ones
     const {
@@ -486,6 +498,7 @@ const Practice = () => {
     const {
       data: newQuestions
     } = await supabase.from('curriculum').select('*').not('question_id', 'in', answeredQuestionIds.length > 0 ? `(${answeredQuestionIds.map(id => `'${id}'`).join(',')})` : '()').limit(20);
+    
     if (newQuestions && newQuestions.length > 0) {
       const formattedQuestions = newQuestions.map(q => ({
         ...q,
@@ -500,6 +513,7 @@ const Practice = () => {
     // Now advance to next question
     advanceToNextQuestion();
   };
+
   const advanceToNextQuestion = () => {
     if (currentIndex + 1 >= sessionQuestionCount) {
       setSessionComplete(true);
@@ -522,30 +536,23 @@ const Practice = () => {
       return;
     }
     try {
-      const {
-        data,
-        error
-      } = await supabase.from('practice_sessions').insert({
+      const { data, error } = await supabase.from('practice_sessions').insert({
         student_id: user?.id,
         session_start: sessionStartTime.toISOString(),
-        session_end: sessionStartTime.toISOString(),
-        // Will be updated later
-        total_questions: 0,
-        // Will be updated later
-        correct_answers: 0,
-        // Will be updated later
-        average_time_per_question: 0,
-        // Will be updated later
-        topics_covered: [],
-        // Will be updated later
-        difficulty_levels: [],
-        // Will be updated later
+        session_end: sessionStartTime.toISOString(), // Will be updated later
+        total_questions: 0, // Will be updated later
+        correct_answers: 0, // Will be updated later
+        average_time_per_question: 0, // Will be updated later
+        topics_covered: [], // Will be updated later
+        difficulty_levels: [], // Will be updated later
         age_group: selectedAgeGroup
       }).select().single();
+
       if (error) {
         console.error('Error creating session:', error);
         return null;
       }
+
       console.log('New session created:', data);
       setCurrentSessionId(data.id);
       return data.id;
@@ -554,22 +561,24 @@ const Practice = () => {
       return null;
     }
   };
+
   const recordSessionResults = async (showNotification: boolean = false) => {
     // Skip recording if overlay is active
     if (isOverlayActive) {
       console.log('Skipping session recording - overlay active');
       return;
     }
-
+    
     // Prevent duplicate session recordings
     if (sessionRecorded || !currentSessionId) {
       return;
     }
+
     try {
       const sessionEndTime = new Date();
       const totalQuestions = answeredQuestions.length;
       const correctAnswers = answeredQuestions.filter(q => q.isCorrect).length;
-      const accuracy = totalQuestions > 0 ? correctAnswers / totalQuestions * 100 : 0;
+      const accuracy = totalQuestions > 0 ? (correctAnswers / totalQuestions) * 100 : 0;
 
       // Calculate average time per question
       const totalTime = answeredQuestions.reduce((sum, q) => sum + q.timeTaken, 0);
@@ -578,18 +587,19 @@ const Practice = () => {
       // Get unique topics and difficulty levels
       const topicsCovered = [...new Set(answeredQuestions.map(q => q.question.topic))];
       const difficultyLevels = [...new Set(answeredQuestions.map(q => q.question.difficulty))];
-      const {
-        data,
-        error
-      } = await supabase.from('practice_sessions').update({
-        session_end: sessionEndTime.toISOString(),
-        total_questions: totalQuestions,
-        correct_answers: correctAnswers,
-        accuracy: accuracy,
-        average_time_per_question: averageTimePerQuestion,
-        topics_covered: topicsCovered,
-        difficulty_levels: difficultyLevels
-      }).eq('id', currentSessionId);
+      
+      const { data, error } = await supabase.from('practice_sessions')
+        .update({
+          session_end: sessionEndTime.toISOString(),
+          total_questions: totalQuestions,
+          correct_answers: correctAnswers,
+          accuracy: accuracy,
+          average_time_per_question: averageTimePerQuestion,
+          topics_covered: topicsCovered,
+          difficulty_levels: difficultyLevels
+        })
+        .eq('id', currentSessionId);
+      
       if (error) {
         console.error('Error updating session:', error);
         if (showNotification) {
@@ -637,6 +647,7 @@ const Practice = () => {
     setPendingAutoAdvance(false); // Reset auto-advance flag for restart
     setShowSessionStartModal(true);
   };
+
   const handleSessionStart = async (questionCount: number, difficulty?: string) => {
     setSessionQuestionCount(questionCount);
     setSessionDifficulty(difficulty);
@@ -645,9 +656,10 @@ const Practice = () => {
     setSessionRecorded(false); // Reset session recorded flag for new session
     setCurrentSessionId(null); // Reset session ID for new session
     setShowSessionStartModal(false); // Close the modal
-
+    
     // Create a new session record when starting
     await createNewSession();
+    
     loadAdaptiveQuestions(selectedAgeGroup, questionCount, difficulty);
   };
   if (loading) {
@@ -698,29 +710,40 @@ const Practice = () => {
         </Card>
       </div>;
   }
-
+  
   // Don't render the practice interface if no questions are available yet
   if (questions.length === 0) {
     return <div>
-      <SessionStartModal isOpen={showSessionStartModal} onClose={() => {
-        setShowSessionStartModal(false);
-        navigate('/dashboard');
-      }} onCancel={() => {
-        setShowSessionStartModal(false);
-        navigate('/');
-      }} onStart={handleSessionStart} />
+      <SessionStartModal 
+        isOpen={showSessionStartModal}
+        onClose={() => {
+          setShowSessionStartModal(false);
+          navigate('/dashboard');
+        }}
+        onCancel={() => {
+          setShowSessionStartModal(false);
+          navigate('/');
+        }}
+        onStart={handleSessionStart}
+      />
     </div>;
   }
+  
   const currentQuestion = questions[currentIndex];
   const progress = (currentIndex + 1) / sessionQuestionCount * 100;
   return <div>
-      <SessionStartModal isOpen={showSessionStartModal} onClose={() => {
-      setShowSessionStartModal(false);
-      navigate('/dashboard');
-    }} onCancel={() => {
-      setShowSessionStartModal(false);
-      navigate('/');
-    }} onStart={handleSessionStart} />
+      <SessionStartModal
+        isOpen={showSessionStartModal}
+        onClose={() => {
+          setShowSessionStartModal(false);
+          navigate('/dashboard');
+        }}
+        onCancel={() => {
+          setShowSessionStartModal(false);
+          navigate('/');
+        }}
+        onStart={handleSessionStart}
+      />
       <div className="container mx-auto max-w-4xl px-6 py-8">
         {/* Header */}
         <div className="flex items-center justify-between mb-8">
@@ -728,7 +751,7 @@ const Practice = () => {
             <ArrowLeft className="mr-2 h-4 w-4" />
             Dashboard
           </Button>
-          <div className="text-center flex-1 mx-0">
+          <div className="text-center flex-1 mx-8">
             <p className="text-sm text-muted-foreground mb-2">
               Question {currentIndex + 1} of {sessionQuestionCount}
             </p>
@@ -739,7 +762,7 @@ const Practice = () => {
 
         {/* Question Card */}
         <Card className="mb-8 mx-auto max-w-3xl">
-          <CardHeader className="pb-6 py-[10px] px-[30px]">
+          <CardHeader className="pb-6 py-[10px] px-[10px]">
             <div className="flex items-center justify-between mb-2 gap-6 mx-[20px]">
               <div className="flex items-center space-x-3 flex-shrink-0 my-[3px]">
                 <Badge variant="secondary" className="px-3 my-0 py-[5px] mx-0">{currentQuestion.topic}</Badge>
@@ -759,7 +782,7 @@ const Practice = () => {
           </CardHeader>
           <CardContent className="px-8 pb-8">
             {/* Answer Options */}
-            <div className="space-y-4 mb-8 px-[30px]">
+            <div className="space-y-4 mb-8">
               {currentQuestion.options.map((option, index) => {
               const isSelected = selectedAnswer === option;
               const isCorrect = option === currentQuestion.correct_answer;
@@ -774,7 +797,7 @@ const Practice = () => {
             </div>
 
             {/* Action Buttons */}
-            <div className="flex justify-center my-[15px]">
+            <div className="flex justify-center">
               {!isAnswered ? <Button onClick={handleSubmitAnswer} disabled={!selectedAnswer} size="lg" className="px-8">
                   Submit Answer
                 </Button> : <Button onClick={handleNextQuestion} size="lg" className="px-8">

@@ -39,9 +39,7 @@ export const AppNavigation: React.FC<AppNavigationProps> = ({
     isTrialExpired,
     hasAccessTo
   } = useSubscription();
-  const {
-    openTrialModal
-  } = useTrialModal();
+  const { openTrialModal } = useTrialModal();
   const handleLogout = async () => {
     const {
       error
@@ -67,16 +65,20 @@ export const AppNavigation: React.FC<AppNavigationProps> = ({
     });
   };
   // Remove help from navigation items and handle it separately
-  const mainAppItems = [{
-    path: '/profile',
-    label: 'Profile',
-    icon: User
-  }];
-  const bootcampItems = [{
-    path: '/profile',
-    label: 'Profile',
-    icon: User
-  }];
+  const mainAppItems = [
+    {
+      path: '/profile',
+      label: 'Profile',
+      icon: User
+    }
+  ];
+  const bootcampItems = [
+    {
+      path: '/profile',
+      label: 'Profile',
+      icon: User
+    }
+  ];
 
   // Show bootcamp items when in bootcamp, main app items otherwise
   const navigationItems = isBootcampRoute ? bootcampItems : mainAppItems;
@@ -133,7 +135,8 @@ export const AppNavigation: React.FC<AppNavigationProps> = ({
     }
   };
   const isActivePath = (path: string) => location.pathname === path;
-  return <>
+  return (
+    <>
       <header className="border-b bg-card/50 backdrop-blur-sm">
         <div className="container mx-auto px-0 py-6 pr-12">
           <div className="flex justify-between items-center h-full">
@@ -141,21 +144,44 @@ export const AppNavigation: React.FC<AppNavigationProps> = ({
             <div className="flex items-center space-x-4">
               {showBackButton ? <Button variant="ghost" onClick={() => navigate(backButtonPath)}>
                   {backButtonText}
-                </Button> : <button onClick={() => navigate('/')} className="flex items-center space-x-2 hover:opacity-80 transition-opacity">
+                </Button> : <button 
+                  onClick={() => navigate('/')} 
+                  className="flex items-center space-x-2 hover:opacity-80 transition-opacity"
+                >
                   <img src="/lovable-uploads/343d37bc-a8af-452f-b2b9-250214aa6175.png" alt="Kudos Academy" className="h-20 w-auto" />
                 </button>}
             </div>
 
             {/* Center section - Mode Toggle (absolutely centered) */}
             <div className="absolute left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2">
-              <div className="bg-muted p-1 rounded-full flex items-center gap-1 hover:text-white ">
-                <Button variant={!isBootcampRoute && !isProfileRoute ? "default" : "ghost"} size="sm" onClick={() => navigate('/dashboard')} className={cn("flex items-center justify-center space-x-2 px-6 py-1.5 rounded-full text-sm font-medium transition-colors min-w-[140px]", !isBootcampRoute && !isProfileRoute ? "bg-primary text-primary-foreground shadow-sm" : "text-muted-foreground hover:text-foreground")}>
+              <div className="bg-muted p-1 rounded-full flex items-center gap-1">
+                <Button 
+                  variant={!isBootcampRoute && !isProfileRoute ? "default" : "ghost"} 
+                  size="sm" 
+                  onClick={() => navigate('/dashboard')}
+                  className={cn(
+                    "flex items-center justify-center space-x-2 px-6 py-1.5 rounded-full text-sm font-medium transition-colors min-w-[140px]",
+                    !isBootcampRoute && !isProfileRoute
+                      ? "bg-primary text-primary-foreground shadow-sm" 
+                      : "text-muted-foreground hover:text-foreground"
+                  )}
+                >
                   <Calendar className="h-4 w-4" />
-                  <span className="button-hover">Daily Practice</span>
+                  <span>Daily Practice</span>
                 </Button>
-                <Button variant={isBootcampRoute && !isProfileRoute ? "default" : "ghost"} size="sm" onClick={() => navigate('/bootcamp')} className={cn("flex items-center justify-center space-x-2 px-6 py-1.5 rounded-full text-sm font-medium transition-colors min-w-[140px]", isBootcampRoute && !isProfileRoute ? "bg-primary text-primary-foreground shadow-sm" : "text-muted-foreground hover:text-foreground")}>
+                <Button 
+                  variant={isBootcampRoute && !isProfileRoute ? "default" : "ghost"} 
+                  size="sm" 
+                  onClick={() => navigate('/bootcamp')}
+                  className={cn(
+                    "flex items-center justify-center space-x-2 px-6 py-1.5 rounded-full text-sm font-medium transition-colors min-w-[140px]",
+                    isBootcampRoute && !isProfileRoute
+                      ? "bg-primary text-primary-foreground shadow-sm" 
+                      : "text-muted-foreground hover:text-foreground"
+                  )}
+                >
                   <Target className="h-4 w-4" />
-                  <span className="">Bootcamp</span>
+                  <span>Bootcamp</span>
                 </Button>
               </div>
             </div>
@@ -224,12 +250,19 @@ export const AppNavigation: React.FC<AppNavigationProps> = ({
       </header>
 
       {/* Floating Help Button - Outside header for proper viewport positioning */}
-      <div className="fixed z-[9999]" style={{
-      bottom: '24px',
-      right: '24px',
-      position: 'fixed'
-    }}>
-        <Button onClick={() => setIsHelpOpen(true)} className="h-14 w-14 rounded-full shadow-lg hover:shadow-xl transition-all duration-200 bg-primary hover:bg-primary/90" size="icon">
+      <div 
+        className="fixed z-[9999]" 
+        style={{ 
+          bottom: '24px', 
+          right: '24px',
+          position: 'fixed'
+        }}
+      >
+        <Button
+          onClick={() => setIsHelpOpen(true)}
+          className="h-14 w-14 rounded-full shadow-lg hover:shadow-xl transition-all duration-200 bg-primary hover:bg-primary/90"
+          size="icon"
+        >
           <HelpCircle className="h-6 w-6" />
         </Button>
       </div>
@@ -242,5 +275,6 @@ export const AppNavigation: React.FC<AppNavigationProps> = ({
           </div>
         </DialogContent>
       </Dialog>
-    </>;
+    </>
+  );
 };

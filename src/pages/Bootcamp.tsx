@@ -52,7 +52,7 @@ const Bootcamp = () => {
   }
   return <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50">
       <Navigation currentView={currentView} setCurrentView={setCurrentView} user={user} />
-      <main className="container mx-auto ">
+      <main className="container mx-auto px-4 py-6">
         {error && <div className="max-w-2xl mx-auto mb-6">
             <div className="bg-white rounded-3xl shadow-xl overflow-hidden">
               <div className="p-6">
@@ -67,10 +67,12 @@ const Bootcamp = () => {
           </div>}
         
         <div className="max-w-6xl mx-auto">
-          {currentView === 'dashboard' && <div className="bg-white rounded-3xl shadow-xl overflow-hidden">
-              <div style={{
-            backgroundColor: '#5947e8'
-          }} className="relative px-8 py-8 rounded-t-3xl  !bg-[#f2f3fa]">
+          {currentView === 'dashboard' && <div className="bg-white rounded-[2rem] shadow-xl overflow-hidden border-[0.5px]" style={{ 
+            borderImage: 'linear-gradient(to right, #6366f1, #9333ea) 1' 
+          }}>
+              <div className="relative px-8 py-8 rounded-t-[calc(2rem-0.5px)] !bg-zinc-100" style={{ 
+                backgroundColor: '#5947e8'
+              }}>
                 
                 <div className="relative z-10 flex items-center justify-between h-full">
                   {/* Left side - Welcome message and icon */}
