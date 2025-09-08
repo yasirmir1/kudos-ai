@@ -3,7 +3,6 @@ import { Star, TrendingUp, AlertTriangle, CheckCircle, Clock, Target, BookOpen, 
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import { KudosScoreCard } from './KudosScoreCard';
 import { PerformanceChart } from './PerformanceChart';
@@ -50,7 +49,9 @@ export const ProgressView: React.FC = () => {
     progress,
     isLoading
   } = useBootcampData();
-  const { kudosData } = useKudosScore();
+  const {
+    kudosData
+  } = useKudosScore();
   const [insights, setInsights] = useState<ParentInsight[]>([]);
   const [topTopics, setTopTopics] = useState<TopicProgress[]>([]);
   const [strugglingTopics, setStrugglingTopics] = useState<TopicProgress[]>([]);
@@ -165,11 +166,7 @@ export const ProgressView: React.FC = () => {
     try {
       const studentProfile = await BootcampAPI.getStudentProfile(user.id);
       if (studentProfile) {
-        const [progress, summary, topics] = await Promise.all([
-          BootcampAPI.getStudentProgress(studentProfile.student_id), 
-          BootcampAPI.getStudentPerformanceSummary(studentProfile.student_id), 
-          supabase.from('bootcamp_topics').select('id, name').order('topic_order')
-        ]);
+        const [progress, summary, topics] = await Promise.all([BootcampAPI.getStudentProgress(studentProfile.student_id), BootcampAPI.getStudentPerformanceSummary(studentProfile.student_id), supabase.from('bootcamp_topics').select('id, name').order('topic_order')]);
 
         // Create topic name mapping
         const topicNameMap = new Map();
@@ -181,33 +178,41 @@ export const ProgressView: React.FC = () => {
 
         // Get topic performance data from both sources
         const [responseCounts, mockTestCounts] = await Promise.all([
-          // Regular practice responses
-          supabase.from('bootcamp_student_responses').select(`
+        // Regular practice responses
+        supabase.from('bootcamp_student_responses').select(`
               is_correct,
               bootcamp_questions!inner(topic_id)
             `).eq('student_id', studentProfile.student_id),
-          // Mock test answers  
-          supabase.from('bootcamp_mock_test_answers').select(`
+        // Mock test answers  
+        supabase.from('bootcamp_mock_test_answers').select(`
               is_correct,
               bootcamp_mock_test_sessions!inner(student_id),
               mock_test_questions!inner(topic)
-            `).eq('bootcamp_mock_test_sessions.student_id', studentProfile.student_id)
-        ]);
+            `).eq('bootcamp_mock_test_sessions.student_id', studentProfile.student_id)]);
 
         // Calculate topic performance from both sources
-        const topicStats = new Map<string, { correct: number; total: number; }>();
+        const topicStats = new Map<string, {
+          correct: number;
+          total: number;
+        }>();
 
         // Initialize all topics with 0 stats
         if (topics.data) {
           topics.data.forEach((topic: any) => {
-            topicStats.set(topic.id, { correct: 0, total: 0 });
+            topicStats.set(topic.id, {
+              correct: 0,
+              total: 0
+            });
           });
         }
 
         // Process regular responses
         responseCounts.data?.forEach((response: any) => {
           const topicId = response.bootcamp_questions.topic_id;
-          const current = topicStats.get(topicId) || { correct: 0, total: 0 };
+          const current = topicStats.get(topicId) || {
+            correct: 0,
+            total: 0
+          };
           current.total++;
           if (response.is_correct) current.correct++;
           topicStats.set(topicId, current);
@@ -217,11 +222,12 @@ export const ProgressView: React.FC = () => {
         mockTestCounts.data?.forEach((answer: any) => {
           const topicName = answer.mock_test_questions.topic;
           // Find topic ID by name
-          const topicId = Array.from(topicNameMap.entries()).find(([_, name]) => 
-            name.toLowerCase().includes(topicName.toLowerCase())
-          )?.[0];
+          const topicId = Array.from(topicNameMap.entries()).find(([_, name]) => name.toLowerCase().includes(topicName.toLowerCase()))?.[0];
           if (topicId) {
-            const current = topicStats.get(topicId) || { correct: 0, total: 0 };
+            const current = topicStats.get(topicId) || {
+              correct: 0,
+              total: 0
+            };
             current.total++;
             if (answer.is_correct) current.correct++;
             topicStats.set(topicId, current);
@@ -229,13 +235,11 @@ export const ProgressView: React.FC = () => {
         });
 
         // Convert to skill development data - only include topics with responses for "Topics to Work On"
-        const skillsDataForCard = Array.from(topicStats.entries())
-        .filter(([topicId, topicStat]) => topicStat.total > 0) // Only include topics with actual responses
+        const skillsDataForCard = Array.from(topicStats.entries()).filter(([topicId, topicStat]) => topicStat.total > 0) // Only include topics with actual responses
         .map(([topicId, topicStat]) => ({
           skill: topicNameMap.get(topicId) || topicId,
-          accuracy: Math.round((topicStat.correct / topicStat.total) * 100)
-        }))
-        .filter(skill => skill.skill) // Only include named topics
+          accuracy: Math.round(topicStat.correct / topicStat.total * 100)
+        })).filter(skill => skill.skill) // Only include named topics
         .sort((a, b) => a.accuracy - b.accuracy); // Sort by accuracy ascending (smallest to largest)
 
         setSkillDevelopmentData(skillsDataForCard);
@@ -354,7 +358,7 @@ export const ProgressView: React.FC = () => {
         </div>
       </div>;
   }
-  const renderDetailedView = () => <div className="space-y-6">
+  const renderDetailedView = () => <div className="space-y-6 bg-transparent ">
       <div className="bg-card rounded-xl shadow-sm border p-6">
         <h1 className="text-2xl font-bold text-foreground mb-2">Detailed Progress Analytics</h1>
         <p className="text-muted-foreground">Comprehensive view of learning performance</p>
@@ -390,51 +394,41 @@ export const ProgressView: React.FC = () => {
       {/* Score Trend Over Time */}
       <Card className="p-6">
         <h3 className="text-lg font-semibold mb-4">Score Trend Over Time</h3>
-        {kudosData?.trend && kudosData.trend.length > 1 ? (
-          <div className="h-48">
+        {kudosData?.trend && kudosData.trend.length > 1 ? <div className="h-48">
             <ResponsiveContainer width="100%" height="100%">
               <LineChart data={kudosData.trend.map((score, index) => ({
-                session: index + 1,
-                score: score,
-                date: new Date(Date.now() - (kudosData.trend.length - index - 1) * 24 * 60 * 60 * 1000).toLocaleDateString()
-              }))}>
+            session: index + 1,
+            score: score,
+            date: new Date(Date.now() - (kudosData.trend.length - index - 1) * 24 * 60 * 60 * 1000).toLocaleDateString()
+          }))}>
                 <CartesianGrid strokeDasharray="3 3" className="stroke-muted" />
-                <XAxis 
-                  dataKey="session" 
-                  className="text-xs fill-muted-foreground"
-                  tick={{ fontSize: 10 }}
-                />
-                <YAxis 
-                  className="text-xs fill-muted-foreground"
-                  tick={{ fontSize: 10 }}
-                />
-                <Tooltip 
-                  contentStyle={{
-                    backgroundColor: 'hsl(var(--card))',
-                    border: '1px solid hsl(var(--border))',
-                    borderRadius: '6px',
-                    fontSize: '12px'
-                  }}
-                  formatter={(value) => [value, 'Kudos Score']}
-                  labelFormatter={(label) => `Session ${label}`}
-                />
-                <Line 
-                  type="monotone" 
-                  dataKey="score" 
-                  stroke="hsl(var(--primary))" 
-                  strokeWidth={2}
-                  dot={{ fill: 'hsl(var(--primary))', strokeWidth: 0, r: 4 }}
-                  activeDot={{ r: 6, stroke: 'hsl(var(--primary))', strokeWidth: 2 }}
-                />
+                <XAxis dataKey="session" className="text-xs fill-muted-foreground" tick={{
+              fontSize: 10
+            }} />
+                <YAxis className="text-xs fill-muted-foreground" tick={{
+              fontSize: 10
+            }} />
+                <Tooltip contentStyle={{
+              backgroundColor: 'hsl(var(--card))',
+              border: '1px solid hsl(var(--border))',
+              borderRadius: '6px',
+              fontSize: '12px'
+            }} formatter={value => [value, 'Kudos Score']} labelFormatter={label => `Session ${label}`} />
+                <Line type="monotone" dataKey="score" stroke="hsl(var(--primary))" strokeWidth={2} dot={{
+              fill: 'hsl(var(--primary))',
+              strokeWidth: 0,
+              r: 4
+            }} activeDot={{
+              r: 6,
+              stroke: 'hsl(var(--primary))',
+              strokeWidth: 2
+            }} />
               </LineChart>
             </ResponsiveContainer>
-          </div>
-        ) : (
-          <div className="text-center py-8 text-muted-foreground">
+          </div> : <div className="text-center py-8 text-muted-foreground">
             <TrendingUp className="h-8 w-8 mx-auto mb-2 opacity-50" />
             <p className="text-sm">Complete more sessions to see your progress trend!</p>
-          </div>
-        )}
+          </div>}
       </Card>
 
       {/* Topics to Work On - Full Width */}
@@ -444,32 +438,23 @@ export const ProgressView: React.FC = () => {
           Topics to Work On
         </h2>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
-          {skillDevelopmentData.length > 0 ? skillDevelopmentData.slice(0, 9).map((skill, index) => (
-            <div key={index} className="flex items-center justify-between p-3 bg-muted/30 rounded-lg">
+          {skillDevelopmentData.length > 0 ? skillDevelopmentData.slice(0, 9).map((skill, index) => <div key={index} className="flex items-center justify-between p-3 bg-muted/30 rounded-lg">
               <div className="flex-1">
                 <div className="font-medium text-foreground">{skill.skill}</div>
                  <div className="w-full bg-muted rounded-full h-2 mt-2">
-                   <div 
-                     className={`h-2 rounded-full transition-all ${
-                       skill.accuracy >= 50 ? 'bg-foreground' : 'bg-destructive'
-                     }`}
-                     style={{ width: `${skill.accuracy}%` }}
-                   />
+                   <div className={`h-2 rounded-full transition-all ${skill.accuracy >= 50 ? 'bg-foreground' : 'bg-destructive'}`} style={{
+                width: `${skill.accuracy}%`
+              }} />
                  </div>
                </div>
                <div className="text-right ml-4">
-                 <div className={`text-lg font-bold ${
-                   skill.accuracy >= 50 ? 'text-foreground' : 'text-destructive'
-                 }`}>
+                 <div className={`text-lg font-bold ${skill.accuracy >= 50 ? 'text-foreground' : 'text-destructive'}`}>
                    {skill.accuracy}%
                  </div>
                </div>
-            </div>
-          )) : (
-            <p className="text-muted-foreground text-center py-4 col-span-full">
+            </div>) : <p className="text-muted-foreground text-center py-4 col-span-full">
               Complete more practice sessions to see topic progress!
-            </p>
-          )}
+            </p>}
         </div>
       </div>
 
@@ -481,29 +466,23 @@ export const ProgressView: React.FC = () => {
           Common Misconceptions
         </h2>
         <div className="space-y-3">
-          {strugglingTopics.length > 0 ? strugglingTopics.map((topic, index) => (
-            <div key={index} className="flex items-center justify-between p-3 bg-warning/5 rounded-lg border border-warning/20">
+          {strugglingTopics.length > 0 ? strugglingTopics.map((topic, index) => <div key={index} className="flex items-center justify-between p-3 bg-warning/5 rounded-lg border border-warning/20">
               <div>
                 <div className="font-medium text-foreground">{topic.name}</div>
                 <div className="text-sm text-muted-foreground">
                   {topic.attempts} attempts • {topic.accuracy}% accuracy
                 </div>
-                {topic.trend === 'declining' && (
-                  <div className="text-xs text-warning mt-1 flex items-center gap-1">
+                {topic.trend === 'declining' && <div className="text-xs text-warning mt-1 flex items-center gap-1">
                     <AlertTriangle className="h-3 w-3" />
                     Performance declining
-                  </div>
-                )}
+                  </div>}
               </div>
               <Button variant="outline" size="sm">
                 Practice
               </Button>
-            </div>
-          )) : (
-            <p className="text-muted-foreground text-center py-4">
+            </div>) : <p className="text-muted-foreground text-center py-4">
               No significant misconceptions detected. Great work!
-            </p>
-          )}
+            </p>}
         </div>
       </div>
 
@@ -533,11 +512,7 @@ export const ProgressView: React.FC = () => {
                 </div>
               </div>
               <div className="w-full bg-muted rounded-full h-2">
-                <div className={`h-2 rounded-full transition-all duration-300 ${
-                  skill.accuracy >= 80 ? 'bg-gradient-to-r from-success to-success/80' : 
-                  skill.accuracy >= 60 ? 'bg-gradient-to-r from-warning to-warning/80' : 
-                  'bg-gradient-to-r from-destructive to-destructive/80'
-                }`} style={{
+                <div className={`h-2 rounded-full transition-all duration-300 ${skill.accuracy >= 80 ? 'bg-gradient-to-r from-success to-success/80' : skill.accuracy >= 60 ? 'bg-gradient-to-r from-warning to-warning/80' : 'bg-gradient-to-r from-destructive to-destructive/80'}`} style={{
               width: `${skill.accuracy}%`
             }} />
               </div>
