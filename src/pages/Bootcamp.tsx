@@ -68,9 +68,10 @@ const Bootcamp = () => {
         
         <div className="max-w-6xl mx-auto">
           {currentView === 'dashboard' && <div className="bg-white rounded-3xl shadow-xl overflow-hidden">
-              <div style={{
-            backgroundColor: '#5947e8'
-          }} className="relative px-8 py-8 rounded-t-3xl !bg-zinc-100 border-t-[0.5px] border-x-[0.5px] border-gradient-to-r from-purple-500 via-indigo-500 to-blue-500">
+              <div className="relative px-8 py-8 rounded-t-3xl !bg-zinc-100 border-t-[0.5px] border-x-[0.5px]" style={{ 
+                backgroundColor: '#5947e8',
+                borderImage: 'linear-gradient(to right, #6366f1, #9333ea) 1' 
+              }}>
                 
                 <div className="relative z-10 flex items-center justify-between h-full">
                   {/* Left side - Welcome message and icon */}
