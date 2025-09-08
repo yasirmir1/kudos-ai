@@ -67,10 +67,10 @@ const Bootcamp = () => {
           </div>}
         
         <div className="max-w-6xl mx-auto">
-          {currentView === 'dashboard' && <div className="bg-white rounded-3xl shadow-xl overflow-hidden border-[0.5px]" style={{ 
+          {currentView === 'dashboard' && <div className="bg-white rounded-[2rem] shadow-xl overflow-hidden border-[0.5px]" style={{ 
             borderImage: 'linear-gradient(to right, #6366f1, #9333ea) 1' 
           }}>
-              <div className="relative px-8 py-8 rounded-t-3xl !bg-zinc-100" style={{ 
+              <div className="relative px-8 py-8 rounded-t-[2rem] !bg-zinc-100" style={{ 
                 backgroundColor: '#5947e8'
               }}>
                 
