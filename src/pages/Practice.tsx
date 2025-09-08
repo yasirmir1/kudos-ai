@@ -728,7 +728,7 @@ const Practice = () => {
             <ArrowLeft className="mr-2 h-4 w-4" />
             Dashboard
           </Button>
-          <div className="text-center flex-1 mx-8">
+          <div className="text-center flex-1 mx-0">
             <p className="text-sm text-muted-foreground mb-2">
               Question {currentIndex + 1} of {sessionQuestionCount}
             </p>
