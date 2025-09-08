@@ -50,29 +50,33 @@ const Bootcamp = () => {
         </div>
       </div>;
   }
-  return <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50">
-      <Navigation currentView={currentView} setCurrentView={setCurrentView} user={user} />
-      <main className="container mx-auto px-4 py-6">
-        {error && <div className="max-w-2xl mx-auto mb-6">
-            <div className="bg-white rounded-3xl shadow-xl overflow-hidden">
-              <div className="p-6">
-                <Alert className="border-red-200 bg-red-50">
-                  <AlertCircle className="h-4 w-4 text-red-600" />
-                  <AlertDescription className="text-red-700">
-                    {error}
-                  </AlertDescription>
-                </Alert>
-              </div>
+  return (
+  <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50">
+    <Navigation currentView={currentView} setCurrentView={setCurrentView} user={user} />
+    <main className="container mx-auto">
+      {error && (
+        <div className="max-w-2xl mx-auto mb-6">
+          <div className="bg-red-50 border border-red-200 rounded-3xl shadow-xl overflow-hidden">
+            <div className="p-6">
+              <Alert className="bg-transparent">
+                <AlertCircle className="h-4 w-4 text-red-600" />
+                <AlertDescription className="text-red-700">
+                  {error}
+                </AlertDescription>
+              </Alert>
             </div>
-          </div>}
+          </div>
+        </div>
+      )}
+    </main>
+  </div>
+);
         
         <div className="max-w-6xl mx-auto">
-          {currentView === 'dashboard' && <div className="bg-white rounded-3xl shadow-xl overflow-hidden border-[0.5px]" style={{ 
-            borderImage: 'linear-gradient(to right, #6366f1, #9333ea) 1' 
-          }}>
-              <div className="relative px-8 py-8 rounded-t-3xl !bg-zinc-100" style={{ 
-                backgroundColor: '#5947e8'
-              }}>
+          {currentView === 'dashboard' && <div className="bg-white rounded-3xl shadow-xl overflow-hidden">
+              <div style={{
+            backgroundColor: '#5947e8'
+          }} className="relative px-8 py-8 rounded-t-3xl  !bg-[#f2f3fa]">
                 
                 <div className="relative z-10 flex items-center justify-between h-full">
                   {/* Left side - Welcome message and icon */}
