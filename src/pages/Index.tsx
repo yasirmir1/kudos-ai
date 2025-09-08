@@ -1,410 +1,598 @@
-import { useEffect, useState } from 'react';
-import { Navigate } from 'react-router-dom';
-import { useAuth } from '@/hooks/useAuth';
+import React, { useState, useEffect } from 'react';
+import { 
+  Star, TrendingUp, AlertTriangle, CheckCircle, Clock, Target, 
+  BookOpen, Trophy, Heart, BarChart3, Loader2, Award, Zap 
+} from 'lucide-react';
+import { Card } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { BookOpen, Target, TrendingUp, Brain, BarChart3, Users, Zap, Smartphone, Clock } from 'lucide-react';
-import { PricingSection } from '@/components/PricingSection';
-const Index = () => {
-  const {
-    user,
-    loading
-  } = useAuth();
-  const [isScrolled, setIsScrolled] = useState(false);
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
+import { KudosScoreCard } from './KudosScoreCard';
+import { PerformanceChart } from './PerformanceChart';
+import { MockTestPerformanceContainer } from './MockTestPerformanceContainer';
+import { WeeklyTestPerformanceContainer } from './WeeklyTestPerformanceContainer';
+import { SkillDevelopmentCard } from './SkillDevelopmentCard';
+import { EnhancedProgressInsights } from './EnhancedProgressInsights';
+import { useAuth } from '../../hooks/useAuth';
+import { useBootcampData } from '../../hooks/useBootcampData';
+import { useKudosScore } from '../../hooks/useKudosScore';
+import { BootcampAPI } from '../../lib/bootcamp-api';
+import { supabase } from '@/integrations/supabase/client';
+
+interface ParentInsight {
+  type: 'strength' | 'concern' | 'suggestion';
+  title: string;
+  description: string;
+  action?: string;
+  icon: React.ComponentType<any>;
+}
+
+interface TopicProgress {
+  name: string;
+  accuracy: number;
+  attempts: number;
+  trend: 'improving' | 'stable' | 'declining';
+}
+
+interface Skill {
+  name: string;
+  level: number;
+  trend: 'up' | 'down' | 'stable';
+}
+
+interface Achievement {
+  name: string;
+  description: string;
+  icon: React.ComponentType<any>;
+  date: string;
+}
+
+export const ProgressView: React.FC = () => {
+  const { user } = useAuth();
+  const { student, stats, progress, isLoading } = useBootcampData();
+  const { kudosData } = useKudosScore();
+  
+  const [insights, setInsights] = useState<ParentInsight[]>([]);
+  const [topTopics, setTopTopics] = useState<TopicProgress[]>([]);
+  const [strugglingTopics, setStrugglingTopics] = useState<TopicProgress[]>([]);
+  const [weeklyActivity, setWeeklyActivity] = useState({
+    questionsThisWeek: 0,
+    accuracyThisWeek: 0,
+    timeSpentMinutes: 0
+  });
+
+  // Detailed view data
+  const [skillsData, setSkillsData] = useState<Skill[]>([]);
+  const [skillDevelopmentData, setSkillDevelopmentData] = useState<{
+    skill: string;
+    accuracy: number;
+  }[]>([]);
+  const [recentAchievements, setRecentAchievements] = useState<Achievement[]>([]);
+
   useEffect(() => {
-    const handleScroll = () => {
-      setIsScrolled(window.scrollY > 50);
-    };
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
-  useEffect(() => {
-    // Intersection Observer for animations
-    const observer = new IntersectionObserver(entries => {
-      entries.forEach(entry => {
-        if (entry.isIntersecting) {
-          entry.target.classList.add('animate-fade-in');
-        }
+    if (user && student && stats) {
+      loadParentDashboardData();
+      loadDetailedProgressData();
+    }
+  }, [user, student, stats]);
+
+  const loadParentDashboardData = async () => {
+    if (!user || !student) return;
+    
+    try {
+      // Get detailed topic performance
+      const [topicResponses, weeklyData] = await Promise.all([
+        // Topic performance
+        supabase
+          .from('bootcamp_student_responses')
+          .select(`
+            is_correct,
+            responded_at,
+            bootcamp_questions!inner(topic_id)
+          `)
+          .eq('student_id', student.student_id),
+        // Weekly activity (last 7 days)
+        supabase
+          .from('bootcamp_student_responses')
+          .select('is_correct, time_taken, responded_at')
+          .eq('student_id', student.student_id)
+          .gte('responded_at', new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString())
+      ]);
+
+      // Get topic names
+      const { data: topics } = await supabase
+        .from('bootcamp_topics')
+        .select('id, name')
+        .order('topic_order');
+      
+      const topicNameMap = new Map();
+      topics?.forEach((topic: any) => {
+        topicNameMap.set(topic.id, topic.name);
       });
-    }, {
-      threshold: 0.1,
-      rootMargin: '0px 0px -50px 0px'
-    });
 
-    // Observe all animatable elements
-    document.querySelectorAll('.fade-on-scroll').forEach(el => {
-      observer.observe(el);
-    });
-    return () => observer.disconnect();
-  }, []);
+      // Process topic performance
+      const topicStats = new Map<string, {
+        correct: number;
+        total: number;
+        recent: boolean[];
+      }>();
+      
+      topicResponses.data?.forEach((response: any) => {
+        const topicId = response.bootcamp_questions.topic_id;
+        const isRecent = new Date(response.responded_at) > new Date(Date.now() - 14 * 24 * 60 * 60 * 1000);
+        
+        if (!topicStats.has(topicId)) {
+          topicStats.set(topicId, {
+            correct: 0,
+            total: 0,
+            recent: []
+          });
+        }
+        
+        const stats = topicStats.get(topicId)!;
+        stats.total++;
+        if (response.is_correct) stats.correct++;
+        if (isRecent) stats.recent.push(response.is_correct);
+      });
 
-  // Show loading state while checking authentication
-  if (loading) {
-    return <div className="min-h-screen bg-background flex items-center justify-center">
-        <div className="text-center space-y-2">
-          <img src="/lovable-uploads/409330f0-2245-4147-b837-ff553d303814.png" alt="Kudos Academy" className="h-8 w-8 mx-auto animate-pulse" />
-          <p className="text-muted-foreground">Loading...</p>
+      // Convert to topic progress with trends
+      const topicProgressData: TopicProgress[] = Array.from(topicStats.entries())
+        .map(([topicId, stats]) => {
+          const name = topicNameMap.get(topicId) || topicId;
+          const accuracy = stats.total > 0 ? Math.round(stats.correct / stats.total * 100) : 0;
+          
+          // Calculate trend from recent attempts
+          let trend: 'improving' | 'stable' | 'declining' = 'stable';
+          if (stats.recent.length >= 3) {
+            const recentAccuracy = stats.recent.filter(Boolean).length / stats.recent.length;
+            const overallAccuracy = stats.correct / stats.total;
+            if (recentAccuracy > overallAccuracy + 0.1) trend = 'improving';
+            else if (recentAccuracy < overallAccuracy - 0.1) trend = 'declining';
+          }
+          
+          return { name, accuracy, attempts: stats.total, trend };
+        })
+        .filter(topic => topic.attempts >= 3); // Only topics with meaningful data
+
+      // Sort topics
+      const sortedTopics = [...topicProgressData].sort((a, b) => b.accuracy - a.accuracy);
+      setTopTopics(sortedTopics.slice(0, 3));
+      setStrugglingTopics(sortedTopics.filter(t => t.accuracy < 70).slice(0, 3));
+
+      // Calculate weekly activity
+      const weeklyQuestions = weeklyData.data?.length || 0;
+      const weeklyCorrect = weeklyData.data?.filter(r => r.is_correct).length || 0;
+      const weeklyAccuracy = weeklyQuestions > 0 ? Math.round(weeklyCorrect / weeklyQuestions * 100) : 0;
+      const timeSpentMinutes = weeklyData.data?.reduce((sum, r) => sum + (r.time_taken || 0), 0) / 60 || 0;
+      
+      setWeeklyActivity({
+        questionsThisWeek: weeklyQuestions,
+        accuracyThisWeek: weeklyAccuracy,
+        timeSpentMinutes: Math.round(timeSpentMinutes)
+      });
+
+      // Generate parent insights
+      generateParentInsights(stats, topicProgressData, weeklyActivity);
+    } catch (error) {
+      console.error('Error loading parent dashboard data:', error);
+    }
+  };
+
+  const loadDetailedProgressData = async () => {
+    if (!user) return;
+    
+    try {
+      const studentProfile = await BootcampAPI.getStudentProfile(user.id);
+      if (studentProfile) {
+        const [progress, summary, topics] = await Promise.all([
+          BootcampAPI.getStudentProgress(studentProfile.student_id),
+          BootcampAPI.getStudentPerformanceSummary(studentProfile.student_id),
+          supabase.from('bootcamp_topics').select('id, name').order('topic_order')
+        ]);
+
+        // Create topic name mapping
+        const topicNameMap = new Map();
+        if (topics.data) {
+          topics.data.forEach((topic: any) => {
+            topicNameMap.set(topic.id, topic.name);
+          });
+        }
+
+        // Get topic performance data from both sources
+        const [responseCounts, mockTestCounts] = await Promise.all([
+          // Regular practice responses
+          supabase
+            .from('bootcamp_student_responses')
+            .select(`
+              is_correct,
+              bootcamp_questions!inner(topic_id)
+            `)
+            .eq('student_id', studentProfile.student_id),
+          // Mock test answers  
+          supabase
+            .from('bootcamp_mock_test_answers')
+            .select(`
+              is_correct,
+              bootcamp_mock_test_sessions!inner(student_id),
+              mock_test_questions!inner(topic)
+            `)
+            .eq('bootcamp_mock_test_sessions.student_id', studentProfile.student_id)
+        ]);
+
+        // Calculate topic performance from both sources
+        const topicStats = new Map<string, {
+          correct: number;
+          total: number;
+        }>();
+
+        // Initialize all topics with 0 stats
+        if (topics.data) {
+          topics.data.forEach((topic: any) => {
+            topicStats.set(topic.id, { correct: 0, total: 0 });
+          });
+        }
+
+        // Process regular responses
+        responseCounts.data?.forEach((response: any) => {
+          const topicId = response.bootcamp_questions.topic_id;
+          const current = topicStats.get(topicId) || { correct: 0, total: 0 };
+          current.total++;
+          if (response.is_correct) current.correct++;
+          topicStats.set(topicId, current);
+        });
+
+        // Process mock test answers
+        mockTestCounts.data?.forEach((answer: any) => {
+          const topicName = answer.mock_test_questions.topic;
+          // Find topic ID by name
+          const topicId = Array.from(topicNameMap.entries())
+            .find(([_, name]) => name.toLowerCase().includes(topicName.toLowerCase()))?.[0];
+          
+          if (topicId) {
+            const current = topicStats.get(topicId) || { correct: 0, total: 0 };
+            current.total++;
+            if (answer.is_correct) current.correct++;
+            topicStats.set(topicId, current);
+          }
+        });
+
+        // Convert to skill development data
+        const skillsDataForCard = Array.from(topicStats.entries())
+          .filter(([topicId, topicStat]) => topicStat.total > 0)
+          .map(([topicId, topicStat]) => ({
+            skill: topicNameMap.get(topicId) || topicId,
+            accuracy: Math.round(topicStat.correct / topicStat.total * 100)
+          }))
+          .filter(skill => skill.skill)
+          .sort((a, b) => a.accuracy - b.accuracy);
+
+        setSkillDevelopmentData(skillsDataForCard);
+
+        // Map progress to skills data with proper topic names
+        const skills: Skill[] = progress.map((p: any) => ({
+          name: topicNameMap.get(p.topic_id) || p.topic_id,
+          level: Math.round(p.accuracy_percentage || 0),
+          trend: (p.accuracy_percentage >= 80 ? 'up' : 
+                  p.accuracy_percentage >= 60 ? 'stable' : 'down') as 'up' | 'down' | 'stable'
+        })).slice(0, 5);
+        
+        setSkillsData(skills);
+
+        // Generate achievements based on performance
+        const achievements: Achievement[] = [];
+        if (stats.accuracy >= 95) {
+          achievements.push({
+            name: 'Accuracy Master',
+            description: 'Achieve 95% overall accuracy',
+            icon: Target,
+            date: 'Recently'
+          });
+        }
+        if (stats.totalQuestions >= 100) {
+          achievements.push({
+            name: 'Question Master',
+            description: 'Complete 100+ practice questions',
+            icon: Zap,
+            date: 'Recently'
+          });
+        }
+        if (stats.streakDays >= 7) {
+          achievements.push({
+            name: 'Week Warrior',
+            description: '7+ days of active practice',
+            icon: Award,
+            date: 'Recently'
+          });
+        }
+        setRecentAchievements(achievements);
+      }
+    } catch (error) {
+      console.error('Error loading detailed progress data:', error);
+    }
+  };
+
+  const generateParentInsights = (stats: any, topicData: TopicProgress[], weekly: typeof weeklyActivity) => {
+    const newInsights: ParentInsight[] = [];
+
+    // Strengths
+    if (stats.accuracy >= 85) {
+      newInsights.push({
+        type: 'strength',
+        title: 'Excellent Understanding',
+        description: `Your child shows strong mastery with ${stats.accuracy}% overall accuracy.`,
+        action: 'Consider introducing more challenging topics.',
+        icon: Star
+      });
+    }
+    if (stats.streakDays >= 5) {
+      newInsights.push({
+        type: 'strength',
+        title: 'Consistent Practice',
+        description: `Great habit! ${stats.streakDays} days of regular practice.`,
+        action: 'Keep encouraging this routine.',
+        icon: Trophy
+      });
+    }
+
+    // Concerns
+    if (weekly.questionsThisWeek < 10) {
+      newInsights.push({
+        type: 'concern',
+        title: 'Low Practice Activity',
+        description: `Only ${weekly.questionsThisWeek} questions this week.`,
+        action: 'Try setting a daily 15-minute practice goal.',
+        icon: AlertTriangle
+      });
+    }
+    
+    const strugglingCount = topicData.filter(t => t.accuracy < 60).length;
+    if (strugglingCount >= 2) {
+      newInsights.push({
+        type: 'concern',
+        title: 'Multiple Weak Areas',
+        description: `Struggling with ${strugglingCount} topic areas.`,
+        action: 'Focus on one topic at a time for better results.',
+        icon: AlertTriangle
+      });
+    }
+
+    // Suggestions
+    if (weekly.timeSpentMinutes < 60) {
+      newInsights.push({
+        type: 'suggestion',
+        title: 'Increase Practice Time',
+        description: `${weekly.timeSpentMinutes} minutes practiced this week.`,
+        action: 'Aim for 15-20 minutes daily for optimal progress.',
+        icon: Clock
+      });
+    }
+    
+    const improvingTopics = topicData.filter(t => t.trend === 'improving').length;
+    if (improvingTopics > 0) {
+      newInsights.push({
+        type: 'strength',
+        title: 'Improving Performance',
+        description: `Shows improvement in ${improvingTopics} topic areas.`,
+        action: 'Celebrate this progress!',
+        icon: TrendingUp
+      });
+    }
+    
+    setInsights(newInsights);
+  };
+
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center min-h-[400px]">
+        <div className="text-center space-y-4">
+          <Loader2 className="h-8 w-8 animate-spin mx-auto text-primary" />
+          <p className="text-muted-foreground">Loading progress...</p>
         </div>
-      </div>;
+      </div>
+    );
   }
 
-  // Redirect authenticated users to dashboard
-  if (user) {
-    return <Navigate to="/dashboard" replace />;
-  }
+  return (
+    <div className="space-y-6 max-w-6xl mx-auto bg-transparent">
+      {/* Header */}
+      <div className="relative px-12 py-6 rounded-3xl shadow-2xl mx-auto max-w-4xl mb-4 bg-gradient-to-r from-[#6366f1] to-[#9333ea]">
+        <h1 className="text-2xl font-bold text-white mb-2">Detailed Progress Analytics</h1>
+        <p className="text-white/80">Comprehensive view of learning performance</p>
+      </div>
 
-  // Landing page for non-authenticated users
-  return <div className="min-h-screen bg-background overflow-x-hidden">
-      {/* Fixed Navigation */}
-      <nav className={`fixed top-0 w-full z-50 transition-all duration-300 ${isScrolled ? 'bg-background/95 backdrop-blur-xl border-b border-border shadow-card' : 'bg-background/80 backdrop-blur-xl'}`}>
-        <div className="container mx-auto px-6 h-16 flex items-center justify-between">
-          <div className="flex items-center space-x-3">
-            <img src="/lovable-uploads/41b9c44a-9030-4543-bfaa-e8cfde4832aa.png" alt="Kudos" className="h-12" />
-          </div>
-          <div className="hidden md:flex items-center space-x-8">
-            <a href="#features" className="text-sm font-medium text-foreground hover:text-primary transition-colors">Features</a>
-            <a href="#pricing" className="text-sm font-medium text-foreground hover:text-primary transition-colors">Pricing</a>
-            <a href="#how-it-works" className="text-sm font-medium text-foreground hover:text-primary transition-colors">How It Works</a>
-            <a href="#testimonials" className="text-sm font-medium text-foreground hover:text-primary transition-colors">Success Stories</a>
-            <Button asChild className="bg-primary hover:bg-primary/90 text-primary-foreground font-medium px-6 shadow-learning hover:shadow-glow transition-all duration-300 hover:scale-105">
-              <a href="/auth">Sign Up</a>
-            </Button>
-          </div>
-        </div>
-      </nav>
-
-      {/* Hero Section */}
-      <section className="pt-32 pb-20 px-6">
-        <div className="container mx-auto text-center max-w-5xl">
-          <div className="inline-flex items-center gap-2 bg-success/10 text-success px-4 py-2 rounded-full text-sm font-medium mb-6">
-            <Target className="h-4 w-4" />
-            2,487 students achieved their target schools with Kudos
-          </div>
-          
-          <h1 className="text-5xl md:text-7xl font-bold leading-tight mb-6">
-            <span className="bg-gradient-to-b from-foreground to-muted-foreground bg-clip-text text-transparent">
-              Turn 11+ stress into
-            </span>
-            <br />
-            <span className="bg-gradient-to-r from-primary to-primary-glow bg-clip-text text-transparent">
-              confident success
-            </span>
-          </h1>
-          
-          <p className="text-xl md:text-2xl text-muted-foreground max-w-4xl mx-auto leading-relaxed mb-10">
-            Stop wondering if your child is ready. Get instant insights into their strengths, 
-            pinpoint exactly where they need help, and watch their confidence soar as they master each topic.
+      {/* Key Stats */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <Card className="p-6 text-center">
+          <h3 className="text-lg font-semibold text-foreground mb-2">Kudos Score</h3>
+          <p className="text-3xl font-bold text-primary">
+            {kudosData?.current_score || 0}
           </p>
+          <p className="text-sm text-muted-foreground">Difficulty & speed adjusted performance</p>
+        </Card>
+        
+        <Card className="p-6 text-center">
+          <h3 className="text-lg font-semibold text-foreground mb-2">Overall Accuracy</h3>
+          <p className="text-3xl font-bold text-success">
+            {stats.accuracy}%
+          </p>
+          <p className="text-sm text-muted-foreground">correct answers</p>
+        </Card>
+        
+        <Card className="p-6 text-center">
+          <h3 className="text-lg font-semibold text-foreground mb-2">Questions Attempted</h3>
+          <p className="text-3xl font-bold text-primary">
+            {stats.totalQuestions}
+          </p>
+          <p className="text-sm text-muted-foreground">total questions</p>
+        </Card>
+      </div>
 
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Button asChild size="lg" className="bg-primary hover:bg-primary/90 text-primary-foreground font-semibold px-8 py-4 text-lg shadow-learning hover:shadow-glow transition-all duration-300 hover:-translate-y-0.5">
-              <a href="/auth">
-                Start Free Trial
-                <span className="ml-2">→</span>
-              </a>
-            </Button>
-            <Button asChild size="lg" variant="outline" className="font-semibold px-8 py-4 text-lg border-2 hover:bg-accent/50 transition-all duration-300">
-              <a href="#how-it-works">See How It Works</a>
-            </Button>
+      {/* Score Trend Over Time */}
+      <Card className="p-6">
+        <h3 className="text-lg font-semibold mb-4">Score Trend Over Time</h3>
+        {kudosData?.trend && kudosData.trend.length > 1 ? (
+          <div className="h-48">
+            <ResponsiveContainer width="100%" height="100%">
+              <LineChart data={kudosData.trend.map((score, index) => ({
+                session: index + 1,
+                score: score,
+                date: new Date(Date.now() - (kudosData.trend.length - index - 1) * 24 * 60 * 60 * 1000).toLocaleDateString()
+              }))}>
+                <CartesianGrid strokeDasharray="3 3" className="stroke-muted" />
+                <XAxis 
+                  dataKey="session" 
+                  className="text-xs fill-muted-foreground" 
+                  tick={{ fontSize: 10 }} 
+                />
+                <YAxis 
+                  className="text-xs fill-muted-foreground" 
+                  tick={{ fontSize: 10 }} 
+                />
+                <Tooltip 
+                  contentStyle={{
+                    backgroundColor: 'hsl(var(--card))',
+                    border: '1px solid hsl(var(--border))',
+                    borderRadius: '6px',
+                    fontSize: '12px'
+                  }}
+                  formatter={value => [value, 'Kudos Score']}
+                  labelFormatter={label => `Session ${label}`}
+                />
+                <Line 
+                  type="monotone" 
+                  dataKey="score" 
+                  stroke="hsl(var(--primary))" 
+                  strokeWidth={2}
+                  dot={{ fill: 'hsl(var(--primary))', strokeWidth: 0, r: 4 }}
+                  activeDot={{ r: 6, stroke: 'hsl(var(--primary))', strokeWidth: 2 }}
+                />
+              </LineChart>
+            </ResponsiveContainer>
           </div>
-        </div>
-      </section>
-
-      {/* Dashboard Preview */}
-      <section className="py-16 px-6 bg-muted/30">
-        <div className="container mx-auto max-w-5xl">
-          <div className="fade-on-scroll bg-background p-6 rounded-3xl shadow-card border border-border hover:shadow-learning hover:border-primary/20 transition-all duration-500 transform hover:-translate-y-2 hover:scale-105 group">
-            <svg viewBox="0 0 800 500" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-full h-auto">
-              {/* Dashboard mockup */}
-              <rect width="800" height="500" rx="8" fill="#FBFBFD"></rect>
-              
-              {/* Header */}
-              <rect y="0" width="800" height="60" fill="#667EEA" fillOpacity="0.1"></rect>
-              <text x="30" y="38" fontFamily="Arial" fontSize="20" fontWeight="600" fill="#667EEA">Emma's Learning Dashboard</text>
-              
-              {/* Progress Cards - Only Topic Breakdown and Practice Insights */}
-              {/* Topic Breakdown - replacing Geometry tile */}
-              <rect x="30" y="90" width="230" height="140" rx="12" fill="#F3F4F6"></rect>
-              <text x="50" y="120" fontFamily="Arial" fontSize="16" fontWeight="600" fill="#1D1D1F">Topic Breakdown</text>
-              
-              {/* Mini progress bars */}
-              <rect x="50" y="140" width="120" height="4" rx="2" fill="#E5E5EA"></rect>
-              <rect x="50" y="140" width="96" height="4" rx="2" fill="#34C759"></rect>
-              <text x="180" y="143" fontFamily="Arial" fontSize="10" fill="#86868B">Fractions 80%</text>
-              
-              <rect x="50" y="155" width="120" height="4" rx="2" fill="#E5E5EA"></rect>
-              <rect x="50" y="155" width="72" height="4" rx="2" fill="#FF9500"></rect>
-              <text x="180" y="158" fontFamily="Arial" fontSize="10" fill="#86868B">Geometry 60%</text>
-              
-              <rect x="50" y="170" width="120" height="4" rx="2" fill="#E5E5EA"></rect>
-              <rect x="50" y="170" width="108" height="4" rx="2" fill="#34C759"></rect>
-              <text x="180" y="173" fontFamily="Arial" fontSize="10" fill="#86868B">Algebra 90%</text>
-              
-              <rect x="50" y="185" width="120" height="4" rx="2" fill="#E5E5EA"></rect>
-              <rect x="50" y="185" width="84" height="4" rx="2" fill="#0071E3"></rect>
-              <text x="180" y="188" fontFamily="Arial" fontSize="10" fill="#86868B">Numbers 70%</text>
-              
-              {/* Practice Insights - replacing English tile */}
-              <rect x="285" y="90" width="230" height="140" rx="12" fill="#F3F4F6"></rect>
-              <text x="305" y="120" fontFamily="Arial" fontSize="16" fontWeight="600" fill="#1D1D1F">Practice Insights</text>
-              
-              {/* Practice stats - improved spacing */}
-              <text x="305" y="150" fontFamily="Arial" fontSize="11" fill="#86868B">Accuracy:</text>
-              <text x="405" y="150" fontFamily="Arial" fontSize="14" fontWeight="600" fill="#0071E3">85%</text>
-              
-              <text x="305" y="170" fontFamily="Arial" fontSize="11" fill="#86868B">Time spent:</text>
-              <text x="405" y="170" fontFamily="Arial" fontSize="14" fontWeight="600" fill="#0071E3">18 mins</text>
-              
-              {/* Weekly Progress - Width aligned with Topic Breakdown */}
-              <rect x="30" y="260" width="485" height="200" rx="12" fill="#F3F4F6"></rect>
-              <text x="50" y="290" fontFamily="Arial" fontSize="18" fontWeight="600" fill="#1D1D1F">Weekly Progress</text>
-              
-              {/* Line graph aligned with topic breakdown width */}
-              <polyline points="80,350 130,340 180,335 230,330 280,325 330,320 380,315" stroke="#667EEA" strokeWidth="3" fill="none"></polyline>
-              <circle cx="80" cy="350" r="3" fill="#667EEA"></circle>
-              <circle cx="130" cy="340" r="3" fill="#667EEA"></circle>
-              <circle cx="180" cy="335" r="3" fill="#667EEA"></circle>
-              <circle cx="230" cy="330" r="3" fill="#667EEA"></circle>
-              <circle cx="280" cy="325" r="3" fill="#667EEA"></circle>
-              <circle cx="330" cy="320" r="3" fill="#667EEA"></circle>
-              <circle cx="380" cy="315" r="3" fill="#667EEA"></circle>
-              
-              {/* Day labels - Mon to Sun */}
-              <text x="80" y="410" fontFamily="Arial" fontSize="10" fill="#86868B" textAnchor="middle">Mon</text>
-              <text x="130" y="410" fontFamily="Arial" fontSize="10" fill="#86868B" textAnchor="middle">Tue</text>
-              <text x="180" y="410" fontFamily="Arial" fontSize="10" fill="#86868B" textAnchor="middle">Wed</text>
-              <text x="230" y="410" fontFamily="Arial" fontSize="10" fill="#86868B" textAnchor="middle">Thu</text>
-              <text x="280" y="410" fontFamily="Arial" fontSize="10" fill="#86868B" textAnchor="middle">Fri</text>
-              <text x="330" y="410" fontFamily="Arial" fontSize="10" fill="#86868B" textAnchor="middle">Sat</text>
-              <text x="380" y="410" fontFamily="Arial" fontSize="10" fill="#86868B" textAnchor="middle">Sun</text>
-              
-              {/* Mathematics Card - Right of Weekly Progress */}
-              <rect x="540" y="260" width="230" height="200" rx="12" fill="#34C759" fillOpacity="0.1" className="group-hover:animate-pulse"></rect>
-              <text x="560" y="290" fontFamily="Arial" fontSize="16" fill="#86868B">Mathematics</text>
-              <text x="560" y="330" fontFamily="Arial" fontSize="28" fontWeight="600" fill="#34C759">87%</text>
-              <text x="560" y="360" fontFamily="Arial" fontSize="14" fill="#34C759">↑ 12% this month</text>
-            </svg>
+        ) : (
+          <div className="text-center py-8 text-muted-foreground">
+            <TrendingUp className="h-8 w-8 mx-auto mb-2 opacity-50" />
+            <p className="text-sm">Complete more sessions to see your progress trend!</p>
           </div>
-        </div>
-      </section>
+        )}
+      </Card>
 
-      {/* Problem Section */}
-      <section className="py-20 px-6 bg-muted/20">
-        <div className="container mx-auto max-w-5xl">
-          <div className="text-center mb-20">
-            <h2 className="text-4xl md:text-5xl font-bold mb-6">The 11+ reality check</h2>
-            <p className="text-xl md:text-2xl text-muted-foreground">Most families are flying blind. Here's why that's risky.</p>
-          </div>
-          
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-16 fade-on-scroll">
-            <div className="text-center space-y-4">
-              <div className="text-6xl md:text-7xl font-bold bg-gradient-to-r from-red-500 to-red-600 bg-clip-text text-transparent">73%</div>
-              <h3 className="text-2xl font-bold">Can't spot the gaps</h3>
-              <p className="text-muted-foreground leading-relaxed">Of parents have no idea which specific topics their child struggles with</p>
-            </div>
-            <div className="text-center space-y-4">
-              <div className="text-6xl md:text-7xl font-bold bg-gradient-to-r from-orange-500 to-orange-600 bg-clip-text text-transparent">56</div>
-              <h3 className="text-2xl font-bold">11+ topics</h3>
-              <p className="text-muted-foreground leading-relaxed">With a further 220 sub topics, keeping track of them is a nightmare</p>
-            </div>
-            <div className="text-center space-y-4">
-              <div className="text-6xl md:text-7xl font-bold bg-gradient-to-r from-primary to-primary-glow bg-clip-text text-transparent">4 hrs</div>
-              <h3 className="text-2xl font-bold">spent marking papers</h3>
-              <p className="text-muted-foreground leading-relaxed">We do the marking so you have more time to help your child practice</p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Core Features - The 4 Tiles */}
-      <section id="features" className="py-20 px-6 bg-background">
-        <div className="container mx-auto max-w-6xl">
-          <div className="text-center mb-16">
-            <h2 className="text-4xl md:text-5xl font-bold mb-6">Finally, 11+ prep that actually works</h2>
-            <p className="text-xl md:text-2xl text-muted-foreground">Stop guessing. Start knowing. See results in days, not months.</p>
-          </div>
-          
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-            <div className="fade-on-scroll group bg-card p-8 rounded-2xl border border-border hover:border-primary/20 transition-all duration-300 hover:shadow-learning hover:-translate-y-1">
-              <div className="p-4 bg-gradient-to-br from-primary/10 to-primary-glow/10 rounded-2xl w-fit mx-auto mb-6 text-primary group-hover:scale-110 transition-transform duration-300">
-                <Brain className="h-10 w-10" />
-              </div>
-              <h3 className="text-2xl font-bold mb-4 text-center">Laser-focused practice</h3>
-              <p className="text-muted-foreground leading-relaxed text-center">
-                No more random worksheets. Our AI finds exactly what your child doesn't know and gives them targeted practice until they master it.
-              </p>
-            </div>
-
-            <div className="fade-on-scroll group bg-card p-8 rounded-2xl border border-border hover:border-primary/20 transition-all duration-300 hover:shadow-learning hover:-translate-y-1">
-              <div className="p-4 bg-gradient-to-br from-primary/10 to-primary-glow/10 rounded-2xl w-fit mx-auto mb-6 text-primary group-hover:scale-110 transition-transform duration-300">
-                <Target className="h-10 w-10" />
-              </div>
-              <h3 className="text-2xl font-bold mb-4 text-center">Instant gap detection</h3>
-              <p className="text-muted-foreground leading-relaxed text-center">
-                Within minutes, see exactly which topics need work. No more wondering if they're ready for fractions or struggling with times tables.
-              </p>
-            </div>
-
-            <div className="fade-on-scroll group bg-card p-8 rounded-2xl border border-border hover:border-primary/20 transition-all duration-300 hover:shadow-learning hover:-translate-y-1">
-              <div className="p-4 bg-gradient-to-br from-primary/10 to-primary-glow/10 rounded-2xl w-fit mx-auto mb-6 text-primary group-hover:scale-110 transition-transform duration-300">
-                <TrendingUp className="h-10 w-10" />
-              </div>
-              <h3 className="text-2xl font-bold mb-4 text-center">Parent peace of mind</h3>
-              <p className="text-muted-foreground leading-relaxed text-center">
-                Check progress anytime on your phone. Get weekly reports showing exactly how your child is improving and what to focus on next.
-              </p>
-            </div>
-
-            <div className="fade-on-scroll group bg-card p-8 rounded-2xl border border-border hover:border-primary/20 transition-all duration-300 hover:shadow-learning hover:-translate-y-1">
-              <div className="p-4 bg-gradient-to-br from-primary/10 to-primary-glow/10 rounded-2xl w-fit mx-auto mb-6 text-primary group-hover:scale-110 transition-transform duration-300">
-                <BarChart3 className="h-10 w-10" />
-              </div>
-              <h3 className="text-2xl font-bold mb-4 text-center">Confidence that grows</h3>
-              <p className="text-muted-foreground leading-relaxed text-center">
-                Watch your child transform from anxious to excited about maths. Our system builds understanding step-by-step, celebrating every win.
-              </p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* How It Works */}
-      <section id="how-it-works" className="py-20 px-6 bg-muted/30">
-        <div className="container mx-auto max-w-5xl">
-          <div className="text-center mb-20">
-            <h2 className="text-4xl md:text-5xl font-bold mb-6">How it works (it's surprisingly simple)</h2>
-            <p className="text-xl md:text-2xl text-muted-foreground">Three steps to transform your child's 11+ preparation</p>
-          </div>
-          
-          
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {[{
-            step: "1",
-            title: "5-minute setup",
-            description: "Sign up, add your child, and they take a quick assessment. We instantly know their current level and create their personalized learning plan.",
-            icon: Clock
-          }, {
-            step: "2",
-            title: "Daily smart practice", 
-            description: "Just 15 minutes daily. Our AI serves up the perfect questions for their level. They practice, we track everything, you see instant progress.",
-            icon: Brain
-          }, {
-            step: "3",
-            title: "Watch them succeed",
-            description: "Check their dashboard anytime. See confidence grow as gaps disappear. Get weekly insights on exactly how to help them improve.",
-            icon: TrendingUp
-          }].map((item, index) =>
-            <div key={index} className="fade-on-scroll text-center">
-              <div className="bg-muted rounded-2xl p-2 text-center h-32 w-32 mx-auto flex items-center justify-center mb-6">
-                <item.icon className="h-12 w-12 text-primary" />
-              </div>
-              <h3 className="text-2xl md:text-3xl font-bold mb-4">{item.step}. {item.title}</h3>
-              <p className="text-lg text-muted-foreground leading-relaxed">{item.description}</p>
-            </div>
-          )}
-          </div>
-        </div>
-      </section>
-
-      {/* Pricing Section */}
-      <PricingSection />
-
-      {/* Testimonials */}
-      <section id="testimonials" className="py-20 px-6 bg-muted/40">
-        <div className="container mx-auto max-w-6xl">
-          <div className="text-center mb-20">
-            <h2 className="text-4xl md:text-5xl font-bold mb-6">Real families, real results</h2>
-            <p className="text-xl md:text-2xl text-muted-foreground">Stories from parents who stopped worrying and started celebrating</p>
-          </div>
-          
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {[{
-            quote: "I finally understood why Oliver kept getting fraction questions wrong. It wasn't the maths - he didn't understand the notation! Within two weeks of targeted practice, he'd completely mastered fractions.",
-            author: "Sarah Mitchell",
-            role: "Mother of Year 5 student",
-            result: "Fractions: 45% → 95% in 2 weeks"
-          }, {
-            quote: "The dashboard is brilliant. I can check Aisha's progress during lunch break at work. No more Sunday afternoons spent marking worksheets! I actually know what's happening with her learning now.",
-            author: "James Chen", 
-            role: "Father of twins, Year 6",
-            result: "Saved 4 hours weekly, twins both improved 30%"
-          }, {
-            quote: "Emma got into our first choice grammar school! Kudos showed us she was brilliant at problem-solving but needed help with calculation speed. We knew exactly what to focus on in the final months.",
-            author: "Priya Patel",
-            role: "Grammar school success story",
-            result: "Achieved top 10% in 11+ exam"
-          }].map((testimonial, index) => <div key={index} className="fade-on-scroll bg-card p-8 rounded-2xl relative shadow-card hover:shadow-learning transition-all duration-300">
-                <div className="text-6xl text-primary opacity-20 absolute top-4 left-6">"</div>
-                <p className="text-lg leading-relaxed mb-6 relative z-10">{testimonial.quote}</p>
-                <div className="space-y-2">
-                  <div className="font-semibold">{testimonial.author}</div>
-                  <div className="text-sm text-muted-foreground">{testimonial.role}</div>
-                  <div className="text-sm font-medium text-success">{testimonial.result}</div>
+      {/* Topics to Work On */}
+      <Card className="p-6">
+        <h2 className="text-lg font-semibold text-foreground mb-4 flex items-center gap-2">
+          <BookOpen className="h-5 w-5 text-primary" />
+          Topics to Work On
+        </h2>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+          {skillDevelopmentData.length > 0 ? (
+            skillDevelopmentData.slice(0, 9).map((skill, index) => (
+              <div key={index} className="flex items-center justify-between p-3 bg-muted/30 rounded-lg">
+                <div className="flex-1">
+                  <div className="font-medium text-foreground">{skill.skill}</div>
+                  <div className="w-full bg-muted rounded-full h-2 mt-2">
+                    <div 
+                      className={`h-2 rounded-full transition-all ${
+                        skill.accuracy >= 50 ? 'bg-foreground' : 'bg-destructive'
+                      }`}
+                      style={{ width: `${skill.accuracy}%` }}
+                    />
+                  </div>
                 </div>
-              </div>)}
-          </div>
-        </div>
-      </section>
-
-      {/* CTA Section */}
-      <section className="py-32 px-6 bg-gradient-to-r from-primary via-primary-glow to-primary text-primary-foreground text-center">
-        <div className="container mx-auto max-w-4xl">
-          <h2 className="text-4xl md:text-6xl font-bold mb-6">Ready to stop worrying and start celebrating?</h2>
-          <p className="text-xl md:text-2xl mb-10 opacity-90">Join thousands of parents who've transformed their child's 11+ journey.</p>
-          <Button asChild size="lg" className="bg-background text-primary hover:bg-background/90 font-semibold px-12 py-6 text-xl shadow-learning hover:shadow-glow transition-all duration-300 hover:scale-105">
-            <a href="/auth">Sign Up Free</a>
-          </Button>
-          <p className="text-sm mt-6 opacity-80">No credit card required • Instant access • Cancel anytime</p>
-        </div>
-      </section>
-
-      {/* Footer */}
-      <footer className="bg-muted/50 border-t border-border py-16 px-6">
-        <div className="container mx-auto max-w-6xl">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-8 mb-12">
-            <div>
-              <h4 className="font-semibold mb-4">Product</h4>
-              <div className="space-y-3">
-                <a href="#" className="block text-sm text-muted-foreground hover:text-primary transition-colors">Features</a>
-                <a href="#" className="block text-sm text-muted-foreground hover:text-primary transition-colors">Pricing</a>
-                <a href="#" className="block text-sm text-muted-foreground hover:text-primary transition-colors">Success Stories</a>
-                <a href="#" className="block text-sm text-muted-foreground hover:text-primary transition-colors">11+ Guide</a>
+                <div className="text-right ml-4">
+                  <div className={`text-lg font-bold ${
+                    skill.accuracy >= 50 ? 'text-foreground' : 'text-destructive'
+                  }`}>
+                    {skill.accuracy}%
+                  </div>
+                </div>
               </div>
-            </div>
-            <div>
-              <h4 className="font-semibold mb-4">Company</h4>
-              <div className="space-y-3">
-                <a href="#" className="block text-sm text-muted-foreground hover:text-primary transition-colors">About Us</a>
-                <a href="#" className="block text-sm text-muted-foreground hover:text-primary transition-colors">Our Method</a>
-                <a href="#" className="block text-sm text-muted-foreground hover:text-primary transition-colors">Contact</a>
-                <a href="#" className="block text-sm text-muted-foreground hover:text-primary transition-colors">Blog</a>
-              </div>
-            </div>
-            <div>
-              <h4 className="font-semibold mb-4">Support</h4>
-              <div className="space-y-3">
-                <a href="#" className="block text-sm text-muted-foreground hover:text-primary transition-colors">Help Center</a>
-                <a href="#" className="block text-sm text-muted-foreground hover:text-primary transition-colors">Getting Started</a>
-                <a href="#" className="block text-sm text-muted-foreground hover:text-primary transition-colors">FAQs</a>
-                <a href="#" className="block text-sm text-muted-foreground hover:text-primary transition-colors">Live Chat</a>
-              </div>
-            </div>
-            <div>
-              <h4 className="font-semibold mb-4">Legal</h4>
-              <div className="space-y-3">
-                <a href="#" className="block text-sm text-muted-foreground hover:text-primary transition-colors">Privacy Policy</a>
-                <a href="#" className="block text-sm text-muted-foreground hover:text-primary transition-colors">Terms of Service</a>
-                <a href="#" className="block text-sm text-muted-foreground hover:text-primary transition-colors">Data Security</a>
-                <a href="#" className="block text-sm text-muted-foreground hover:text-primary transition-colors">GDPR</a>
-              </div>
-            </div>
-          </div>
-          <div className="text-center pt-8 border-t border-border">
-            <p className="text-sm text-muted-foreground">
-              &copy; 2024 Kudos Academy. All rights reserved. • Empowering parents to support their children's success.
+            ))
+          ) : (
+            <p className="text-muted-foreground text-center py-4 col-span-full">
+              Complete more practice sessions to see topic progress!
             </p>
-          </div>
+          )}
         </div>
-      </footer>
-    </div>;
+      </Card>
+
+      {/* Common Misconceptions Card */}
+      <Card className="p-6">
+        <h2 className="text-lg font-semibold text-foreground mb-4 flex items-center gap-2">
+          <AlertTriangle className="h-5 w-5 text-warning" />
+          Common Misconceptions
+        </h2>
+        <div className="space-y-3">
+          {strugglingTopics.length > 0 ? (
+            strugglingTopics.map((topic, index) => (
+              <div key={index} className="flex items-center justify-between p-3 bg-warning/5 rounded-lg border border-warning/20">
+                <div>
+                  <div className="font-medium text-foreground">{topic.name}</div>
+                  <div className="text-sm text-muted-foreground">
+                    {topic.attempts} attempts • {topic.accuracy}% accuracy
+                  </div>
+                  {topic.trend === 'declining' && (
+                    <div className="text-xs text-warning mt-1 flex items-center gap-1">
+                      <AlertTriangle className="h-3 w-3" />
+                      Performance declining
+                    </div>
+                  )}
+                </div>
+                <Button variant="outline" size="sm">
+                  Practice
+                </Button>
+              </div>
+            ))
+          ) : (
+            <p className="text-muted-foreground text-center py-4">
+              No significant misconceptions detected. Great work!
+            </p>
+          )}
+        </div>
+      </Card>
+
+      {/* Mock Test and Weekly Test Performance Containers */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <MockTestPerformanceContainer />
+        <WeeklyTestPerformanceContainer />
+      </div>
+
+      {/* Skill Development */}
+      <Card className="p-6">
+        <h2 className="text-lg font-semibold text-foreground mb-4">Skill Development</h2>
+        <div className="space-y-4">
+          {skillDevelopmentData.length > 0 ? (
+            skillDevelopmentData.map((skill, index) => (
+              <div key={index}>
+                <div className="flex items-center justify-between mb-2">
+                  <span className="text-sm font-medium text-foreground">{skill.skill}</span>
+                  <div className="flex items-center space-x-2">
+                    <span className="text-sm text-muted-foreground">{skill.accuracy}%</span>
+                    {skill.accuracy >= 80 && <TrendingUp className="h-3 w-3 text-success" />}
+                    {skill.accuracy < 60 && <TrendingUp className="h-3 w-3 text-destructive rotate-180" />}
+                  </div>
+                </div>
+                <div className="w-full bg-muted rounded-full h-2">
+                  <div 
+                    className={`h-2 rounded-full transition-all duration-300 ${
+                      skill.accuracy >= 80 
+                        ? 'bg-gradient-to-r from-success to-success/80' 
+                        : skill.accuracy >= 60 
+                        ? 'bg-gradient-to-r from-warning to-warning/80' 
+                        : 'bg-gradient-to-r from-destructive to-destructive/80'
+                    }`}
+                    style={{ width: `${skill.accuracy}%` }}
+                  />
+                </div>
+              </div>
+            ))
+          ) : (
+            <p className="text-muted-foreground text-center py-4">
+              Start practicing to see your skill development!
+            </p>
+          )}
+        </div>
+              </Card>
+      </div>
+    </div>
+  );
 };
-export default Index;
