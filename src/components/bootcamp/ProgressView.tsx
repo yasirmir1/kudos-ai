@@ -548,7 +548,7 @@ export const ProgressView: React.FC = () => {
             </p>
           )}
         </div>
-      </div>
+      </Card>
 
       {/* Mock Test and Weekly Test Performance Containers */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
@@ -557,7 +557,7 @@ export const ProgressView: React.FC = () => {
       </div>
 
       {/* Skill Development */}
-      <div className="bg-transparent rounded-xl shadow-sm border p-6">
+      <Card className="p-6">
         <h2 className="text-lg font-semibold text-foreground mb-4">Skill Development</h2>
         <div className="space-y-4">
           {skillDevelopmentData.length > 0 ? (
@@ -591,10 +591,7 @@ export const ProgressView: React.FC = () => {
             </p>
           )}
         </div>
-              </Card>
-      </div>
+      </Card>
     </div>
   );
 };
-
-export default ProgressView;
