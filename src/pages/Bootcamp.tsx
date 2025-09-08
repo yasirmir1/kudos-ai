@@ -52,7 +52,7 @@ const Bootcamp = () => {
   }
   return <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50">
       <Navigation currentView={currentView} setCurrentView={setCurrentView} user={user} />
-      <main className="container mx-auto px-4 py-6 relative px-12 py-6 rounded-3xl shadow-2xl mx-auto max-w-4xl mb-4 ">
+      <main className="container mx-auto ">
         {error && <div className="max-w-2xl mx-auto mb-6">
             <div className="bg-white rounded-3xl shadow-xl overflow-hidden">
               <div className="p-6">
