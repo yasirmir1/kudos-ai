@@ -359,7 +359,7 @@ export const ProgressView: React.FC = () => {
       </div>;
   }
   const renderDetailedView = () => <div className="space-y-6 bg-transparent ">
-      <div className="relative px-12 py-6 rounded-3xl shadow-2xl mx-auto max-w-4xl mb-4">
+      <div className=" px-4 py-6 relative px-12 py-6 rounded-3xl shadow-2xl mx-auto max-w-4xl mb-4 background: linear-gradient(to right, #6366f1, #9333ea)', minHeight: '140px', boxShadow: '0 25px 50px -12px rgba(0, 0, 0, -bottom-0 -bottom-0 ">
         <h1 className="text-2xl font-bold text-foreground mb-2">Detailed Progress Analytics</h1>
         <p className="text-muted-foreground">Comprehensive view of learning performance</p>
       </div>
