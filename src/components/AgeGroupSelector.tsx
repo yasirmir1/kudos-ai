@@ -15,18 +15,7 @@ export const AgeGroupSelector: React.FC = () => {
   const selectedGroup = ageGroups.find(group => group.value === selectedAgeGroup);
   return <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
-        <Button
-          variant="outline"
-          role="combobox"
-          aria-expanded={open}
-          className="w-[240px] justify-between"
-        >
-          <div className="flex items-center">
-            <GraduationCap className="mr-2 h-4 w-4" />
-            {selectedGroup ? selectedGroup.label : "Select age group..."}
-          </div>
-          <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
-        </Button>
+        
       </PopoverTrigger>
       <PopoverContent className="w-[240px] p-0" align="start">
         <Command>
