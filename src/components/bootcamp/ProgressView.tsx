@@ -393,8 +393,7 @@ export const ProgressView: React.FC = () => {
   }
 
   return (
-    <div className="space-y-6 max-w-6xl mx-auto bg-transparent">
-      {/* Header */}
+  
       <div className="relative px-12 py-6 rounded-3xl shadow-2xl mx-auto max-w-4xl mb-4 bg-gradient-to-r from-[#6366f1] to-[#9333ea]">
         <h1 className="text-2xl font-bold text-white mb-2">Detailed Progress Analytics</h1>
         <p className="text-white/80">Comprehensive view of learning performance</p>
@@ -425,7 +424,7 @@ export const ProgressView: React.FC = () => {
           </p>
           <p className="text-sm text-muted-foreground">total questions</p>
         </Card>
-      </div>
+  
 
       {/* Score Trend Over Time */}
       <Card className="p-6">
