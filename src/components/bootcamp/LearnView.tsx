@@ -126,16 +126,56 @@ export const LearnView: React.FC<LearnViewProps> = ({
       // Load curriculum data from complete JSON
       const curriculumResponse = await import('../../data/complete-curriculum-content.json');
       const curriculumData = curriculumResponse.default;
+      
       if (curriculumData) {
-        // Transform data to match expected interface
-        setTopics(curriculumData.curriculum_topics?.map((topic: any) => ({
+        // Transform topics data
+        const transformedTopics = curriculumData.curriculum_topics?.map((topic: any) => ({
           id: topic.id,
           name: topic.topic_name,
           module_id: topic.module_id,
           difficulty: topic.difficulty,
           skills: topic.learning_objectives || [],
           topic_order: topic.topic_order
-        })) || []);
+        })) || [];
+        setTopics(transformedTopics);
+
+        // Create modules from content_progression
+        const moduleSequences = curriculumData.content_progression?.module_sequences || {};
+        const transformedModules = Object.entries(moduleSequences).map(([moduleId, moduleData]: [string, any]) => ({
+          id: moduleId,
+          name: moduleData.module_name,
+          curriculum_id: 'main',
+          weeks: [], // Will be calculated based on topics
+          module_order: moduleId === 'mod1' ? 1 : moduleId === 'mod2' ? 2 : parseInt(moduleId.replace('mod', ''))
+        }));
+        setModules(transformedModules);
+
+        // Create weekly plans - group topics into weeks (4 topics per week approximately)
+        const weeklyPlans = [];
+        const topicsPerWeek = 4;
+        const totalWeeks = Math.ceil(transformedTopics.length / topicsPerWeek);
+        
+        for (let week = 1; week <= Math.min(totalWeeks, 52); week++) {
+          const startIndex = (week - 1) * topicsPerWeek;
+          const weekTopics = transformedTopics.slice(startIndex, startIndex + topicsPerWeek);
+          
+          if (weekTopics.length > 0) {
+            const weekModuleId = weekTopics[0].module_id;
+            const weekModule = transformedModules.find(m => m.id === weekModuleId);
+            const avgDifficulty = getAverageDifficulty(weekTopics);
+            
+            weeklyPlans.push({
+              week,
+              title: `Week ${week}: ${weekTopics.map(t => t.name).join(', ')}`,
+              topics: weekTopics.map(t => t.name),
+              module: weekModule?.name || 'Unknown Module',
+              difficulty: avgDifficulty,
+              focus: getFocusArea(weekTopics)
+            });
+          }
+        }
+        
+        setWeeklyPlan(weeklyPlans);
       } else {
         setError('Unable to load curriculum data');
       }
@@ -145,6 +185,25 @@ export const LearnView: React.FC<LearnViewProps> = ({
     } finally {
       setLoading(false);
     }
+  };
+
+  const getAverageDifficulty = (topics: Topic[]) => {
+    const difficultyLevels = { foundation: 1, intermediate: 2, advanced: 3, mastery: 4 };
+    const avgLevel = topics.reduce((sum, topic) => {
+      return sum + (difficultyLevels[topic.difficulty as keyof typeof difficultyLevels] || 1);
+    }, 0) / topics.length;
+    
+    if (avgLevel <= 1.5) return 'foundation';
+    if (avgLevel <= 2.5) return 'intermediate';
+    if (avgLevel <= 3.5) return 'advanced';
+    return 'mastery';
+  };
+
+  const getFocusArea = (topics: Topic[]) => {
+    const moduleId = topics[0]?.module_id;
+    if (moduleId === 'mod1') return 'Number & Place Value';
+    if (moduleId === 'mod2') return 'Arithmetic Operations';
+    return 'Mathematical Concepts';
   };
   const getDifficultyColor = (difficulty: string) => {
     switch (difficulty?.toLowerCase()) {
@@ -315,10 +374,15 @@ export const LearnView: React.FC<LearnViewProps> = ({
 
           <TabsContent value="plan" className="space-y-6">
             <div className="bg-gradient-to-r from-primary/10 to-secondary/10 rounded-xl p-6">
-              <h2 className="text-2xl font-bold mb-2">Learning Center Overview</h2>
+              <h2 className="text-2xl font-bold mb-2">52-Week Learning Plan</h2>
               <p className="text-muted-foreground">
-                Comprehensive learning journey through all mathematical concepts
+                Comprehensive learning journey through {weeklyPlan.length} weeks of mathematical concepts
               </p>
+            </div>
+
+            {/* Weekly Plan Grid */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              {weeklyPlan.map(week => renderWeekCard(week))}
             </div>
           </TabsContent>
 
