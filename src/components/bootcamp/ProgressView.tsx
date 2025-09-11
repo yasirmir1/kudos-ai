@@ -354,7 +354,7 @@ export const ProgressView: React.FC = () => {
         </div>
       </div>;
   }
-  const renderDetailedView = () => <div className="space-y-6">
+  const renderDetailedView = () => <>
       <div className="relative px-12 py-6 rounded-3xl shadow-2xl mx-auto max-w-4xl mb-4" style={{
         background: 'linear-gradient(to right, #6366f1, #9333ea)',
         minHeight: '140px',
@@ -560,7 +560,7 @@ export const ProgressView: React.FC = () => {
         </div>
       </div>
 
-    </div>;
+    </>;
   return <div className="space-y-6 max-w-6xl mx-auto">
       {renderDetailedView()}
     </div>;
