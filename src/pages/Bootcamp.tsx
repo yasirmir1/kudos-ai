@@ -105,7 +105,7 @@ const Bootcamp = () => {
               <LearnView selectedWeek={selectedWeek} onWeekChange={setSelectedWeek} />
             </div>}
           
-          {currentView === 'progress' && <div className="bg-white rounded-3xl shadow-xl overflow-hidden">
+          {currentView === 'progress' && <div>
               <ProgressView />
             </div>}
           
