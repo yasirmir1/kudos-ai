@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Star, TrendingUp, AlertTriangle, CheckCircle, Clock, Target, BookOpen, Trophy, Heart, BarChart3, Loader2, Award, Zap } from 'lucide-react';
+import { Star, TrendingUp, AlertTriangle, CheckCircle, Clock, Target, BookOpen, Trophy, Heart, BarChart3, Loader2, Award, Zap, Brain } from 'lucide-react';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -355,9 +355,59 @@ export const ProgressView: React.FC = () => {
       </div>;
   }
   const renderDetailedView = () => <div className="space-y-6">
-      <div className="bg-card rounded-xl shadow-sm border p-6">
-        <h1 className="text-2xl font-bold text-foreground mb-2">Detailed Progress Analytics</h1>
-        <p className="text-muted-foreground">Comprehensive view of learning performance</p>
+      <div className="bg-card border border-muted rounded-xl p-6 shadow-card" style={{ 
+        background: 'hsl(var(--card))', 
+        borderColor: 'hsl(var(--border))', 
+        color: 'hsl(var(--card-foreground))',
+        boxShadow: 'var(--shadow-card)',
+        position: 'relative',
+        zIndex: 1
+      }}>
+        <div className="space-y-6">
+          {/* Header */}
+          <div className="text-center space-y-3">
+            <div className="bg-primary/10 p-4 rounded-full mx-auto w-fit">
+              <BarChart3 className="h-8 w-8 text-primary" />
+            </div>
+            <div>
+              <h3 className="text-xl font-semibold text-foreground">Detailed Progress Analytics</h3>
+              <p className="text-muted-foreground">Comprehensive view of learning performance</p>
+            </div>
+          </div>
+
+          {/* Key Features */}
+          <div className="grid grid-cols-1 gap-4">
+            <div className="flex items-center gap-3 p-3 bg-muted/50 rounded-lg">
+              <div className="bg-primary/10 p-2 rounded-full">
+                <Target className="h-4 w-4 text-primary" />
+              </div>
+              <div>
+                <p className="font-medium text-foreground">Performance Tracking</p>
+                <p className="text-sm text-muted-foreground">Real-time analytics</p>
+              </div>
+            </div>
+            
+            <div className="flex items-center gap-3 p-3 bg-muted/50 rounded-lg">
+              <div className="bg-primary/10 p-2 rounded-full">
+                <TrendingUp className="h-4 w-4 text-primary" />
+              </div>
+              <div>
+                <p className="font-medium text-foreground">Score Trends</p>
+                <p className="text-sm text-muted-foreground">Detailed progression</p>
+              </div>
+            </div>
+            
+            <div className="flex items-center gap-3 p-3 bg-muted/50 rounded-lg">
+              <div className="bg-primary/10 p-2 rounded-full">
+                <Brain className="h-4 w-4 text-primary" />
+              </div>
+              <div>
+                <p className="font-medium text-foreground">Skill Analysis</p>
+                <p className="text-sm text-muted-foreground">Comprehensive insights</p>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
 
       {/* Key Stats */}
