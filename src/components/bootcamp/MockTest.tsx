@@ -7,6 +7,7 @@ import { Alert, AlertDescription } from '@/components/ui/alert';
 import { supabase } from '@/integrations/supabase/client';
 import { useBootcampDatabase } from '@/hooks/useBootcampDatabase';
 import { toast } from 'sonner';
+
 interface MockTestQuestion {
   question_id: string;
   question_text: string;
@@ -21,6 +22,7 @@ interface MockTestQuestion {
   marks: number;
   time_seconds: number;
 }
+
 interface MockTestState {
   status: 'instructions' | 'active' | 'completed' | 'paused';
   currentQuestion: number;
@@ -31,6 +33,7 @@ interface MockTestState {
   sessionId: string | null;
   timeSpent: number; // total time spent (for pause/resume)
 }
+
 interface MockTestResults {
   sessionId: string;
   totalQuestions: number;
@@ -38,27 +41,20 @@ interface MockTestResults {
   correctAnswers: number;
   accuracy: number;
   timeSpent: number;
-  topicBreakdown: Record<string, {
-    correct: number;
-    total: number;
-    accuracy: number;
-  }>;
+  topicBreakdown: Record<string, { correct: number; total: number; accuracy: number }>;
   misconceptionsSummary: Array<{
     misconception_code: string;
     frequency: number;
     questions: string[];
   }>;
 }
+
 export const MockTest: React.FC = () => {
-  const {
-    student,
-    isLoading: dbLoading
-  } = useBootcampDatabase();
+  const { student, isLoading: dbLoading } = useBootcampDatabase();
   const [testState, setTestState] = useState<MockTestState>({
     status: 'instructions',
     currentQuestion: 0,
-    timeRemaining: 3600,
-    // 60 minutes
+    timeRemaining: 3600, // 60 minutes
     answers: {},
     questions: [],
     startTime: null,
@@ -74,45 +70,59 @@ export const MockTest: React.FC = () => {
       loadExistingSession();
     }
   }, [student]);
+
   const loadExistingSession = async () => {
     if (!student) return;
+
     try {
       // Check for existing active mock test session
-      const {
-        data: existingSession
-      } = await supabase.from('bootcamp_mock_test_sessions').select('*').eq('student_id', student.student_id).eq('status', 'in_progress').order('started_at', {
-        ascending: false
-      }).limit(1).maybeSingle();
+      const { data: existingSession } = await supabase
+        .from('bootcamp_mock_test_sessions')
+        .select('*')
+        .eq('student_id', student.student_id)
+        .eq('status', 'in_progress')
+        .order('started_at', { ascending: false })
+        .limit(1)
+        .maybeSingle();
+
       if (existingSession) {
         // Load session data and continue where left off
         const sessionData = existingSession.session_data as any || {};
         const startTime = new Date(existingSession.started_at);
         const timeElapsed = Math.floor((Date.now() - startTime.getTime()) / 1000);
-
+        
         // Load questions for this session
-        const {
-          data: sessionQuestions
-        } = await supabase.from('bootcamp_mock_test_answers' as any).select(`
+        const { data: sessionQuestions } = await supabase
+          .from('bootcamp_mock_test_answers' as any)
+          .select(`
             question_id,
             question_order,
             student_answer
-          `).eq('session_id', existingSession.session_id).order('question_order');
+          `)
+          .eq('session_id', existingSession.session_id)
+          .order('question_order');
+
         if (sessionQuestions && sessionQuestions.length > 0) {
           // Get the questions from the mock_test_questions table
           const questionIds = (sessionQuestions as any[]).map((q: any) => q.question_id);
-          const {
-            data: questions
-          } = await supabase.from('mock_test_questions').select('*').in('question_id', questionIds).eq('is_active', true);
+          const { data: questions } = await supabase
+            .from('mock_test_questions')
+            .select('*')
+            .in('question_id', questionIds)
+            .eq('is_active', true);
+
           if (questions) {
             const answers: Record<number, string> = {};
+            
             (sessionQuestions as any[]).forEach((q: any) => {
               if (q.student_answer) {
                 answers[q.question_order] = q.student_answer;
               }
             });
+
             setTestState({
               status: 'active',
-              currentQuestion: sessionData.currentQuestion as number || 0,
+              currentQuestion: (sessionData.currentQuestion as number) || 0,
               timeRemaining: Math.max(0, existingSession.time_limit_seconds - timeElapsed),
               answers,
               questions: questions as MockTestQuestion[],
@@ -120,6 +130,7 @@ export const MockTest: React.FC = () => {
               sessionId: existingSession.session_id,
               timeSpent: timeElapsed
             });
+
             toast.info('Continuing your mock test session');
           }
         }
@@ -128,8 +139,10 @@ export const MockTest: React.FC = () => {
       console.error('Failed to load existing session:', error);
     }
   };
+
   const handleSubmitTest = useCallback(async () => {
     if (!testState.sessionId || !student) return;
+
     setIsLoading(true);
     try {
       // Submit all responses to backend
@@ -147,41 +160,44 @@ export const MockTest: React.FC = () => {
         const question = testState.questions[response.question_order];
         const isCorrect = response.student_answer === question.correct_answer;
         if (isCorrect) correctCount++;
-        await supabase.from('bootcamp_mock_test_answers' as any).update({
-          student_answer: response.student_answer,
-          answered_at: response.answered_at,
-          is_correct: isCorrect,
-          time_taken_seconds: testState.startTime ? Math.floor((Date.now() - testState.startTime.getTime()) / 1000) / Object.keys(testState.answers).length : 60
-        }).eq('session_id', response.session_id).eq('question_order', response.question_order);
+
+        await supabase
+          .from('bootcamp_mock_test_answers' as any)
+          .update({
+            student_answer: response.student_answer,
+            answered_at: response.answered_at,
+            is_correct: isCorrect,
+            time_taken_seconds: testState.startTime ? 
+              Math.floor((Date.now() - testState.startTime.getTime()) / 1000) / Object.keys(testState.answers).length : 60
+          })
+          .eq('session_id', response.session_id)
+          .eq('question_order', response.question_order);
       }
 
       // Complete the session
       const timeSpent = testState.startTime ? Math.floor((Date.now() - testState.startTime.getTime()) / 1000) : testState.timeSpent;
-      await supabase.from('bootcamp_mock_test_sessions').update({
-        status: 'completed',
-        completed_at: new Date().toISOString(),
-        time_spent_seconds: timeSpent,
-        questions_attempted: Object.keys(testState.answers).length,
-        questions_correct: correctCount
-      }).eq('session_id', testState.sessionId);
+      await supabase
+        .from('bootcamp_mock_test_sessions')
+        .update({
+          status: 'completed',
+          completed_at: new Date().toISOString(),
+          time_spent_seconds: timeSpent,
+          questions_attempted: Object.keys(testState.answers).length,
+          questions_correct: correctCount
+        })
+        .eq('session_id', testState.sessionId);
 
       // Calculate results
-      const topicBreakdown: Record<string, {
-        correct: number;
-        total: number;
-        accuracy: number;
-      }> = {};
+      const topicBreakdown: Record<string, { correct: number; total: number; accuracy: number }> = {};
       let correctAnswers = 0;
+
       testState.questions.forEach((question, index) => {
         const topic = question.topic || 'Unknown';
         if (!topicBreakdown[topic]) {
-          topicBreakdown[topic] = {
-            correct: 0,
-            total: 0,
-            accuracy: 0
-          };
+          topicBreakdown[topic] = { correct: 0, total: 0, accuracy: 0 };
         }
         topicBreakdown[topic].total++;
+        
         if (testState.answers[index] === question.correct_answer) {
           correctAnswers++;
           topicBreakdown[topic].correct++;
@@ -190,23 +206,22 @@ export const MockTest: React.FC = () => {
 
       // Calculate accuracy for each topic
       Object.keys(topicBreakdown).forEach(topic => {
-        topicBreakdown[topic].accuracy = topicBreakdown[topic].correct / topicBreakdown[topic].total * 100;
+        topicBreakdown[topic].accuracy = (topicBreakdown[topic].correct / topicBreakdown[topic].total) * 100;
       });
+
       const results: MockTestResults = {
         sessionId: testState.sessionId,
         totalQuestions: testState.questions.length,
         answeredQuestions: Object.keys(testState.answers).length,
         correctAnswers,
-        accuracy: correctAnswers / testState.questions.length * 100,
+        accuracy: (correctAnswers / testState.questions.length) * 100,
         timeSpent,
         topicBreakdown,
         misconceptionsSummary: [] // Will be populated in post-session analysis
       };
+
       setResults(results);
-      setTestState(prev => ({
-        ...prev,
-        status: 'completed'
-      }));
+      setTestState(prev => ({ ...prev, status: 'completed' }));
       toast.success('Mock test completed!');
     } catch (error) {
       console.error('Failed to submit test:', error);
@@ -219,6 +234,7 @@ export const MockTest: React.FC = () => {
   // Timer effect with pause/resume and persistence
   useEffect(() => {
     let interval: NodeJS.Timeout | null = null;
+    
     if (testState.status === 'active' && testState.timeRemaining > 0) {
       interval = setInterval(() => {
         setTestState(prev => {
@@ -226,11 +242,12 @@ export const MockTest: React.FC = () => {
             ...prev,
             timeRemaining: prev.timeRemaining - 1
           };
-
+          
           // Auto-save progress every 10 seconds
           if (prev.timeRemaining % 10 === 0 && prev.sessionId) {
             saveProgress(newState);
           }
+          
           return newState;
         });
       }, 1000);
@@ -238,64 +255,83 @@ export const MockTest: React.FC = () => {
       toast.warning('Time is up! Submitting your test automatically.');
       handleSubmitTest();
     }
+
     return () => {
       if (interval) clearInterval(interval);
     };
   }, [testState.status, testState.timeRemaining, handleSubmitTest]);
+
   const saveProgress = async (currentState: MockTestState) => {
     if (!currentState.sessionId || !student) return;
+
     try {
       // Update session progress
-      await supabase.from('bootcamp_mock_test_sessions').update({
-        session_data: {
-          currentQuestion: currentState.currentQuestion,
-          answers: currentState.answers
-        }
-      }).eq('session_id', currentState.sessionId);
+      await supabase
+        .from('bootcamp_mock_test_sessions')
+        .update({
+          session_data: {
+            currentQuestion: currentState.currentQuestion,
+            answers: currentState.answers
+          }
+        })
+        .eq('session_id', currentState.sessionId);
 
       // Update individual question responses
       Object.entries(currentState.answers).forEach(async ([questionIndex, answer]) => {
-        await supabase.from('bootcamp_mock_test_answers' as any).update({
-          student_answer: answer
-        }).eq('session_id', currentState.sessionId).eq('question_order', parseInt(questionIndex));
+        await supabase
+          .from('bootcamp_mock_test_answers' as any)
+          .update({
+            student_answer: answer
+          })
+          .eq('session_id', currentState.sessionId)
+          .eq('question_order', parseInt(questionIndex));
       });
     } catch (error) {
       console.error('Failed to save progress:', error);
     }
   };
+
   const formatTime = (seconds: number) => {
     const hours = Math.floor(seconds / 3600);
-    const minutes = Math.floor(seconds % 3600 / 60);
+    const minutes = Math.floor((seconds % 3600) / 60);
     const secs = seconds % 60;
     return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
   };
+
   const startTest = async () => {
     if (!student) {
       toast.error('Please log in to start the mock test');
       return;
     }
+
     setIsLoading(true);
     try {
       // Create new mock test session
-      const {
-        data: newSession,
-        error: sessionError
-      } = await supabase.from('bootcamp_mock_test_sessions').insert({
-        student_id: student.student_id,
-        session_type: 'mock_test',
-        status: 'in_progress',
-        total_questions: 50,
-        time_limit_seconds: 3600,
-        started_at: new Date().toISOString()
-      }).select().single();
+      const { data: newSession, error: sessionError } = await supabase
+        .from('bootcamp_mock_test_sessions')
+        .insert({
+          student_id: student.student_id,
+          session_type: 'mock_test',
+          status: 'in_progress',
+          total_questions: 50,
+          time_limit_seconds: 3600,
+          started_at: new Date().toISOString()
+        })
+        .select()
+        .single();
+
       if (sessionError) throw sessionError;
 
       // Get questions from database (real 11+ style questions)
-      const {
-        data: questions,
-        error: questionsError
-      } = await supabase.from('mock_test_questions').select('*').eq('is_active', true).limit(50).order('question_id');
+      const { data: questions, error: questionsError } = await supabase
+        .from('mock_test_questions')
+        .select('*')
+        .eq('is_active', true)
+        .limit(50)
+        .order('question_id');
+
       if (questionsError) throw questionsError;
+
       if (!questions || questions.length === 0) {
         throw new Error('No questions available');
       }
@@ -306,10 +342,13 @@ export const MockTest: React.FC = () => {
         question_id: question.question_id,
         question_order: index
       }));
-      const {
-        error: assignmentError
-      } = await supabase.from('bootcamp_mock_test_answers' as any).insert(questionAssignments);
+
+      const { error: assignmentError } = await supabase
+        .from('bootcamp_mock_test_answers' as any)
+        .insert(questionAssignments);
+
       if (assignmentError) throw assignmentError;
+
       setTestState({
         status: 'active',
         currentQuestion: 0,
@@ -320,6 +359,7 @@ export const MockTest: React.FC = () => {
         sessionId: newSession.session_id,
         timeSpent: 0
       });
+
       toast.success('Mock test started! Good luck!');
     } catch (error) {
       console.error('Failed to start test:', error);
@@ -328,21 +368,22 @@ export const MockTest: React.FC = () => {
       setIsLoading(false);
     }
   };
+
   const exitTest = async () => {
     if (!testState.sessionId) return;
+
     try {
       // Save current progress before exiting
       await saveProgress(testState);
+      
       toast.info('Progress saved. You can resume this test later.');
-      setTestState(prev => ({
-        ...prev,
-        status: 'instructions'
-      }));
+      setTestState(prev => ({ ...prev, status: 'instructions' }));
     } catch (error) {
       console.error('Failed to save progress:', error);
       toast.error('Failed to save progress');
     }
   };
+
   const handleAnswer = useCallback((selectedAnswer: string) => {
     // Update local state (no immediate feedback in mock test)
     setTestState(prev => ({
@@ -353,12 +394,14 @@ export const MockTest: React.FC = () => {
       }
     }));
   }, []);
+
   const navigateToQuestion = (questionIndex: number) => {
     setTestState(prev => ({
       ...prev,
       currentQuestion: questionIndex
     }));
   };
+
   const nextQuestion = () => {
     if (testState.currentQuestion < testState.questions.length - 1) {
       setTestState(prev => ({
@@ -367,6 +410,7 @@ export const MockTest: React.FC = () => {
       }));
     }
   };
+
   const previousQuestion = () => {
     if (testState.currentQuestion > 0) {
       setTestState(prev => ({
@@ -375,14 +419,16 @@ export const MockTest: React.FC = () => {
       }));
     }
   };
+
   if (testState.status === 'instructions') {
-    return <>
+    return (
+      <>
         {/* Header Section */}
-        <div style={{
-        background: 'linear-gradient(to right, #6366f1, #9333ea)',
-        minHeight: '140px',
-        boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)'
-      }} className="relative px-12 rounded-3xl shadow-2xl mx-auto max-w-4xl mb-4 py-[10px]">
+        <div className="relative px-12 py-6 rounded-3xl shadow-2xl mx-auto max-w-4xl mb-4" style={{ 
+          background: 'linear-gradient(to right, #6366f1, #9333ea)',
+          minHeight: '140px',
+          boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)'
+        }}>
           
           <div className="relative z-10">
             <div className="flex items-center gap-4 mb-3">
@@ -469,13 +515,13 @@ export const MockTest: React.FC = () => {
           <div className="flex gap-3 mb-8">
             <div className="flex-1 flex items-center gap-3 p-4 bg-white border border-amber-200 rounded-xl">
               <svg className="w-5 h-5 text-amber-600 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
-                <path d="M10 2a6 6 0 00-6 6v3.586l-.707.707A1 1 0 004 14h12a1 1 0 00.707-1.707L16 11.586V8a6 6 0 00-6-6zM10 18a3 3 0 01-3-3h6a3 3 0 01-3 3z" />
+                <path d="M10 2a6 6 0 00-6 6v3.586l-.707.707A1 1 0 004 14h12a1 1 0 00.707-1.707L16 11.586V8a6 6 0 00-6-6zM10 18a3 3 0 01-3-3h6a3 3 0 01-3 3z"/>
               </svg>
               <span className="text-xs text-amber-800 font-medium">No calculator allowed</span>
             </div>
             <div className="flex-1 flex items-center gap-3 p-4 bg-white border border-blue-200 rounded-xl">
               <svg className="w-5 h-5 text-blue-600 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
-                <path fillRule="evenodd" d="M6.267 3.455a3.066 3.066 0 001.745-.723 3.066 3.066 0 013.976 0 3.066 3.066 0 001.745.723 3.066 3.066 0 012.812 2.812c.051.643.304 1.254.723 1.745a3.066 3.066 0 010 3.976 3.066 3.066 0 00-.723 1.745 3.066 3.066 0 01-2.812 2.812 3.066 3.066 0 00-1.745.723 3.066 3.066 0 01-3.976 0 3.066 3.066 0 00-1.745-.723 3.066 3.066 0 01-2.812-2.812 3.066 3.066 0 00-.723-1.745 3.066 3.066 0 010-3.976 3.066 3.066 0 00.723-1.745 3.066 3.066 0 012.812-2.812zm7.44 5.252a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                <path fillRule="evenodd" d="M6.267 3.455a3.066 3.066 0 001.745-.723 3.066 3.066 0 013.976 0 3.066 3.066 0 001.745.723 3.066 3.066 0 012.812 2.812c.051.643.304 1.254.723 1.745a3.066 3.066 0 010 3.976 3.066 3.066 0 00-.723 1.745 3.066 3.066 0 01-2.812 2.812 3.066 3.066 0 00-1.745.723 3.066 3.066 0 01-3.976 0 3.066 3.066 0 00-1.745-.723 3.066 3.066 0 01-2.812-2.812 3.066 3.066 0 00-.723-1.745 3.066 3.066 0 010-3.976 3.066 3.066 0 00.723-1.745 3.066 3.066 0 012.812-2.812zm7.44 5.252a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd"/>
               </svg>
               <span className="text-xs text-blue-800 font-medium">Progress auto-saved</span>
             </div>
@@ -486,34 +532,53 @@ export const MockTest: React.FC = () => {
             <button className="flex-1 py-4 px-8 bg-gray-100 text-gray-700 rounded-xl font-semibold hover:bg-gray-200 transition-colors text-lg">
               Practice Mode
             </button>
-            <button onClick={startTest} disabled={isLoading || dbLoading || !student} className={`flex-1 py-4 px-8 rounded-xl font-semibold transition-all flex items-center justify-center gap-2 text-lg ${isLoading || dbLoading || !student ? 'bg-gray-200 text-gray-400 cursor-not-allowed' : 'bg-indigo-600 text-white hover:bg-indigo-700 hover:shadow-lg transform hover:scale-[1.02]'}`}>
-              {isLoading ? <>
+            <button
+              onClick={startTest}
+              disabled={isLoading || dbLoading || !student}
+              className={`flex-1 py-4 px-8 rounded-xl font-semibold transition-all flex items-center justify-center gap-2 text-lg ${
+                isLoading || dbLoading || !student
+                  ? 'bg-gray-200 text-gray-400 cursor-not-allowed' 
+                  : 'bg-indigo-600 text-white hover:bg-indigo-700 hover:shadow-lg transform hover:scale-[1.02]'
+              }`}
+            >
+              {isLoading ? (
+                <>
                   <svg className="animate-spin h-4 w-4" fill="none" viewBox="0 0 24 24">
                     <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                     <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                   </svg>
                   Loading Questions...
-                </> : dbLoading ? 'Preparing...' : !student ? 'Please log in to start' : <>
+                </>
+              ) : dbLoading ? (
+                'Preparing...'
+              ) : !student ? (
+                'Please log in to start'
+              ) : (
+                <>
                   Start Exam Mode
                   <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                   </svg>
-                </>}
+                </>
+              )}
             </button>
           </div>
         </div>
-      </>;
+      </>
+    );
   }
+
   if (testState.status === 'completed' && results) {
-    return <div className="max-w-4xl mx-auto p-6">
-        <Card className="p-8" style={{
-        background: 'hsl(var(--card))',
-        borderColor: 'hsl(var(--border))',
-        color: 'hsl(var(--card-foreground))',
-        boxShadow: 'var(--shadow-card)',
-        position: 'relative',
-        zIndex: 1
-      }}>
+    return (
+      <div className="max-w-4xl mx-auto p-6">
+        <Card className="p-8" style={{ 
+          background: 'hsl(var(--card))', 
+          borderColor: 'hsl(var(--border))', 
+          color: 'hsl(var(--card-foreground))',
+          boxShadow: 'var(--shadow-card)',
+          position: 'relative',
+          zIndex: 1
+        }}>
           <div className="text-center mb-8">
             <CheckCircle className="h-16 w-16 text-green-500 mx-auto mb-4" />
             <h1 className="text-3xl font-bold text-foreground mb-4">Test Completed!</h1>
@@ -546,17 +611,19 @@ export const MockTest: React.FC = () => {
           <div className="mb-8">
             <h3 className="text-lg font-semibold mb-4">Topic Breakdown</h3>
             <div className="space-y-3">
-              {Object.entries(results.topicBreakdown).map(([topic, stats]) => <div key={topic} className="flex items-center justify-between p-3 bg-muted rounded-lg">
+              {Object.entries(results.topicBreakdown).map(([topic, stats]) => (
+                <div key={topic} className="flex items-center justify-between p-3 bg-muted rounded-lg">
                   <span className="font-medium">{topic}</span>
                   <div className="flex items-center gap-4">
                     <span className="text-sm text-muted-foreground">
                       {stats.correct}/{stats.total}
                     </span>
                     <div className="w-24">
-                      <Progress value={stats.correct / stats.total * 100} />
+                      <Progress value={(stats.correct / stats.total) * 100} />
                     </div>
                   </div>
-                </div>)}
+                </div>
+              ))}
             </div>
           </div>
 
@@ -573,17 +640,17 @@ export const MockTest: React.FC = () => {
           </div>
 
           <div className="text-center space-x-4">
-            <Button variant="outline" onClick={() => setTestState(prev => ({
-            ...prev,
-            status: 'instructions',
-            currentQuestion: 0,
-            timeRemaining: 3600,
-            answers: {},
-            questions: [],
-            startTime: null,
-            sessionId: null,
-            timeSpent: 0
-          }))}>
+            <Button variant="outline" onClick={() => setTestState(prev => ({ 
+              ...prev, 
+              status: 'instructions',
+              currentQuestion: 0,
+              timeRemaining: 3600,
+              answers: {},
+              questions: [],
+              startTime: null,
+              sessionId: null,
+              timeSpent: 0
+            }))}>
               Take Another Test
             </Button>
             <Button onClick={() => window.location.href = '/bootcamp'}>
@@ -591,23 +658,26 @@ export const MockTest: React.FC = () => {
             </Button>
           </div>
         </Card>
-      </div>;
+      </div>
+    );
   }
 
   // Active test view
   const currentQuestion = testState.questions[testState.currentQuestion];
-  const progress = (testState.currentQuestion + 1) / testState.questions.length * 100;
+  const progress = ((testState.currentQuestion + 1) / testState.questions.length) * 100;
   const answeredCount = Object.keys(testState.answers).length;
-  return <div className="max-w-6xl mx-auto p-6">
+
+  return (
+    <div className="max-w-6xl mx-auto p-6">
       {/* Header with timer and progress */}
-      <Card className="mb-6 p-4" style={{
-      background: 'hsl(var(--card))',
-      borderColor: 'hsl(var(--border))',
-      color: 'hsl(var(--card-foreground))',
-      boxShadow: 'var(--shadow-card)',
-      position: 'relative',
-      zIndex: 1
-    }}>
+      <Card className="mb-6 p-4" style={{ 
+        background: 'hsl(var(--card))', 
+        borderColor: 'hsl(var(--border))', 
+        color: 'hsl(var(--card-foreground))',
+        boxShadow: 'var(--shadow-card)',
+        position: 'relative',
+        zIndex: 1
+      }}>
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-4">
             <div className="text-sm text-muted-foreground">
@@ -643,14 +713,15 @@ export const MockTest: React.FC = () => {
       <div className="grid lg:grid-cols-4 gap-6">
         {/* Question content */}
         <div className="lg:col-span-3">
-          {currentQuestion && <Card className="p-6" style={{
-          background: 'hsl(var(--card))',
-          borderColor: 'hsl(var(--border))',
-          color: 'hsl(var(--card-foreground))',
-          boxShadow: 'var(--shadow-card)',
-          position: 'relative',
-          zIndex: 1
-        }}>
+          {currentQuestion && (
+            <Card className="p-6" style={{ 
+              background: 'hsl(var(--card))', 
+              borderColor: 'hsl(var(--border))', 
+              color: 'hsl(var(--card-foreground))',
+              boxShadow: 'var(--shadow-card)',
+              position: 'relative',
+              zIndex: 1
+            }}>
               <div className="mb-4">
                 <span className="text-sm text-muted-foreground">
                   {currentQuestion.difficulty} • {currentQuestion.topic}
@@ -660,24 +731,40 @@ export const MockTest: React.FC = () => {
               <h2 className="text-lg font-medium mb-6">{currentQuestion.question_text}</h2>
               
               <div className="space-y-3">
-                {['A', 'B', 'C', 'D'].map(option => <button key={option} onClick={() => handleAnswer(option)} className={`w-full p-4 text-left rounded-lg border transition-colors ${testState.answers[testState.currentQuestion] === option ? 'border-primary bg-primary/10 text-primary' : 'border-border hover:bg-muted'}`}>
+                {['A', 'B', 'C', 'D'].map((option) => (
+                  <button
+                    key={option}
+                    onClick={() => handleAnswer(option)}
+                    className={`w-full p-4 text-left rounded-lg border transition-colors ${
+                      testState.answers[testState.currentQuestion] === option
+                        ? 'border-primary bg-primary/10 text-primary'
+                        : 'border-border hover:bg-muted'
+                    }`}
+                  >
                     <span className="font-medium mr-3">{option}.</span>
                     {currentQuestion[`option_${option.toLowerCase()}`]}
-                  </button>)}
+                  </button>
+                ))}
               </div>
-            </Card>}
+            </Card>
+          )}
           
           {/* Navigation */}
-          <Card className="mt-6 p-4" style={{
-          background: 'hsl(var(--card))',
-          borderColor: 'hsl(var(--border))',
-          color: 'hsl(var(--card-foreground))',
-          boxShadow: 'var(--shadow-card)',
-          position: 'relative',
-          zIndex: 1
-        }}>
+          <Card className="mt-6 p-4" style={{ 
+            background: 'hsl(var(--card))', 
+            borderColor: 'hsl(var(--border))', 
+            color: 'hsl(var(--card-foreground))',
+            boxShadow: 'var(--shadow-card)',
+            position: 'relative',
+            zIndex: 1
+          }}>
             <div className="flex items-center justify-between">
-              <Button variant="outline" onClick={previousQuestion} disabled={testState.currentQuestion === 0} className="flex items-center gap-2">
+              <Button
+                variant="outline"
+                onClick={previousQuestion}
+                disabled={testState.currentQuestion === 0}
+                className="flex items-center gap-2"
+              >
                 <ArrowLeft className="h-4 w-4" />
                 Previous
               </Button>
@@ -686,7 +773,11 @@ export const MockTest: React.FC = () => {
                 Use the question grid to jump to any question
               </div>
               
-              <Button onClick={nextQuestion} disabled={testState.currentQuestion === testState.questions.length - 1} className="flex items-center gap-2">
+              <Button
+                onClick={nextQuestion}
+                disabled={testState.currentQuestion === testState.questions.length - 1}
+                className="flex items-center gap-2"
+              >
                 Next
                 <ArrowRight className="h-4 w-4" />
               </Button>
@@ -696,22 +787,33 @@ export const MockTest: React.FC = () => {
 
         {/* Question grid navigation */}
         <div className="lg:col-span-1">
-          <Card className="p-4" style={{
-          background: 'hsl(var(--card))',
-          borderColor: 'hsl(var(--border))',
-          color: 'hsl(var(--card-foreground))',
-          boxShadow: 'var(--shadow-card)',
-          position: 'relative',
-          zIndex: 1
-        }}>
+          <Card className="p-4" style={{ 
+            background: 'hsl(var(--card))', 
+            borderColor: 'hsl(var(--border))', 
+            color: 'hsl(var(--card-foreground))',
+            boxShadow: 'var(--shadow-card)',
+            position: 'relative',
+            zIndex: 1
+          }}>
             <h3 className="font-semibold mb-4">Question Overview</h3>
             <div className="grid grid-cols-5 gap-2">
-              {testState.questions.map((_, index) => <button key={index} onClick={() => navigateToQuestion(index)} className={`
+              {testState.questions.map((_, index) => (
+                <button
+                  key={index}
+                  onClick={() => navigateToQuestion(index)}
+                  className={`
                     w-10 h-10 rounded text-sm font-medium transition-colors
-                    ${index === testState.currentQuestion ? 'bg-primary text-primary-foreground' : testState.answers[index] ? 'bg-green-100 text-green-800 border border-green-300' : 'bg-muted hover:bg-muted/80'}
-                  `}>
+                    ${index === testState.currentQuestion 
+                      ? 'bg-primary text-primary-foreground' 
+                      : testState.answers[index]
+                      ? 'bg-green-100 text-green-800 border border-green-300'
+                      : 'bg-muted hover:bg-muted/80'
+                    }
+                  `}
+                >
                   {index + 1}
-                </button>)}
+                </button>
+              ))}
             </div>
             
             <div className="mt-4 space-y-2 text-xs">
@@ -731,5 +833,6 @@ export const MockTest: React.FC = () => {
           </Card>
         </div>
       </div>
-    </div>;
+    </div>
+  );
 };
