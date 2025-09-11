@@ -101,7 +101,7 @@ const Bootcamp = () => {
               <MockTest />
             </div>}
           
-          {currentView === 'learn' && <div className="bg-white rounded-3xl shadow-xl overflow-hidden">
+          {currentView === 'learn' && <div>
               <LearnView selectedWeek={selectedWeek} onWeekChange={setSelectedWeek} />
             </div>}
           
